@@ -30,13 +30,13 @@ if svem_flag in sys.argv:
 
 setup(name='echo_kernel',
       version='0.5',
-      description='A simple echo kernel for IPython',
-      long_description="A simple echo kernel for IPython, based on MagicKernel",
-      url="https://bitbucket.org/ipre/calico/src/master/src/echo_kernel/",
+      description='A simple echo kernel for Jupyter/IPython',
+      long_description="A simple echo kernel for Jupyter/IPython, based on MagicKernel",
+      url="https://github.com/blink1073/jupyter_kernel/tree/master/echo_kernel",
       author='Douglas Blank',
       author_email='doug.blank@gmail.com',
       py_modules=['echo_kernel'],
-      install_requires=["ipython_kernels"],
+      install_requires=["jupyter_kernel"],
       cmdclass={'install': install_with_kernelspec},
       classifiers = [
           'Framework :: IPython',

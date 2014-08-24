@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-from ipython_kernel import MagicKernel
+from jupyter_kernel import MagicKernel
 import os
 
 class EvalKernel(MagicKernel):

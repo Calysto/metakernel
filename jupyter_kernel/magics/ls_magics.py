@@ -3,7 +3,7 @@
 # http://calicoproject.org/
 
 from IPython.core.magic import magic_escapes
-from ipython_kernel import Magic
+from jupyter_kernel import Magic
 import os
 
 

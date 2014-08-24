@@ -2,7 +2,7 @@
 # Distributed under the terms of the Modified BSD License.
 # http://calicoproject.org/
 
-from ipython_kernel import Magic
+from jupyter_kernel import Magic
 import os
 
 class FileMagic(Magic):

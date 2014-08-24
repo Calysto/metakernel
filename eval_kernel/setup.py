@@ -30,13 +30,13 @@ if svem_flag in sys.argv:
 
 setup(name='eval_kernel',
       version='0.4',
-      description='A simple eval kernel for IPython',
-      long_description="A simple eval kernel for IPython, based on MagicKernel",
-      url="https://bitbucket.org/ipre/calico/src/master/src/eval_kernel/",
+      description='A simple eval kernel for Jupyter/IPython',
+      long_description="A simple eval kernel for Jupyter/IPython, based on MagicKernel",
+      url="https://github.com/blink1073/jupyter_kernel/tree/master/eval_kernel",
       author='Douglas Blank',
       author_email='doug.blank@gmail.com',
       py_modules=['eval_kernel'],
-      install_requires=["calico"],
+      install_requires=["jupyter_kernel"],
       cmdclass={'install': install_with_kernelspec},
       classifiers = [
           'Framework :: IPython',

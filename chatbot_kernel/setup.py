@@ -30,13 +30,13 @@ if svem_flag in sys.argv:
 
 setup(name='chatbot_kernel',
       version='0.3',
-      description='A simple chatbot kernel for IPython',
-      long_description="A simple chatbot kernel for IPython, based on MagicKernel",
-      url="https://bitbucket.org/ipre/calico/src/master/src/chatbot_kernel/",
+      description='A simple chatbot kernel for Jupyter/IPython',
+      long_description="A simple chatbot kernel for Jupyter/IPython, based on MagicKernel",
+      url="https://github.com/blink1073/jupyter_kernel/tree/master/chatbot_kernel",
       author='Douglas Blank',
       author_email='doug.blank@gmail.com',
       py_modules=['chatbot_kernel'],
-      install_requires=["calico", "aiml"],
+      install_requires=["jupyter_kernel", "aiml"],
       cmdclass={'install': install_with_kernelspec},
       classifiers = [
           'Framework :: IPython',
