@@ -1,3 +1,4 @@
+from __future__ import print_function
 try:
     from IPython.kernel.zmq.kernelbase import Kernel
 except:
@@ -9,6 +10,8 @@ import base64
 from magic import Magic
 import imp
 import re
+import inspect
+
 
 class MagicKernel(Kernel):
     def __init__(self, *args, **kwargs):
@@ -22,13 +25,19 @@ class MagicKernel(Kernel):
         self.___ = None
         self.reload_magics()
         sys.stdout.write = self.Write
-        print('hello there')
 
     def reload_magics(self):
         self.magics = {}
-        magic_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "magics")
-        sys.path.append(magic_directory)
-        magic_files = glob.glob(os.path.join(magic_directory, "*.py"))
+
+        # get base magic files and those relative to the current class directory
+        magic_files = []
+        paths = [__file__, inspect.getfile(self.__class__)]
+        for path in paths:
+            dname = os.path.dirname(os.path.abspath(path))
+            magic_dir = os.path.join(dname, 'magics')
+            sys.path.append(magic_dir)
+            magic_files.extend(glob.glob(os.path.join(magic_dir, "*.py")))
+
         for magic in magic_files:
             basename = os.path.basename(magic)
             if basename == "__init__.py":
@@ -218,8 +227,15 @@ class MagicKernel(Kernel):
             return [{"start_line_number": 0,
                      "data": {"text/plain": self.get_usage()},
                      "source": "page"}]
+        helpstr = self.get_help_on(item, level)
+
+        item = item.replace('%', '')
+        if helpstr == "Sorry, no help is available." and item in self.magics.keys():
+            return [{"data": {"text/plain": '\n'.join(self.magics[item].help_lines)},
+                     "start_line_number": 0,
+                     "source": "page"}]
         else:
-            return [{"data": {"text/plain": self.get_help_on(item, level)},
+            return [{"data": {"text/plain": helpstr},
                      "start_line_number": 0,
                      "source": "page"}]
 
@@ -233,6 +249,8 @@ class MagicKernel(Kernel):
     def do_execute(self, code, silent, store_history=True, user_expressions=None,
                    allow_stdin=False):
         # Handle Magics
+        import sys
+        print(code, file=sys.__stderr__)
         payload = self._process_help(code)
         if not payload:
             retval = None
