@@ -228,9 +228,6 @@ class MagicKernel(Kernel):
     def get_usage(self):
         return "This is a usage statement."
 
-    def get_completion_on(self, token):
-        return []
-
     def _get_help_on(self, expr, level):
         if expr.startswith("%"):
             magic = expr.strip().split("%")[-1]
@@ -316,32 +313,6 @@ class MagicKernel(Kernel):
             'user_expressions': {},
         }
 
-    def do_complete(self, code, cursor_pos):
-        """Get code completions including path completions.
-        By default, use code up to cursor and split on blank spaces.'"""
-
-        code = code[:cursor_pos]
-        default = {'matches': [], 'cursor_start': 0,
-                   'cursor_end': cursor_pos, 'metadata': dict(),
-                   'status': 'ok'}
-
-        if code[-1] == ' ':
-            return default
-
-        tokens = code.split()
-        if not tokens:
-            return default
-        token = tokens[-1]
-
-        start = cursor_pos - len(token)
-
-        matches = self.get_completion_on(token)
-        matches.extend(_complete_path(token))
-
-        return {'matches': matches, 'cursor_start': start,
-                'cursor_end': cursor_pos, 'metadata': dict(),
-                'status': 'ok'}
-
     def do_history(self, hist_access_type, output, raw, session=None,
                    start=None, stop=None, n=None, pattern=None, unique=False):
         """
@@ -370,6 +341,27 @@ class MagicKernel(Kernel):
                 fid.write(data.encode('utf-8'))
         return {'status': 'ok', 'restart': restart}
 
+    def do_complete(self, code, cursor_pos):
+        token, start, end = self.get_complete(code, 0, cursor_pos)
+        content = {
+            'matches' : [],
+            'cursor_start' : start,
+            'cursor_end' : end,
+            'metadata' : {},
+            'status' : 'ok'
+        }
+        # from magics:
+        if code.startswith("%"):
+            for magic in self.magics.values():
+                for help_line in magic.help_lines:
+                    item = help_line.split("-", 1)[0].strip().split(" ", 1)[0]
+                    if item.startswith(token):
+                        content["matches"].append(item)
+        # Add more from kernel:
+        self.add_complete(content["matches"], token)
+        content['matches'].extend(_complete_path(token))
+        content["matches"] = sorted(content["matches"])
+        return content
 
 
 def _listdir(root):
