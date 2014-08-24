@@ -339,3 +339,43 @@ class MagicKernel(Kernel):
                 fid.write(data.encode('utf-8'))
         return {'status': 'ok', 'restart': restart}
 
+    def get_complete(self, code, start, end):
+        """
+        Parse the code line to get the element that we want to get help on.
+        """
+        token = ""
+        current = end - 1
+        while current >= 0:
+            # go backwards until we find end of token:
+            if code[current] in ["(", " ", ")", "\n", "\t", '"', ]:
+                return (token, current + 1, end)
+            token = code[current] + token
+            current -= 1
+        return (token, start, end)
+
+    def add_complete(self, matches, token):
+        """
+        Add matches based on token from kernel.
+        """
+        return
+
+    def do_complete(self, code, cursor_pos):
+        token, start, end = self.get_complete(code, 0, cursor_pos)
+        content = {
+            'matches' : [],
+            'cursor_start' : start,
+            'cursor_end' : end,
+            'metadata' : {},
+            'status' : 'ok'
+        }
+        # from magics:
+        if code.startswith("%"):
+            for magic in self.magics.values():
+                for help_line in magic.help_lines:
+                    item = help_line.split("-", 1)[0].strip().split(" ", 1)[0]
+                    if item.startswith(token):
+                        content["matches"].append(item)
+        # Add more from kernel:
+        self.add_complete(content["matches"], token)
+        content["matches"] = sorted(content["matches"])
+        return content
