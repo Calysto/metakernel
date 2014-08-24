@@ -228,6 +228,9 @@ class MagicKernel(Kernel):
     def get_usage(self):
         return "This is a usage statement."
 
+    def get_completion_on(self, token):
+        return []
+
     def _get_help_on(self, expr, level):
         if expr.startswith("%"):
             magic = expr.strip().split("%")[-1]
@@ -258,6 +261,8 @@ class MagicKernel(Kernel):
 
     def do_execute(self, code, silent, store_history=True, user_expressions=None,
                    allow_stdin=False):
+        if code and store_history:
+            self.hist_cache.append(code)
         # Handle Magics
         payload = self._process_help(code)
         if not payload:
@@ -311,6 +316,32 @@ class MagicKernel(Kernel):
             'user_expressions': {},
         }
 
+    def do_complete(self, code, cursor_pos):
+        """Get code completions including path completions.
+        By default, use code up to cursor and split on blank spaces.'"""
+
+        code = code[:cursor_pos]
+        default = {'matches': [], 'cursor_start': 0,
+                   'cursor_end': cursor_pos, 'metadata': dict(),
+                   'status': 'ok'}
+
+        if code[-1] == ' ':
+            return default
+
+        tokens = code.split()
+        if not tokens:
+            return default
+        token = tokens[-1]
+
+        start = cursor_pos - len(token)
+
+        matches = self.get_completion_on(token)
+        matches.extend(_complete_path(token))
+
+        return {'matches': matches, 'cursor_start': start,
+                'cursor_end': cursor_pos, 'metadata': dict(),
+                'status': 'ok'}
+
     def do_history(self, hist_access_type, output, raw, session=None,
                    start=None, stop=None, n=None, pattern=None, unique=False):
         """
@@ -339,3 +370,35 @@ class MagicKernel(Kernel):
                 fid.write(data.encode('utf-8'))
         return {'status': 'ok', 'restart': restart}
 
+
+
+def _listdir(root):
+    "List directory 'root' appending the path separator to subdirs."
+    res = []
+    for name in os.listdir(root):
+        path = os.path.join(root, name)
+        if os.path.isdir(path):
+            name += os.sep
+        res.append(name)
+    return res
+
+
+def _complete_path(path=None):
+    """Perform completion of filesystem path.
+
+    http://stackoverflow.com/questions/5637124/tab-completion-in-pythons-raw-input
+    """
+    if not path:
+        return _listdir('.')
+    dirname, rest = os.path.split(path)
+    tmp = dirname if dirname else '.'
+    res = [os.path.join(dirname, p)
+           for p in _listdir(tmp) if p.startswith(rest)]
+    # more than one match, or single match which does not exist (typo)
+    if len(res) > 1 or not os.path.exists(path):
+        return res
+    # resolved to a single directory, so return list of files below it
+    if os.path.isdir(path):
+        return [os.path.join(path, p) for p in _listdir(path)]
+    # exact file match terminates this completion
+    return [path + ' ']
