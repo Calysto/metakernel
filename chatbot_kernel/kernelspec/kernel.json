@@ -1,0 +1,7 @@
+{
+    "argv": ["python", 
+	     "-m","chatbot_kernel", 
+	     "-f", "{connection_file}"],
+    "display_name": "Chatbot",
+    "language": "python"
+}

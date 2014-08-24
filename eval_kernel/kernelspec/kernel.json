@@ -1,0 +1,7 @@
+{
+    "argv": ["python", 
+	     "-m","eval_kernel", 
+	     "-f", "{connection_file}"],
+    "display_name": "Eval",
+    "language": "python"
+}
