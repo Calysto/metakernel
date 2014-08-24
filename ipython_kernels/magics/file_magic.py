@@ -2,7 +2,7 @@
 # Distributed under the terms of the Modified BSD License.
 # http://calicoproject.org/
 
-from calico import Magic
+from ipython_kernels import Magic
 import os
 
 class FileMagic(Magic):
@@ -24,4 +24,4 @@ class FileMagic(Magic):
 
 def register_magics(magics):
     magics[FileMagic.name] = FileMagic
-    
+

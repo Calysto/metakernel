@@ -5,8 +5,8 @@ import json
 import sys
 
 kernel_json = {
-    "argv": [sys.executable, 
-	     "-m", "echo_kernel", 
+    "argv": [sys.executable,
+	     "-m", "echo_kernel",
 	     "-f", "{connection_file}"],
     "display_name": "Echo",
     "language": "python"
@@ -17,7 +17,7 @@ class install_with_kernelspec(install):
         install.run(self)
         from IPython.kernel.kernelspec import KernelSpecManager
         from IPython.utils.path import ensure_dir_exists
-        destdir = os.path.join(KernelSpecManager().user_kernel_dir, 
+        destdir = os.path.join(KernelSpecManager().user_kernel_dir,
                                'echo_kernel')
         ensure_dir_exists(destdir)
         with open(os.path.join(destdir, 'kernel.json'), 'w') as f:
@@ -36,7 +36,7 @@ setup(name='echo_kernel',
       author='Douglas Blank',
       author_email='doug.blank@gmail.com',
       py_modules=['echo_kernel'],
-      install_requires=["calico"],
+      install_requires=["ipython_kernels"],
       cmdclass={'install': install_with_kernelspec},
       classifiers = [
           'Framework :: IPython',

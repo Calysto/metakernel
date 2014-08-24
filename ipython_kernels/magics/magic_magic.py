@@ -2,7 +2,7 @@
 # Distributed under the terms of the Modified BSD License.
 # http://calicoproject.org/
 
-from calico import Magic
+from ipython_kernels import Magic
 
 class MagicMagic(Magic):
     name = "magic"
@@ -31,5 +31,5 @@ class MagicMagic(Magic):
 
 def register_magics(magics):
     magics[MagicMagic.name] = MagicMagic
-    
+
 

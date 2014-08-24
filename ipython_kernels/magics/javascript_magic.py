@@ -2,7 +2,7 @@
 # Distributed under the terms of the Modified BSD License.
 # http://calicoproject.org/
 
-from calico import Magic
+from ipython_kernels import Magic
 from IPython.display import Javascript
 
 class JavascriptMagic(Magic):
@@ -22,4 +22,4 @@ class JavascriptMagic(Magic):
 
 def register_magics(magics):
     magics[JavascriptMagic.name] = JavascriptMagic
-    
+

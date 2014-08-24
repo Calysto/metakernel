@@ -2,7 +2,7 @@
 # Distributed under the terms of the Modified BSD License.
 # http://calicoproject.org/
 
-from calico import Magic
+from ipython_kernels import Magic
 import subprocess
 
 class ShellMagic(Magic):
@@ -12,7 +12,7 @@ class ShellMagic(Magic):
 
     def line(self, args):
         try:
-            process = subprocess.Popen(args, shell=True, 
+            process = subprocess.Popen(args, shell=True,
                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             retval, error = process.communicate()
             if error:
@@ -29,5 +29,5 @@ class ShellMagic(Magic):
 
 def register_magics(magics):
     magics[ShellMagic.name] = ShellMagic
-    
+
 

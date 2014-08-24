@@ -2,7 +2,7 @@
 # Distributed under the terms of the Modified BSD License.
 # http://calicoproject.org/
 
-from calico import Magic
+from ipython_kernels import Magic
 import json
 
 class ConnectInfoMagic(Magic):
@@ -26,7 +26,7 @@ class ConnectInfoMagic(Magic):
 Paste the above JSON into a file, and connect with:
     $> ipython <app> --existing <file>
 or, if you are local, you can connect with just:
-    $> ipython <app> --existing %(key)s 
+    $> ipython <app> --existing %(key)s
 
 or even just:
     $> ipython <app> --existing

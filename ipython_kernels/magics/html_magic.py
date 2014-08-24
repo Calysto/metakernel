@@ -2,7 +2,7 @@
 # Distributed under the terms of the Modified BSD License.
 # http://calicoproject.org/
 
-from calico import Magic
+from ipython_kernels import Magic
 from IPython.display import HTML
 
 class HTMLMagic(Magic):
@@ -21,4 +21,4 @@ class HTMLMagic(Magic):
 
 def register_magics(magics):
     magics[HTMLMagic.name] = HTMLMagic
-    
+

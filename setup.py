@@ -6,14 +6,14 @@ if svem_flag in sys.argv:
     # Die, setuptools, die.
     sys.argv.remove(svem_flag)
 
-setup(name='calico',
+setup(name='ipython_kernels',
       version='0.2.8',
       description='Tools for Python and IPython',
       long_description="Tools for IPython, and Scheme for Python",
       author='Douglas Blank',
       author_email='doug.blank@gmail.com',
       url="https://bitbucket.org/ipre/calico/src/master/src/",
-      packages=['calico', 'calico.magics'],
+      packages=['ipython_kernels', 'ipython_kernels.magics'],
       classifiers = [
           'Framework :: IPython',
           'License :: OSI Approved :: BSD License',

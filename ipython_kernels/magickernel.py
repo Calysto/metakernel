@@ -22,6 +22,7 @@ class MagicKernel(Kernel):
         self.___ = None
         self.reload_magics()
         sys.stdout.write = self.Write
+        print('hello there')
 
     def reload_magics(self):
         self.magics = {}
@@ -57,23 +58,24 @@ class MagicKernel(Kernel):
 
     def Display(self, *args):
         for message in args:
-            self.send_response(self.iopub_socket, 'display_data', 
-                               {'data': self.formatter(message)})
+            self.send_response(self.iopub_socket, 'display_data',
+                               {'data': self.formatter(message),
+                                 'metadata': dict()})
 
     def Print(self, *args, **kwargs):
         end = kwargs["end"] if ("end" in kwargs) else "\n"
         message = " ".join(args) + end
-        stream_content = {'name': 'stdout', 'data': message}
+        stream_content = {'name': 'stdout', 'data': message, 'metadata': dict()}
         self.send_response(self.iopub_socket, 'stream', stream_content)
 
     def Write(self, message):
-        stream_content = {'name': 'stdout', 'data': message}
+        stream_content = {'name': 'stdout', 'data': message, 'metadata': dict()}
         self.send_response(self.iopub_socket, 'stream', stream_content)
 
     def Error(self, *args, **kwargs):
         end = kwargs["end"] if ("end" in kwargs) else "\n"
         message = " ".join(args) + end
-        stream_content = {'name': 'stderr', 'data': message}
+        stream_content = {'name': 'stderr', 'data': message, 'metadata': dict()}
         self.send_response(self.iopub_socket, 'stream', stream_content)
 
     def get_magic(self, text):
@@ -133,7 +135,7 @@ class MagicKernel(Kernel):
         ret_magics = []
         ret_code = []
         index = 0
-        while index < len(lines) and (lines[index].startswith("!") or 
+        while index < len(lines) and (lines[index].startswith("!") or
                                       lines[index].startswith("%")):
             ret_magics.append(lines[index])
             index += 1
@@ -195,16 +197,16 @@ class MagicKernel(Kernel):
     def help_patterns(self):
         # Longest first:
         return [
-            ("^(.*)\?\?$", 2, 
+            ("^(.*)\?\?$", 2,
              "item?? - get detailed help on item"), # "code??", level, explain
-            ("^(.*)\?$", 1, 
+            ("^(.*)\?$", 1,
              "item? - get help on item"),   # "code?"
-            ("^\?\?(.*)$", 2, 
+            ("^\?\?(.*)$", 2,
              "??item - get detailed help on item"), # "??code"
-            ("^\?(.*)$", 1, 
+            ("^\?(.*)$", 1,
              "?item - get help on item"),   # "?code"
         ]
-        
+
     def get_help_on(self, expr, level):
         return "Sorry, no help is available."
 
@@ -217,7 +219,7 @@ class MagicKernel(Kernel):
                      "data": {"text/plain": self.get_usage()},
                      "source": "page"}]
         else:
-            return [{"data": {"text/plain": self.get_help_on(item, level)}, 
+            return [{"data": {"text/plain": self.get_help_on(item, level)},
                      "start_line_number": 0,
                      "source": "page"}]
 
@@ -271,7 +273,9 @@ class MagicKernel(Kernel):
                 self.set_variable("_" + str(self.execution_count), retval)
                 self.___ = self.__
                 self.__ = retval
-                content = {'execution_count': self.execution_count, 'data': self.formatter(retval)}
+                content = {'execution_count': self.execution_count,
+                                    'data': self.formatter(retval),
+                                    'metadata': dict()}
                 self.send_response(self.iopub_socket, 'execute_result', content)
         return {
             'status': 'ok',
