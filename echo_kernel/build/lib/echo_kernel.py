@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-from ipython_kernels import MagicKernel
+from ipython_kernel import MagicKernel
 
 class EchoKernel(MagicKernel):
     implementation = 'Echo'

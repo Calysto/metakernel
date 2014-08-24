@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-from calico import MagicKernel
+from ipython_kernel import MagicKernel
 import aiml
 import os
 
@@ -16,17 +16,17 @@ class ChatbotKernel(MagicKernel):
         return [
             ("^\?\?(.*)$", 2,
              "??item - get detailed help on item"), # "??code"
-            ("^\?(.*)$", 1, 
+            ("^\?(.*)$", 1,
              "?item - get help on item"),   # "?code"
         ]
-        
+
     def __init__(self, *args, **kwargs):
         self.kernel = aiml.Kernel()
-        os.chdir(os.path.join(os.path.dirname(aiml.__file__), 
+        os.chdir(os.path.join(os.path.dirname(aiml.__file__),
                               "standard"))
         self.kernel.learn("startup.xml")
         self.kernel.respond("load aiml b")
-        os.chdir(os.path.join(os.path.dirname(aiml.__file__), 
+        os.chdir(os.path.join(os.path.dirname(aiml.__file__),
                               "alice"))
         self.kernel.learn("startup.xml")
         self.kernel.respond("load alice")

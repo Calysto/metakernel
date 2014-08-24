@@ -2,7 +2,7 @@
 # Distributed under the terms of the Modified BSD License.
 # http://calicoproject.org/
 
-from ipython_kernels import Magic
+from ipython_kernel import Magic
 import subprocess
 
 class ShellMagic(Magic):

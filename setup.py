@@ -6,14 +6,14 @@ if svem_flag in sys.argv:
     # Die, setuptools, die.
     sys.argv.remove(svem_flag)
 
-setup(name='ipython_kernels',
-      version='0.2.8',
-      description='Tools for Python and IPython',
-      long_description="Tools for IPython, and Scheme for Python",
-      author='Douglas Blank',
-      author_email='doug.blank@gmail.com',
-      url="https://bitbucket.org/ipre/calico/src/master/src/",
-      packages=['ipython_kernels', 'ipython_kernels.magics'],
+setup(name='ipython_kernel',
+      version='0.1.0',
+      description='IPython Kernel Tools',
+      long_description="IPython Kernel Tools using kernel wrappers",
+      author='Steven Silvester',
+      author_email='steven.silvester@ieee.or',
+      url="https://github.com/blink1073/ipython_kernel",
+      packages=['ipython_kernel', 'ipython_kernel.magics'],
       classifiers = [
           'Framework :: IPython',
           'License :: OSI Approved :: BSD License',
