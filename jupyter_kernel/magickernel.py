@@ -258,6 +258,8 @@ class MagicKernel(Kernel):
 
     def do_execute(self, code, silent, store_history=True, user_expressions=None,
                    allow_stdin=False):
+        if code and store_history:
+            self.hist_cache.append(code)
         # Handle Magics
         payload = self._process_help(code)
         if not payload:
@@ -377,5 +379,38 @@ class MagicKernel(Kernel):
                         content["matches"].append(item)
         # Add more from kernel:
         self.add_complete(content["matches"], token)
+        content['matches'].extend(_complete_path(token))
         content["matches"] = sorted(content["matches"])
         return content
+
+
+def _listdir(root):
+    "List directory 'root' appending the path separator to subdirs."
+    res = []
+    for name in os.listdir(root):
+        path = os.path.join(root, name)
+        if os.path.isdir(path):
+            name += os.sep
+        res.append(name)
+    return res
+
+
+def _complete_path(path=None):
+    """Perform completion of filesystem path.
+
+    http://stackoverflow.com/questions/5637124/tab-completion-in-pythons-raw-input
+    """
+    if not path:
+        return _listdir('.')
+    dirname, rest = os.path.split(path)
+    tmp = dirname if dirname else '.'
+    res = [os.path.join(dirname, p)
+           for p in _listdir(tmp) if p.startswith(rest)]
+    # more than one match, or single match which does not exist (typo)
+    if len(res) > 1 or not os.path.exists(path):
+        return res
+    # resolved to a single directory, so return list of files below it
+    if os.path.isdir(path):
+        return [os.path.join(path, p) for p in _listdir(path)]
+    # exact file match terminates this completion
+    return [path + ' ']
