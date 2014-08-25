@@ -7,6 +7,6 @@ Additional magics can be installed within the new kernel package under a `magics
 
 You can install jupyter_kernel through `pip`:
 
-```shell
-pip install jupyter_kernel --upgrade
-```
+
+`pip install jupyter_kernel --upgrade`
+
