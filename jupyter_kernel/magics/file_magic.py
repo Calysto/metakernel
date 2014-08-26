@@ -6,12 +6,11 @@ from jupyter_kernel import Magic
 import os
 
 class FileMagic(Magic):
-    name = "file"
-    help_lines = ["%%file FILENAME - write contents of cell to file"]
 
-    def cell(self, args):
+    def cell_file(self, args):
+        """%%file FILENAME - write contents of cell to file"""
         message = "Created file '%s'." % args
-        if os.path.isfile(args):
+        if os.path.isfile(self.code):
             message = "Overwrote file '%s'." % args
         try:
             fp = open(args, "w")
@@ -22,6 +21,5 @@ class FileMagic(Magic):
             self.kernel.Error(e.message)
         self.evaluate = False
 
-def register_magics(magics):
-    magics[FileMagic.name] = FileMagic
-
+def register_magics(kernel):
+    kernel.register_magics(FileMagic)

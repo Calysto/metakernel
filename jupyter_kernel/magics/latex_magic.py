@@ -6,19 +6,17 @@ from jupyter_kernel import Magic
 from IPython.display import Latex
 
 class LatexMagic(Magic):
-    name = "latex"
-    help_lines = ["%%latex - display contents of cell as LaTeX",
-                  " %latex TEXT - display text as LaTex"]
 
-    def line(self, args):
+    def line_latex(self, args):
+        """%latex TEXT - display text as LaTex"""
         latex = Latex(args)
         self.kernel.Display(latex)
 
-    def cell(self, args):
+    def cell_latex(self, args):
+        """%%latex - display contents of cell as LaTeX"""
         latex = Latex(self.code)
         self.kernel.Display(latex)
         self.evaluate = False
 
-def register_magics(magics):
-    magics[LatexMagic.name] = LatexMagic
-
+def register_magics(kernel):
+    kernel.register_magics(LatexMagic)

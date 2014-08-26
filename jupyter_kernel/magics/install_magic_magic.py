@@ -8,10 +8,9 @@ import urlparse
 import os
 
 class InstallMagicMagic(Magic):
-    name = "install_magic"
-    help_lines = [" %install_magic URL - download and install magic from URL"]
 
-    def line(self, args):
+    def line_install(self, args):
+        """%install_magic URL - download and install magic from URL"""
         opener = urllib.URLopener()
         url = args
         parts = urlparse.urlsplit(url)
@@ -26,6 +25,6 @@ class InstallMagicMagic(Magic):
         except Exception as e:
             self.kernel.Error(e.message)
 
-def register_magics(magics):
-    magics[InstallMagicMagic.name] = InstallMagicMagic
+def register_magics(kernel):
+    kernel.register_magics(InstallMagicMagic)
 

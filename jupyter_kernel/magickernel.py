@@ -33,7 +33,8 @@ class MagicKernel(Kernel):
         sys.stdout.write = self.Write
 
     def reload_magics(self):
-        self.magics = {}
+        self.line_magics = {}
+        self.cell_magics = {}
 
         # get base magic files and those relative to the current class directory
         magic_files = []
@@ -51,9 +52,18 @@ class MagicKernel(Kernel):
             try:
                 module = __import__(os.path.splitext(basename)[0])
                 imp.reload(module)
-                module.register_magics(self.magics)
+                module.register_magics(self)
             except Exception as e:
                 print("Can't load '%s': error: %s" % (magic, e.message))
+
+    def register_magics(self, magic_klass):
+        magic = magic_klass(self)
+        line_magics = magic.get_magics('line')
+        cell_magics = magic.get_magics('cell')
+        for name in line_magics:
+            self.line_magics[name] = magic
+        for name in cell_magics:
+            self.cell_magics[name] = magic
 
     def parse_magic(self, text):
         lines = text.split("\n")
@@ -125,9 +135,12 @@ class MagicKernel(Kernel):
                 mtype = "cell"
             else:
                 return None
-            if name in self.magics:
-                klass = self.magics[name]
-                return klass(self, code, mtype, args)
+            if mtype == 'cell' and name in self.cell_magics.keys():
+                magic = self.cell_magics[name]
+                return magic.call_magic(mtype, name, code, args)
+            elif mtype == 'line' and name in self.line_magics.keys():
+                magic = self.line_magics[name]
+                return magic .call_magic(mtype, name, code, args)
             else:
                 # FIXME: Raise an error
                 return None
@@ -229,9 +242,14 @@ class MagicKernel(Kernel):
         return "This is a usage statement."
 
     def _get_help_on(self, expr, level):
-        if expr.startswith("%"):
-            magic = expr.strip().split("%")[-1]
-            return "\n".join(self.magics[magic].help_lines)
+        if expr.startswith('%%'):
+            name = expr.strip().split("%")[-1]
+            magic = self.cell_magics[name]
+            return magic.get_help('cell', name)
+        elif expr.startswith("%"):
+            name = expr.strip().split("%")[-1]
+            magic = self.line_magics[name]
+            return magic.get_help('line', name)
         else:
             result = self.get_help_on(expr, level)
             if result:
@@ -349,7 +367,7 @@ class MagicKernel(Kernel):
         current = end - 1
         while current >= 0:
             # go backwards until we find end of token:
-            if code[current] in ["(", " ", ")", "\n", "\t", '"', ]:
+            if code[current] in ["(", " ", ")", "\n", "\t", '"', "%", ";"]:
                 return (token, current + 1, end)
             token = code[current] + token
             current -= 1
@@ -371,12 +389,14 @@ class MagicKernel(Kernel):
             'status' : 'ok'
         }
         # from magics:
-        if code.startswith("%"):
-            for magic in self.magics.values():
-                for help_line in magic.help_lines:
-                    item = help_line.split("-", 1)[0].strip().split(" ", 1)[0]
-                    if item.startswith(token):
-                        content["matches"].append(item)
+        if code.startswith("%%"):
+            for name in self.cell_magics.keys():
+                if name.startswith(token):
+                    content['matches'].append(name)
+        elif code.startswith('%'):
+            for name in self.line_magics.keys():
+                if name.startswith(token):
+                    content['matches'].append(name)
         # Add more from kernel:
         self.add_complete(content["matches"], token)
         content['matches'].extend(_complete_path(token))

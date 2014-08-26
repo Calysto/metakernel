@@ -6,11 +6,9 @@ from jupyter_kernel import Magic
 import subprocess
 
 class ShellMagic(Magic):
-    name = "shell"
-    help_lines = [" %shell COMMAND - run the line as a shell command",
-                  "%%shell - run the contents of the cell as shell commands"]
 
-    def line(self, args):
+    def line_shell(self, args):
+        """%shell COMMAND - run the line as a shell command"""
         try:
             process = subprocess.Popen(args, shell=True,
                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -23,11 +21,10 @@ class ShellMagic(Magic):
         if retval:
             self.kernel.Print(retval)
 
-    def cell(self, args):
-        self.line(self.code)
+    def cell_shell(self, args):
+        """%%shell - run the contents of the cell as shell commands"""
+        self.line_shell(self.code)
         self.evaluate = False
 
-def register_magics(magics):
-    magics[ShellMagic.name] = ShellMagic
-
-
+def register_magics(kernel):
+    kernel.register_magics(ShellMagic)

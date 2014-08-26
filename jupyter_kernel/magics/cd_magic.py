@@ -6,10 +6,9 @@ from jupyter_kernel import Magic
 import os
 
 class CDMagic(Magic):
-    name = "cd"
-    help_lines = [" %cd PATH - change current directory of session"]
 
-    def line(self, args):
+    def line_cd(self, args):
+        """%cd PATH - change current directory of session"""
         try:
             os.chdir(args)
             retval = os.path.abspath(args)
@@ -19,7 +18,6 @@ class CDMagic(Magic):
         if retval:
             self.kernel.Print(retval)
 
-def register_magics(magics):
-    magics[CDMagic.name] = CDMagic
 
-
+def register_magics(kernel):
+   kernel.register_magics(CDMagic)

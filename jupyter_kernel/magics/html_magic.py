@@ -6,19 +6,17 @@ from jupyter_kernel import Magic
 from IPython.display import HTML
 
 class HTMLMagic(Magic):
-    name = "html"
-    help_lines = ["%%html - display contents of cell as HTML",
-                  " %html CODE - display code as HTML"]
 
-    def line(self, args):
+    def line_html(self, args):
+        """%html CODE - display code as HTML"""
         html = HTML(args)
         self.kernel.Display(html)
 
-    def cell(self, args):
+    def cell_html(self, args):
+        """%%html - display contents of cell as HTML"""
         html = HTML(self.code)
         self.kernel.Display(html)
         self.evaluate = False
 
-def register_magics(magics):
-    magics[HTMLMagic.name] = HTMLMagic
-
+def register_magics(kernel):
+    kernel.register_magics(HTMLMagic)

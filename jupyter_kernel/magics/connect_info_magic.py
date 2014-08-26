@@ -6,10 +6,9 @@ from jupyter_kernel import Magic
 import json
 
 class ConnectInfoMagic(Magic):
-    name = "connect_info"
-    help_lines = [" %connect_info - show connection information"]
 
-    def line(self, args):
+    def line_connect_info(self, args):
+      """%connect_info - show connection information"""
         connection_file = self.kernel.config["IPKernelApp"]["connection_file"]
         config = json.loads(open(connection_file).read())
         retval = """{
@@ -34,8 +33,5 @@ if this is the most recent ICalico session you have started.
 """ % config
         self.kernel.Print(retval)
 
-    def cell(self, args):
-        self.line(args)
-
-def register_magics(magics):
-    magics[ConnectInfoMagic.name] = ConnectInfoMagic
+def register_magics(kernel):
+    kernel.register_magics(ConnectInfoMagic)

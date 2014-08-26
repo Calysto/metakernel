@@ -1,25 +1,28 @@
 class Magic(object):
-    name = None
-    help_lines = []
-    def __init__(self, kernel, code, mtype, args):
+
+    def __init__(self, kernel):
         self.kernel = kernel
-        self.code = code
-        self.mtype = mtype
-        self.args = args
         self.evaluate = True
-        if mtype == "line":
-            self.line(args)
-        elif mtype == "cell":
-            self.cell(args)
+        self.code = ''
 
-    def cell(self, args):
-        pass
+    def call_magic(self, mtype, name, code, args):
+        self.code = code
+        func = getattr(self, mtype + '_' + name)
+        func(args)
 
-    def line(self, args):
-        pass
+    def get_help(self, mtype, name):
+        func = getattr(self, mtype + '_' + name)
+        return func.__doc__
+
+    def get_magics(self, mtype):
+        magics = []
+        for name in dir(self):
+            if name.startswith(mtype + '_'):
+                magics.append(name.replace(mtype + '_', ''))
+        return magics
 
     def get_code(self):
         return self.code
-        
+
     def post_process(self, retval):
         return retval

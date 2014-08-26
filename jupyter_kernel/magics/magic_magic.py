@@ -5,18 +5,22 @@
 from jupyter_kernel import Magic
 
 class MagicMagic(Magic):
-    name = "magic"
-    help_lines = [" %magic - show installed magics"]
 
-    def line(self, args):
-        retval = []
-        for magic in self.kernel.magics:
-            retval.extend(self.kernel.magics[magic].help_lines)
+    def line_magic(self, args):
+        """%magic - show installed magics"""
+        line_magics = []
+        cell_magics = []
+
+        for (name, magic) in self.kernel.line_magics.items():
+            line_magics.append(magic.get_help('line', name))
+        for (name, magic) in self.kernel.cell_magics.items():
+            cell_magics.append(magic.get_help('cell', name))
+
         self.kernel.Print("Line magics:")
-        self.kernel.Print("    " + ("\n    ".join(sorted([line for line in retval if line.startswith(" ")]))))
+        self.kernel.Print("    " + ("\n    ".join(sorted(line_magics))))
         self.kernel.Print("")
         self.kernel.Print("Cell magics:")
-        self.kernel.Print("    " + ("\n    ".join(sorted([line for line in retval if line.startswith("%")]))))
+        self.kernel.Print("    " + ("\n    ".join(sorted(cell_magics))))
         self.kernel.Print("")
         self.kernel.Print("Shell shortcut:")
         self.kernel.Print("    ! COMMAND ... - execute command in shell")
@@ -29,7 +33,5 @@ class MagicMagic(Magic):
                 self.kernel.Print("    " + doc)
         self.kernel.Print("")
 
-def register_magics(magics):
-    magics[MagicMagic.name] = MagicMagic
-
-
+def register_magics(kernel):
+    kernel.register_magics(MagicMagic)

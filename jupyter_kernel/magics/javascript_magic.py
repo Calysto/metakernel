@@ -20,6 +20,6 @@ class JavascriptMagic(Magic):
             self.kernel.Display(jscode)
             self.evaluate = False
 
-def register_magics(magics):
-    magics[JavascriptMagic.name] = JavascriptMagic
+def register_magics(kernel):
+    kernel.register_magics(JavascriptMagic)
 

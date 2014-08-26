@@ -5,15 +5,12 @@
 from jupyter_kernel import Magic
 
 class ReloadMagicsMagic(Magic):
-    name = "reload_magics"
-    help_lines = [" %reload_magics - reload the magics from the installed files"]
 
-    def post_process(self, retval):
+    def line_reload_magics(self):
+        """%reload_magics - reload the magics from the installed files"""
         self.kernel.reload_magics()
         result = "Magics reloaded: %s\n" % ", ".join(self.kernel.magics.keys())
         self.kernel.Print(result)
-        return retval
 
-def register_magics(magics):
-    magics[ReloadMagicsMagic.name] = ReloadMagicsMagic
-
+def register_magics(kernel):
+    kernel.reload_magics(ReloadMagicsMagic)

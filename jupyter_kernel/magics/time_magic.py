@@ -6,14 +6,13 @@ from jupyter_kernel import Magic
 import time
 
 class TimeMagic(Magic):
-    name = "time"
-    help_lines = [" %time COMMAND - show time to run line",
-                  "%%time - show time to run cell"]
 
-    def cell(self, args):
+    def cell_time(self, args):
+        """%%time - show time to run cell"""
         self.start = time.time()
 
-    def line(self, args):
+    def line_time(self, args):
+        """%time COMMAND - show time to run line"""
         self.start = time.time()
 
     def post_process(self, retval):
@@ -22,6 +21,6 @@ class TimeMagic(Magic):
             self.kernel.Print(result)
         return retval
 
-def register_magics(magics):
-    magics[TimeMagic.name] = TimeMagic
 
+def register_magics(kernel):
+    kernel.register_magics(TimeMagic)

@@ -7,27 +7,23 @@ from jupyter_kernel import Magic
 import os
 
 class LSMagicMagic(Magic):
-    name = "lsmagic"
-    help_lines = [" %lsmagic - list the current line and cell magics"]
 
-    def line(self, args):
+    def line_lsmagic(self, args):
+        """%lsmagic - list the current line and cell magics"""
         mesc = magic_escapes['line']
         cesc = magic_escapes['cell']
-        magics = self.kernel.magics
-        # Hack to find out if magic supports line/cell (need more definite manner):
-        line = [mesc + v.name for v in magics.values() if any([row.startswith(" %") for row in v.help_lines])]
-        cell = [cesc + v.name for v in magics.values() if any([row.startswith("%%") for row in v.help_lines])]
+
+        line_magics = self.kernel.line_magics.keys()
+        cell_magics = self.kernel.cell_magics.keys()
 
         out = [
             'Available line magics:',
-            '  '.join(sorted(line)),
+            '  '.join(sorted(line_magics)),
             '',
             'Available cell magics:',
-            '  '.join(sorted(cell)),
+            '  '.join(sorted(cell_magics)),
         ]
         self.kernel.Print('\n'.join(out))
 
-def register_magics(magics):
-    magics[LSMagicMagic.name] = LSMagicMagic
-
-
+def register_magics(kernel):
+    kernel.register_magics(LSMagicMagic)

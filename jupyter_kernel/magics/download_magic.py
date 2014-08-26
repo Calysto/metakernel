@@ -8,10 +8,9 @@ import urlparse
 import os
 
 class DownloadMagic(Magic):
-    name = "download"
-    help_lines = [" %download URL [FILENAME] - download file from URL"]
 
-    def line(self, args):
+    def line_download(self, args):
+        """%download URL [FILENAME] - download file from URL"""
         opener = urllib.URLopener()
         if " " in args:
             url, filename = args.split(" ", 1)
@@ -27,6 +26,5 @@ class DownloadMagic(Magic):
         except Exception as e:
             self.kernel.Error(e.message)
 
-def register_magics(magics):
-    magics[DownloadMagic.name] = DownloadMagic
-
+def register_magics(kernel):
+    kernel.register_magics(DownloadMagic)
