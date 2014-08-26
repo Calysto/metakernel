@@ -8,7 +8,7 @@ from IPython.display import Latex
 class LatexMagic(Magic):
 
     def line_latex(self, args):
-        """%latex TEXT - display text as LaTex"""
+        """%latex TEXT - display text as LaTeX"""
         latex = Latex(args)
         self.kernel.Display(latex)
 

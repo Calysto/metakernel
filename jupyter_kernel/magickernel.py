@@ -30,9 +30,12 @@ class MagicKernel(Kernel):
         except IOError:
             self.hist_file = None
         self.reload_magics()
-        sys.stdout.write = self.Write
+        try:
+            sys.stdout.write = self.Write
+        except:
+            pass # Can't change stdout
 
-    def reload_magics(self):
+    def reload_magics(self, args=None):
         self.line_magics = {}
         self.cell_magics = {}
 
