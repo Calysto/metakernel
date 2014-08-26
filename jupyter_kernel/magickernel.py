@@ -108,7 +108,7 @@ class MagicKernel(Kernel):
 
     def get_magic(self, text):
         # if first line matches a magic,
-        # return Magic(self)
+        # call magic.call_magic() and return magic object
         parts = self.parse_magic(text)
         if parts:
             command, args, code = parts
@@ -122,6 +122,7 @@ class MagicKernel(Kernel):
                 else:
                     self.sticky_magics[name] = args
                     self.Print("%s added to session magics.\n" % name)
+                    name = command[3:]
                     mtype = "cell"
             elif command.startswith("%%"):
                 name = command[2:]
