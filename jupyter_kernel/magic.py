@@ -9,6 +9,7 @@ class Magic(object):
         self.code = code
         func = getattr(self, mtype + '_' + name)
         func(args)
+        return self
 
     def get_help(self, mtype, name):
         func = getattr(self, mtype + '_' + name)

@@ -10,11 +10,11 @@ class JavascriptMagic(Magic):
     help_lines = [" %javascript CODE - send code as JavaScript",
                   "%%javascript - send contents of cell as JavaScript"]
 
-    def line(self, args):
+    def line_javascript(self, args):
         jscode = Javascript(args)
         self.kernel.Display(jscode)
 
-    def cell(self, args):
+    def cell_javascript(self, args):
         if self.code.strip():
             jscode = Javascript(self.code)
             self.kernel.Display(jscode)
