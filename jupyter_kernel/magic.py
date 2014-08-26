@@ -13,7 +13,7 @@ class Magic(object):
 
     def get_help(self, mtype, name):
         func = getattr(self, mtype + '_' + name)
-        return func.__doc__
+        return func.__doc__ if func.__doc__ else "(no help available for magic '%s' operating on a %s)" % (name, mtype)
 
     def get_magics(self, mtype):
         magics = []
