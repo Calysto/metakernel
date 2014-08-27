@@ -34,6 +34,11 @@ class MagicKernel(Kernel):
             sys.stdout.write = self.Write
         except:
             pass # Can't change stdout
+        # provide a way to get the current instance
+        self.set_variable("get_jupyter", self.get_jupyter)
+
+    def get_jupyter(self):
+        return self
 
     def reload_magics(self, args=None):
         self.line_magics = {}
