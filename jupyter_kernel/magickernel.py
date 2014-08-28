@@ -1,6 +1,7 @@
 try:
     from IPython.kernel.zmq.kernelbase import Kernel
     from IPython.utils.path import locate_profile
+    from IPython.html.widgets import Widget
 except:
     Kernel = object
 import os
@@ -88,11 +89,21 @@ class MagicKernel(Kernel):
         args = args.strip()
         return command, args, code
 
+
+    def display_widget(self, widget):
+        content = {"data"   : {"method": "display"},
+                   "comm_id": widget.model_id}
+        self.send_response(self.iopub_socket, "comm_open", 
+                           {"data": content})
+        
     def Display(self, *args):
         for message in args:
-            self.send_response(self.iopub_socket, 'display_data',
-                               {'data': self.formatter(message),
-                                 'metadata': dict()})
+            if isinstance(message, Widget):
+                self.display_widget(message)
+            else:
+                self.send_response(self.iopub_socket, 'display_data',
+                                   {'data': self.formatter(message),
+                                    'metadata': dict()})
 
     def Print(self, *args, **kwargs):
         end = kwargs["end"] if ("end" in kwargs) else "\n"
