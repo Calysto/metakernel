@@ -11,6 +11,7 @@ from magic import Magic
 import imp
 import re
 import inspect
+import namedtuple
 
 class MagicKernel(Kernel):
     def __init__(self, *args, **kwargs):
@@ -24,6 +25,8 @@ class MagicKernel(Kernel):
         self.___ = None
         self.max_hist_cache = 1000
         self.hist_cache = []
+        ps = namedtuple('plot_settings', 'backend, format, size')
+        self.plot_settings = ps('inline', None, None)
         try:
             self.hist_file = os.path.join(locate_profile(),
                                           self.__class__.__name__ + '.hist')
@@ -405,6 +408,10 @@ class MagicKernel(Kernel):
         content['matches'].extend(_complete_path(token))
         content["matches"] = sorted(content["matches"])
         return content
+
+    def update_plot_settings(self):
+        """Update the default plot settings for the kernel."""
+        pass
 
 
 def _listdir(root):
