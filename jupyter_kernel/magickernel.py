@@ -12,7 +12,7 @@ from magic import Magic
 import imp
 import re
 import inspect
-import namedtuple
+from collections import namedtuple
 
 class MagicKernel(Kernel):
     def __init__(self, *args, **kwargs):
@@ -96,9 +96,9 @@ class MagicKernel(Kernel):
     def display_widget(self, widget):
         content = {"data"   : {"method": "display"},
                    "comm_id": widget.model_id}
-        self.send_response(self.iopub_socket, "comm_open", 
+        self.send_response(self.iopub_socket, "comm_open",
                            {"data": content})
-        
+
     def Display(self, *args):
         for message in args:
             if isinstance(message, Widget):
