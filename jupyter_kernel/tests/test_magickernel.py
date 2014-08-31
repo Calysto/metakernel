@@ -37,9 +37,12 @@ def test_magics():
     for magic in ['file', 'html', 'javascript', 'latex', 'shell', 'time']:
         assert magic in kernel.cell_magics
 
+    with open('TEST.txt', 'wb') as fid:
+        pass
     kernel.get_magic('%shell ls')
     log_text = get_log_text(kernel)
-    assert 'magickernel.py' in log_text
+    assert 'TEST.txt' in log_text
+    os.remove('TEST.txt')
 
     resp = kernel.get_help_on('%shell', 0)
     assert 'run the line as a shell command' in resp
