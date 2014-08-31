@@ -11,10 +11,6 @@ class TimeMagic(Magic):
         """%%time - show time to run cell"""
         self.start = time.time()
 
-    def line_time(self, comand):
-        """%time COMMAND - show time to run line"""
-        self.start = time.time()
-
     def post_process(self, retval):
         if self.code.strip():
             result = "Time: %s seconds.\n" % (time.time() - self.start)

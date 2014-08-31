@@ -9,14 +9,14 @@ import os
 
 class InstallMagicMagic(Magic):
 
-    def line_install(self, url):
+    def line_install_magic(self, url):
         """%install_magic URL - download and install magic from URL"""
         opener = urllib.URLopener()
         parts = urlparse.urlsplit(url)
         #('http', 'example.com', '/somefile.zip', '', '')
         path = parts[2]
         filename = os.path.basename(path)
-        magic_filename = os.path.join(os.path.abspath(__file__), filename)
+        magic_filename = os.path.join(self.kernel.get_local_magics_dir(), filename)
         try:
             opener.retrieve(url, magic_filename)
             self.kernel.Print("Downloaded '%s'." % magic_filename)

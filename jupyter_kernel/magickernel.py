@@ -422,12 +422,12 @@ class MagicKernel(Kernel):
         # from magics:
         if code.startswith("%%"):
             for name in self.cell_magics.keys():
-                if name.startswith(token):
+                if name.startswith("%%" + token):
                     content['matches'].append(name)
         elif code.startswith('%'):
             for name in self.line_magics.keys():
                 if name.startswith(token):
-                    content['matches'].append(name)
+                    content['matches'].append("%" + name)
         # Add more from kernel:
         self.add_complete(content["matches"], token)
         content['matches'].extend(_complete_path(token))
@@ -446,14 +446,27 @@ class MagicKernel(Kernel):
         """Handle the current plot settings"""
         pass
 
+    def get_local_magics_dir(self):
+        """
+        Ensures that there is a ~/.ipython/jupyter_kernel/magics directory,
+        and returns the path to it.
+        """
+        base = get_ipython_dir()
+        return os.path.join(base, 'jupyter_kernel', 'magics')
+
+
 def _listdir(root):
     "List directory 'root' appending the path separator to subdirs."
     res = []
-    for name in os.listdir(root):
-        path = os.path.join(root, name)
-        if os.path.isdir(path):
-            name += os.sep
-        res.append(name)
+    root = os.path.expanduser(root)
+    try:
+        for name in os.listdir(root):
+            path = os.path.join(root, name)
+            if os.path.isdir(path):
+                name += os.sep
+            res.append(name)
+    except:
+        pass # no need to report invalid paths
     return res
 
 

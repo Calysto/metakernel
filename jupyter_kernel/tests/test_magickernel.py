@@ -29,10 +29,10 @@ def get_log_text(kernel):
 
 def test_magics():
     kernel = get_kernel()
-    for magic in ['cd', 'connect_info', 'download', 'html', 'install',
+    for magic in ['cd', 'connect_info', 'download', 'html', 'install_magic',
                   'javascript', 'latex', 'lsmagic', 'magic', 'plot',
-                  'reload_magics', 'shell', 'time']:
-        assert magic in kernel.line_magics
+                  'reload_magics', 'shell']:
+        assert magic in kernel.line_magics, "magic '%s' is not in line_magics" % magic
 
     for magic in ['file', 'html', 'javascript', 'latex', 'shell', 'time']:
         assert magic in kernel.cell_magics
@@ -52,7 +52,7 @@ def test_magics():
         'payload'][0]['data']['text/plain']
 
     comp = kernel.do_complete('%connect_', len('%connect_'))
-    assert comp['matches'] == ['connect_info']
+    assert comp['matches'] == ['%connect_info'], str(comp['matches'])
 
 
 def test_file_magic():
