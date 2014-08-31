@@ -1,6 +1,6 @@
 try:
     from IPython.kernel.zmq.kernelbase import Kernel
-    from IPython.utils.path import locate_profile, get_ipython_dir
+    from IPython.utils.path import get_ipython_dir
     from IPython.html.widgets import Widget
 except:
     Kernel = object
@@ -27,7 +27,7 @@ class MagicKernel(Kernel):
         self.hist_cache = []
         self.plot_settings = dict(backend='inline', format=None, size=None)
         try:
-            self.hist_file = os.path.join(locate_profile(),
+            self.hist_file = os.path.join(self.profile_dir.location,
                                           self.__class__.__name__ + '.hist')
         except IOError:
             self.hist_file = None
