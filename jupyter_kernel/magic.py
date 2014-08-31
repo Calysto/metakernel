@@ -15,10 +15,18 @@ class Magic(object):
         func(*args, **kwargs)
         return self
 
-    def get_help(self, mtype, name):
-        func = getattr(self, mtype + '_' + name)
-        msg = "(no help available for magic '%s' operating on a %s)"
-        return func.__doc__ if func.__doc__ else msg % (name, mtype)
+    def get_help(self, mtype, name, level=0):
+        if hasattr(self, mtype + '_' + name):
+            func = getattr(self, mtype + '_' + name)
+            if func.__doc__:
+                if level == 0:
+                    return func.__doc__.lstrip().split("\n", 1)[0]
+                else:
+                    return func.__doc__.lstrip()
+            else:
+                return "No help available for magic '%s' for %ss." % (name, mtype)
+        else:
+            return "No such magic '%s' for %ss." % (name, mtype)
 
     def get_magics(self, mtype):
         magics = []
