@@ -1,4 +1,5 @@
 import optparse
+import inspect
 
 
 class Magic(object):
@@ -65,12 +66,29 @@ def _parse_args(func, args):
     """Parse the arguments given to a magic function"""
     if not isinstance(args, list):
         args = args.split()
+
     if not getattr(func, 'has_options', False):
-        return args, dict()
-    parser = optparse.OptionParser()
-    parser.add_options(func.options)
-    value, args = parser.parse_args(args)
-    return args, value.__dict__
+        kwargs = dict()
+    else:
+        parser = optparse.OptionParser()
+        parser.add_options(func.options)
+        value, args = parser.parse_args(args)
+        kwargs = value.__dict__
+
+    argspec = inspect.getargspec(func)
+    if not argspec.defaults is None:
+        valid_kwargs = argspec.args[-len(argspec.defaults):]
+        total_args = len(argspec.args) - len(argspec.defaults)
+    else:
+        valid_kwargs = []
+        total_args = len(argspec.args)
+    args = args[:total_args]
+
+    for key in kwargs.keys():
+        if not key in valid_kwargs:
+            del kwargs[key]
+
+    return args, kwargs
 
 
 def _format_option(option):
