@@ -84,7 +84,6 @@ def test_shell_magic():
      kernel = get_kernel()
      kernel.do_execute("!cat \"%s\"" % __file__, False)
      log_text = get_log_text(kernel)
-     print(log_text)
      assert 'magickernel.py' in log_text
 
 
