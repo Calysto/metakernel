@@ -448,8 +448,7 @@ class MagicKernel(Kernel):
 
     def get_local_magics_dir(self):
         """
-        Ensures that there is a ~/.ipython/jupyter_kernel/magics directory,
-        and returns the path to it.
+        Returns the path to local magics dir (eg ~/.ipython/jupyter_kernel/magics)
         """
         base = get_ipython_dir()
         return os.path.join(base, 'jupyter_kernel', 'magics')
