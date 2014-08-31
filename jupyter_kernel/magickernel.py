@@ -66,7 +66,7 @@ class MagicKernel(Kernel):
                 imp.reload(module)
                 module.register_magics(self)
             except Exception as e:
-                print("Can't load '%s': error: %s" % (magic, e)
+                print("Can't load '%s': error: %s" % (magic, e))
 
     def register_magics(self, magic_klass):
         magic = magic_klass(self)
