@@ -29,17 +29,20 @@ class MagicKernel(Kernel):
         if self.profile_dir:
             profile_dir = self.profile_dir.location
         else:
-            profile_dir = locate_profile()
-        try:
+            try:
+                profile_dir = locate_profile()
+            except IOError:
+                profile_dir = None
+        if not profile_dir is None:
             self.hist_file = os.path.join(profile_dir,
                                           self.__class__.__name__ + '.hist')
-        except IOError:
+        else:
             self.hist_file = None
         self.reload_magics()
         try:
             sys.stdout.write = self.Write
         except:
-            pass # Can't change stdout
+            pass  # Can't change stdout
         # provide a way to get the current instance
         import jupyter_kernel
         jupyter_kernel.JUPYTER_INSTANCE = self
