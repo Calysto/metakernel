@@ -1,6 +1,6 @@
 try:
     from IPython.kernel.zmq.kernelbase import Kernel
-    from IPython.utils.path import locate_profile
+    from IPython.utils.path import locate_profile, get_ipython_dir
     from IPython.html.widgets import Widget
 except:
     Kernel = object
@@ -47,10 +47,13 @@ class MagicKernel(Kernel):
 
         # get base magic files and those relative to the current class directory
         magic_files = []
-        paths = [__file__, inspect.getfile(self.__class__)]
-        for path in paths:
-            dname = os.path.dirname(os.path.abspath(path))
-            magic_dir = os.path.join(dname, 'magics')
+        # Make a jupyter_kernel/magics if it doesn't exist:
+        local_magics_dir = _ensure_local_magics_dir()
+        # Search all of the places there could be magics:
+        paths = [os.path.join(os.path.dirname(os.path.abspath(__file__)), "magics"), 
+                 os.path.join(os.path.dirname(os.path.abspath(inspect.getfile(self.__class__))), "magics"), 
+                 local_magics_dir]
+        for magic_dir in paths:
             sys.path.append(magic_dir)
             magic_files.extend(glob.glob(os.path.join(magic_dir, "*.py")))
 
@@ -465,3 +468,14 @@ def _complete_path(path=None):
         return [os.path.join(path, p) for p in _listdir(path)]
     # exact file match terminates this completion
     return [path + ' ']
+
+def _ensure_local_magics_dir():
+    """
+    Ensures that there is a ~/.ipython/jupyter_kernel/magics directory,
+    and returns the path to it.
+    """
+    base = get_ipython_dir()
+    local_magics_dir = os.path.join(base, 'jupyter_kernel', 'magics')
+    if not os.path.exists(local_magics_dir):
+        os.makedirs(local_magics_dir)
+    return local_magics_dir
