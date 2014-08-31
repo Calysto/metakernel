@@ -1,6 +1,6 @@
 try:
     from IPython.kernel.zmq.kernelbase import Kernel
-    from IPython.utils.path import get_ipython_dir
+    from IPython.utils.path import locate_profile, get_ipython_dir
     from IPython.html.widgets import Widget
 except:
     Kernel = object
@@ -26,8 +26,12 @@ class MagicKernel(Kernel):
         self.max_hist_cache = 1000
         self.hist_cache = []
         self.plot_settings = dict(backend='inline', format=None, size=None)
+        if self.profile_dir:
+            profile_dir = self.profile_dir.location
+        else:
+            profile_dir = locate_profile('default')
         try:
-            self.hist_file = os.path.join(self.profile_dir.location,
+            self.hist_file = os.path.join(profile_dir,
                                           self.__class__.__name__ + '.hist')
         except IOError:
             self.hist_file = None
@@ -453,16 +457,6 @@ class MagicKernel(Kernel):
         base = get_ipython_dir()
         return os.path.join(base, 'jupyter_kernel', 'magics')
 
-    def do_inspect(self, code, cursor_pos, detail_level=0):
-        # Object introspection
-        token, start, end = self.get_complete(code, 0, cursor_pos)
-        content = {'status': 'aborted', 'data': {}, 'found': False}
-        docstring = self.get_help_on(token)
-        if docstring:
-            content["data"] = {"text/plain": docstring}
-            content["status"] = "ok"
-            content["found"] = True
-        return content
 
 def _listdir(root):
     "List directory 'root' appending the path separator to subdirs."
