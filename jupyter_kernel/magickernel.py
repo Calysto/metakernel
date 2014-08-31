@@ -8,7 +8,7 @@ import os
 import sys
 import glob
 import base64
-from magic import Magic
+from .magic import Magic
 import imp
 import re
 import inspect
@@ -50,8 +50,8 @@ class MagicKernel(Kernel):
         # Make a jupyter_kernel/magics if it doesn't exist:
         local_magics_dir = _ensure_local_magics_dir()
         # Search all of the places there could be magics:
-        paths = [os.path.join(os.path.dirname(os.path.abspath(__file__)), "magics"), 
-                 os.path.join(os.path.dirname(os.path.abspath(inspect.getfile(self.__class__))), "magics"), 
+        paths = [os.path.join(os.path.dirname(os.path.abspath(__file__)), "magics"),
+                 os.path.join(os.path.dirname(os.path.abspath(inspect.getfile(self.__class__))), "magics"),
                  local_magics_dir]
         for magic_dir in paths:
             sys.path.append(magic_dir)
