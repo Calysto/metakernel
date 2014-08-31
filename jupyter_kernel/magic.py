@@ -1,5 +1,4 @@
 import optparse
-import inspect
 
 
 class Magic(object):
@@ -80,19 +79,6 @@ def _parse_args(func, args):
         parser.add_options(func.options)
         value, args = parser.parse_args(args)
         kwargs = value.__dict__
-
-    argspec = inspect.getargspec(func)
-    if not argspec.defaults is None:
-        valid_kwargs = argspec.args[-len(argspec.defaults):]
-        total_args = len(argspec.args) - len(argspec.defaults)
-    else:
-        valid_kwargs = []
-        total_args = len(argspec.args)
-    args = args[:total_args]
-
-    for key in kwargs.keys():
-        if not key in valid_kwargs:
-            del kwargs[key]
 
     return args, kwargs
 
