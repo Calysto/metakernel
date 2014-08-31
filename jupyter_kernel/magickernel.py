@@ -29,7 +29,7 @@ class MagicKernel(Kernel):
         if self.profile_dir:
             profile_dir = self.profile_dir.location
         else:
-            profile_dir = locate_profile('default')
+            profile_dir = locate_profile()
         try:
             self.hist_file = os.path.join(profile_dir,
                                           self.__class__.__name__ + '.hist')
