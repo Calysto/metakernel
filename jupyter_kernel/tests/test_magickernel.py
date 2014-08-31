@@ -51,6 +51,9 @@ def test_magics():
     comp = kernel.do_complete('%connect_', len('%connect_'))
     assert comp['matches'] == ['connect_info']
 
+
+def test_file_magic():
+    kernel = get_kernel()
     resp = kernel.do_execute("""%%file TEST.txt
 LINE1
 LINE2
