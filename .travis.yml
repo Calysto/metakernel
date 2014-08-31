@@ -10,9 +10,10 @@ python:
 
 
 install:
+    - pip install ipython[all]
     - git clone https://github.com/ipython/ipython
     - cd ipython
-    - pip install . [all]
+    - pip install .
     - cd ..
     - travis_retry python setup.py install
 
