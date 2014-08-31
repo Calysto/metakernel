@@ -90,7 +90,6 @@ class MagicKernel(Kernel):
         args = args.strip()
         return command, args, code
 
-
     def display_widget(self, widget):
         content = {"data"   : {"method": "display"},
                    "comm_id": widget.model_id}
