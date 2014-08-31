@@ -11,7 +11,7 @@ python:
 
 install:
     - sudo apt-get update
-    - sudo apt-get install zeromq
+    - sudo apt-get install libzmq-dev
     - pip install ipython[all]
     - git clone https://github.com/ipython/ipython
     - cd ipython
