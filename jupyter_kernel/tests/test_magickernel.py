@@ -2,7 +2,10 @@ from jupyter_kernel import MagicKernel
 from IPython.kernel.zmq import session as ss
 import zmq
 import logging
-from StringIO import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 import os
 
 def get_kernel():
