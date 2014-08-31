@@ -261,29 +261,28 @@ class MagicKernel(Kernel):
              "?item - get help on item"),   # "?code"
         ]
 
-    def get_help_on(self, expr, level):
+    def _get_help_on(self, expr, level=0):
         return "Sorry, no help is available on '%s'." % expr
 
     def get_usage(self):
         return "This is a usage statement."
 
-    def _get_help_on(self, expr, level):
-        if expr.startswith('%%'):
-            name = expr.strip().split("%")[-1]
-            if name in self.cell_magics:
-                magic = self.cell_magics[name]
-                return magic.get_help('cell', name, level)
-            else:
-                return "No such cell magic '%s'" % name
-        elif expr.startswith("%"):
-            name = expr.strip().split("%")[-1]
-            if name in self.line_magics:
-                magic = self.line_magics[name]
-                return magic.get_help('line', name, level)
-            else:
-                return "No such line magic '%s'" % name
+    def get_help_on_magic(self, name, mtype, level=0):
+        if mtype == "cell" and name in self.cell_magics:
+            magic = self.cell_magics[name]
+        elif mtype == "line" and name in self.line_magics:
+            magic = self.line_magics[name]
         else:
-            return self.get_help_on(expr, level)
+            return "No such %s magic '%s'" % (mtype, name)
+        return magic.get_help(mtype, name, level)
+
+    def get_help_on(self, expr, level=0):
+        if expr.startswith('%'):
+            name = expr.split(" ")[0].split("%")[-1]
+            mtype = "cell" if expr.startswith("%%") else "line"
+            return self.get_help_on_magic(name, mtype, level)
+        else:
+            return self._get_help_on(expr, level)
 
     def _handle_help(self, item, level):
         if item == "":            # help!
@@ -291,7 +290,7 @@ class MagicKernel(Kernel):
                      "data": {"text/plain": self.get_usage()},
                      "source": "page"}]
         else:
-            return [{"data": {"text/plain": self._get_help_on(item, level)},
+            return [{"data": {"text/plain": self.get_help_on(item, level)},
                      "start_line_number": 0,
                      "source": "page"}]
 

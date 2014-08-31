@@ -7,7 +7,7 @@ import json
 
 class ConnectInfoMagic(Magic):
 
-    def line_connect_info(self, *args, **kwargs):
+    def line_connect_info(self):
         """%connect_info - show connection information"""
         connection_file = self.kernel.config["IPKernelApp"]["connection_file"]
         config = json.loads(open(connection_file).read())

@@ -9,7 +9,7 @@ import os
 
 class DownloadMagic(Magic):
 
-    def line_download(self, url, filename=None, **kwargs):
+    def line_download(self, url, filename=None):
         """%download URL [FILENAME] - download file from URL"""
         opener = urllib.URLopener()
         if filename is None:

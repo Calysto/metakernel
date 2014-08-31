@@ -13,7 +13,13 @@ class Magic(object):
         self.code = code
         func = getattr(self, mtype + '_' + name)
         args, kwargs = _parse_args(func, args)
-        func(*args, **kwargs)
+        try:
+            func(*args, **kwargs)
+        except TypeError as error:
+            self.kernel.Error(error.message)
+            self.kernel.Error(self.get_help(name, mtype))
+            # return dummy magic to end processing:
+            return Magic(self.kernel)
         return self
 
     def get_help(self, mtype, name, level=0):

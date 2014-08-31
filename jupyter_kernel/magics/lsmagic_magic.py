@@ -8,7 +8,7 @@ import os
 
 class LSMagicMagic(Magic):
 
-    def line_lsmagic(self, *args, **kwargs):
+    def line_lsmagic(self):
         """%lsmagic - list the current line and cell magics"""
         mesc = magic_escapes['line']
         cesc = magic_escapes['cell']

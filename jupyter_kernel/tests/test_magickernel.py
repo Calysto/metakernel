@@ -3,7 +3,7 @@ from IPython.kernel.zmq import session as ss
 import zmq
 import logging
 from StringIO import StringIO
-
+import os
 
 def get_kernel():
     log = logging.getLogger('test')
@@ -37,9 +37,9 @@ def test_magics():
 
     kernel.get_magic('%shell ls')
     log_text = get_log_text(kernel)
-    assert 'test_magickernel.py' in log_text
+    assert 'magickernel.py' in log_text
 
-    resp = kernel._get_help_on('%shell', 0)
+    resp = kernel.get_help_on('%shell', 0)
     assert 'run the line as a shell command' in resp
 
     resp = kernel.do_execute('%cd?', False)
@@ -48,3 +48,33 @@ def test_magics():
 
     comp = kernel.do_complete('%connect_', len('%connect_'))
     assert comp['matches'] == ['connect_info']
+
+    resp = kernel.do_execute("""%%file TEST.txt
+LINE1
+LINE2
+LINE3""", False)
+    assert os.path.exists("TEST.txt")
+    with open("TEST.txt") as fp:
+        lines = fp.readlines()
+        assert len(lines) == 3
+        assert lines[0] == "LINE1\n"
+        assert lines[1] == "LINE2\n"
+        assert lines[2] == "LINE3"
+
+    resp = kernel.do_execute("""%%file -a TEST.txt
+
+LINE4
+LINE5
+LINE6""", False)
+    assert os.path.exists("TEST.txt")
+    with open("TEST.txt") as fp:
+        lines = fp.readlines()
+        assert len(lines) == 6
+        assert lines[3] == "LINE4\n"
+        assert lines[4] == "LINE5\n"
+        assert lines[5] == "LINE6"
+
+def teardown():
+    if os.path.exists("TEST.txt"):
+        os.remove("TEST.txt")
+

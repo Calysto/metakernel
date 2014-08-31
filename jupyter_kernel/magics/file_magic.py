@@ -2,18 +2,28 @@
 # Distributed under the terms of the Modified BSD License.
 # http://calicoproject.org/
 
-from jupyter_kernel import Magic
+from jupyter_kernel import Magic, option
 import os
 
 class FileMagic(Magic):
 
-    def cell_file(self, filename, *args, **kwargs):
-        """%%file FILENAME - write contents of cell to file"""
-        message = "Created file '%s'." % filename
-        if os.path.isfile(self.code):
-            message = "Overwrote file '%s'." % filename
+    @option(
+        '-a', '--append', action='store_true', default=False,
+        help='append onto an existing file'
+    )
+    def cell_file(self, filename, append=False):
+        """%%file [--append|-a] FILENAME - write contents of cell to file"""
+        if not append:
+            message = "Created file '%s'." % filename
+            if os.path.isfile(self.code):
+                message = "Overwrote file '%s'." % filename
+        else:
+            message = "Appended on file '%s'." % filename
         try:
-            fp = open(filename, "w")
+            if append:
+                fp = open(filename, "a")
+            else:
+                fp = open(filename, "w")
             fp.write(self.code)
             fp.close()
             self.kernel.Print(message)
