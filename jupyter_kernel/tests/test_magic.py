@@ -34,11 +34,17 @@ def test_get_magics():
 def test_get_help():
     d = Dummy(None)
 
-    dummy_help = d.get_help('line', 'dummy')
-    assert dummy_help == d.line_dummy.__doc__
+    dummy_help = d.get_help('line', 'dummy', 0)
+    assert dummy_help == d.line_dummy.__doc__.lstrip().split("\n", 1)[0]
 
-    spam_help = d.get_help('cell', 'spam')
-    assert spam_help == d.cell_spam.__doc__
+    dummy_help = d.get_help('line', 'dummy', 1)
+    assert dummy_help == d.line_dummy.__doc__.lstrip()
+
+    spam_help = d.get_help('cell', 'spam', 0)
+    assert spam_help == d.cell_spam.__doc__.lstrip().split("\n", 1)[0]
+
+    spam_help = d.get_help('cell', 'spam', 1)
+    assert spam_help == d.cell_spam.__doc__.lstrip()
 
 
 def test_option():
