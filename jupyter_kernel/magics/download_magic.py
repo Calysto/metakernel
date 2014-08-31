@@ -4,7 +4,10 @@
 
 from jupyter_kernel import Magic
 import urllib
-import urlparse
+try:
+    import urlparse
+except ImportError:
+    from urllib import parse as urlparse
 import os
 
 class DownloadMagic(Magic):
