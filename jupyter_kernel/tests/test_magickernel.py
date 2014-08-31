@@ -26,7 +26,6 @@ def get_log_text(kernel):
 
 def test_magics():
     kernel = get_kernel()
-    kernel.reload_magics()
     for magic in ['cd', 'connect_info', 'download', 'html', 'install',
                   'javascript', 'latex', 'lsmagic', 'magic', 'plot',
                   'reload_magics', 'shell', 'time']:
@@ -73,6 +72,13 @@ LINE6""", False)
         assert lines[3] == "LINE4\n"
         assert lines[4] == "LINE5\n"
         assert lines[5] == "LINE6"
+
+# def test_shell_magic():
+#     kernel = get_kernel()
+#     kernel.do_execute("!cat \"%s\"" % __file__, False)
+#     log_text = get_log_text(kernel)
+#     print(log_text)
+#     assert 'magickernel.py' in log_text
 
 def teardown():
     if os.path.exists("TEST.txt"):

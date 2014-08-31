@@ -7,8 +7,10 @@ import subprocess
 
 class ShellMagic(Magic):
 
-    def line_shell(self, command):
+    def line_shell(self, *args):
         """%shell COMMAND - run the line as a shell command"""
+        command = " ".join(args)
+        print(command)
         try:
             process = subprocess.Popen(command, shell=True,
                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
