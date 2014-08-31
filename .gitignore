@@ -1,3 +1,4 @@
 
 *.pyc
 jupyter_kernel.egg-info/
+*_kernel/build/
