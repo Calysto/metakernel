@@ -1,6 +1,6 @@
 try:
     from IPython.kernel.zmq.kernelbase import Kernel
-    from IPython.utils.path import locate_profile, get_ipython_dir
+    from IPython.utils.path import get_ipython_dir
     from IPython.html.widgets import Widget
 except:
     Kernel = object
@@ -9,9 +9,11 @@ import sys
 import glob
 import base64
 from .magic import Magic
+from .config import get_history_file, get_local_magics_dir
 import imp
 import re
 import inspect
+
 
 class MagicKernel(Kernel):
     def __init__(self, *args, **kwargs):
@@ -26,18 +28,7 @@ class MagicKernel(Kernel):
         self.max_hist_cache = 1000
         self.hist_cache = []
         self.plot_settings = dict(backend='inline', format=None, size=None)
-        if self.profile_dir:
-            profile_dir = self.profile_dir.location
-        else:
-            try:
-                profile_dir = locate_profile()
-            except IOError:
-                profile_dir = None
-        if not profile_dir is None:
-            self.hist_file = os.path.join(profile_dir,
-                                          self.__class__.__name__ + '.hist')
-        else:
-            self.hist_file = None
+        self.hist_file = get_history_file(self)
         self.reload_magics()
         try:
             sys.stdout.write = self.Write
@@ -205,7 +196,7 @@ class MagicKernel(Kernel):
         # get base magic files and those relative to the current class directory
         magic_files = []
         # Make a jupyter_kernel/magics if it doesn't exist:
-        local_magics_dir = _ensure_local_magics_dir()
+        local_magics_dir = get_local_magics_dir()
         # Search all of the places there could be magics:
         paths = [os.path.join(os.path.dirname(os.path.abspath(__file__)), "magics"),
                  os.path.join(os.path.dirname(os.path.abspath(inspect.getfile(self.__class__))), "magics"),
@@ -467,18 +458,6 @@ def _complete_path(path=None):
         return [os.path.join(path, p) for p in _listdir(path)]
     # exact file match terminates this completion
     return [path + ' ']
-
-def _ensure_local_magics_dir():
-    """
-    Ensures that there is a ~/.ipython/jupyter_kernel/magics directory,
-    and returns the path to it.
-    """
-    base = get_ipython_dir()
-    local_magics_dir = os.path.join(base, 'jupyter_kernel', 'magics')
-    if not os.path.exists(local_magics_dir):
-        os.makedirs(local_magics_dir)
-    return local_magics_dir
-
 
 def _parse_magic(text):
         lines = text.split("\n")
