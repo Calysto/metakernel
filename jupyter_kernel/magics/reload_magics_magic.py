@@ -9,8 +9,7 @@ class ReloadMagicsMagic(Magic):
     def line_reload_magics(self):
         """%reload_magics - reload the magics from the installed files"""
         self.kernel.reload_magics()
-        result = "Magics reloaded: %s\n" % ", ".join(self.kernel.magics.keys())
-        self.kernel.Print(result)
+        self.code += "%lsmagic\n" + self.code
 
 def register_magics(kernel):
     kernel.register_magics(ReloadMagicsMagic)
