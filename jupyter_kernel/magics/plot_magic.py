@@ -2,16 +2,16 @@
 # Distributed under the terms of the Modified BSD License.
 # http://calicoproject.org/
 
-from jupyter_kernel import Magic, argument
+from jupyter_kernel import Magic, option
 
 
 class PlotMagic(Magic):
 
-    @argument(
+    @option(
         '-s', '--size', action='store',
         help='Pixel size of plots, "width,height"'
     )
-    @argument(
+    @option(
         '-f', '--format', action='store', default='png',
         help='Plot format (png, svg or jpg).'
     )

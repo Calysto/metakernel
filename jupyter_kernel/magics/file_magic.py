@@ -7,13 +7,13 @@ import os
 
 class FileMagic(Magic):
 
-    def cell_file(self, args):
+    def cell_file(self, filename):
         """%%file FILENAME - write contents of cell to file"""
-        message = "Created file '%s'." % args
+        message = "Created file '%s'." % filename
         if os.path.isfile(self.code):
-            message = "Overwrote file '%s'." % args
+            message = "Overwrote file '%s'." % filename
         try:
-            fp = open(args, "w")
+            fp = open(filename, "w")
             fp.write(self.code)
             fp.close()
             self.kernel.Print(message)

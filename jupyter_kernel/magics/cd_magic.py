@@ -7,11 +7,11 @@ import os
 
 class CDMagic(Magic):
 
-    def line_cd(self, args):
+    def line_cd(self, path):
         """%cd PATH - change current directory of session"""
         try:
-            os.chdir(args)
-            retval = os.path.abspath(args)
+            os.chdir(path)
+            retval = os.path.abspath(path)
         except Exception as e:
             self.kernel.Error(e.message)
             retval = None

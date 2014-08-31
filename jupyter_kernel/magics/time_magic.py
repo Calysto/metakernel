@@ -7,11 +7,11 @@ import time
 
 class TimeMagic(Magic):
 
-    def cell_time(self, args):
+    def cell_time(self):
         """%%time - show time to run cell"""
         self.start = time.time()
 
-    def line_time(self, args):
+    def line_time(self, comand):
         """%time COMMAND - show time to run line"""
         self.start = time.time()
 

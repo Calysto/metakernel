@@ -9,13 +9,10 @@ import os
 
 class DownloadMagic(Magic):
 
-    def line_download(self, args):
+    def line_download(self, url, filename=None):
         """%download URL [FILENAME] - download file from URL"""
         opener = urllib.URLopener()
-        if " " in args:
-            url, filename = args.split(" ", 1)
-        else:
-            url = args
+        if filename is None:
             parts = urlparse.urlsplit(url)
             #('http', 'example.com', '/somefile.zip', '', '')
             path = parts[2]
@@ -25,6 +22,7 @@ class DownloadMagic(Magic):
             self.kernel.Print("Downloaded '%s'." % filename)
         except Exception as e:
             self.kernel.Error(e.message)
+
 
 def register_magics(kernel):
     kernel.register_magics(DownloadMagic)

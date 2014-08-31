@@ -6,12 +6,12 @@ from jupyter_kernel import Magic
 from IPython.display import Javascript
 
 class JavascriptMagic(Magic):
-    def line_javascript(self, args):
+    def line_javascript(self, code):
         """%javascript CODE - send code as JavaScript"""
-        jscode = Javascript(args)
+        jscode = Javascript(code)
         self.kernel.Display(jscode)
 
-    def cell_javascript(self, args):
+    def cell_javascript(self):
         """%%javascript - send contents of cell as JavaScript"""
         if self.code.strip():
             jscode = Javascript(self.code)

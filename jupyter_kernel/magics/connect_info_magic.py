@@ -7,7 +7,7 @@ import json
 
 class ConnectInfoMagic(Magic):
 
-    def line_connect_info(self, args):
+    def line_connect_info(self):
         """%connect_info - show connection information"""
         connection_file = self.kernel.config["IPKernelApp"]["connection_file"]
         config = json.loads(open(connection_file).read())
@@ -29,7 +29,7 @@ or, if you are local, you can connect with just:
 
 or even just:
     $> ipython <app> --existing
-if this is the most recent ICalico session you have started.
+if this is the most recent Jupyter session you have started.
 """ % config
         self.kernel.Print(retval)
 

@@ -7,12 +7,12 @@ from IPython.display import HTML
 
 class HTMLMagic(Magic):
 
-    def line_html(self, args):
+    def line_html(self, code):
         """%html CODE - display code as HTML"""
-        html = HTML(args)
+        html = HTML(code)
         self.kernel.Display(html)
 
-    def cell_html(self, args):
+    def cell_html(self):
         """%%html - display contents of cell as HTML"""
         html = HTML(self.code)
         self.kernel.Display(html)

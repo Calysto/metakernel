@@ -34,13 +34,13 @@ class Magic(object):
         return retval
 
 
-def argument(*args, **kwargs):
-    """Return decorator that adds a magic argument to a function.
+def option(*args, **kwargs):
+    """Return decorator that adds a magic option to a function.
     """
     def decorator(func):
-        if not getattr(func, 'has_arguments', False):
-            func.has_arguments = True
-            func.arguments = []
+        if not getattr(func, 'has_options', False):
+            func.has_options = True
+            func.options = []
             func.__doc__ += '\nOptions:\n-------'
         try:
             option = optparse.Option(*args, **kwargs)
@@ -48,7 +48,7 @@ def argument(*args, **kwargs):
             func.__doc__ += '\n' + args[0]
         else:
             func.__doc__ += '\n' + _format_option(option)
-            func.arguments.append(option)
+            func.options.append(option)
         return func
     return decorator
 
@@ -57,10 +57,10 @@ def _parse_args(func, args):
     """Parse the arguments given to a magic function"""
     if not isinstance(args, list):
         args = args.split()
-    if not getattr(func, 'has_arguments', False):
+    if not getattr(func, 'has_options', False):
         return args, dict()
     parser = optparse.OptionParser()
-    parser.add_options(func.arguments)
+    parser.add_options(func.options)
     value, args = parser.parse_args(args)
     return args, value.__dict__
 

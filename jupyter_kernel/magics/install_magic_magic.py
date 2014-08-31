@@ -9,10 +9,9 @@ import os
 
 class InstallMagicMagic(Magic):
 
-    def line_install(self, args):
+    def line_install(self, url):
         """%install_magic URL - download and install magic from URL"""
         opener = urllib.URLopener()
-        url = args
         parts = urlparse.urlsplit(url)
         #('http', 'example.com', '/somefile.zip', '', '')
         path = parts[2]
