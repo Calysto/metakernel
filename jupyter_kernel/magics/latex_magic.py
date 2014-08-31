@@ -7,12 +7,12 @@ from IPython.display import Latex
 
 class LatexMagic(Magic):
 
-    def line_latex(self, text):
+    def line_latex(self, text, *args, **kwargs):
         """%latex TEXT - display text as LaTeX"""
         latex = Latex(text)
         self.kernel.Display(latex)
 
-    def cell_latex(self):
+    def cell_latex(self, *args, **kwargs):
         """%%latex - display contents of cell as LaTeX"""
         latex = Latex(self.code)
         self.kernel.Display(latex)

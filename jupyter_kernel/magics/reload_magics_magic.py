@@ -6,7 +6,7 @@ from jupyter_kernel import Magic
 
 class ReloadMagicsMagic(Magic):
 
-    def line_reload_magics(self):
+    def line_reload_magics(self, *args, **kwargs):
         """%reload_magics - reload the magics from the installed files"""
         self.kernel.reload_magics()
         result = "Magics reloaded: %s\n" % ", ".join(self.kernel.magics.keys())

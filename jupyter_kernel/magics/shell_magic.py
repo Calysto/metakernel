@@ -7,7 +7,7 @@ import subprocess
 
 class ShellMagic(Magic):
 
-    def line_shell(self, command):
+    def line_shell(self, command, *args, **kwargs):
         """%shell COMMAND - run the line as a shell command"""
         try:
             process = subprocess.Popen(command, shell=True,
@@ -21,7 +21,7 @@ class ShellMagic(Magic):
         if retval:
             self.kernel.Print(retval)
 
-    def cell_shell(self):
+    def cell_shell(self, *args, **kwargs):
         """%%shell - run the contents of the cell as shell commands"""
         self.line_shell(self.code)
         self.evaluate = False

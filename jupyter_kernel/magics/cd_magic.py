@@ -7,7 +7,7 @@ import os
 
 class CDMagic(Magic):
 
-    def line_cd(self, path):
+    def line_cd(self, path, , *args, **kwargs):
         """%cd PATH - change current directory of session"""
         try:
             os.chdir(path)

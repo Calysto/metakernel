@@ -6,7 +6,7 @@ from jupyter_kernel import Magic
 
 class MagicMagic(Magic):
 
-    def line_magic(self):
+    def line_magic(self, *args, **kwargs):
         """%magic - show installed magics"""
         line_magics = []
         cell_magics = []

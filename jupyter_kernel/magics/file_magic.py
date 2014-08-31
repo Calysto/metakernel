@@ -7,7 +7,7 @@ import os
 
 class FileMagic(Magic):
 
-    def cell_file(self, filename):
+    def cell_file(self, filename, *args, **kwargs):
         """%%file FILENAME - write contents of cell to file"""
         message = "Created file '%s'." % filename
         if os.path.isfile(self.code):
