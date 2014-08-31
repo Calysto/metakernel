@@ -99,8 +99,10 @@ class MagicKernel(Kernel):
     def Display(self, *args):
         for message in args:
             if isinstance(message, Widget):
+                self.log.debug('Display Widget')
                 self.display_widget(message)
             else:
+                self.log.debug('Display Data')
                 self.send_response(self.iopub_socket, 'display_data',
                                    {'data': self.formatter(message),
                                     'metadata': dict()})
@@ -109,15 +111,18 @@ class MagicKernel(Kernel):
         end = kwargs["end"] if ("end" in kwargs) else "\n"
         message = " ".join(args) + end
         stream_content = {'name': 'stdout', 'data': message, 'metadata': dict()}
+        self.log.debug('Print: %s' % message)
         self.send_response(self.iopub_socket, 'stream', stream_content)
 
     def Write(self, message):
         stream_content = {'name': 'stdout', 'data': message, 'metadata': dict()}
+        self.log.debug('Write: %s' % message)
         self.send_response(self.iopub_socket, 'stream', stream_content)
 
     def Error(self, *args, **kwargs):
         end = kwargs["end"] if ("end" in kwargs) else "\n"
         message = " ".join(args) + end
+        self.log.debug('Error: %s' % message)
         stream_content = {'name': 'stderr', 'data': message, 'metadata': dict()}
         self.send_response(self.iopub_socket, 'stream', stream_content)
 
