@@ -12,7 +12,6 @@ from magic import Magic
 import imp
 import re
 import inspect
-from collections import namedtuple
 
 class MagicKernel(Kernel):
     def __init__(self, *args, **kwargs):
@@ -26,8 +25,7 @@ class MagicKernel(Kernel):
         self.___ = None
         self.max_hist_cache = 1000
         self.hist_cache = []
-        ps = namedtuple('plot_settings', 'backend, format, size')
-        self.plot_settings = ps('inline', None, None)
+        self.plot_settings = dict(backend='inline', format=None, size=None)
         try:
             self.hist_file = os.path.join(locate_profile(),
                                           self.__class__.__name__ + '.hist')
@@ -424,10 +422,17 @@ class MagicKernel(Kernel):
         content["matches"] = sorted(content["matches"])
         return content
 
-    def update_plot_settings(self):
+    def update_plot_settings(self, backend, size, format):
         """Update the default plot settings for the kernel."""
-        pass
+        self.plot_settings['backend'] = backend
+        size = size or self.plot_settings['size']
+        self.plot_settings['size'] = size
+        format = format or self.plot_settings['format']
+        self.plot_settings['format'] = format
 
+    def handle_plot_settings(self):
+        """Handle the current plot settings"""
+        pass
 
 def _listdir(root):
     "List directory 'root' appending the path separator to subdirs."
