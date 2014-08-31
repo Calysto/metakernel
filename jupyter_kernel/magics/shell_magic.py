@@ -20,6 +20,7 @@ class ShellMagic(Magic):
             self.kernel.Error(e.message)
             retval = None
         if retval:
+            retval = retval.decode('utf-8')
             self.kernel.Print(retval)
 
     def cell_shell(self):
