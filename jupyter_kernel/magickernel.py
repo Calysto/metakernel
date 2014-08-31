@@ -255,7 +255,7 @@ class MagicKernel(Kernel):
         ]
 
     def get_help_on(self, expr, level):
-        return "Sorry, no help is available."
+        return "Sorry, no help is available on '%s'." % expr
 
     def get_usage(self):
         return "This is a usage statement."
@@ -263,18 +263,20 @@ class MagicKernel(Kernel):
     def _get_help_on(self, expr, level):
         if expr.startswith('%%'):
             name = expr.strip().split("%")[-1]
-            magic = self.cell_magics[name]
-            return magic.get_help('cell', name)
+            if name in self.cell_magics:
+                magic = self.cell_magics[name]
+                return magic.get_help('cell', name, level)
+            else:
+                return "No such cell magic '%s'" % name
         elif expr.startswith("%"):
             name = expr.strip().split("%")[-1]
-            magic = self.line_magics[name]
-            return magic.get_help('line', name)
-        else:
-            result = self.get_help_on(expr, level)
-            if result:
-                return result
+            if name in self.line_magics:
+                magic = self.line_magics[name]
+                return magic.get_help('line', name, level)
             else:
-                return "No available help on '%s'" % expr
+                return "No such line magic '%s'" % name
+        else:
+            return self.get_help_on(expr, level)
 
     def _handle_help(self, item, level):
         if item == "":            # help!
