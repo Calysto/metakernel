@@ -28,3 +28,5 @@ install:
 
 script:
     -  nosetests --exe -v --with-doctest jupyter_kernel
+    - ipython profile create
+    - nosetests --exe -v --with-doctest jupyter_kernel
