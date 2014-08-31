@@ -281,6 +281,10 @@ class MagicKernel(Kernel):
             name = expr.split(" ")[0].split("%")[-1]
             mtype = "cell" if expr.startswith("%%") else "line"
             return self.get_help_on_magic(name, mtype, level)
+        elif expr.startswith('!'):
+            name = "shell"
+            mtype = "cell" if expr.startswith("!!") else "line"
+            return self.get_help_on_magic(name, mtype, level)
         else:
             return self._get_help_on(expr, level)
 

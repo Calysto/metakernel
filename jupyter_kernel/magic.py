@@ -15,8 +15,8 @@ class Magic(object):
         try:
             func(*args, **kwargs)
         except TypeError as error:
-            self.kernel.Error(error.message)
-            self.kernel.Error(self.get_help(name, mtype))
+            self.kernel.Error("Error in calling magic '%s' on %s" % (name, mtype))
+            self.kernel.Error(self.get_help(mtype, name))
             # return dummy magic to end processing:
             return Magic(self.kernel)
         return self
