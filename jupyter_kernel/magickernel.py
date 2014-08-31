@@ -170,7 +170,7 @@ class MagicKernel(Kernel):
                 return magic.call_magic(mtype, name, code, args)
             elif mtype == 'line' and name in self.line_magics.keys():
                 magic = self.line_magics[name]
-                return magic .call_magic(mtype, name, code, args)
+                return magic.call_magic(mtype, name, code, args)
             else:
                 # FIXME: Raise an error
                 return None
