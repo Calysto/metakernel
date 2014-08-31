@@ -1,0 +1,20 @@
+# After changing this file, check it on:
+#   http://lint.travis-ci.org/
+
+
+language: python
+python:
+    - 2.7
+    - 3.3
+    - 3.4
+
+
+install:
+    - git clone https://github.com/ipython/ipython
+    - cd ipython
+    - pip install .
+    - cd ..
+    - travis_retry python setup.py install
+
+script:
+    -  nosetests --exe -v --with-doctest jupyter_kernel
