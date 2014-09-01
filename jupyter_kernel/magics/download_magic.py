@@ -24,7 +24,7 @@ class DownloadMagic(Magic):
             opener.retrieve(url, filename)
             self.kernel.Print("Downloaded '%s'." % filename)
         except Exception as e:
-            self.kernel.Error(e.message)
+            self.kernel.Error(str(e))
 
 
 def register_magics(kernel):

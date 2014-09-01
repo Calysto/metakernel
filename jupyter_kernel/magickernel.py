@@ -269,7 +269,7 @@ class MagicKernel(Kernel):
 
     def Error(self, *args, **kwargs):
         end = kwargs["end"] if ("end" in kwargs) else "\n"
-        message = " ".join(args) + end
+        message = " ".join([str(a) for a in args]) + end
         self.log.debug('Error: %s' % message)
         stream_content = {'name': 'stderr', 'data': message, 'metadata': dict()}
         self.send_response(self.iopub_socket, 'stream', stream_content)

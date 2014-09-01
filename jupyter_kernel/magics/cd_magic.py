@@ -13,7 +13,7 @@ class CDMagic(Magic):
             os.chdir(path)
             retval = os.path.abspath(path)
         except Exception as e:
-            self.kernel.Error(e.message)
+            self.kernel.Error(str(e))
             retval = None
         if retval:
             self.kernel.Print(retval)

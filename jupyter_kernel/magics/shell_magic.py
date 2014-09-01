@@ -17,7 +17,7 @@ class ShellMagic(Magic):
             if error:
                 self.kernel.Error(error)
         except Exception as e:
-            self.kernel.Error(e.message)
+            self.kernel.Error(str(e))
             retval = None
         if retval:
             retval = retval.decode('utf-8', 'replace')

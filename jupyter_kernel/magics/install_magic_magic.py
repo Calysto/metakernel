@@ -25,7 +25,7 @@ class InstallMagicMagic(Magic):
             self.kernel.Print("Downloaded '%s'." % magic_filename)
             self.code = "%reload_magics\n" + self.code
         except Exception as e:
-            self.kernel.Error(e.message)
+            self.kernel.Error(str(e))
 
 def register_magics(kernel):
     kernel.register_magics(InstallMagicMagic)

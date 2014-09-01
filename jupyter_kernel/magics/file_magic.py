@@ -28,7 +28,7 @@ class FileMagic(Magic):
             fp.close()
             self.kernel.Print(message)
         except Exception as e:
-            self.kernel.Error(e.message)
+            self.kernel.Error(str(e))
         self.evaluate = False
 
 def register_magics(kernel):
