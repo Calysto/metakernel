@@ -8,6 +8,7 @@ except ImportError:
     from io import StringIO
 import os
 
+
 def get_kernel():
     log = logging.getLogger('test')
     log.setLevel(logging.DEBUG)
@@ -36,12 +37,13 @@ def test_magics():
     for magic in ['cd', 'connect_info', 'download', 'html', 'install_magic',
                   'javascript', 'latex', 'lsmagic', 'magic', 'plot',
                   'reload_magics', 'shell']:
-        assert magic in kernel.line_magics, "magic '%s' is not in line_magics" % magic
+        msg = "magic '%s' is not in line_magics" % magic
+        assert magic in kernel.line_magics, msg
 
     for magic in ['file', 'html', 'javascript', 'latex', 'shell', 'time']:
         assert magic in kernel.cell_magics
 
-    with open('TEST.txt', 'wb') as fid:
+    with open('TEST.txt', 'wb'):
         pass
     kernel.get_magic('%shell ls')
     log_text = get_log_text(kernel)
@@ -70,7 +72,7 @@ def test_complete():
 
 def test_file_magic():
     kernel = get_kernel()
-    resp = kernel.do_execute("""%%file TEST.txt
+    kernel.do_execute("""%%file TEST.txt
 LINE1
 LINE2
 LINE3""", False)
@@ -82,7 +84,7 @@ LINE3""", False)
         assert lines[1] == "LINE2\n"
         assert lines[2] == "LINE3"
 
-    resp = kernel.do_execute("""%%file -a TEST.txt
+    kernel.do_execute("""%%file -a TEST.txt
 
 LINE4
 LINE5
@@ -97,10 +99,10 @@ LINE6""", False)
 
 
 def test_shell_magic():
-     kernel = get_kernel()
-     kernel.do_execute("!cat \"%s\"" % __file__, False)
-     log_text = get_log_text(kernel)
-     assert 'magickernel.py' in log_text
+    kernel = get_kernel()
+    kernel.do_execute("!cat \"%s\"" % __file__, False)
+    log_text = get_log_text(kernel)
+    assert 'magickernel.py' in log_text
 
 
 def test_inspect():
@@ -136,4 +138,3 @@ def test_history():
 def teardown():
     if os.path.exists("TEST.txt"):
         os.remove("TEST.txt")
-
