@@ -6,7 +6,7 @@ Release History
 
 0.3.0 (2014-09-xx)
 ++++++++++++++++++
--
+- Add gh-pages website: http://blink1073.github.io/jupyter_kernel
 
 
 0.2.0 (2014-09-01)
