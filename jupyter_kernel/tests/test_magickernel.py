@@ -11,6 +11,10 @@ import os
 def get_kernel():
     log = logging.getLogger('test')
     log.setLevel(logging.DEBUG)
+
+    for hdlr in log.handlers:
+        log.removeHandler(hdlr)
+
     hdlr = logging.StreamHandler(StringIO())
     hdlr.setLevel(logging.DEBUG)
     log.addHandler(hdlr)
@@ -44,6 +48,9 @@ def test_magics():
     assert 'TEST.txt' in log_text
     os.remove('TEST.txt')
 
+
+def test_help():
+    kernel = get_kernel()
     resp = kernel.get_help_on('%shell', 0)
     assert 'run the line as a shell command' in resp
 
@@ -51,8 +58,14 @@ def test_magics():
     assert 'change current directory of session' in resp[
         'payload'][0]['data']['text/plain']
 
+
+def test_complete():
+    kernel = get_kernel()
     comp = kernel.do_complete('%connect_', len('%connect_'))
     assert comp['matches'] == ['%connect_info'], str(comp['matches'])
+
+    comp = kernel.do_complete('%%fil', len('%%fil'))
+    assert comp['matches'] == ['%%file'], str(comp['matches'])
 
 
 def test_file_magic():
@@ -88,6 +101,36 @@ def test_shell_magic():
      kernel.do_execute("!cat \"%s\"" % __file__, False)
      log_text = get_log_text(kernel)
      assert 'magickernel.py' in log_text
+
+
+def test_inspect():
+    kernel = get_kernel()
+    kernel.do_inspect('%lsmagic', len('%lsmagic'))
+    log_text = get_log_text(kernel)
+    assert "list the current line and cell magics" in log_text
+
+
+def test_path_complete():
+    kernel = get_kernel()
+    comp = kernel.do_complete('~/.ipytho', len('~/.ipytho'))
+    assert comp['matches'] == ['~' + os.sep + '.ipython' + os.sep]
+
+    files = [f for f in os.listdir(os.getcwd()) if not os.path.isdir(f)]
+    comp = kernel.do_complete(files[0], len(files[0]) - 1)
+    assert files[0] in comp['matches']
+
+
+def test_history():
+    kernel = get_kernel()
+    kernel.do_execute('!ls', False)
+    kernel.do_execute('%cd ~', False)
+    kernel.do_shutdown(False)
+
+    with open(kernel.hist_file, 'rb') as fid:
+        text = fid.read().decode('utf-8', 'replace')
+
+    assert '!ls' in text
+    assert '%cd' in text
 
 
 def teardown():

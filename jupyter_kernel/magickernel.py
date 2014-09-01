@@ -174,11 +174,11 @@ class MagicKernel(Kernel):
         # from magics:
         if code.startswith("%%"):
             for name in self.cell_magics.keys():
-                if name.startswith("%%" + token):
-                    content['matches'].append(name)
+                if name.startswith(token[2:]):
+                    content['matches'].append('%%' + name)
         elif code.startswith('%'):
             for name in self.line_magics.keys():
-                if name.startswith(token):
+                if name.startswith(token[1:]):
                     content['matches'].append("%" + name)
         # Add more from kernel:
         self.add_complete(content["matches"], token)
@@ -189,12 +189,14 @@ class MagicKernel(Kernel):
     def do_inspect(self, code, cursor_pos, detail_level=0):
         # Object introspection
         token, start, end = self._get_complete(code, 0, cursor_pos)
+        self.log.debug(code)
         content = {'status': 'aborted', 'data': {}, 'found': False}
         docstring = self.get_help_on(token)
         if docstring:
             content["data"] = {"text/plain": docstring}
             content["status"] = "ok"
             content["found"] = True
+            self.log.debug(docstring)
         return content
 
     ##############################
@@ -430,7 +432,7 @@ class MagicKernel(Kernel):
         current = end - 1
         while current >= 0:
             # go backwards until we find end of token:
-            if code[current] in ["(", " ", ")", "\n", "\t", '"', "%", ";"]:
+            if code[current] in ["(", " ", ")", "\n", "\t", '"', ";"]:
                 return (token, current + 1, end)
             token = code[current] + token
             current -= 1
