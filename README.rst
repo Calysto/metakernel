@@ -14,7 +14,11 @@ Additional magics can be installed within the new kernel package under a `magics
 
 Features
 -------------
-- Under construction.
+- Basic set of line and cell magics for all kernels.
+- Tab completion for magics and file paths.
+- Help for magics using ? or Shift+Tab.
+- Plot magic for setting default plot behavior.
+- Python magic for accessing python interpreter.
 
 
 Installation
