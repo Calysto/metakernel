@@ -153,7 +153,8 @@ class MagicKernel(Kernel):
             with open(self.hist_file, 'wb') as fid:
                 fid.write('')
         with open(self.hist_file, 'rb') as fid:
-            history = fid.readlines()
+            history = fid.read().decode('utf-8', 'replace')
+        history = history.splitlines()
         history = history[:self.max_hist_cache]
         self.hist_cache = history
         history = [(None, None, h) for h in history]
