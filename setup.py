@@ -22,7 +22,7 @@ with open('jupyter_kernel/__init__.py', 'rb') as fid:
 setup(name='jupyter_kernel',
       version=version,
       description='Jupyter Kernel Tools',
-      long_description="Jupyter Kernel Tools using kernel wrappers",
+      long_description=open('README.rst', 'rb').read().decode('utf-8'),
       author='Steven Silvester',
       author_email='steven.silvester@ieee.org',
       url="https://github.com/blink1073/jupyter_kernel",
