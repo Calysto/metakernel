@@ -1,0 +1,11 @@
+include *.txt
+include *.rst
+include Makefile
+recursive-include docs *.rst
+recursive-include docs *.png
+recursive-include docs *.py
+recursive-include numpydoc *.py
+prune .git
+prune docs/build
+prune dist
+prune build

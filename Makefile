@@ -12,8 +12,6 @@ clean:
 	rm -rf build
 	rm -rf dist
 	find . -name "*.pyc" -o -name "*.py,cover"| xargs rm -f
-	python -c $(KILL_PROC)
-	killall -9 nosetests; true
 
 test: clean
 	python setup.py build
@@ -26,7 +24,9 @@ cover: clean
 	coverage annotate
 
 release: test
+	pip install wheel
 	python setup.py register
+	python setup.py bdist_wheel upload
 	python setup.py sdist --formats=gztar,zip upload
 	git tag v$(VERSION)
 	git push origin --all
