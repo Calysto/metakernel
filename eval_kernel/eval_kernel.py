@@ -20,7 +20,7 @@ class EvalKernel(MagicKernel):
         """
         self.env[name] = value
 
-    def _get_help_on(self, expr, level):
+    def get_kernel_help_on(self, expr, level):
         return "Sorry, no help is available on '%s'." % expr
 
     def do_execute_direct(self, code):
