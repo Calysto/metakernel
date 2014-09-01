@@ -26,7 +26,7 @@ setup(name='jupyter_kernel',
       author='Steven Silvester',
       author_email='steven.silvester@ieee.org',
       url="https://github.com/blink1073/jupyter_kernel",
-      install_requires=['IPython >= 3.0'],
+      install_requires=['IPython'],
       packages=['jupyter_kernel', 'jupyter_kernel.magics',
                 'jupyter_kernel.tests'],
       classifiers=[
