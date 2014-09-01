@@ -188,7 +188,7 @@ class MagicKernel(Kernel):
 
     def do_inspect(self, code, cursor_pos, detail_level=0):
         # Object introspection
-        token, start, end = self.get_complete(code, 0, cursor_pos)
+        token, start, end = self._get_complete(code, 0, cursor_pos)
         content = {'status': 'aborted', 'data': {}, 'found': False}
         docstring = self.get_help_on(token)
         if docstring:
