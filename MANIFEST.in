@@ -4,7 +4,12 @@ include Makefile
 recursive-include docs *.rst
 recursive-include docs *.png
 recursive-include docs *.py
-recursive-include numpydoc *.py
+recursive-inlcude echo_kernel *.*
+prune echo_kernel/build
+recursive-include chatbot_kernel *.*
+prune chatbot_kernel/build
+recursive-include eval_kernel *.*
+prune eval_kernel/build
 prune .git
 prune docs/build
 prune dist

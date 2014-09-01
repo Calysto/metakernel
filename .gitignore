@@ -5,3 +5,4 @@ jupyter_kernel.egg-info/
 dist/
 MANIFEST
 docs/_build/
+build/
