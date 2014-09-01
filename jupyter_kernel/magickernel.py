@@ -86,7 +86,7 @@ class MagicKernel(Kernel):
     def do_execute(self, code, silent, store_history=True, user_expressions=None,
                    allow_stdin=False):
         if code and store_history:
-            self.hist_cache.append(code)
+            self.hist_cache.append(code.strip())
         # Handle Magics
         payload = self._process_help(code)
         if not payload:
@@ -128,6 +128,7 @@ class MagicKernel(Kernel):
                 self.set_variable("_" + str(self.execution_count), retval)
                 self.___ = self.__
                 self.__ = retval
+                self.log.debug(retval)
                 content = {'execution_count': self.execution_count,
                                     'data': self._formatter(retval),
                                     'metadata': dict()}

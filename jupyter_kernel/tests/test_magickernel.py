@@ -134,6 +134,39 @@ def test_history():
     assert '!ls' in text
     assert '%cd' in text
 
+    kernel = get_kernel()
+    kernel.do_history(None, None, None)
+    print(kernel.hist_cache)
+    assert '!ls' in ''.join(kernel.hist_cache)
+    assert '%cd ~'
+
+
+def test_plot_magic():
+    kernel = get_kernel()
+    kernel.do_execute('%plot qt -f svg -s400,200', None)
+    assert kernel.plot_settings['size'] == '400,200'
+    assert kernel.plot_settings['format'] == 'svg'
+    assert kernel.plot_settings['backend'] == 'qt'
+
+
+def test_python_magic():
+    kernel = get_kernel()
+    kernel.do_execute('%python retval = 1', None)
+    assert '1' in get_log_text(kernel)
+
+    kernel.do_execute('''%%python
+        def test(a):
+            return a + 1
+        retval = test(2)''', None)
+    assert '3' in get_log_text(kernel)
+
+
+def test_magic_magic():
+    kernel = get_kernel()
+    kernel.do_execute('%magic', None)
+    text = get_log_text(kernel)
+    assert '! COMMAND ... - execute command in shell' in text
+
 
 def teardown():
     if os.path.exists("TEST.txt"):
