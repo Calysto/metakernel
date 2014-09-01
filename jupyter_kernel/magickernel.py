@@ -48,6 +48,12 @@ class MagicKernel(Kernel):
         """
         pass
 
+    def get_variable(self, name):
+        """
+        Get a variable from the kernel language.
+        """
+        pass
+
     def repr(self, item):
         return repr(item)
 
