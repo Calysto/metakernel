@@ -33,10 +33,14 @@ You can install jupyter_kernel through `pip`:
 Documentation
 -----------------------
 
+An example notebook can be viewed here_.
+
 Documentation is available online_.
 
 For version information, see the Revision History_.
 
+
+.. _here: http://nbviewer.ipython.org/github/blink1073/jupyter_kernel/blob/master/examples/echo_kernel.ipynb?create=1
 
 .. _online: http://blink1073.github.io/jupyter_kernel/
 
