@@ -7,7 +7,7 @@ if svem_flag in sys.argv:
     sys.argv.remove(svem_flag)
 
 setup(name='jupyter_kernel',
-      version='0.1.1',
+      version='0.2',
       description='Jupyter Kernel Tools',
       long_description="Jupyter Kernel Tools using kernel wrappers",
       author='Steven Silvester',
