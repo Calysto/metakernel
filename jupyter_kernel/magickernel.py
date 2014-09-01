@@ -344,6 +344,18 @@ class MagicKernel(Kernel):
         else:
             return self.get_kernel_help_on(expr, level)
 
+    def help_patterns(self):
+        # Longest first:
+        return [
+            ("^(.*)\?\?$", 1,
+             "item?? - get detailed help on item"), # "code??", level, explain
+            ("^(.*)\?$", 0,
+             "item? - get help on item"),   # "code?"
+            ("^\?\?(.*)$", 1,
+             "??item - get detailed help on item"), # "??code"
+            ("^\?(.*)$", 0,
+             "?item - get help on item"),   # "?code"
+        ]
     def _get_sticky_magics(self):
         retval = ""
         for key in self.sticky_magics:
@@ -361,24 +373,11 @@ class MagicKernel(Kernel):
                      "source": "page"}]
 
     def _process_help(self, code):
-        for (pattern, level, doc) in self._help_patterns():
+        for (pattern, level, doc) in self.help_patterns():
             match = re.match(pattern, code.strip())
             if match:
                 return self._handle_help(match.groups()[0], level)
         return []
-
-    def _help_patterns(self):
-        # Longest first:
-        return [
-            ("^(.*)\?\?$", 1,
-             "item?? - get detailed help on item"), # "code??", level, explain
-            ("^(.*)\?$", 0,
-             "item? - get help on item"),   # "code?"
-            ("^\?\?(.*)$", 1,
-             "??item - get detailed help on item"), # "??code"
-            ("^\?(.*)$", 0,
-             "?item - get help on item"),   # "?code"
-        ]
 
     def _get_help_on_magic(self, name, mtype, level=0):
         if mtype == "cell" and name in self.cell_magics:
