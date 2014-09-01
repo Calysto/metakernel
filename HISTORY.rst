@@ -8,6 +8,7 @@ Release History
 ++++++++++++++++++
 - Add gh-pages website: http://blink1073.github.io/jupyter_kernel
 - Add example notebook for echo_kernel.
+- Add %python magic to interact with python shell.
 
 
 0.2.0 (2014-09-01)
