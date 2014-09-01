@@ -188,7 +188,7 @@ class MagicKernel(Kernel):
 
     def do_inspect(self, code, cursor_pos, detail_level=0):
         # Object introspection
-        token, start, end = self.get_complete(code, 0, cursor_pos)
+        token, start, end = self._get_complete(code, 0, cursor_pos)
         content = {'status': 'aborted', 'data': {}, 'found': False}
         docstring = self.get_help_on(token)
         if docstring:
@@ -426,6 +426,7 @@ class MagicKernel(Kernel):
         Parse the code line to get the element that we want to get help on.
         """
         token = ""
+        end = min(end, len(code))
         current = end - 1
         while current >= 0:
             # go backwards until we find end of token:
