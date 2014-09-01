@@ -3,7 +3,7 @@ from .magic import Magic, option
 
 __all__ = ['Magic', 'MagicKernel', 'option']
 
-__version__ = '0.3dev'
+__version__ = '0.3'
 
 JUPYTER_INSTANCE = None
 

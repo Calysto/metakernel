@@ -4,7 +4,7 @@ Release History
 ------------------------
 
 
-0.3.0 (2014-09-xx)
+0.3.0 (2014-09-01)
 ++++++++++++++++++
 - Add gh-pages website: http://blink1073.github.io/jupyter_kernel
 - Add example notebook for echo_kernel.
