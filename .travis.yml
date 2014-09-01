@@ -14,10 +14,10 @@ install:
     # workaround for https://github.com/travis-ci/travis-cookbooks/issues/155
     - sudo rm -rf /dev/shm && sudo ln -s /run/shm /dev/shm
     # Pierre Carrier's PPA for PhantomJS and CasperJS
-    - time sudo add-apt-repository -y ppa:pcarrier/ppa
+    - time sudo add-apt-repository -y --force-yes ppa:pcarrier/ppa
     - time sudo apt-get update
     - time sudo apt-get install pandoc casperjs libzmq3-dev
-    - time pip install -f https://nipy.bic.berkeley.edu/wheelhouse/travis jinja2 sphinx pygments tornado requests mock pyzmq jsonschema jsonpointer mistune
+    - travis_retry time pip install -f https://nipy.bic.berkeley.edu/wheelhouse/travis jinja2 sphinx pygments tornado requests mock pyzmq jsonschema jsonpointer mistune
 
     - git clone https://github.com/ipython/ipython
     - cd ipython
@@ -28,5 +28,3 @@ install:
 
 script:
     -  nosetests --exe -v --with-doctest jupyter_kernel
-    - ipython profile create
-    - nosetests --exe -v --with-doctest jupyter_kernel
