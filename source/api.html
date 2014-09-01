@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>API Reference &mdash; Jupyter Kernel 0.3dev documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootswatch-3.1.0/cosmo/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.3dev',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.1.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Jupyter Kernel 0.3dev documentation" href="../index.html" />
+    <link rel="next" title="Information" href="info.html" />
+    <link rel="prev" title="Installation" href="installation.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+  
+  
+
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          Jupyter Kernel</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.3dev</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            <li class="divider-vertical"></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="info.html">Information</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">API Reference</a><ul>
+<li><a class="reference internal" href="#jupyter-kernel">Jupyter Kernel</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="installation.html" title="Previous Chapter: Installation"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm">&laquo; Installation</span>
+    </a>
+  </li>
+  <li>
+    <a href="info.html" title="Next Chapter: Information"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm">Information &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../_sources/source/api.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-3">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li><a class="reference internal" href="#">API Reference</a><ul>
+<li><a class="reference internal" href="#jupyter-kernel">Jupyter Kernel</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    <div class="col-md-9">
+      
+  <div class="section" id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="jupyter-kernel">
+<h2>Jupyter Kernel<a class="headerlink" href="#jupyter-kernel" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-jupyter_kernel"></span><dl class="class">
+<dt id="jupyter_kernel.MagicKernel">
+<em class="property">class </em><tt class="descclassname">jupyter_kernel.</tt><tt class="descname">MagicKernel</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#jupyter_kernel.MagicKernel" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="jupyter_kernel.MagicKernel.set_variable">
+<tt class="descname">set_variable</tt><big>(</big><em>name</em>, <em>value</em><big>)</big><a class="headerlink" href="#jupyter_kernel.MagicKernel.set_variable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a variable in the kernel language.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jupyter_kernel.MagicKernel.get_variable">
+<tt class="descname">get_variable</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#jupyter_kernel.MagicKernel.get_variable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a variable from the kernel language.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jupyter_kernel.MagicKernel.handle_plot_settings">
+<tt class="descname">handle_plot_settings</tt><big>(</big><big>)</big><a class="headerlink" href="#jupyter_kernel.MagicKernel.handle_plot_settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the current plot settings</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jupyter_kernel.MagicKernel.get_local_magics_dir">
+<tt class="descname">get_local_magics_dir</tt><big>(</big><big>)</big><a class="headerlink" href="#jupyter_kernel.MagicKernel.get_local_magics_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the path to local magics dir (eg ~/.ipython/jupyter_kernel/magics)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jupyter_kernel.MagicKernel.add_complete">
+<tt class="descname">add_complete</tt><big>(</big><em>matches</em>, <em>token</em><big>)</big><a class="headerlink" href="#jupyter_kernel.MagicKernel.add_complete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add matches based on token from kernel.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jupyter_kernel.MagicKernel.do_history">
+<tt class="descname">do_history</tt><big>(</big><em>hist_access_type</em>, <em>output</em>, <em>raw</em>, <em>session=None</em>, <em>start=None</em>, <em>stop=None</em>, <em>n=None</em>, <em>pattern=None</em>, <em>unique=False</em><big>)</big><a class="headerlink" href="#jupyter_kernel.MagicKernel.do_history" title="Permalink to this definition">¶</a></dt>
+<dd><p>Access history at startup.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jupyter_kernel.MagicKernel.do_shutdown">
+<tt class="descname">do_shutdown</tt><big>(</big><em>restart</em><big>)</big><a class="headerlink" href="#jupyter_kernel.MagicKernel.do_shutdown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shut down the app gracefully, saving history.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jupyter_kernel.MagicKernel.update_plot_settings">
+<tt class="descname">update_plot_settings</tt><big>(</big><em>backend</em>, <em>size</em>, <em>format</em><big>)</big><a class="headerlink" href="#jupyter_kernel.MagicKernel.update_plot_settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the default plot settings for the kernel.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="jupyter_kernel.Magic">
+<em class="property">class </em><tt class="descclassname">jupyter_kernel.</tt><tt class="descname">Magic</tt><big>(</big><em>kernel</em><big>)</big><a class="headerlink" href="#jupyter_kernel.Magic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="jupyter_kernel.option">
+<tt class="descclassname">jupyter_kernel.</tt><tt class="descname">option</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#jupyter_kernel.option" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return decorator that adds a magic option to a function.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2014 - 2014, Jupyter Kernel contributors.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
