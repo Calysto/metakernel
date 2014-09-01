@@ -17,7 +17,7 @@ class PythonMagic(Magic):
             return eval(code.strip(), self.env)
         except:
             try:
-                exec code.strip() in self.env
+                exec(code.strip(), self.env)
             except Exception as exc:
                 return "Error: " + str(exc)
         if "retval" in self.env:
