@@ -1,0 +1,7 @@
+Installation
+************************
+
+You can install jupyter_kernel through `pip`:
+
+
+`pip install jupyter_kernel --upgrade`
