@@ -315,7 +315,6 @@ class MagicKernel(Kernel):
                 name = command[1:]
                 mtype = "line"
             elif command.startswith("!!"):
-                args = ''
                 name = "shell"
                 mtype = "cell"
             elif command.startswith("!"):

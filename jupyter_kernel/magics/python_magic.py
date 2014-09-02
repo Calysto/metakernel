@@ -13,7 +13,6 @@ class PythonMagic(Magic):
         self.retval = self.eval(code)
 
     def eval(self, code):
-        print(code.strip())
         try:
             return eval(code.strip(), self.env)
         except:
