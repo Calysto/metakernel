@@ -6,6 +6,10 @@ A simple Jupyter/IPython kernel template which includes core magic functions.
 .. image:: https://pypip.in/d/jupyter_kernel/badge.png
         :target: https://crate.io/packages/jupyter_kernel/
 
+.. image:: https://coveralls.io/repos/blink1073/jupyter_kernel/badge.png?branch=master
+  :target: https://coveralls.io/r/blink1073/jupyter_kernel
+
+
 See IPython's docs on `wrapper kernels
 <http://ipython.org/ipython-doc/dev/development/wrapperkernels.html>`_.
 

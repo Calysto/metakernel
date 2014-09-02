@@ -24,7 +24,14 @@ install:
     - python setup.py install
 
     - cd ..
+    - travis_retry pip install coveralls
     - travis_retry python setup.py install
 
 script:
     -  nosetests --exe -v --with-doctest jupyter_kernel
+
+script:
+  - nosetests --exe -v --with-doctest --with-cov --cover-package jupyter_kernel;
+
+after_success:
+    - coveralls

@@ -30,7 +30,6 @@ class PythonMagic(Magic):
     )
     def cell_python(self, eval_output=False):
         """%%python - evaluate contents of cell as Python"""
-        print 'in cell python'
         if self.code.strip():
             if eval_output:
                 self.eval(self.code)
