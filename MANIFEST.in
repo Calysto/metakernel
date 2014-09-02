@@ -10,6 +10,8 @@ recursive-include chatbot_kernel *.*
 prune chatbot_kernel/build
 recursive-include eval_kernel *.*
 prune eval_kernel/build
+recursive-include bash_kernel *.*
+prune bash_kernel/build
 prune .git
 prune docs/build
 prune dist
