@@ -13,6 +13,7 @@ class PythonMagic(Magic):
         self.retval = self.eval(code)
 
     def eval(self, code):
+        print(code.strip())
         try:
             return eval(code.strip(), self.env)
         except:
@@ -29,6 +30,7 @@ class PythonMagic(Magic):
     )
     def cell_python(self, eval_output=False):
         """%%python - evaluate contents of cell as Python"""
+        print 'in cell python'
         if self.code.strip():
             if eval_output:
                 self.eval(self.code)

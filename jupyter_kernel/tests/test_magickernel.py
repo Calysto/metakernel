@@ -1,35 +1,5 @@
-from jupyter_kernel import MagicKernel
-from IPython.kernel.zmq import session as ss
-import zmq
-import logging
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
 import os
-
-
-def get_kernel():
-    log = logging.getLogger('test')
-    log.setLevel(logging.DEBUG)
-
-    for hdlr in log.handlers:
-        log.removeHandler(hdlr)
-
-    hdlr = logging.StreamHandler(StringIO())
-    hdlr.setLevel(logging.DEBUG)
-    log.addHandler(hdlr)
-
-    context = zmq.Context.instance()
-    iopub_socket = context.socket(zmq.PUB)
-
-    kernel = MagicKernel(session=ss.Session(), iopub_socket=iopub_socket,
-                         log=log)
-    return kernel
-
-
-def get_log_text(kernel):
-    return kernel.log.handlers[0].stream.getvalue()
+from jupyter_kernel.tests.utils import get_kernel, get_log_text
 
 
 def test_magics():
@@ -60,6 +30,12 @@ def test_help():
     assert 'change current directory of session' in resp[
         'payload'][0]['data']['text/plain']
 
+    resp = kernel.get_help_on('!hello', 0)
+    assert 'run the line as a shell command' in resp
+
+    resp = kernel.get_help_on('what', 0)
+    assert resp == "Sorry, no help is available on 'what'."
+
 
 def test_complete():
     kernel = get_kernel()
@@ -68,41 +44,6 @@ def test_complete():
 
     comp = kernel.do_complete('%%fil', len('%%fil'))
     assert comp['matches'] == ['%%file'], str(comp['matches'])
-
-
-def test_file_magic():
-    kernel = get_kernel()
-    kernel.do_execute("""%%file TEST.txt
-LINE1
-LINE2
-LINE3""", False)
-    assert os.path.exists("TEST.txt")
-    with open("TEST.txt") as fp:
-        lines = fp.readlines()
-        assert len(lines) == 3
-        assert lines[0] == "LINE1\n"
-        assert lines[1] == "LINE2\n"
-        assert lines[2] == "LINE3"
-
-    kernel.do_execute("""%%file -a TEST.txt
-
-LINE4
-LINE5
-LINE6""", False)
-    assert os.path.exists("TEST.txt")
-    with open("TEST.txt") as fp:
-        lines = fp.readlines()
-        assert len(lines) == 6
-        assert lines[3] == "LINE4\n"
-        assert lines[4] == "LINE5\n"
-        assert lines[5] == "LINE6"
-
-
-def test_shell_magic():
-    kernel = get_kernel()
-    kernel.do_execute("!cat \"%s\"" % __file__, False)
-    log_text = get_log_text(kernel)
-    assert 'magickernel.py' in log_text
 
 
 def test_inspect():
@@ -117,9 +58,12 @@ def test_path_complete():
     comp = kernel.do_complete('~/.ipytho', len('~/.ipytho'))
     assert comp['matches'] == ['~' + os.sep + '.ipython' + os.sep]
 
-    files = [f for f in os.listdir(os.getcwd()) if not os.path.isdir(f)]
-    comp = kernel.do_complete(files[0], len(files[0]) - 1)
-    assert files[0] in comp['matches']
+    path = os.listdir(os.getcwd())[0]
+    comp = kernel.do_complete(path, len(path) - 1)
+    if os.path.isdir(path):
+        assert path + os.sep in comp['matches']
+    else:
+        assert path in comp['matches']
 
 
 def test_history():
@@ -136,36 +80,20 @@ def test_history():
 
     kernel = get_kernel()
     kernel.do_history(None, None, None)
-    print(kernel.hist_cache)
     assert '!ls' in ''.join(kernel.hist_cache)
     assert '%cd ~'
 
 
-def test_plot_magic():
+def test_sticky_magics():
     kernel = get_kernel()
-    kernel.do_execute('%plot qt -f svg -s400,200', None)
-    assert kernel.plot_settings['size'] == '400,200'
-    assert kernel.plot_settings['format'] == 'svg'
-    assert kernel.plot_settings['backend'] == 'qt'
-
-
-def test_python_magic():
-    kernel = get_kernel()
-    kernel.do_execute('%python retval = 1', None)
-    assert '1' in get_log_text(kernel)
-
-    kernel.do_execute('''%%python
-        def test(a):
-            return a + 1
-        retval = test(2)''', None)
-    assert '3' in get_log_text(kernel)
-
-
-def test_magic_magic():
-    kernel = get_kernel()
-    kernel.do_execute('%magic', None)
+    kernel.do_execute('%%%html\nhello', None)
     text = get_log_text(kernel)
-    assert '! COMMAND ... - execute command in shell' in text
+    assert '%%html added to session magics' in text
+    kernel.do_execute('<b>hello</b>', None)
+    kernel.do_execute('%%%html', None)
+    text = get_log_text(kernel)
+    assert text.count('Display Data') == 2
+    assert '%%html removed from session magics' in text
 
 
 def teardown():

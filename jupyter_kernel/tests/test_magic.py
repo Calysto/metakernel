@@ -1,4 +1,5 @@
 from jupyter_kernel import Magic, option
+from jupyter_kernel.tests.utils import get_kernel, get_log_text
 
 
 class Dummy(Magic):
@@ -22,7 +23,8 @@ class Dummy(Magic):
 
 
 def test_get_magics():
-    d = Dummy(None)
+    kernel = get_kernel()
+    d = Dummy(kernel)
     line = d.get_magics('line')
     cell = d.get_magics('cell')
 
@@ -32,7 +34,8 @@ def test_get_magics():
 
 
 def test_get_help():
-    d = Dummy(None)
+    kernel = get_kernel()
+    d = Dummy(kernel)
 
     dummy_help = d.get_help('line', 'dummy', 0)
     assert dummy_help == d.line_dummy.__doc__.lstrip().split("\n", 1)[0]
@@ -48,7 +51,8 @@ def test_get_help():
 
 
 def test_option():
-    d = Dummy(None)
+    kernel = get_kernel()
+    d = Dummy(kernel)
     assert 'Options:' in d.line_dummy.__doc__
     assert '--size' in d.line_dummy.__doc__
 

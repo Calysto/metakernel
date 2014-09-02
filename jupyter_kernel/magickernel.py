@@ -314,12 +314,13 @@ class MagicKernel(Kernel):
             elif command.startswith("%"):
                 name = command[1:]
                 mtype = "line"
+            elif command.startswith("!!"):
+                args = ''
+                name = "shell"
+                mtype = "cell"
             elif command.startswith("!"):
                 name = "shell"
                 mtype = "line"
-            elif command.startswith("!!"):
-                name = "shell"
-                mtype = "cell"
             else:
                 return None
             if mtype == 'cell' and name in self.cell_magics.keys():

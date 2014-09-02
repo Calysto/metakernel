@@ -1,4 +1,5 @@
 import optparse
+import inspect
 
 
 class Magic(object):
@@ -10,15 +11,29 @@ class Magic(object):
 
     def call_magic(self, mtype, name, code, args):
         self.code = code
+        old_args = args
         func = getattr(self, mtype + '_' + name)
         args, kwargs = _parse_args(func, args)
+
+        argspec = inspect.getargspec(func)
+        if not argspec.defaults is None:
+            total_args = len(argspec.args) - len(argspec.defaults) - 1
+        else:
+            total_args = len(argspec.args) - 1
+        if total_args == 0 and argspec.varargs is None:
+            args = []
+
         try:
             func(*args, **kwargs)
-        except TypeError as error:
-            self.kernel.Error("Error in calling magic '%s' on %s" % (name, mtype))
-            self.kernel.Error(self.get_help(mtype, name))
-            # return dummy magic to end processing:
-            return Magic(self.kernel)
+        except TypeError:
+            try:
+                func(old_args)
+            except Exception:
+                msg = "Error in calling magic '%s' on %s" % (name, mtype)
+                self.kernel.Error(msg)
+                self.kernel.Error(self.get_help(mtype, name))
+                # return dummy magic to end processing:
+                return Magic(self.kernel)
         return self
 
     def get_help(self, mtype, name, level=0):
