@@ -80,6 +80,12 @@ class MagicKernel(Kernel):
         """
         return
 
+    def do_execute_direct(self, code):
+        """
+        Execute code in the kernel language.
+        """
+        pass
+
     ############################################
     # Implement base class methods
 
