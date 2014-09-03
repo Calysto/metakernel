@@ -194,6 +194,10 @@ class MagicKernel(Kernel):
             for name in self.line_magics.keys():
                 if name.startswith(token[1:]):
                     content['matches'].append("%" + name)
+        # from shell
+        if code.startswith(('!', "%shell", "%%shell")):
+            shell_magic = self.line_magics['shell']
+            content['matches'].extend(shell_magic.get_complete(token))
         # Add more from kernel:
         self.add_complete(content["matches"], token)
         content['matches'].extend(_complete_path(token))
@@ -445,7 +449,7 @@ class MagicKernel(Kernel):
         current = end - 1
         while current >= 0:
             # go backwards until we find end of token:
-            if code[current] in ["(", " ", ")", "\n", "\t", '"', ";"]:
+            if code[current] in ["(", " ", ")", "\n", "\t", '"', ";", "!"]:
                 return (token, current + 1, end)
             token = code[current] + token
             current -= 1
