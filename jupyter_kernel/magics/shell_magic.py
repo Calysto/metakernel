@@ -24,7 +24,6 @@ class ShellMagic(Magic):
         """%shell COMMAND - run the line as a shell command"""
         command = " ".join(args)
         resp, error = self.eval(command)
-
         if error:
             self.kernel.Error(error)
 
@@ -36,7 +35,7 @@ class ShellMagic(Magic):
         cmd += self.separator
         cmd += 'echo "__eval_complete__"\n'
 
-        os.write(self.wfid, cmd)
+        os.write(self.wfid, cmd.encode('utf-8'))
 
         buf = ''
 
