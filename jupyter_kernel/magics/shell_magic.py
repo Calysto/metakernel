@@ -71,7 +71,7 @@ class ShellMagic(Magic):
 
     def start_process(self):
         try:
-            subprocess.check_output('bash --version')
+            subprocess.check_output('bash --version', shell=True)
         except OSError as e:
             if os.name == 'nt':
                 self.cmd = 'cmd'
