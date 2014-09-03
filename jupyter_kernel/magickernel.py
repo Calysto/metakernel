@@ -197,7 +197,7 @@ class MagicKernel(Kernel):
         # from shell
         if code.startswith(('!', "%shell", "%%shell")):
             shell_magic = self.line_magics['shell']
-            content['matches'].extend(shell_magic.get_complete(token))
+            content['matches'].extend(shell_magic.get_completions(token))
         # Add more from kernel:
         self.add_complete(content["matches"], token)
         content['matches'].extend(_complete_path(token))

@@ -100,7 +100,7 @@ class ShellMagic(Magic):
         self.line_shell(self.code)
         self.evaluate = False
 
-    def get_complete(self, token):
+    def get_completions(self, token):
         if self.cmd == 'cmd':
             return []
         cmd = 'compgen -cdfa %s' % token
