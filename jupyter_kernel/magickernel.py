@@ -177,6 +177,7 @@ class MagicKernel(Kernel):
         return {'status': 'ok', 'restart': restart}
 
     def do_complete(self, code, cursor_pos):
+
         token, start, end = self._get_object(code, 0, cursor_pos)
         content = {
             'matches' : [],
@@ -187,19 +188,21 @@ class MagicKernel(Kernel):
         }
         # from magics:
         if code.startswith("%%"):
+            rest = ' '.join(code.split(' ')[1:])
             for name in self.cell_magics.keys():
                 if name.startswith(token[2:]):
                     content['matches'].append('%%' + name)
                 elif code.startswith('%%' + name):
                     magic = self.cell_magics[name]
-                    content['matches'].append(magic.get_completions(token))
+                    content['matches'].extend(magic.get_completions(rest))
         elif code.startswith('%'):
+            rest = ' '.join(code.split(' ')[1:])
             for name in self.line_magics.keys():
                 if name.startswith(token[1:]):
                     content['matches'].append("%" + name)
                 elif code.startswith('%' + name):
-                    magic = self.cell_magics[name]
-                    content['matches'].append(magic.get_completions(token))
+                    magic = self.line_magics[name]
+                    content['matches'].extend(magic.get_completions(rest))
         # from shell
         elif code.startswith('!'):
             shell_magic = self.line_magics['shell']

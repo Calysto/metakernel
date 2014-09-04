@@ -2,7 +2,18 @@
 # Distributed under the terms of the Modified BSD License.
 # http://calicoproject.org/
 
+import sys
+import os
 from jupyter_kernel import Magic, option
+try:
+    import jedi
+except ImportError:
+    jedi = None
+else:
+    from jedi import Interpreter
+    from jedi.api.helpers import completion_parts
+    from jedi.parser.user_context import UserContext
+
 
 class PythonMagic(Magic):
     env = {}
@@ -44,6 +55,42 @@ class PythonMagic(Magic):
             return retval
         else:
             return self.retval
+
+    def get_completions(self, text):
+        '''Get Python completions'''
+        # https://github.com/davidhalter/jedi/blob/master/jedi/utils.py
+        if jedi is None:
+            return []
+
+        interpreter = Interpreter(text, [self.env])
+        path = UserContext(text, (1, len(text))).get_path_until_cursor()
+        path, dot, like = completion_parts(path)
+        before = text[:len(text) - len(like)]
+        completions = interpreter.completions()
+
+        completions = [before + c.name_with_symbols for c in completions]
+        return completions
+
+    def get_help_on(self, expr, level=0):
+        """Implement basic help for functions"""
+        if not expr:
+            return ''
+
+        last = expr.split()[-1]
+        default = 'No help available for "%s"' % last
+
+        obj = self.env.get(last, None)
+        if not obj is None:
+            return getattr(obj, '__doc__', default)
+
+        elif '.' in last:
+            mod, _, name = last.partition('.')
+            obj = self.env.get(mod, None)
+            if obj:
+                subobj = getattr(obj, name, None)
+                if subobj:
+                    return getattr(subobj, '__doc__', default)
+        return default
 
 def register_magics(kernel):
     kernel.register_magics(PythonMagic)
