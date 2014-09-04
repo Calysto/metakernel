@@ -28,9 +28,7 @@ class EvalKernel(MagicKernel):
 
     def do_execute_direct(self, code):
         python_magic = self.line_magics['python']
-        resp = python_magic.eval(code.strip())
-        if not resp is None:
-            self.Print(str(resp))
+        return python_magic.eval(code.strip())
 
     def get_completions(self, token):
         python_magic = self.line_magics['python']
