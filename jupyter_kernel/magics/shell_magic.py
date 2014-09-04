@@ -108,7 +108,9 @@ class ShellMagic(Magic):
         return completion_text.split()
 
     def get_help_on(self, expr, level=0):
-        if level == 0 or os.name == 'nt':
+        if self.cmd == 'cmd':
+            resp, error = self.eval('help %s' % expr)
+        elif level == 0:
             resp, error = self.eval('%s --help' % expr)
         else:
             resp, error = self.eval('man %s' % expr)

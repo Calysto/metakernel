@@ -230,13 +230,19 @@ class MagicKernel(Kernel):
             for name in self.cell_magics.keys():
                 if code.startswith('%%' + name):
                     magic = self.cell_magics[name]
-                    docstring = magic.get_help_on(token, detail_level)
+                    if token.replace('%', '') == name:
+                        docstring = magic.get_help('cell', name, detail_level)
+                    else:
+                        docstring = magic.get_help_on(token, detail_level)
 
         elif code.startswith('%'):
             for name in self.line_magics.keys():
                 if code.startswith('%' + name):
                     magic = self.line_magics[name]
-                    docstring = magic.get_help_on(token, detail_level)
+                    if token.replace('%', '') == name:
+                        docstring = magic.get_help('line', name, detail_level)
+                    else:
+                        docstring = magic.get_help_on(token, detail_level)
 
         elif code.startswith('!'):
             magic = self.line_magics['shell']

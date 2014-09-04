@@ -30,9 +30,6 @@ def test_help():
     assert 'change current directory of session' in resp[
         'payload'][0]['data']['text/plain']
 
-    resp = kernel.get_help_on('!hello', 0)
-    assert 'run the line as a shell command' in resp
-
     resp = kernel.get_help_on('what', 0)
     assert resp == "Sorry, no help is available on 'what'."
 
