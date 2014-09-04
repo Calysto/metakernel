@@ -79,18 +79,19 @@ class PythonMagic(Magic):
         last = expr.split()[-1]
         default = 'No help available for "%s"' % last
 
-        obj = self.env.get(last, None)
-        if not obj is None:
-            return getattr(obj, '__doc__', default)
+        parts = last.split('.')
 
-        elif '.' in last:
-            mod, _, name = last.partition('.')
-            obj = self.env.get(mod, None)
-            if obj:
-                subobj = getattr(obj, name, None)
-                if subobj:
-                    return getattr(subobj, '__doc__', default)
-        return default
+        obj = self.env.get(parts[0], None)
+        if not obj:
+            return default
+
+        for p in parts[1:]:
+            obj = getattr(obj, p, None)
+            if not obj:
+                return default
+
+        return getattr(obj, '__doc__', default)
+
 
 def register_magics(kernel):
     kernel.register_magics(PythonMagic)
