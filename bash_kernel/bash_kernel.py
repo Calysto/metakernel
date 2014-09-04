@@ -21,9 +21,13 @@ class BashKernel(MagicKernel):
         if resp:
             self.Print(resp)
 
-    def add_complete(self, matches, token):
+    def get_completions(self, token):
         shell_magic = self.line_magics['shell']
-        matches.extend(shell_magic.get_completions(token))
+        return shell_magic.get_completions(token)
+
+    def get_kernel_help_on(self, expr, level=0):
+        shell_magic = self.line_magics['shell']
+        return shell_magic.get_help_on(expr, level)
 
 if __name__ == '__main__':
     from IPython.kernel.zmq.kernelapp import IPKernelApp
