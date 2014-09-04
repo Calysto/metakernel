@@ -14,6 +14,9 @@ import imp
 import re
 import inspect
 
+if sys.version.startswith('3'):
+    unicode = str
+
 
 class MagicKernel(Kernel):
     def __init__(self, *args, **kwargs):
@@ -458,7 +461,10 @@ class MagicKernel(Kernel):
 
     def _formatter(self, data):
         retval = {}
-        retval["text/plain"] = self.repr(data)
+        if isinstance(data, (str, unicode)):
+            retval["text/plain"] = data
+        else:
+            retval["text/plain"] = self.repr(data)
         if hasattr(data, "_repr_png_"):
             obj = data._repr_png_()
             if obj:

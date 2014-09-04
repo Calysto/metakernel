@@ -18,8 +18,7 @@ class BashKernel(MagicKernel):
         resp, error = shell_magic.eval(code.strip())
         if error:
             self.Error(error)
-        if resp:
-            self.Print(resp)
+        return resp.strip()
 
     def get_completions(self, token):
         shell_magic = self.line_magics['shell']
