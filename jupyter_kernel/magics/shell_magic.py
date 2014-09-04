@@ -107,6 +107,16 @@ class ShellMagic(Magic):
         completion_text, error = self.eval(cmd)
         return completion_text.split()
 
+    def get_help_on(self, expr, level=0):
+        if level == 0 or os.name == 'nt':
+            resp, error = self.eval('%s --help' % expr)
+        else:
+            resp, error = self.eval('man %s' % expr)
+        if resp:
+            return resp
+        else:
+            return "Sorry, no help is available on '%s'." % expr
+
 
 def register_magics(kernel):
     kernel.register_magics(ShellMagic)

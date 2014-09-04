@@ -49,6 +49,15 @@ class Magic(object):
         else:
             return "No such magic '%s' for %ss." % (name, mtype)
 
+    def get_help_on(self, expr, level=0):
+        return "Sorry, no help is available on '%s'." % expr
+
+    def get_completions(self, token):
+            """
+            Get completions based on token from magic.
+            """
+            return []
+
     def get_magics(self, mtype):
         magics = []
         for name in dir(self):

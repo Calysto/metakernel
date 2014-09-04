@@ -74,11 +74,11 @@ class MagicKernel(Kernel):
         base = get_ipython_dir()
         return os.path.join(base, 'jupyter_kernel', 'magics')
 
-    def add_complete(self, matches, token):
+    def get_completions(self, token):
         """
-        Add matches based on token from kernel.
+        Get completions based on token from kernel.
         """
-        return
+        return []
 
     def do_execute_direct(self, code):
         """
@@ -177,7 +177,7 @@ class MagicKernel(Kernel):
         return {'status': 'ok', 'restart': restart}
 
     def do_complete(self, code, cursor_pos):
-        token, start, end = self._get_complete(code, 0, cursor_pos)
+        token, start, end = self._get_object(code, 0, cursor_pos)
         content = {
             'matches' : [],
             'cursor_start' : start,
@@ -190,31 +190,67 @@ class MagicKernel(Kernel):
             for name in self.cell_magics.keys():
                 if name.startswith(token[2:]):
                     content['matches'].append('%%' + name)
+                elif code.startswith('%%' + name):
+                    magic = self.cell_magics[name]
+                    content['matches'].append(magic.get_completions(token))
         elif code.startswith('%'):
             for name in self.line_magics.keys():
                 if name.startswith(token[1:]):
                     content['matches'].append("%" + name)
+                elif code.startswith('%' + name):
+                    magic = self.cell_magics[name]
+                    content['matches'].append(magic.get_completions(token))
         # from shell
-        if code.startswith(('!', "%shell", "%%shell")):
+        elif code.startswith('!'):
             shell_magic = self.line_magics['shell']
             content['matches'].extend(shell_magic.get_completions(token))
-        # Add more from kernel:
-        self.add_complete(content["matches"], token)
+        #  from kernel:
+        else:
+            content['matches'].extend(self.get_completions(token))
+
         content['matches'].extend(_complete_path(token))
         content["matches"] = sorted(content["matches"])
         return content
 
     def do_inspect(self, code, cursor_pos, detail_level=0):
         # Object introspection
-        token, start, end = self._get_complete(code, 0, cursor_pos)
+        if cursor_pos > len(code):
+            return
+
+        if len(code) > 1 and code[cursor_pos - 1] == '(':
+            cursor_pos -= 1
+
+        token, start, end = self._get_object(code, 0, cursor_pos)
         self.log.debug(code)
         content = {'status': 'aborted', 'data': {}, 'found': False}
-        docstring = self.get_help_on(token)
+
+        docstring = ''
+
+        if code.startswith('%%'):
+            for name in self.cell_magics.keys():
+                if code.startswith('%%' + name):
+                    magic = self.cell_magics[name]
+                    docstring = magic.get_help_on(token, detail_level)
+
+        elif code.startswith('%'):
+            for name in self.line_magics.keys():
+                if code.startswith('%' + name):
+                    magic = self.line_magics[name]
+                    docstring = magic.get_help_on(token, detail_level)
+
+        elif code.startswith('!'):
+            magic = self.line_magics['shell']
+            docstring = magic.get_help_on(token, detail_level)
+
+        else:
+            docstring = self.get_help_on(token)
+
         if docstring:
             content["data"] = {"text/plain": docstring}
             content["status"] = "ok"
             content["found"] = True
             self.log.debug(docstring)
+
         return content
 
     ##############################
@@ -344,14 +380,26 @@ class MagicKernel(Kernel):
         return None
 
     def get_help_on(self, expr, level=0):
+
+        token, start, end = self._get_object(expr)
         if expr.startswith('%'):
-            name = expr.split(" ")[0].split("%")[-1]
-            mtype = "cell" if expr.startswith("%%") else "line"
-            return self._get_help_on_magic(name, mtype, level)
+
+            if len(expr.split()) == 1:
+                name = expr.replace('%', '')
+                mtype = "cell" if expr.startswith("%%") else "line"
+                return self._get_help_on_magic(name, mtype, level)
+            else:
+                name = expr.split()[0].replace('%', '')
+                if expr.startswith('%%'):
+                    magic = self.cell_magics[name]
+                else:
+                    magic = self.line_magics[name]
+                return magic.get_help_on(token, level)
+
         elif expr.startswith('!'):
-            name = "shell"
-            mtype = "cell" if expr.startswith("!!") else "line"
-            return self._get_help_on_magic(name, mtype, level)
+            magic = self.line_magics['shell']
+            return magic.get_help_on(token, level)
+
         else:
             return self.get_kernel_help_on(expr, level)
 
@@ -440,10 +488,13 @@ class MagicKernel(Kernel):
                 retval["application/pdf"] = obj
         return retval
 
-    def _get_complete(self, code, start, end):
+    def _get_object(self, code, start=0, end=-1):
         """
         Parse the code line to get the element that we want to get help on.
         """
+        if end == -1:
+            end = len(code)
+
         token = ""
         end = min(end, len(code))
         current = end - 1
