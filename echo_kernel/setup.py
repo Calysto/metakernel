@@ -10,6 +10,7 @@ kernel_json = {
 	     "-f", "{connection_file}"],
     "display_name": "Echo",
     "language": "python"
+     "codemirror_mode":"none"
 }
 
 class install_with_kernelspec(install):

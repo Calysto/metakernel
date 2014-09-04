@@ -1,7 +1,0 @@
-{
-    "argv": ["python", 
-	     "-m","echo_kernel", 
-	     "-f", "{connection_file}"],
-    "display_name": "Echo",
-    "language": "no-op"
-}
