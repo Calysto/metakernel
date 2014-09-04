@@ -9,7 +9,8 @@ kernel_json = {
 	     "-m", "bash_kernel",
 	     "-f", "{connection_file}"],
     "display_name": "bash_kernel",
-    "language": "Bash"
+    "language": "Bash",
+     "codemirror_mode":"shell"
 }
 
 class install_with_kernelspec(install):
