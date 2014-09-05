@@ -43,11 +43,14 @@ class PythonMagic(Magic):
         if self.code.strip():
             if eval_output:
                 self.eval(self.code)
-                self.code = str(self.env["retval"]) if "retval" in self.env else ""
+                self.code = str(self.env["retval"]) if ("retval" in self.env and 
+                                                        self.env["retval"] != None) else ""
                 self.retval = None
+                self.env["retval"] = None
                 self.evaluate = True
             else:
                 self.retval = self.eval(self.code)
+                self.env["retval"] = None
                 self.evaluate = False
 
     def post_process(self, retval):
