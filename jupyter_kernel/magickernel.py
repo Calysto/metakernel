@@ -461,10 +461,7 @@ class MagicKernel(Kernel):
 
     def _formatter(self, data):
         retval = {}
-        if isinstance(data, (str, unicode)):
-            retval["text/plain"] = data
-        else:
-            retval["text/plain"] = self.repr(data)
+        retval["text/plain"] = self.repr(data)
         if hasattr(data, "_repr_png_"):
             obj = data._repr_png_()
             if obj:

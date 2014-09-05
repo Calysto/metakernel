@@ -28,6 +28,9 @@ class BashKernel(MagicKernel):
         shell_magic = self.line_magics['shell']
         return shell_magic.get_help_on(expr, level)
 
+    def repr(self, data):
+        return data
+
 if __name__ == '__main__':
     from IPython.kernel.zmq.kernelapp import IPKernelApp
     IPKernelApp.launch_instance(kernel_class=BashKernel)

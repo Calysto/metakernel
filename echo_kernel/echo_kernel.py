@@ -15,6 +15,9 @@ class EchoKernel(MagicKernel):
     def do_execute_direct(self, code):
         return code.rstrip()
 
+    def repr(self, data):
+        return data
+
 if __name__ == '__main__':
     from IPython.kernel.zmq.kernelapp import IPKernelApp
     IPKernelApp.launch_instance(kernel_class=EchoKernel)
