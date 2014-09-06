@@ -37,10 +37,10 @@ def test_help():
 def test_complete():
     kernel = get_kernel()
     comp = kernel.do_complete('%connect_', len('%connect_'))
-    assert comp['matches'] == ['%connect_info'], str(comp['matches'])
+    assert comp['matches'] == ['info'], str(comp['matches'])
 
     comp = kernel.do_complete('%%fil', len('%%fil'))
-    assert comp['matches'] == ['%%file'], str(comp['matches'])
+    assert comp['matches'] == ['e'], str(comp['matches'])
 
 
 def test_inspect():
@@ -85,12 +85,13 @@ def test_sticky_magics():
     kernel = get_kernel()
     kernel.do_execute('%%%html\nhello', None)
     text = get_log_text(kernel)
-    assert '%%html added to session magics' in text
+
+    assert 'html added to session magics' in text
     kernel.do_execute('<b>hello</b>', None)
     kernel.do_execute('%%%html', None)
     text = get_log_text(kernel)
     assert text.count('Display Data') == 2
-    assert '%%html removed from session magics' in text
+    assert 'html removed from session magics' in text
 
 
 def teardown():

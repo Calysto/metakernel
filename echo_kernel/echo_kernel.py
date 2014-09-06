@@ -2,6 +2,7 @@ from __future__ import print_function
 
 from jupyter_kernel import MagicKernel
 
+
 class EchoKernel(MagicKernel):
     implementation = 'Echo'
     implementation_version = '1.0'
@@ -16,7 +17,7 @@ class EchoKernel(MagicKernel):
         return code.rstrip()
 
     def repr(self, data):
-        return data
+        return repr(data)
 
 if __name__ == '__main__':
     from IPython.kernel.zmq.kernelapp import IPKernelApp

@@ -27,10 +27,9 @@ class MagicMagic(Magic):
         self.kernel.Print("")
         self.kernel.Print("Any cell magic can be made persistent for rest of session by using %%% prefix.")
         self.kernel.Print("")
-        if self.kernel.help_patterns():
-            self.kernel.Print("Help on items:")
-            for (pattern, level, doc) in self.kernel.help_patterns():
-                self.kernel.Print("    " + doc)
+        self.kernel.Print("Help on items:")
+        for (pattern, level, doc) in self.kernel.line_magics['help'].help_patterns():
+            self.kernel.Print("    " + doc)
         self.kernel.Print("")
 
 def register_magics(kernel):

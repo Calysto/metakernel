@@ -100,15 +100,15 @@ class ShellMagic(Magic):
         self.line_shell(self.code)
         self.evaluate = False
 
-    def get_completions(self, text):
+    def get_completions(self, info):
         if self.cmd == 'cmd':
             return []
-        token, start, end = self.kernel._get_object(text)
-        cmd = 'compgen -cdfa %s' % token
+        cmd = 'compgen -cdfa %s' % info['obj']
         completion_text, error = self.eval(cmd)
         return completion_text.split()
 
-    def get_help_on(self, expr, level=0):
+    def get_help_on(self, info, level=0):
+        expr = info['rest']
         if self.cmd == 'cmd':
             resp, error = self.eval('help %s' % expr)
         elif level == 0:

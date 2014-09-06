@@ -59,12 +59,13 @@ class PythonMagic(Magic):
         else:
             return self.retval
 
-    def get_completions(self, text):
+    def get_completions(self, info):
         '''Get Python completions'''
         # https://github.com/davidhalter/jedi/blob/master/jedi/utils.py
         if jedi is None:
             return []
 
+        text = info['rest']
         interpreter = Interpreter(text, [self.env])
         path = UserContext(text, (1, len(text))).get_path_until_cursor()
         path, dot, like = completion_parts(path)
@@ -74,22 +75,27 @@ class PythonMagic(Magic):
         completions = [before + c.name_with_symbols for c in completions]
         return completions
 
-    def get_help_on(self, expr, level=0):
+    def get_help_on(self, info, level=0):
         """Implement basic help for functions"""
-        if not expr:
+
+        if not info['rest']:
             return ''
 
-        last = expr.split()[-1]
+        last = info['obj']
+
         default = 'No help available for "%s"' % last
 
         parts = last.split('.')
 
         obj = self.env.get(parts[0], None)
+
         if not obj:
             return default
 
         for p in parts[1:]:
+
             obj = getattr(obj, p, None)
+
             if not obj:
                 return default
 
