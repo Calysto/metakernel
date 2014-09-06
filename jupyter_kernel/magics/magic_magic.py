@@ -28,8 +28,8 @@ class MagicMagic(Magic):
         self.kernel.Print("Any cell magic can be made persistent for rest of session by using %%% prefix.")
         self.kernel.Print("")
         self.kernel.Print("Help on items:")
-        for (pattern, level, doc) in self.kernel.line_magics['help'].help_patterns():
-            self.kernel.Print("    " + doc)
+        for string in self.kernel.line_magics['help'].help_strings:
+            self.kernel.Print("    " + string)
         self.kernel.Print("")
 
 def register_magics(kernel):

@@ -67,7 +67,7 @@ class MagicKernel(Kernel):
         return "This is a usage statement."
 
     def get_kernel_help_on(self, info, level=0):
-        return "Sorry, no help is available on '%s'." % info
+        return "Sorry, no help is available on '%s'." % info['code']
 
     def handle_plot_settings(self):
         """Handle the current plot settings"""
@@ -80,9 +80,9 @@ class MagicKernel(Kernel):
         base = get_ipython_dir()
         return os.path.join(base, 'jupyter_kernel', 'magics')
 
-    def get_completions(self, token):
+    def get_completions(self, info):
         """
-        Get completions based on token from kernel.
+        Get completions from kernel based on info dict.
         """
         return []
 
@@ -111,6 +111,7 @@ class MagicKernel(Kernel):
             else:
                 level = 1
             text = self.get_help_on(code, level)
+            self.log.debug(text)
             payload = [{"data": {"text/plain": text},
                      "start_line_number": 0,
                      "source": "page"}]
@@ -373,37 +374,9 @@ class MagicKernel(Kernel):
                 minfo['code'], minfo['args'])
 
     def get_help_on(self, expr, level=0):
-
         info = self.parse_code(expr)
-
-        if info['magic']:
-
-            if info['magic']['name'] == 'help':
-                return self.line_magics['help'].get_help_on(info, level)
-
-            minfo = info['magic']
-            errmsg = "No such %s magic '%s'" % (minfo['type'], minfo['name'])
-
-            if minfo['type'] == 'line':
-                    magic = self.line_magics.get(minfo['name'], None)
-            else:
-                    magic = self.cell_magics.get(minfo['name'], None)
-
-            if not info['rest']:
-                if magic:
-                    return magic.get_help(minfo['type'], minfo['name'], level)
-                elif not info['magic']['name']:
-                    return self.get_usage()
-                else:
-                    return errmsg
-            else:
-                if magic:
-                    return magic.get_help_on(info, level)
-                else:
-                    return errmsg
-
-        else:
-            return self.get_kernel_help_on(info, level)
+        help_magic = self.line_magics['help']
+        return help_magic.get_help_on(info, level)
 
     def parse_code(self, code, start=0, end=-1):
         info = _parse_code(code, start, end)
@@ -507,7 +480,7 @@ def _parse_code(code, start=0, end=-1):
         end = min(end, len(code))
 
         info = dict(type=None, magic={}, end=end, obj='',
-                    start=start, rest='', leading_chars='')
+                    start=start, rest='', leading_chars='', code='')
 
         tokens = code[start: end].split()
         if not tokens:
@@ -519,25 +492,21 @@ def _parse_code(code, start=0, end=-1):
 
         if first.startswith("%%%"):
             info['magic']['type'] = 'sticky'
-            info['magic']['prefix'] = '%%%'
             info['magic']['name'] = first[3:]
             offset = len(first)
 
         elif first.startswith("%%"):
             info['magic']['type'] = 'cell'
-            info['magic']['prefix'] = '%%'
             info['magic']['name'] = first[2:]
             offset = len(first)
 
         elif first.startswith('%'):
             info['magic']['type'] = 'line'
-            info['magic']['prefix'] = '%'
             info['magic']['name'] = first[1:]
             offset = 1 + len(first)
 
         elif first.startswith('!!'):
             info['magic']['type'] = 'cell'
-            info['magic']['prefix'] = '!!'
             info['magic']['name'] = 'shell'
             offset = 2
 
@@ -550,23 +519,12 @@ def _parse_code(code, start=0, end=-1):
         if code.startswith('??') or code.rstrip().endswith('??'):
             info['magic']['type'] = 'cell'
             info['magic']['name'] = 'help'
-            if first.startswith('??'):
-                info['magic']['prefix'] = '??'
-            else:
-                info['magic']['prefix'] = ''
             offset = len(first)
 
         elif code.startswith('?') or code.rstrip().endswith('?'):
             info['magic']['type'] = 'line'
             info['magic']['name'] = 'help'
-            if first.startswith('?'):
-                info['magic']['prefix'] = '?'
-            else:
-                info['magic']['prefix'] = ''
             offset = len(first)
-
-        if code.rstrip().endswith('?'):
-            code = code.replace('?', '')
 
         if start == 0:
             start = offset
@@ -582,6 +540,7 @@ def _parse_code(code, start=0, end=-1):
         info['code'] = code
 
         return info
+
 
 def _formatter(data, repr_func):
         retval = {}

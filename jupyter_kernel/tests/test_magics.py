@@ -41,6 +41,14 @@ def test_magic_magic():
     assert '! COMMAND ... - execute command in shell' in text
 
 
+def test_help_magic():
+    kernel = get_kernel()
+    kernel.do_execute('?%magic', None)
+    text = get_log_text(kernel)
+    print(text)
+    assert '%magic - show installed magics' in text
+
+
 def test_file_magic():
     kernel = get_kernel()
     kernel.do_execute("""%%file TEST.txt
