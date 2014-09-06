@@ -51,7 +51,7 @@ class Magic(object):
             return "No such magic '%s' for %ss." % (name, mtype)
 
     def get_help_on(self, info, level=0):
-        return "Sorry, no help is available on '%s'." % info
+        return "Sorry, no help is available on '%s'." % info["code"]
 
     def get_completions(self, info):
             """

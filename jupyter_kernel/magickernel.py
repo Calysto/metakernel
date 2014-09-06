@@ -67,7 +67,11 @@ class MagicKernel(Kernel):
         return "This is a usage statement."
 
     def get_kernel_help_on(self, info, level=0):
+<<<<<<< HEAD
         return "Sorry, no help is available on '%s'." % info['code']
+=======
+        return "Sorry, no help is available on '%s'." % info["code"]
+>>>>>>> 9873ab825c539576e69ef477d6af5dfe38e95c4c
 
     def handle_plot_settings(self):
         """Handle the current plot settings"""
