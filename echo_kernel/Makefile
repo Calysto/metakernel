@@ -3,7 +3,7 @@
 
 test:
 	python setup.py install
-	ipython qtconsole --kernel=echo_kernel
+	ipython console --kernel=echo_kernel
 
 all:
 	python setup.py register

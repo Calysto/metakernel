@@ -2,7 +2,7 @@
 
 test:
 	python setup.py install
-	ipython qtconsole --kernel=eval_kernel
+	ipython console --kernel=eval_kernel
 
 all:
 	python setup.py register
