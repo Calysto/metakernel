@@ -19,6 +19,9 @@ if sys.version.startswith('3'):
 
 
 class MagicKernel(Kernel):
+
+    split_characters = "( )\n\;!'\""
+
     def __init__(self, *args, **kwargs):
         super(MagicKernel, self).__init__(*args, **kwargs)
         self.sticky_magics = {}
@@ -96,9 +99,22 @@ class MagicKernel(Kernel):
                    allow_stdin=False):
         if code and store_history:
             self.hist_cache.append(code.strip())
-        # Handle Magics
-        payload = self._process_help(code)
-        if not payload:
+
+        info = self.parse_code(code)
+        payload = []
+
+        if info['magic'] and info['magic']['name'] == 'help':
+
+            if info['magic']['type'] == 'line':
+                level = 0
+            else:
+                level = 1
+            text = self.get_help_on(code, level)
+            payload = [{"data": {"text/plain": text},
+                     "start_line_number": 0,
+                     "source": "page"}]
+
+        elif info['magic'] or self.sticky_magics:
             retval = None
             if self.sticky_magics:
                 magics, code = _split_magics_code(code)
@@ -121,27 +137,10 @@ class MagicKernel(Kernel):
             # Post-process magics:
             for magic in reversed(stack):
                 retval = magic.post_process(retval)
-            ## Handle in's
-            self.set_variable("_iii", self._iii);
-            self.set_variable("_ii", self._ii);
-            self.set_variable("_i", code);
-            self.set_variable("_i" + str(self.execution_count), code);
-            self._iii = self._ii;
-            self._ii = code;
-            if (retval is not None):
-                ## --------------------------------------
-                ## Handle out's (only when non-null)
-                self.set_variable("___", self.___)
-                self.set_variable("__", self.__)
-                self.set_variable("_", retval)
-                self.set_variable("_" + str(self.execution_count), retval)
-                self.___ = self.__
-                self.__ = retval
-                self.log.debug(retval)
-                content = {'execution_count': self.execution_count,
-                                    'data': self._formatter(retval),
-                                    'metadata': dict()}
-                self.send_response(self.iopub_socket, 'execute_result', content)
+            self.post_execute(retval, code)
+        else:
+            self.do_execute_direct(code)
+
         return {
             'status': 'ok',
             # The base class increments the execution count
@@ -149,6 +148,29 @@ class MagicKernel(Kernel):
             'payload': payload,
             'user_expressions': {},
         }
+
+    def post_execute(self, retval, code):
+        ## Handle in's
+        self.set_variable("_iii", self._iii);
+        self.set_variable("_ii", self._ii);
+        self.set_variable("_i", code);
+        self.set_variable("_i" + str(self.execution_count), code);
+        self._iii = self._ii;
+        self._ii = code;
+        if (retval is not None):
+            ## --------------------------------------
+            ## Handle out's (only when non-null)
+            self.set_variable("___", self.___)
+            self.set_variable("__", self.__)
+            self.set_variable("_", retval)
+            self.set_variable("_" + str(self.execution_count), retval)
+            self.___ = self.__
+            self.__ = retval
+            self.log.debug(retval)
+            content = {'execution_count': self.execution_count,
+                                'data': _formatter(retval, self.repr),
+                                'metadata': dict()}
+            self.send_response(self.iopub_socket, 'execute_result', content)
 
     def do_history(self, hist_access_type, output, raw, session=None,
                    start=None, stop=None, n=None, pattern=None, unique=False):
@@ -181,41 +203,35 @@ class MagicKernel(Kernel):
 
     def do_complete(self, code, cursor_pos):
 
-        token, start, end = self._get_object(code, 0, cursor_pos)
+        info = self.parse_code(code, 0, cursor_pos)
         content = {
             'matches' : [],
-            'cursor_start' : start,
-            'cursor_end' : end,
+            'cursor_start' : info['start'],
+            'cursor_end' : info['end'],
             'metadata' : {},
             'status' : 'ok'
         }
-        # from magics:
-        if code.startswith("%%"):
-            rest = ' '.join(code.split(' ')[1:])
-            for name in self.cell_magics.keys():
-                if name.startswith(token[2:]):
-                    content['matches'].append('%%' + name)
-                elif code.startswith('%%' + name):
-                    magic = self.cell_magics[name]
-                    content['matches'].extend(magic.get_completions(rest))
-        elif code.startswith('%'):
-            rest = ' '.join(code.split(' ')[1:])
-            for name in self.line_magics.keys():
-                if name.startswith(token[1:]):
-                    content['matches'].append("%" + name)
-                elif code.startswith('%' + name):
-                    magic = self.line_magics[name]
-                    content['matches'].extend(magic.get_completions(rest))
-        # from shell
-        elif code.startswith('!'):
-            shell_magic = self.line_magics['shell']
-            content['matches'].extend(shell_magic.get_completions(token))
-        #  from kernel:
-        else:
-            content['matches'].extend(self.get_completions(token))
 
-        content['matches'].extend(_complete_path(token))
+        if info['magic']:
+            if info['magic']['type'] == 'line':
+                magics = self.line_magics
+            else:
+                magics = self.cell_magics
+            if info['rest']:
+                magic = magics[info['magic']['name']]
+                content['matches'].extend(magic.get_completions(info))
+            else:
+                for name in magics.keys():
+                    if name.startswith(info['magic']['name']):
+                        rest = name[len(info['magic']['name']):]
+                        content['matches'].append(rest)
+        else:
+            content['matches'].extend(self.get_completions(info))
+
+        if not info['magic'] or info['rest']:
+            content['matches'].extend(_complete_path(info['obj']))
         content["matches"] = sorted(content["matches"])
+
         return content
 
     def do_inspect(self, code, cursor_pos, detail_level=0):
@@ -226,36 +242,10 @@ class MagicKernel(Kernel):
         if len(code) > 1 and code[cursor_pos - 1] == '(':
             cursor_pos -= 1
 
-        token, start, end = self._get_object(code, 0, cursor_pos)
         self.log.debug(code)
         content = {'status': 'aborted', 'data': {}, 'found': False}
 
-        docstring = ''
-
-        if code.startswith('%%'):
-            for name in self.cell_magics.keys():
-                if code.startswith('%%' + name):
-                    magic = self.cell_magics[name]
-                    if token.replace('%', '') == name:
-                        docstring = magic.get_help('cell', name, detail_level)
-                    else:
-                        docstring = magic.get_help_on(token, detail_level)
-
-        elif code.startswith('%'):
-            for name in self.line_magics.keys():
-                if code.startswith('%' + name):
-                    magic = self.line_magics[name]
-                    if token.replace('%', '') == name:
-                        docstring = magic.get_help('line', name, detail_level)
-                    else:
-                        docstring = magic.get_help_on(token, detail_level)
-
-        elif code.startswith('!'):
-            magic = self.line_magics['shell']
-            docstring = magic.get_help_on(token, detail_level)
-
-        else:
-            docstring = self.get_help_on(token)
+        docstring = self.get_help_on(code[:cursor_pos], detail_level)
 
         if docstring:
             content["data"] = {"text/plain": docstring}
@@ -293,7 +283,7 @@ class MagicKernel(Kernel):
                 imp.reload(module)
                 module.register_magics(self)
             except Exception as e:
-                print("Can't load '%s': error: %s" % (magic, e))
+                self.log.error("Can't load '%s': error: %s" % (magic, e))
 
     def register_magics(self, magic_klass):
         magic = magic_klass(self)
@@ -318,7 +308,7 @@ class MagicKernel(Kernel):
             else:
                 self.log.debug('Display Data')
                 self.send_response(self.iopub_socket, 'display_data',
-                                   {'data': self._formatter(message),
+                                   {'data': _formatter(message, self.repr),
                                     'metadata': dict()})
 
     def Print(self, *args, **kwargs):
@@ -351,117 +341,249 @@ class MagicKernel(Kernel):
     def get_magic(self, text):
         # if first line matches a magic,
         # call magic.call_magic() and return magic object
-        parts = _parse_magic(text)
-        if parts:
-            command, args, code = parts
-            if command.startswith("%%%"):
-                name = "%%" + command[3:]
-                if name in self.sticky_magics:
-                    del self.sticky_magics[name]
-                    self.Print("%s removed from session magics.\n" % name)
-                    # dummy magic to eat this line and continue:
-                    return Magic(self)
-                else:
-                    self.sticky_magics[name] = args
-                    self.Print("%s added to session magics.\n" % name)
-                    name = command[3:]
-                    mtype = "cell"
-            elif command.startswith("%%"):
-                name = command[2:]
-                mtype = "cell"
-            elif command.startswith("%"):
-                name = command[1:]
-                mtype = "line"
-            elif command.startswith("!!"):
-                name = "shell"
-                mtype = "cell"
-            elif command.startswith("!"):
-                name = "shell"
-                mtype = "line"
+        info = self.parse_code(text)
+
+        if not info['magic']:
+            return None
+
+        minfo = info['magic']
+        name = minfo['name']
+        if minfo['type'] == 'sticky':
+            sname = '%%' + name
+            if sname in self.sticky_magics:
+                del self.sticky_magics[sname]
+                self.Print("%s removed from session magics.\n" % sname)
+                # dummy magic to eat this line and continue:
+                return Magic(self)
             else:
-                return None
-            if mtype == 'cell' and name in self.cell_magics.keys():
-                magic = self.cell_magics[name]
-                return magic.call_magic(mtype, name, code, args)
-            elif mtype == 'line' and name in self.line_magics.keys():
-                magic = self.line_magics[name]
-                return magic.call_magic(mtype, name, code, args)
-            else:
-                # FIXME: Raise an error
-                return None
-        return None
+                self.sticky_magics[sname] = minfo['args']
+                self.Print("%s added to session magics.\n" % name)
+
+        if minfo['type'] in ['cell', 'sticky'] and name in self.cell_magics.keys():
+            magic = self.cell_magics[name]
+        elif minfo['type'] == 'line' and name in self.line_magics.keys():
+            magic = self.line_magics[name]
+
+        else:
+            # FIXME: Raise an error
+            return None
+        return magic.call_magic(minfo['type'], minfo['name'], 
+                minfo['code'], minfo['args'])
 
     def get_help_on(self, expr, level=0):
 
-        token, start, end = self._get_object(expr)
-        if expr.startswith('%'):
+        info = self.parse_code(expr)
 
-            if len(expr.split()) == 1:
-                name = expr.replace('%', '')
-                mtype = "cell" if expr.startswith("%%") else "line"
-                return self._get_help_on_magic(name, mtype, level)
+        if info['magic']:
+
+            if info['magic']['name'] == 'help':
+                return self.line_magics['help'].get_help_on(info, level)
+
+            minfo = info['magic']
+            errmsg = "No such %s magic '%s'" % (minfo['type'], minfo['name'])
+
+            if minfo['type'] == 'line':
+                    magic = self.line_magics.get(minfo['name'], None)
             else:
-                name = expr.split()[0].replace('%', '')
-                if expr.startswith('%%'):
-                    magic = self.cell_magics[name]
-                else:
-                    magic = self.line_magics[name]
-                return magic.get_help_on(token, level)
+                    magic = self.cell_magics.get(minfo['name'], None)
 
-        elif expr.startswith('!'):
-            magic = self.line_magics['shell']
-            return magic.get_help_on(token, level)
+            if not info['rest']:
+                if magic:
+                    return magic.get_help(minfo['type'], minfo['name'], level)
+                elif not info['magic']['name']:
+                    return self.get_usage()
+                else:
+                    return errmsg
+            else:
+                if magic:
+                    return magic.get_help_on(info, level)
+                else:
+                    return errmsg
 
         else:
             return self.get_kernel_help_on(expr, level)
 
-    def help_patterns(self):
-        # Longest first:
-        return [
-            ("^(.*)\?\?$", 1,
-             "item?? - get detailed help on item"), # "code??", level, explain
-            ("^(.*)\?$", 0,
-             "item? - get help on item"),   # "code?"
-            ("^\?\?(.*)$", 1,
-             "??item - get detailed help on item"), # "??code"
-            ("^\?(.*)$", 0,
-             "?item - get help on item"),   # "?code"
-        ]
+    def parse_code(self, code, start=0, end=-1):
+        info = _parse_code(code, start, end)
+
+        split_str = self.split_characters
+        if '|' in split_str and not r'\|' in split_str:
+            split_str = split_str.replace('|', r'\|')
+
+        tokens = re.split('|'.join(split_str), info['rest'])
+        if tokens:
+            info['obj'] = tokens[-1]
+
+        info['obj'] = info['obj'].replace('?', '').rstrip()
+        return info
+
     def _get_sticky_magics(self):
         retval = ""
         for key in self.sticky_magics:
             retval += (key + " " + " ".join(self.sticky_magics[key])).strip() + "\n"
         return retval
 
-    def _handle_help(self, item, level):
-        if item == "":            # help!
-            return [{"start_line_number": 0,
-                     "data": {"text/plain": self.get_usage()},
-                     "source": "page"}]
+def _listdir(root):
+    "List directory 'root' appending the path separator to subdirs."
+    res = []
+    root = os.path.expanduser(root)
+    try:
+        for name in os.listdir(root):
+            path = os.path.join(root, name)
+            if os.path.isdir(path):
+                name += os.sep
+            res.append(name)
+    except:
+        pass # no need to report invalid paths
+    return res
+
+
+def _complete_path(path=None):
+    """Perform completion of filesystem path.
+
+    http://stackoverflow.com/questions/5637124/tab-completion-in-pythons-raw-input
+    """
+    if not path:
+        return _listdir('.')
+    dirname, rest = os.path.split(path)
+    tmp = dirname if dirname else '.'
+    res = [os.path.join(dirname, p)
+           for p in _listdir(tmp) if p.startswith(rest)]
+    # more than one match, or single match which does not exist (typo)
+    if len(res) > 1 or not os.path.exists(path):
+        return res
+    # resolved to a single directory, so return list of files below it
+    if os.path.isdir(path):
+        return [os.path.join(path, p) for p in _listdir(path)]
+    # exact file match terminates this completion
+    return [path + ' ']
+
+
+def _parse_magic(text):
+        lines = text.split("\n")
+        command = lines[0]
+        if command.startswith("%"):
+            if " " in command:
+                command, args = command.split(" ", 1)
+            else:
+                args = ""
+        elif command.startswith('!!'):
+            args = command[2:]
+        elif command.startswith("!"):
+            args = command[1:]
         else:
-            return [{"data": {"text/plain": self.get_help_on(item, level)},
-                     "start_line_number": 0,
-                     "source": "page"}]
+            args = ""
+        code = "\n".join(lines[1:])
+        args = args.strip()
+        return command, args, code
 
-    def _process_help(self, code):
-        for (pattern, level, doc) in self.help_patterns():
-            match = re.match(pattern, code.strip())
-            if match:
-                return self._handle_help(match.groups()[0], level)
-        return []
 
-    def _get_help_on_magic(self, name, mtype, level=0):
-        if mtype == "cell" and name in self.cell_magics:
-            magic = self.cell_magics[name]
-        elif mtype == "line" and name in self.line_magics:
-            magic = self.line_magics[name]
-        else:
-            return "No such %s magic '%s'" % (mtype, name)
-        return magic.get_help(mtype, name, level)
+def _split_magics_code(code):
+        lines = code.split("\n")
+        ret_magics = []
+        ret_code = []
+        index = 0
+        while index < len(lines) and (lines[index].startswith("!") or
+                                      lines[index].startswith("%")):
+            ret_magics.append(lines[index])
+            index += 1
+        while index < len(lines):
+            ret_code.append(lines[index])
+            index += 1
+        ret_magics_str = "\n".join(ret_magics)
+        if ret_magics_str:
+            ret_magics_str += "\n"
+        ret_code_str = "\n".join(ret_code)
+        if ret_code_str:
+            ret_code_str += "\n"
+        return (ret_magics_str, ret_code_str)
 
-    def _formatter(self, data):
+
+def _parse_code(code, start=0, end=-1):
+        if end == -1:
+            end = len(code)
+        end = min(end, len(code))
+
+        info = dict(type=None, magic={}, end=end, obj='',
+                    start=start, rest='', leading_chars='')
+
+        tokens = code[start: end].split()
+        if not tokens:
+            return info
+
+        first = tokens[0]
+
+        offset = 0
+
+        if first.startswith("%%%"):
+            info['magic']['type'] = 'sticky'
+            info['magic']['prefix'] = '%%%'
+            info['magic']['name'] = first[3:]
+            offset = len(first)
+
+        elif first.startswith("%%"):
+            info['magic']['type'] = 'cell'
+            info['magic']['prefix'] = '%%'
+            info['magic']['name'] = first[2:]
+            offset = len(first)
+
+        elif first.startswith('%'):
+            info['magic']['type'] = 'line'
+            info['magic']['prefix'] = '%'
+            info['magic']['name'] = first[1:]
+            offset = 1 + len(first)
+
+        elif first.startswith('!!'):
+            info['magic']['type'] = 'cell'
+            info['magic']['prefix'] = '!!'
+            info['magic']['name'] = 'shell'
+            offset = 2
+
+        elif first.startswith('!'):
+            info['magic']['type'] = 'line'
+            info['magic']['prefix'] = '!'
+            info['magic']['name'] = 'shell'
+            offset = 1
+
+        if code.startswith('??') or code.rstrip().endswith('??'):
+            info['magic']['type'] = 'cell'
+            info['magic']['name'] = 'help'
+            if first.startswith('??'):
+                info['magic']['prefix'] = '??'
+            else:
+                info['magic']['prefix'] = ''
+            offset = len(first)
+
+        elif code.startswith('?') or code.rstrip().endswith('?'):
+            info['magic']['type'] = 'line'
+            info['magic']['name'] = 'help'
+            if first.startswith('?'):
+                info['magic']['prefix'] = '?'
+            else:
+                info['magic']['prefix'] = ''
+            offset = len(first)
+
+        if code.rstrip().endswith('?'):
+            code = code.replace('?', '')
+
+        if start == 0:
+            start = offset
+            info['start'] = start
+
+        if info['magic']:
+            cmd, args, magic_code = _parse_magic(code)
+            info['magic']['cmd'] = cmd
+            info['magic']['args'] = args
+            info['magic']['code'] = magic_code
+
+        info['rest'] = code[start:end]
+        info['code'] = code
+
+        return info
+
+def _formatter(data, repr_func):
         retval = {}
-        retval["text/plain"] = self.repr(data)
+        retval["text/plain"] = repr_func(data)
         if hasattr(data, "_repr_png_"):
             obj = data._repr_png_()
             if obj:
@@ -499,93 +621,3 @@ class MagicKernel(Kernel):
             if obj:
                 retval["application/pdf"] = obj
         return retval
-
-    def _get_object(self, code, start=0, end=-1):
-        """
-        Parse the code line to get the element that we want to get help on.
-        """
-        if end == -1:
-            end = len(code)
-
-        token = ""
-        end = min(end, len(code))
-        current = end - 1
-        while current >= 0:
-            # go backwards until we find end of token:
-            if code[current] in ["(", " ", ")", "\n", "\t", '"', ";", "!"]:
-                return (token, current + 1, end)
-            token = code[current] + token
-            current -= 1
-        return (token, start, end)
-
-def _listdir(root):
-    "List directory 'root' appending the path separator to subdirs."
-    res = []
-    root = os.path.expanduser(root)
-    try:
-        for name in os.listdir(root):
-            path = os.path.join(root, name)
-            if os.path.isdir(path):
-                name += os.sep
-            res.append(name)
-    except:
-        pass # no need to report invalid paths
-    return res
-
-
-def _complete_path(path=None):
-    """Perform completion of filesystem path.
-
-    http://stackoverflow.com/questions/5637124/tab-completion-in-pythons-raw-input
-    """
-    if not path:
-        return _listdir('.')
-    dirname, rest = os.path.split(path)
-    tmp = dirname if dirname else '.'
-    res = [os.path.join(dirname, p)
-           for p in _listdir(tmp) if p.startswith(rest)]
-    # more than one match, or single match which does not exist (typo)
-    if len(res) > 1 or not os.path.exists(path):
-        return res
-    # resolved to a single directory, so return list of files below it
-    if os.path.isdir(path):
-        return [os.path.join(path, p) for p in _listdir(path)]
-    # exact file match terminates this completion
-    return [path + ' ']
-
-def _parse_magic(text):
-        lines = text.split("\n")
-        command = lines[0]
-        if command.startswith("%"):
-            if " " in command:
-                command, args = command.split(" ", 1)
-            else:
-                args = ""
-        elif command.startswith("!"):
-            args = command[1:]
-        else:
-            args = ""
-        code = "\n".join(lines[1:])
-        args = args.strip()
-        return command, args, code
-
-
-def _split_magics_code(code):
-        lines = code.split("\n")
-        ret_magics = []
-        ret_code = []
-        index = 0
-        while index < len(lines) and (lines[index].startswith("!") or
-                                      lines[index].startswith("%")):
-            ret_magics.append(lines[index])
-            index += 1
-        while index < len(lines):
-            ret_code.append(lines[index])
-            index += 1
-        ret_magics_str = "\n".join(ret_magics)
-        if ret_magics_str:
-            ret_magics_str += "\n"
-        ret_code_str = "\n".join(ret_code)
-        if ret_code_str:
-            ret_code_str += "\n"
-        return (ret_magics_str, ret_code_str)

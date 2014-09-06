@@ -12,6 +12,7 @@ class Magic(object):
     def call_magic(self, mtype, name, code, args):
         self.code = code
         old_args = args
+        mtype = mtype.replace('sticky', 'cell')
         func = getattr(self, mtype + '_' + name)
         args, kwargs = _parse_args(func, args)
 
@@ -49,12 +50,12 @@ class Magic(object):
         else:
             return "No such magic '%s' for %ss." % (name, mtype)
 
-    def get_help_on(self, expr, level=0):
-        return "Sorry, no help is available on '%s'." % expr
+    def get_help_on(self, info, level=0):
+        return "Sorry, no help is available on '%s'." % info
 
-    def get_completions(self, token):
+    def get_completions(self, info):
             """
-            Get completions based on token from magic.
+            Get completions based on info dict from magic.
             """
             return []
 
