@@ -113,8 +113,8 @@ class MagicKernel(Kernel):
             text = self.get_help_on(code, level)
             self.log.debug(text)
             payload = [{"data": {"text/plain": text},
-                     "start_line_number": 0,
-                     "source": "page"}]
+                        "start_line_number": 0,
+                        "source": "page"}]
 
         elif info['magic'] or self.sticky_magics:
             retval = None
@@ -126,10 +126,11 @@ class MagicKernel(Kernel):
             magic = None
             while code.startswith("%") or code.startswith("!"):
                 magic = self.get_magic(code)
-                if magic != None:
+                if magic is not None:
                     stack.append(magic)
                     code = magic.get_code()
-                    if not magic.evaluate: # signal to exit, maybe error or no block
+                    # signal to exit, maybe error or no block
+                    if not magic.evaluate:
                         break
                 else:
                     break
@@ -153,16 +154,16 @@ class MagicKernel(Kernel):
         }
 
     def post_execute(self, retval, code):
-        ## Handle in's
-        self.set_variable("_iii", self._iii);
-        self.set_variable("_ii", self._ii);
-        self.set_variable("_i", code);
-        self.set_variable("_i" + str(self.execution_count), code);
-        self._iii = self._ii;
-        self._ii = code;
+        # Handle in's
+        self.set_variable("_iii", self._iii)
+        self.set_variable("_ii", self._ii)
+        self.set_variable("_i", code)
+        self.set_variable("_i" + str(self.execution_count), code)
+        self._iii = self._ii
+        self._ii = code
         if (retval is not None):
-            ## --------------------------------------
-            ## Handle out's (only when non-null)
+            # --------------------------------------
+            # Handle out's (only when non-null)
             self.set_variable("___", self.___)
             self.set_variable("__", self.__)
             self.set_variable("_", retval)
@@ -171,8 +172,8 @@ class MagicKernel(Kernel):
             self.__ = retval
             self.log.debug(retval)
             content = {'execution_count': self.execution_count,
-                                'data': _formatter(retval, self.repr),
-                                'metadata': dict()}
+                       'data': _formatter(retval, self.repr),
+                       'metadata': dict()}
             self.send_response(self.iopub_socket, 'execute_result', content)
 
     def do_history(self, hist_access_type, output, raw, session=None,
@@ -208,11 +209,11 @@ class MagicKernel(Kernel):
 
         info = self.parse_code(code, 0, cursor_pos)
         content = {
-            'matches' : [],
-            'cursor_start' : info['start'],
-            'cursor_end' : info['end'],
-            'metadata' : {},
-            'status' : 'ok'
+            'matches': [],
+            'cursor_start': info['start'],
+            'cursor_end': info['end'],
+            'metadata': {},
+            'status': 'ok'
         }
 
         if info['magic']:
@@ -265,13 +266,15 @@ class MagicKernel(Kernel):
         self.line_magics = {}
         self.cell_magics = {}
 
-        # get base magic files and those relative to the current class directory
+        # get base magic files and those relative to the current class
+        # directory
         magic_files = []
         # Make a jupyter_kernel/magics if it doesn't exist:
         local_magics_dir = get_local_magics_dir()
         # Search all of the places there could be magics:
         paths = [os.path.join(os.path.dirname(os.path.abspath(__file__)), "magics"),
-                 os.path.join(os.path.dirname(os.path.abspath(inspect.getfile(self.__class__))), "magics"),
+                 os.path.join(
+                     os.path.dirname(os.path.abspath(inspect.getfile(self.__class__))), "magics"),
                  local_magics_dir]
         for magic_dir in paths:
             sys.path.append(magic_dir)
@@ -298,7 +301,7 @@ class MagicKernel(Kernel):
             self.cell_magics[name] = magic
 
     def display_widget(self, widget):
-        content = {"data"   : {"method": "display"},
+        content = {"data": {"method": "display"},
                    "comm_id": widget.model_id}
         self.send_response(self.iopub_socket, "comm_open",
                            {"data": content})
@@ -317,12 +320,14 @@ class MagicKernel(Kernel):
     def Print(self, *args, **kwargs):
         end = kwargs["end"] if ("end" in kwargs) else "\n"
         message = " ".join(args) + end
-        stream_content = {'name': 'stdout', 'data': message, 'metadata': dict()}
+        stream_content = {
+            'name': 'stdout', 'data': message, 'metadata': dict()}
         self.log.debug('Print: %s' % message)
         self.send_response(self.iopub_socket, 'stream', stream_content)
 
     def Write(self, message):
-        stream_content = {'name': 'stdout', 'data': message, 'metadata': dict()}
+        stream_content = {
+            'name': 'stdout', 'data': message, 'metadata': dict()}
         self.log.debug('Write: %s' % message)
         self.send_response(self.iopub_socket, 'stream', stream_content)
 
@@ -330,7 +335,8 @@ class MagicKernel(Kernel):
         end = kwargs["end"] if ("end" in kwargs) else "\n"
         message = " ".join([str(a) for a in args]) + end
         self.log.debug('Error: %s' % message)
-        stream_content = {'name': 'stderr', 'data': message, 'metadata': dict()}
+        stream_content = {
+            'name': 'stderr', 'data': message, 'metadata': dict()}
         self.send_response(self.iopub_socket, 'stream', stream_content)
 
     def update_plot_settings(self, backend, size, format):
@@ -370,8 +376,10 @@ class MagicKernel(Kernel):
     def _get_sticky_magics(self):
         retval = ""
         for key in self.sticky_magics:
-            retval += (key + " " + " ".join(self.sticky_magics[key])).strip() + "\n"
+            retval += (key + " " +
+                       " ".join(self.sticky_magics[key])).strip() + "\n"
         return retval
+
 
 def _listdir(root):
     "List directory 'root' appending the path separator to subdirs."
@@ -384,7 +392,7 @@ def _listdir(root):
                 name += os.sep
             res.append(name)
     except:
-        pass # no need to report invalid paths
+        pass  # no need to report invalid paths
     return res
 
 
@@ -410,150 +418,150 @@ def _complete_path(path=None):
 
 
 def _parse_magic(text):
-        lines = text.split("\n")
-        command = lines[0]
-        if command.startswith("%"):
-            if " " in command:
-                command, args = command.split(" ", 1)
-            else:
-                args = ""
-        elif command.startswith('!!'):
-            args = command[2:]
-        elif command.startswith("!"):
-            args = command[1:]
+    lines = text.split("\n")
+    command = lines[0]
+    if command.startswith("%"):
+        if " " in command:
+            command, args = command.split(" ", 1)
         else:
             args = ""
-        code = "\n".join(lines[1:])
-        args = args.strip()
-        return command, args, code
+    elif command.startswith('!!'):
+        args = command[2:]
+    elif command.startswith("!"):
+        args = command[1:]
+    else:
+        args = ""
+    code = "\n".join(lines[1:])
+    args = args.strip()
+    return command, args, code
 
 
 def _split_magics_code(code):
-        lines = code.split("\n")
-        ret_magics = []
-        ret_code = []
-        index = 0
-        while index < len(lines) and (lines[index].startswith("!") or
-                                      lines[index].startswith("%")):
-            ret_magics.append(lines[index])
-            index += 1
-        while index < len(lines):
-            ret_code.append(lines[index])
-            index += 1
-        ret_magics_str = "\n".join(ret_magics)
-        if ret_magics_str:
-            ret_magics_str += "\n"
-        ret_code_str = "\n".join(ret_code)
-        if ret_code_str:
-            ret_code_str += "\n"
-        return (ret_magics_str, ret_code_str)
+    lines = code.split("\n")
+    ret_magics = []
+    ret_code = []
+    index = 0
+    while index < len(lines) and (lines[index].startswith("!") or
+                                  lines[index].startswith("%")):
+        ret_magics.append(lines[index])
+        index += 1
+    while index < len(lines):
+        ret_code.append(lines[index])
+        index += 1
+    ret_magics_str = "\n".join(ret_magics)
+    if ret_magics_str:
+        ret_magics_str += "\n"
+    ret_code_str = "\n".join(ret_code)
+    if ret_code_str:
+        ret_code_str += "\n"
+    return (ret_magics_str, ret_code_str)
 
 
 def _parse_code(code, start=0, end=-1):
-        if end == -1:
-            end = len(code)
-        end = min(end, len(code))
+    if end == -1:
+        end = len(code)
+    end = min(end, len(code))
 
-        info = dict(type=None, magic={}, end=end, obj='',
-                    start=start, rest='', leading_chars='', code='')
+    info = dict(type=None, magic={}, end=end, obj='',
+                start=start, rest='', leading_chars='', code='')
 
-        tokens = code[start: end].split()
-        if not tokens:
-            return info
-
-        first = tokens[0]
-
-        offset = 0
-
-        if first.startswith("%%%"):
-            info['magic']['type'] = 'sticky'
-            info['magic']['name'] = first[3:]
-            offset = len(first)
-
-        elif first.startswith("%%"):
-            info['magic']['type'] = 'cell'
-            info['magic']['name'] = first[2:]
-            offset = len(first)
-
-        elif first.startswith('%'):
-            info['magic']['type'] = 'line'
-            info['magic']['name'] = first[1:]
-            offset = 1 + len(first)
-
-        elif first.startswith('!!'):
-            info['magic']['type'] = 'cell'
-            info['magic']['name'] = 'shell'
-            offset = 2
-
-        elif first.startswith('!'):
-            info['magic']['type'] = 'line'
-            info['magic']['prefix'] = '!'
-            info['magic']['name'] = 'shell'
-            offset = 1
-
-        if code.startswith('??') or code.rstrip().endswith('??'):
-            info['magic']['type'] = 'cell'
-            info['magic']['name'] = 'help'
-            offset = len(first)
-
-        elif code.startswith('?') or code.rstrip().endswith('?'):
-            info['magic']['type'] = 'line'
-            info['magic']['name'] = 'help'
-            offset = len(first)
-
-        if start == 0:
-            start = offset
-            info['start'] = start
-
-        if info['magic']:
-            cmd, args, magic_code = _parse_magic(code)
-            info['magic']['cmd'] = cmd
-            info['magic']['args'] = args
-            info['magic']['code'] = magic_code
-
-        info['rest'] = code[start:end]
-        info['code'] = code
-
+    tokens = code[start: end].split()
+    if not tokens:
         return info
+
+    first = tokens[0]
+
+    offset = 0
+
+    if first.startswith("%%%"):
+        info['magic']['type'] = 'sticky'
+        info['magic']['name'] = first[3:]
+        offset = len(first)
+
+    elif first.startswith("%%"):
+        info['magic']['type'] = 'cell'
+        info['magic']['name'] = first[2:]
+        offset = len(first)
+
+    elif first.startswith('%'):
+        info['magic']['type'] = 'line'
+        info['magic']['name'] = first[1:]
+        offset = 1 + len(first)
+
+    elif first.startswith('!!'):
+        info['magic']['type'] = 'cell'
+        info['magic']['name'] = 'shell'
+        offset = 2
+
+    elif first.startswith('!'):
+        info['magic']['type'] = 'line'
+        info['magic']['prefix'] = '!'
+        info['magic']['name'] = 'shell'
+        offset = 1
+
+    if code.startswith('??') or code.rstrip().endswith('??'):
+        info['magic']['type'] = 'cell'
+        info['magic']['name'] = 'help'
+        offset = len(first)
+
+    elif code.startswith('?') or code.rstrip().endswith('?'):
+        info['magic']['type'] = 'line'
+        info['magic']['name'] = 'help'
+        offset = len(first)
+
+    if start == 0:
+        start = offset
+        info['start'] = start
+
+    if info['magic']:
+        cmd, args, magic_code = _parse_magic(code)
+        info['magic']['cmd'] = cmd
+        info['magic']['args'] = args
+        info['magic']['code'] = magic_code
+
+    info['rest'] = code[start:end]
+    info['code'] = code
+
+    return info
 
 
 def _formatter(data, repr_func):
-        retval = {}
-        retval["text/plain"] = repr_func(data)
-        if hasattr(data, "_repr_png_"):
-            obj = data._repr_png_()
-            if obj:
-                retval["image/png"] = base64.encodestring(obj)
-        if hasattr(data, "_repr_jpeg_"):
-            obj = data._repr_jpeg_()
-            if obj:
-                retval["image/jpeg"] = base64.encodestring(obj)
-        if hasattr(data, "_repr_html_"):
-            obj = data._repr_html_()
-            if obj:
-                retval["text/html"] = obj
-        if hasattr(data, "_repr_markdown_"):
-            obj = data._repr_markdown_()
-            if obj:
-                retval["text/markdown"] = obj
-        if hasattr(data, "_repr_svg_"):
-            obj = data._repr_svg_()
-            if obj:
-                retval["image/svg+xml"] = obj
-        if hasattr(data, "_repr_latex_"):
-            obj = data._repr_latex_()
-            if obj:
-                retval["text/latex"] = obj
-        if hasattr(data, "_repr_json_"):
-            obj = data._repr_json_()
-            if obj:
-                retval["application/json"] = obj
-        if hasattr(data, "_repr_javascript_"):
-            obj = data._repr_javascript_()
-            if obj:
-                retval["application/javascript"] = obj
-        if hasattr(data, "_repr_pdf_"):
-            obj = data._repr_pdf_()
-            if obj:
-                retval["application/pdf"] = obj
-        return retval
+    retval = {}
+    retval["text/plain"] = repr_func(data)
+    if hasattr(data, "_repr_png_"):
+        obj = data._repr_png_()
+        if obj:
+            retval["image/png"] = base64.encodestring(obj)
+    if hasattr(data, "_repr_jpeg_"):
+        obj = data._repr_jpeg_()
+        if obj:
+            retval["image/jpeg"] = base64.encodestring(obj)
+    if hasattr(data, "_repr_html_"):
+        obj = data._repr_html_()
+        if obj:
+            retval["text/html"] = obj
+    if hasattr(data, "_repr_markdown_"):
+        obj = data._repr_markdown_()
+        if obj:
+            retval["text/markdown"] = obj
+    if hasattr(data, "_repr_svg_"):
+        obj = data._repr_svg_()
+        if obj:
+            retval["image/svg+xml"] = obj
+    if hasattr(data, "_repr_latex_"):
+        obj = data._repr_latex_()
+        if obj:
+            retval["text/latex"] = obj
+    if hasattr(data, "_repr_json_"):
+        obj = data._repr_json_()
+        if obj:
+            retval["application/json"] = obj
+    if hasattr(data, "_repr_javascript_"):
+        obj = data._repr_javascript_()
+        if obj:
+            retval["application/javascript"] = obj
+    if hasattr(data, "_repr_pdf_"):
+        obj = data._repr_pdf_()
+        if obj:
+            retval["application/pdf"] = obj
+    return retval
