@@ -97,6 +97,18 @@ class MagicKernel(Kernel):
 
     def do_execute(self, code, silent, store_history=True, user_expressions=None,
                    allow_stdin=False):
+        kernel_resp = {
+            'status': 'ok',
+            # The base class increments the execution count
+            'execution_count': self.execution_count,
+            'payload': [],
+            'user_expressions': {},
+        }
+
+        # TODO: remove this when IPython fixes this
+        if '_usage.page_guiref' in code:
+            return kernel_resp
+
         if code and store_history:
             self.hist_cache.append(code.strip())
 
@@ -145,13 +157,8 @@ class MagicKernel(Kernel):
 
         self.post_execute(retval, code)
 
-        return {
-            'status': 'ok',
-            # The base class increments the execution count
-            'execution_count': self.execution_count,
-            'payload': payload,
-            'user_expressions': {},
-        }
+        kernel_resp['payload'] = payload
+        return kernel_resp
 
     def post_execute(self, retval, code):
         # Handle in's
