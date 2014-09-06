@@ -14,12 +14,14 @@ class BashKernel(MagicKernel):
         return "This is the bash kernel."
 
     def do_execute_direct(self, code):
-        if not code:
+        if not code.strip():
             return
+        self.log.debug('execute: %s' % code)
         shell_magic = self.line_magics['shell']
         resp, error = shell_magic.eval(code.strip())
         if error:
             self.Error(error)
+        self.log.debug('execute done')
         return resp.strip()
 
     def get_completions(self, info):
@@ -27,6 +29,9 @@ class BashKernel(MagicKernel):
         return shell_magic.get_completions(info)
 
     def get_kernel_help_on(self, info, level=0):
+        code = info['code'].strip()
+        if not code or len(code.split()) > 1:
+            return ''
         shell_magic = self.line_magics['shell']
         return shell_magic.get_help_on(info, level)
 

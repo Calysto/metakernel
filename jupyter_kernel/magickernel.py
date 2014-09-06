@@ -13,6 +13,7 @@ from .config import get_history_file, get_local_magics_dir
 import imp
 import re
 import inspect
+import logging
 
 if sys.version.startswith('3'):
     unicode = str
@@ -106,11 +107,15 @@ class MagicKernel(Kernel):
         }
 
         # TODO: remove this when IPython fixes this
+        # This happens at startup when the language is set to python
         if '_usage.page_guiref' in code:
             return kernel_resp
 
         if code and store_history:
             self.hist_cache.append(code.strip())
+
+        if not code.strip():
+            return kernel_resp
 
         info = self.parse_code(code)
         payload = []
