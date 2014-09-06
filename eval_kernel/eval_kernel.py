@@ -30,13 +30,13 @@ class EvalKernel(MagicKernel):
         python_magic = self.line_magics['python']
         return python_magic.eval(code.strip())
 
-    def get_completions(self, token):
+    def get_completions(self, info):
         python_magic = self.line_magics['python']
-        return python_magic.get_completions(token)
+        return python_magic.get_completions(info)
 
-    def get_kernel_help_on(self, expr, level=0):
+    def get_kernel_help_on(self, info, level=0):
         python_magic = self.line_magics['python']
-        return python_magic.get_help_on(expr, level)
+        return python_magic.get_help_on(info, level)
 
 if __name__ == '__main__':
     from IPython.kernel.zmq.kernelapp import IPKernelApp

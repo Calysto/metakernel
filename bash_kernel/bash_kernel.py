@@ -24,9 +24,9 @@ class BashKernel(MagicKernel):
         shell_magic = self.line_magics['shell']
         return shell_magic.get_completions(token)
 
-    def get_kernel_help_on(self, expr, level=0):
+    def get_kernel_help_on(self, info, level=0):
         shell_magic = self.line_magics['shell']
-        return shell_magic.get_help_on(expr, level)
+        return shell_magic.get_help_on(info, level)
 
     def repr(self, data):
         return data

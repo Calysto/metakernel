@@ -66,8 +66,8 @@ class MagicKernel(Kernel):
     def get_usage(self):
         return "This is a usage statement."
 
-    def get_kernel_help_on(self, expr, level=0):
-        return "Sorry, no help is available on '%s'." % expr
+    def get_kernel_help_on(self, info, level=0):
+        return "Sorry, no help is available on '%s'." % info
 
     def handle_plot_settings(self):
         """Handle the current plot settings"""
@@ -102,6 +102,7 @@ class MagicKernel(Kernel):
 
         info = self.parse_code(code)
         payload = []
+        retval = None
 
         if info['magic'] and info['magic']['name'] == 'help':
 
@@ -137,9 +138,10 @@ class MagicKernel(Kernel):
             # Post-process magics:
             for magic in reversed(stack):
                 retval = magic.post_process(retval)
-            self.post_execute(retval, code)
         else:
-            self.do_execute_direct(code)
+            retval = self.do_execute_direct(code)
+
+        self.post_execute(retval, code)
 
         return {
             'status': 'ok',
@@ -401,7 +403,7 @@ class MagicKernel(Kernel):
                     return errmsg
 
         else:
-            return self.get_kernel_help_on(expr, level)
+            return self.get_kernel_help_on(info, level)
 
     def parse_code(self, code, start=0, end=-1):
         info = _parse_code(code, start, end)
