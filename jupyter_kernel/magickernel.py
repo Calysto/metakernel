@@ -67,11 +67,7 @@ class MagicKernel(Kernel):
         return "This is a usage statement."
 
     def get_kernel_help_on(self, info, level=0):
-<<<<<<< HEAD
         return "Sorry, no help is available on '%s'." % info['code']
-=======
-        return "Sorry, no help is available on '%s'." % info["code"]
->>>>>>> 9873ab825c539576e69ef477d6af5dfe38e95c4c
 
     def handle_plot_settings(self):
         """Handle the current plot settings"""
@@ -349,33 +345,8 @@ class MagicKernel(Kernel):
         # if first line matches a magic,
         # call magic.call_magic() and return magic object
         info = self.parse_code(text)
-
-        if not info['magic']:
-            return None
-
-        minfo = info['magic']
-        name = minfo['name']
-        if minfo['type'] == 'sticky':
-            sname = '%%' + name
-            if sname in self.sticky_magics:
-                del self.sticky_magics[sname]
-                self.Print("%s removed from session magics.\n" % sname)
-                # dummy magic to eat this line and continue:
-                return Magic(self)
-            else:
-                self.sticky_magics[sname] = minfo['args']
-                self.Print("%s added to session magics.\n" % name)
-
-        if minfo['type'] in ['cell', 'sticky'] and name in self.cell_magics.keys():
-            magic = self.cell_magics[name]
-        elif minfo['type'] == 'line' and name in self.line_magics.keys():
-            magic = self.line_magics[name]
-
-        else:
-            # FIXME: Raise an error
-            return None
-        return magic.call_magic(minfo['type'], minfo['name'], 
-                minfo['code'], minfo['args'])
+        magic = self.line_magics['magic']
+        return magic.get_magic(info)
 
     def get_help_on(self, expr, level=0):
         info = self.parse_code(expr)
