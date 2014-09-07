@@ -51,7 +51,7 @@ def test_inspect():
     assert "list the current line and cell magics" in log_text
 
     kernel.do_inspect('%lsmagic ', len('%lsmagic') + 1)
-    assert True, "This was hanging..."
+
 
 def test_path_complete():
     kernel = get_kernel()

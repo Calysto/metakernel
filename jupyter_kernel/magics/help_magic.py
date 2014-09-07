@@ -39,9 +39,12 @@ class HelpMagic(Magic):
     def get_help_on(self, info, level):
 
         if info['magic'] and info['magic']['name'] == 'help':
-            code = info['rest']
+            code = info['rest'].rstrip()
 
             magic_prefix = self.kernel.magic_prefixes['magic']
+            if code.endswith(magic_prefix + 'help'):
+                return self.get_help('line', 'help', level)
+
             if magic_prefix + 'help' in code:
                 while code.startswith(self.kernel.magic_prefixes['magic']):
                     code = code[1:]

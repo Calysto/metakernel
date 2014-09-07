@@ -506,7 +506,7 @@ def _parse_code(code, prefixes, suffixes, start=0, end=-1):
     pre_magics = {}
     for (name, prefix) in prefixes.items():
         pre = ''
-        while snip[len(pre)] == prefix:
+        while len(pre) < len(snip) and snip[len(pre)] == prefix:
             pre += prefix
         if pre:
             pre_magics[name] = pre
@@ -514,7 +514,7 @@ def _parse_code(code, prefixes, suffixes, start=0, end=-1):
     post_magics = {}
     for (name, suffix) in suffixes.items():
         post = ''
-        while snip[-len(post) - 1] == suffix:
+        while len(post) < len(snip) and snip[-len(post) - 1] == suffix:
             post += suffix
         if post:
             post_magics[name] = post
