@@ -30,7 +30,7 @@ class MagicMagic(Magic):
             "Any cell magic can be made persistent for rest of session by using %%% prefix.")
         self.kernel.Print("")
         self.kernel.Print("Help on items:")
-        for string in self.kernel.line_magics['help'].help_strings:
+        for string in self.kernel.line_magics['help'].help_strings():
             self.kernel.Print("    " + string)
         self.kernel.Print("")
 

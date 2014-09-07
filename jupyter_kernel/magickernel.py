@@ -8,20 +8,17 @@ import os
 import sys
 import glob
 import base64
-from zmq.eventloop import ioloop
 from .config import get_history_file, get_local_magics_dir
 import imp
 import re
 import inspect
-import time
-
-if sys.version.startswith('3'):
-    unicode = str
 
 
 class MagicKernel(Kernel):
 
-    split_characters = "( )\n\;!'\""
+    split_characters = "( )\n\;'\""
+    magic_prefixes = dict(magic='%', shell='!', help='?')
+    magic_suffixes = dict(help='?')
 
     def __init__(self, *args, **kwargs):
         super(MagicKernel, self).__init__(*args, **kwargs)
@@ -246,7 +243,7 @@ class MagicKernel(Kernel):
             else:
                 for name in magics.keys():
                     if name.startswith(info['magic']['name']):
-                        full_name = info['magic']['prefix'] + name
+                        full_name = info['magic']['symbol'] + name
                         content['matches'].append(full_name)
         else:
             content['matches'].extend(self.get_completions(info))
@@ -379,7 +376,8 @@ class MagicKernel(Kernel):
         return help_magic.get_help_on(info, level)
 
     def parse_code(self, code, start=0, end=-1):
-        info = _parse_code(code, start, end)
+        info = _parse_code(code, self.magic_prefixes, self.magic_suffixes, 
+                start, end)
 
         split_str = self.split_characters
         if '|' in split_str and not r'\|' in split_str:
@@ -387,9 +385,8 @@ class MagicKernel(Kernel):
 
         tokens = re.split('|'.join(split_str), info['rest'])
         if tokens:
-            info['obj'] = tokens[-1]
+            info['obj'] = tokens[-1].rstrip()
 
-        info['obj'] = info['obj'].replace('?', '').rstrip()
         return info
 
     def _get_sticky_magics(self):
@@ -476,49 +473,71 @@ def _split_magics_code(code):
     return (ret_magics_str, ret_code_str)
 
 
-def _parse_code(code, start=0, end=-1):
+def _parse_code(code, prefixes, suffixes, start=0, end=-1):
     if end == -1:
         end = len(code)
     end = min(end, len(code))
 
-    info = dict(type=None, magic={}, end=end, obj='',
-                start=start, rest=code[start:end], leading_chars='', code=code)
+    start = min(start, len(code))
+    snip = code[start: end].rstrip()
 
-    tokens = code[start: end].split()
+    info = dict(type=None, magic={}, end=end, obj='',
+                start=start, rest=snip, code=code)
+
+    tokens = snip.split()
     if not tokens:
         return info
 
     # find magic characters - help overrides any others
-    magic_chars = 0
-    for search in ['\A!+', '\A%+', '\A\?+', '\?+\Z']:
-        match = re.search(search, code)
-        if match:
-            group = match.group()
-            if len(group) == 3:
-                info['magic']['type'] = 'sticky'
-            elif len(group) == 2:
-                info['magic']['type'] = 'cell'
-            else:
-                info['magic']['type'] = 'line'
-            info['magic']['prefix'] = group
-            magic_chars = len(group)
+    pre_magics = {}
+    for (name, prefix) in prefixes.items():
+        pre = ''
+        while snip[len(pre)] == prefix:
+            pre += prefix
+        if pre:
+            pre_magics[name] = pre
 
-    if not magic_chars:
-        return info
+    post_magics = {}
+    for (name, suffix) in suffixes.items():
+        post = ''
+        while snip[-len(post) - 1] == suffix:
+            post += suffix
+        if post:
+            post_magics[name] = post
 
-    if '%' in info['magic']['prefix']:
+    if 'help' in pre_magics:
+        info['magic']['name'] = 'help'
+        info['magic']['symbol'] = pre_magics['help']
+        info['rest'] = info['rest'][len(pre_magics['help']):]
+
+    elif 'help' in post_magics:
+        info['magic']['name'] = 'help'
+        info['magic']['symbol'] = post_magics['help']
+        info['rest'] = info['rest'][:-len(post_magics['help'])]
+
+    elif 'shell' in pre_magics:
+        info['magic']['name'] = 'shell'
+        info['magic']['symbol'] = pre_magics['shell']
+        info['rest'] = info['rest'][len(pre_magics['shell']):]
+
+    elif 'magic' in pre_magics:
         first = tokens[0]
-        info['magic']['name'] = first.replace('%', '')
+        info['magic']['name'] = first[len(pre_magics['magic']):]
+        info['magic']['symbol'] = pre_magics['magic']
         info['rest'] = info['rest'][len(first):]
 
-    elif '!' in info['magic']['prefix']:
-        info['magic']['name'] = 'shell'
-        info['rest'] = info['rest'][magic_chars:]
+    if info['magic']:
+        if len(info['magic']['symbol']) == 3:
+            info['magic']['type'] = 'sticky'
+        elif len(info['magic']['symbol']) == 2:
+            info['magic']['type'] = 'cell'
+        else:
+            info['magic']['type'] = 'line'
 
     else:
-        info['magic']['name'] = 'help'
+        return info
 
-    cmd, args, magic_code = _parse_magic(code)
+    cmd, args, magic_code = _parse_magic(snip)
     info['magic']['cmd'] = cmd
     info['magic']['args'] = args
     info['magic']['code'] = magic_code

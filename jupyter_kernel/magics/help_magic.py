@@ -8,12 +8,23 @@ import re
 
 class HelpMagic(Magic):
 
-    help_strings = [
-        "item?? - get detailed help on item",   # "code??", level, explain
-        "item? - get help on item",   # "code?"
-        "??item - get detailed help on item",  # "??code"
-        "?item - get help on item",   # "?code"
-    ]
+    def help_strings():
+        suffixes = [
+            "item{0}{0} - get detailed help on item",
+            "item{0} - get help on item",
+        ]
+        prefixes = [
+            "{0}{0}item - get detailed help on item",
+            "{0}item - get help on item",
+        ]
+        strings = []
+        if 'help' in self.kernel.suffixes:
+            strings += [s.format(self.kernel.suffixes['help'])
+                        for s in suffixes]
+        if 'help' in self.kernel.prefixes:
+            strings += [p.format(self.kernel.prefixes['help'])
+                        for p in prefixes]
+        return strings
 
     def line_help(self, text):
         """%help TEXT - get help on the given text"""
@@ -28,14 +39,19 @@ class HelpMagic(Magic):
     def get_help_on(self, info, level):
 
         if info['magic'] and info['magic']['name'] == 'help':
-            code = info['code']
-            if '?' in info['code']:
-                code = code.replace('?', '')
-            elif re.match('%+help', code):
-                code = re.sub('%+help', '', code).lstrip()
-            info = self.kernel.parse_code(code)
+            code = info['rest']
+
+            while code.startswith(self.kernel.magic_prefixes['magic']):
+                code = code[1:]
+            if code.startswith('help'):
+                code = code[len('help'):]
+
+            info = self.kernel.parse_code(code.lstrip())
 
         if info['magic']:
+
+            if info['magic']['name'] == 'help':
+                return ''
 
             minfo = info['magic']
             errmsg = "No such %s magic '%s'" % (minfo['type'], minfo['name'])
