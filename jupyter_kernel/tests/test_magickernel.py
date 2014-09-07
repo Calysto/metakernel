@@ -113,19 +113,35 @@ def test_other_kernels():
     assert "Sorry, no help is available on 'dir?'." == message, message
 
     content = kernel.do_inspect('dir', len('dir'))
+    assert (content['status'] == 'aborted' and 
+            content['found'] == False), "do_inspect should abort, and be not found"
+
+    content = kernel.do_inspect('len(dir', len('len(dir'))
+    assert (content['status'] == 'aborted' and 
+            content['found'] == False), "do_inspect should abort, and be not found"
+
+    content = kernel.do_inspect('(dir', len('(dir'))
+    assert (content['status'] == 'aborted' and 
+            content['found'] == False), "do_inspect should abort, and be not found"
+
+    # Now change it so that there is help available:
+    kernel.get_kernel_help_on = lambda info, level=0, none_on_fail=False: \
+                                   "Help is available on '%s'." % info['code']
+    content = kernel.do_inspect('dir', len('dir'))
     message = content["data"]["text/plain"]
-    match = re.match("Sorry, no help is available on '(.*)'", message)
+    match = re.match("Help is available on '(.*)'", message)
     assert match.groups()[0] == "dir", message + " for 'dir'"
 
     content = kernel.do_inspect('len(dir', len('len(dir'))
     message = content["data"]["text/plain"]
-    match = re.match("Sorry, no help is available on '(.*)'", message)
-    assert match.groups()[0] == "dir", message + " for 'len(dir'"
+    match = re.match("Help is available on '(.*)'", message)
+    assert match.groups()[0] == "dir", message + " for 'dir'"
 
     content = kernel.do_inspect('(dir', len('(dir'))
     message = content["data"]["text/plain"]
-    match = re.match("Sorry, no help is available on '(.*)'", message)
-    assert match.groups()[0] == "dir", message + " for '(dir'"
+    match = re.match("Help is available on '(.*)'", message)
+    assert match.groups()[0] == "dir", message + " for 'dir'"
+
 
 def teardown():
     if os.path.exists("TEST.txt"):

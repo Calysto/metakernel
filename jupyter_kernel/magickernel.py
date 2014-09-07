@@ -64,8 +64,11 @@ class MagicKernel(Kernel):
     def get_usage(self):
         return "This is a usage statement."
 
-    def get_kernel_help_on(self, info, level=0):
-        return "Sorry, no help is available on '%s'." % info['code']
+    def get_kernel_help_on(self, info, level=0, none_on_fail=False):
+        if none_on_fail:
+            return None
+        else:
+            return "Sorry, no help is available on '%s'." % info['code']
 
     def handle_plot_settings(self):
         """Handle the current plot settings"""
@@ -258,6 +261,7 @@ class MagicKernel(Kernel):
 
     def do_inspect(self, code, cursor_pos, detail_level=0):
         # Object introspection
+        self.log.info("do_inspect, detail_level=%d" % detail_level)
         if cursor_pos > len(code):
             return
 
@@ -277,7 +281,7 @@ class MagicKernel(Kernel):
 
         partial = code[start:cursor_pos]
         content = {'status': 'aborted', 'data': {}, 'found': False}
-        docstring = self.get_help_on(partial, detail_level)
+        docstring = self.get_help_on(partial, detail_level, none_on_fail=True)
 
         if docstring:
             content["data"] = {"text/plain": docstring}
@@ -382,10 +386,10 @@ class MagicKernel(Kernel):
         magic = self.line_magics['magic']
         return magic.get_magic(info)
 
-    def get_help_on(self, expr, level=0):
+    def get_help_on(self, expr, level=0, none_on_fail=False):
         info = self.parse_code(expr)
         help_magic = self.line_magics['help']
-        return help_magic.get_help_on(info, level)
+        return help_magic.get_help_on(info, level, none_on_fail)
 
     def parse_code(self, code, start=0, end=-1):
         info = _parse_code(code, self.magic_prefixes, self.magic_suffixes,

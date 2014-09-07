@@ -36,7 +36,7 @@ class HelpMagic(Magic):
         text = text.replace('%%help', '').lstrip()
         return self.get_help_on(text, 1)
 
-    def get_help_on(self, info, level):
+    def get_help_on(self, info, level, none_on_fail=False):
 
         if info['magic'] and info['magic']['name'] == 'help':
             code = info['rest'].rstrip()
@@ -79,7 +79,7 @@ class HelpMagic(Magic):
                 else:
                     return errmsg
         else:
-            return self.kernel.get_kernel_help_on(info, level)
+            return self.kernel.get_kernel_help_on(info, level, none_on_fail)
 
 
 def register_magics(kernel):
