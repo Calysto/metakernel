@@ -13,6 +13,10 @@ class FileMagic(Magic):
     )
     def cell_file(self, filename, append=False):
         """%%file [--append|-a] FILENAME - write contents of cell to file"""
+        if '~' in filename:
+            filename = os.path.expanduser(filename)
+        filename = os.path.abspath(filename)
+
         if not append:
             message = "Created file '%s'." % filename
             if os.path.isfile(self.code):
