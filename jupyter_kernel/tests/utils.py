@@ -8,8 +8,7 @@ try:
 except ImportError:
     from io import StringIO
 
-
-def get_kernel():
+def get_kernel(kernel_class=MagicKernel):
     log = logging.getLogger('test')
     log.setLevel(logging.DEBUG)
 
@@ -23,8 +22,8 @@ def get_kernel():
     context = zmq.Context.instance()
     iopub_socket = context.socket(zmq.PUB)
 
-    kernel = MagicKernel(session=ss.Session(), iopub_socket=iopub_socket,
-                         log=log)
+    kernel = kernel_class(session=ss.Session(), iopub_socket=iopub_socket,
+                          log=log)
     return kernel
 
 

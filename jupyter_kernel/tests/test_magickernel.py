@@ -49,6 +49,8 @@ def test_inspect():
     log_text = get_log_text(kernel)
     assert "list the current line and cell magics" in log_text
 
+    kernel.do_inspect('%lsmagic ', len('%lsmagic') + 1)
+    assert True, "This was hanging..."
 
 def test_path_complete():
     kernel = get_kernel()
@@ -93,6 +95,36 @@ def test_sticky_magics():
     assert text.count('Display Data') == 2
     assert 'html removed from session magics' in text
 
+
+def test_other_kernels():
+    from jupyter_kernel import MagicKernel
+    class SchemeKernel(MagicKernel):
+        magic_suffixes = {}
+        def do_execute_direct(self, code):
+            return "OK"
+
+    kernel = get_kernel(SchemeKernel)
+    resp = kernel.do_execute('dir?', None)
+    assert len(resp['payload']) == 0, "should handle this, rather than using help"
+    resp = kernel.do_execute('?dir?', None)
+    assert len(resp['payload']) == 1, "should use help"
+    message = resp['payload'][0]['data']['text/plain']
+    assert "Sorry, no help is available on 'dir?'." == message, message
+
+    comp = kernel.parse_code('dir', 0, len('dir'))
+    assert (comp["start"] == 0 and 
+            comp["end"] ==  3 and 
+            comp["obj"] == "dir"), comp
+
+    comp = kernel.parse_code('len(dir', 0, len('len(dir'))
+    assert (comp["start"] == 4 and 
+            comp["end"] ==  7 and 
+            comp["obj"] == "dir"), comp
+
+    comp = kernel.parse_code('(dir', 0, len('(dir'))
+    assert (comp["start"] == 1 and 
+            comp["end"] ==  4 and 
+            comp["obj"] == "dir"), comp
 
 def teardown():
     if os.path.exists("TEST.txt"):
