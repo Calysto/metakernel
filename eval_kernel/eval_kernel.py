@@ -34,9 +34,9 @@ class EvalKernel(MagicKernel):
         python_magic = self.line_magics['python']
         return python_magic.get_completions(info)
 
-    def get_kernel_help_on(self, info, level=0):
+    def get_kernel_help_on(self, info, level=0, none_on_fail=False):
         python_magic = self.line_magics['python']
-        return python_magic.get_help_on(info, level)
+        return python_magic.get_help_on(info, level, none_on_fail)
 
 if __name__ == '__main__':
     from IPython.kernel.zmq.kernelapp import IPKernelApp

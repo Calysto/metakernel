@@ -28,12 +28,15 @@ class BashKernel(MagicKernel):
         shell_magic = self.line_magics['shell']
         return shell_magic.get_completions(info)
 
-    def get_kernel_help_on(self, info, level=0):
+    def get_kernel_help_on(self, info, level=0, none_on_fail=False):
         code = info['code'].strip()
         if not code or len(code.split()) > 1:
-            return ''
+            if none_on_fail:
+                return None
+            else:
+                return ""
         shell_magic = self.line_magics['shell']
-        return shell_magic.get_help_on(info, level)
+        return shell_magic.get_help_on(info, level, none_on_fail)
 
     def repr(self, data):
         return data
