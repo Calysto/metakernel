@@ -261,13 +261,23 @@ class MagicKernel(Kernel):
         if cursor_pos > len(code):
             return
 
-        if len(code) > 1 and code[cursor_pos - 1] == '(':
+        if cursor_pos == len(code):
+            cursor_position = len(code) - 1
+
+        # skip over non-interesting characters:
+        while (cursor_pos - 1 > 0 and 
+               code[cursor_pos - 1] in self.split_characters):
             cursor_pos -= 1
 
-        self.log.debug(code)
-        content = {'status': 'aborted', 'data': {}, 'found': False}
+        # include only interesting characters:
+        start = cursor_pos
+        while (start - 1 >= 0 and 
+               code[start - 1] not in self.split_characters):
+            start -= 1
 
-        docstring = self.get_help_on(code[:cursor_pos], detail_level)
+        partial = code[start:cursor_pos]
+        content = {'status': 'aborted', 'data': {}, 'found': False}
+        docstring = self.get_help_on(partial, detail_level)
 
         if docstring:
             content["data"] = {"text/plain": docstring}

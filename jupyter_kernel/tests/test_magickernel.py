@@ -1,4 +1,5 @@
 import os
+import re
 from jupyter_kernel.tests.utils import get_kernel, get_log_text
 
 
@@ -111,20 +112,20 @@ def test_other_kernels():
     message = resp['payload'][0]['data']['text/plain']
     assert "Sorry, no help is available on 'dir?'." == message, message
 
-    comp = kernel.parse_code('dir', 0, len('dir'))
-    assert (comp["start"] == 0 and 
-            comp["end"] ==  3 and 
-            comp["obj"] == "dir"), comp
+    content = kernel.do_inspect('dir', len('dir'))
+    message = content["data"]["text/plain"]
+    match = re.match("Sorry, no help is available on '(.*)'", message)
+    assert match.groups()[0] == "dir", message + " for 'dir'"
 
-    comp = kernel.parse_code('len(dir', 0, len('len(dir'))
-    assert (comp["start"] == 4 and 
-            comp["end"] ==  7 and 
-            comp["obj"] == "dir"), comp
+    content = kernel.do_inspect('len(dir', len('len(dir'))
+    message = content["data"]["text/plain"]
+    match = re.match("Sorry, no help is available on '(.*)'", message)
+    assert match.groups()[0] == "dir", message + " for 'len(dir'"
 
-    comp = kernel.parse_code('(dir', 0, len('(dir'))
-    assert (comp["start"] == 1 and 
-            comp["end"] ==  4 and 
-            comp["obj"] == "dir"), comp
+    content = kernel.do_inspect('(dir', len('(dir'))
+    message = content["data"]["text/plain"]
+    match = re.match("Sorry, no help is available on '(.*)'", message)
+    assert match.groups()[0] == "dir", message + " for '(dir'"
 
 def teardown():
     if os.path.exists("TEST.txt"):
