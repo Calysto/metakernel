@@ -41,10 +41,12 @@ class HelpMagic(Magic):
         if info['magic'] and info['magic']['name'] == 'help':
             code = info['rest']
 
-            while code.startswith(self.kernel.magic_prefixes['magic']):
-                code = code[1:]
-            if code.startswith('help'):
-                code = code[len('help'):]
+            magic_prefix = self.kernel.magic_prefixes['magic']
+            if magic_prefix + 'help' in code:
+                while code.startswith(self.kernel.magic_prefixes['magic']):
+                    code = code[1:]
+                if code.startswith('help'):
+                    code = code[len('help'):]
 
             info = self.kernel.parse_code(code.lstrip())
 
