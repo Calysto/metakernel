@@ -5,7 +5,7 @@
 from jupyter_kernel import Magic
 import subprocess
 import os
-import signal
+import atexit
 import threading
 import time
 try:
@@ -86,6 +86,8 @@ class ShellMagic(Magic):
 
         self.proc = subprocess.Popen(self.cmd, **kwargs)
 
+        atexit.register(self.proc.terminate)
+
         self._error_thread = threading.Thread(target=self._read_errors)
         self._error_queue = Queue.Queue()
         self._error_thread.setDaemon(True)
@@ -115,6 +117,9 @@ class ShellMagic(Magic):
             return resp
         else:
             return "Sorry, no help is available on '%s'." % expr
+
+    def __del__(self):
+        self.proc.terminate()
 
 
 def register_magics(kernel):
