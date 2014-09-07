@@ -8,12 +8,12 @@ import os
 import sys
 import glob
 import base64
-from .magic import Magic
+from zmq.eventloop import ioloop
 from .config import get_history_file, get_local_magics_dir
 import imp
 import re
 import inspect
-import logging
+import time
 
 if sys.version.startswith('3'):
     unicode = str
@@ -91,6 +91,10 @@ class MagicKernel(Kernel):
         """
         Execute code in the kernel language.
         """
+        pass
+
+    def restart_kernel(self):
+        """Restart the kernel"""
         pass
 
     ############################################
@@ -215,6 +219,9 @@ class MagicKernel(Kernel):
             with open(self.hist_file, 'wb') as fid:
                 data = '\n'.join(self.hist_cache[-self.max_hist_cache:])
                 fid.write(data.encode('utf-8'))
+        if restart:
+            self.reload_magics()
+            self.restart_kernel()
         return {'status': 'ok', 'restart': restart}
 
     def do_complete(self, code, cursor_pos):
