@@ -30,9 +30,3 @@ def get_kernel():
 
 def get_log_text(kernel):
     return kernel.log.handlers[0].stream.getvalue()
-
-
-
-k = get_kernel()
-import ipdb; ipdb.set_trace()
-pass
