@@ -18,6 +18,7 @@ class ShellMagic(Magic):
 
     def __init__(self, kernel):
         super(ShellMagic, self).__init__(kernel)
+        self.proc = None
         self.start_process()
 
     def line_shell(self, *args):
@@ -65,6 +66,9 @@ class ShellMagic(Magic):
         time.sleep(0.01)
 
     def start_process(self):
+        if not self.proc is None:
+            self.proc.terminate()
+
         try:
             subprocess.check_output('bash --version', shell=True)
         except OSError as e:
