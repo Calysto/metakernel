@@ -53,7 +53,7 @@ class HelpMagic(Magic):
         if info['magic']:
 
             if info['magic']['name'] == 'help':
-                return ''
+                return self.get_help('line', 'help')
 
             minfo = info['magic']
             errmsg = "No such %s magic '%s'" % (minfo['type'], minfo['name'])
