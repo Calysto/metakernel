@@ -17,17 +17,23 @@ class MagicMagic(Magic):
         for (name, magic) in self.kernel.cell_magics.items():
             cell_magics.append(magic.get_help('cell', name))
 
+        prefixes = self.kernel.magic_prefixes
+        line_magics = ("\n    ".join(sorted(line_magics)))
+        line_magics = line_magics.replace('%', prefixes['magic'])
+        cell_magics = ("\n    ".join(sorted(cell_magics)))
+        cell_magics = cell_magics.replace('%', prefixes['magic'])
+
         self.kernel.Print("Line magics:")
-        self.kernel.Print("    " + ("\n    ".join(sorted(line_magics))))
+        self.kernel.Print("    " + line_magics)
         self.kernel.Print("")
         self.kernel.Print("Cell magics:")
-        self.kernel.Print("    " + ("\n    ".join(sorted(cell_magics))))
+        self.kernel.Print("    " + cell_magics)
         self.kernel.Print("")
         self.kernel.Print("Shell shortcut:")
-        self.kernel.Print("    ! COMMAND ... - execute command in shell")
+        self.kernel.Print("    %s COMMAND ... - execute command in shell" % prefixes['shell'])
         self.kernel.Print("")
         self.kernel.Print(
-            "Any cell magic can be made persistent for rest of session by using %%% prefix.")
+            "Any cell magic can be made persistent for rest of session by using {0}{0}{0} prefix.".format(prefixes['magic']))
         self.kernel.Print("")
         self.kernel.Print("Help on items:")
         for string in self.kernel.line_magics['help'].help_strings():

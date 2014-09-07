@@ -137,12 +137,14 @@ class MagicKernel(Kernel):
         elif info['magic'] or self.sticky_magics:
             retval = None
             if self.sticky_magics:
-                magics, code = _split_magics_code(code)
+                magics, code = _split_magics_code(code, self.magic_prefixes)
                 code = magics + self._get_sticky_magics() + code
             stack = []
             # Handle magics:
             magic = None
-            while code.startswith("%") or code.startswith("!"):
+            prefixes = ((self.magic_prefixes['shell'],
+                         self.magic_prefixes['magic']))
+            while code.startswith(prefixes):
                 magic = self.get_magic(code)
                 if magic is not None:
                     stack.append(magic)
@@ -376,8 +378,8 @@ class MagicKernel(Kernel):
         return help_magic.get_help_on(info, level)
 
     def parse_code(self, code, start=0, end=-1):
-        info = _parse_code(code, self.magic_prefixes, self.magic_suffixes, 
-                start, end)
+        info = _parse_code(code, self.magic_prefixes, self.magic_suffixes,
+                           start, end)
 
         split_str = self.split_characters
         if '|' in split_str and not r'\|' in split_str:
@@ -433,17 +435,18 @@ def _complete_path(path=None):
     return [path + ' ']
 
 
-def _parse_magic(text):
+def _parse_magic(text, prefixes):
     lines = text.split("\n")
     command = lines[0]
-    if command.startswith("%"):
+    shell_prefix = prefixes['shell']
+    if command.startswith(prefixes['magic']):
         if " " in command:
             command, args = command.split(" ", 1)
         else:
             args = ""
-    elif command.startswith('!!'):
+    elif command.startswith('{0}{0}'.format(shell_prefix)):
         args = command[2:]
-    elif command.startswith("!"):
+    elif command.startswith(shell_prefix):
         args = command[1:]
     else:
         args = ""
@@ -452,13 +455,14 @@ def _parse_magic(text):
     return command, args, code
 
 
-def _split_magics_code(code):
+def _split_magics_code(code, prefixes):
     lines = code.split("\n")
     ret_magics = []
     ret_code = []
     index = 0
-    while index < len(lines) and (lines[index].startswith("!") or
-                                  lines[index].startswith("%")):
+    shell = prefixes['shell']
+    magic = prefixes['magic']
+    while index < len(lines) and lines[index].startswith((shell, magic)):
         ret_magics.append(lines[index])
         index += 1
     while index < len(lines):
@@ -534,13 +538,10 @@ def _parse_code(code, prefixes, suffixes, start=0, end=-1):
         else:
             info['magic']['type'] = 'line'
 
-    else:
-        return info
-
-    cmd, args, magic_code = _parse_magic(snip)
-    info['magic']['cmd'] = cmd
-    info['magic']['args'] = args
-    info['magic']['code'] = magic_code
+        cmd, args, magic_code = _parse_magic(snip, prefixes)
+        info['magic']['cmd'] = cmd
+        info['magic']['args'] = args
+        info['magic']['code'] = magic_code
 
     return info
 
