@@ -43,12 +43,8 @@ class ShellMagic(Magic):
             while not '__eval_complete__' in buf:
                 buf += os.read(self.rfid, 1024).decode('utf-8', 'replace')
         except KeyboardInterrupt:
-            if os.name == 'nt':
-                self.start_process()
-                return '', 'Interrupted, restarting shell'
-            else:
-                self.proc.send_signal(signal.SIGINT)
-                return '', 'Interrupted'
+            self.start_process()
+            return '', 'Interrupted, restarting shell'
         buf = buf[:buf.index('__eval_complete__')]
 
         if buf.endswith('"'):
