@@ -233,14 +233,14 @@ class MagicKernel(Kernel):
                 magics = self.line_magics
             else:
                 magics = self.cell_magics
-            if info['rest']:
+            if info['rest'] and info['magic']['name'] in magics:
                 magic = magics[info['magic']['name']]
                 content['matches'].extend(magic.get_completions(info))
             else:
                 for name in magics.keys():
                     if name.startswith(info['magic']['name']):
-                        rest = name[len(info['magic']['name']):]
-                        content['matches'].append(rest)
+                        full_name = info['magic']['prefix'] + name
+                        content['matches'].append(full_name)
         else:
             content['matches'].extend(self.get_completions(info))
 
@@ -475,64 +475,46 @@ def _parse_code(code, start=0, end=-1):
     end = min(end, len(code))
 
     info = dict(type=None, magic={}, end=end, obj='',
-                start=start, rest='', leading_chars='', code='')
+                start=start, rest=code[start:end], leading_chars='', code=code)
 
     tokens = code[start: end].split()
     if not tokens:
         return info
 
-    first = tokens[0]
+    # find magic characters - help overrides any others
+    magic_chars = 0
+    for search in ['\A!+', '\A%+', '\A\?+', '\?+\Z']:
+        match = re.search(search, code)
+        if match:
+            group = match.group()
+            if len(group) == 3:
+                info['magic']['type'] = 'sticky'
+            elif len(group) == 2:
+                info['magic']['type'] = 'cell'
+            else:
+                info['magic']['type'] = 'line'
+            info['magic']['prefix'] = group
+            magic_chars = len(group)
 
-    offset = 0
+    if not magic_chars:
+        return info
 
-    if first.startswith("%%%"):
-        info['magic']['type'] = 'sticky'
-        info['magic']['name'] = first[3:]
-        offset = len(first)
+    if '%' in info['magic']['prefix']:
+        first = tokens[0]
+        info['magic']['name'] = first.replace('%', '')
+        info['rest'] = info['rest'][len(first):]
 
-    elif first.startswith("%%"):
-        info['magic']['type'] = 'cell'
-        info['magic']['name'] = first[2:]
-        offset = len(first)
-
-    elif first.startswith('%'):
-        info['magic']['type'] = 'line'
-        info['magic']['name'] = first[1:]
-        offset = 1 + len(first)
-
-    elif first.startswith('!!'):
-        info['magic']['type'] = 'cell'
+    elif '!' in info['magic']['prefix']:
         info['magic']['name'] = 'shell'
-        offset = 2
+        info['rest'] = info['rest'][magic_chars:]
 
-    elif first.startswith('!'):
-        info['magic']['type'] = 'line'
-        info['magic']['prefix'] = '!'
-        info['magic']['name'] = 'shell'
-        offset = 1
-
-    if code.startswith('??') or code.rstrip().endswith('??'):
-        info['magic']['type'] = 'cell'
+    else:
         info['magic']['name'] = 'help'
-        offset = len(first)
 
-    elif code.startswith('?') or code.rstrip().endswith('?'):
-        info['magic']['type'] = 'line'
-        info['magic']['name'] = 'help'
-        offset = len(first)
-
-    if start == 0:
-        start = offset
-        info['start'] = start
-
-    if info['magic']:
-        cmd, args, magic_code = _parse_magic(code)
-        info['magic']['cmd'] = cmd
-        info['magic']['args'] = args
-        info['magic']['code'] = magic_code
-
-    info['rest'] = code[start:end]
-    info['code'] = code
+    cmd, args, magic_code = _parse_magic(code)
+    info['magic']['cmd'] = cmd
+    info['magic']['args'] = args
+    info['magic']['code'] = magic_code
 
     return info
 
