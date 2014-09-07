@@ -24,6 +24,7 @@ class PythonMagic(Magic):
         self.retval = self.eval(code)
 
     def eval(self, code):
+        self.env["kernel"] = self.kernel
         try:
             return eval(code.strip(), self.env)
         except:
@@ -54,7 +55,7 @@ class PythonMagic(Magic):
                 self.evaluate = False
 
     def post_process(self, retval):
-        if retval:
+        if retval is not None:
             return retval
         else:
             return self.retval
