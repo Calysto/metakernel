@@ -13,7 +13,7 @@ class FileMagic(Magic):
     )
     def cell_file(self, filename, append=False):
         """%%file [--append|-a] FILENAME - write contents of cell to file"""
-        if '~' in filename:
+        if filename.startswith("~"):
             filename = os.path.expanduser(filename)
         filename = os.path.abspath(filename)
 
