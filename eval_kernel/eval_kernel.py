@@ -30,7 +30,7 @@ class EvalKernel(MagicKernel):
 
     def do_execute_direct(self, code):
         python_magic = self.line_magics['python']
-        return python_magic.eval(code.strip(), self.env)
+        return python_magic.eval(code.strip())
 
     def get_completions(self, info):
         python_magic = self.line_magics['python']
