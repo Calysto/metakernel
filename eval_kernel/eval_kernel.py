@@ -9,26 +9,28 @@ class EvalKernel(MagicKernel):
     language = 'python'
     language_version = '0.1'
     banner = "Eval kernel - evaluates simple Python statements and expressions"
-    env = {}
 
     def get_usage(self):
-        return "This is a usage statement."
+        return ("This is the Eval kernel. It implements a simple Python " +
+                "interpreter.")
 
     def set_variable(self, name, value):
         """
         Set a variable in the kernel language.
         """
-        self.env[name] = value
+        python_magic = self.line_magics['python']
+        python_magic.env[name] = value
 
     def get_variable(self, name):
         """
         Get a variable from the kernel language.
         """
-        return self.env.get(name, None)
+        python_magic = self.line_magics['python']
+        return python_magic.env.get(name, None)
 
     def do_execute_direct(self, code):
         python_magic = self.line_magics['python']
-        return python_magic.eval(code.strip())
+        return python_magic.eval(code.strip(), self.env)
 
     def get_completions(self, info):
         python_magic = self.line_magics['python']
