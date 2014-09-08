@@ -232,8 +232,8 @@ class MagicKernel(Kernel):
         info = self.parse_code(partial, 0, cursor_pos)
         content = {
             'matches': [],
-            'cursor_start': info['start'],
-            'cursor_end': info['end'],
+            'cursor_start': start,
+            'cursor_end': start + info['end'],
             'metadata': {},
             'status': 'ok'
         }
