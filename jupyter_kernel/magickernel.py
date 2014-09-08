@@ -227,12 +227,9 @@ class MagicKernel(Kernel):
         return {'status': 'ok', 'restart': restart}
 
     def do_complete(self, code, cursor_pos):
-        self.log.info("do_complete: code=%s" % code)
         code, start, cursor_pos = _parse_partial(code, cursor_pos, 
                                                  self.split_characters)
-        self.log.info("do_complete: code=%s" % code)
-        info = self.parse_code(code, start, cursor_pos)
-        self.log.info("do_complete: info=%s" % str(info))
+        info = self.parse_code(code, 0, cursor_pos)
         content = {
             'matches': [],
             'cursor_start': info['start'],
@@ -265,7 +262,6 @@ class MagicKernel(Kernel):
 
     def do_inspect(self, code, cursor_pos, detail_level=0):
         # Object introspection
-        self.log.info("do_inspect, detail_level=%d" % detail_level)
         if cursor_pos > len(code):
             return
         partial, start, end = _parse_partial(code, cursor_pos, self.split_characters)
