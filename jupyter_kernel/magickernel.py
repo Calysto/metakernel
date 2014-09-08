@@ -227,9 +227,9 @@ class MagicKernel(Kernel):
         return {'status': 'ok', 'restart': restart}
 
     def do_complete(self, code, cursor_pos):
-        code, start, cursor_pos = _parse_partial(code, cursor_pos, 
+        partial, start, cursor_pos = _parse_partial(code, cursor_pos, 
                                                  self.split_characters)
-        info = self.parse_code(code, 0, cursor_pos)
+        info = self.parse_code(partial, 0, cursor_pos)
         content = {
             'matches': [],
             'cursor_start': info['start'],
