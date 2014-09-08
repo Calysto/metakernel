@@ -65,6 +65,10 @@ def test_path_complete():
     else:
         assert path in comp['matches']
 
+def test_ls_path_complete():
+    kernel = get_kernel()
+    comp = kernel.do_complete('! ls ~/.ipytho', len('! ls ~/.ipytho'))
+    assert comp['matches'] == ['~' + os.sep + '.ipython' + os.sep], str(comp['matches'])
 
 def test_history():
     kernel = get_kernel()

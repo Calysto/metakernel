@@ -227,8 +227,12 @@ class MagicKernel(Kernel):
         return {'status': 'ok', 'restart': restart}
 
     def do_complete(self, code, cursor_pos):
-
-        info = self.parse_code(code, 0, cursor_pos)
+        self.log.info("do_complete: code=%s" % code)
+        code, start, cursor_pos = _parse_partial(code, cursor_pos, 
+                                                 self.split_characters)
+        self.log.info("do_complete: code=%s" % code)
+        info = self.parse_code(code, start, cursor_pos)
+        self.log.info("do_complete: info=%s" % str(info))
         content = {
             'matches': [],
             'cursor_start': info['start'],
@@ -264,22 +268,7 @@ class MagicKernel(Kernel):
         self.log.info("do_inspect, detail_level=%d" % detail_level)
         if cursor_pos > len(code):
             return
-
-        if cursor_pos == len(code):
-            cursor_position = len(code) - 1
-
-        # skip over non-interesting characters:
-        while (cursor_pos - 1 > 0 and 
-               code[cursor_pos - 1] in self.split_characters):
-            cursor_pos -= 1
-
-        # include only interesting characters:
-        start = cursor_pos
-        while (start - 1 >= 0 and 
-               code[start - 1] not in self.split_characters):
-            start -= 1
-
-        partial = code[start:cursor_pos]
+        partial, start, end = _parse_partial(code, cursor_pos, self.split_characters)
         content = {'status': 'aborted', 'data': {}, 'found': False}
         docstring = self.get_help_on(partial, detail_level, none_on_fail=True)
 
@@ -491,6 +480,21 @@ def _split_magics_code(code, prefixes):
     return (ret_magics_str, ret_code_str)
 
 
+def _parse_partial(code, cursor_pos, split_characters):
+    if cursor_pos == len(code):
+        cursor_position = len(code) - 1
+    # skip over non-interesting characters:
+    while (cursor_pos - 1 > 0 and 
+           code[cursor_pos - 1] in split_characters):
+        cursor_pos -= 1
+    # include only interesting characters:
+    start = cursor_pos
+    while (start - 1 >= 0 and 
+           code[start - 1] not in split_characters):
+        start -= 1
+    return code[start:cursor_pos], start, cursor_pos
+
+        
 def _parse_code(code, prefixes, suffixes, start=0, end=-1):
     if end == -1:
         end = len(code)
