@@ -93,6 +93,12 @@ class MagicKernel(Kernel):
         """
         pass
 
+    def do_execute_file(self, filename):
+        """
+        Execute a file in the kernel language.
+        """
+        self.Error("This language does not support \"%run filename\".")
+
     def restart_kernel(self):
         """Restart the kernel"""
         pass
@@ -122,7 +128,7 @@ class MagicKernel(Kernel):
             return kernel_resp
 
         info = self.parse_code(code)
-        payload = []
+        self.payload = []
         retval = None
 
         if info['magic'] and info['magic']['name'] == 'help':
@@ -133,9 +139,9 @@ class MagicKernel(Kernel):
                 level = 1
             text = self.get_help_on(code, level)
             self.log.debug(text)
-            payload = [{"data": {"text/plain": text},
-                        "start_line_number": 0,
-                        "source": "page"}]
+            self.payload = [{"data": {"text/plain": text},
+                             "start_line_number": 0,
+                             "source": "page"}]
 
         elif info['magic'] or self.sticky_magics:
             retval = None
@@ -168,7 +174,7 @@ class MagicKernel(Kernel):
 
         self.post_execute(retval, code)
 
-        kernel_resp['payload'] = payload
+        kernel_resp['payload'] = self.payload
         return kernel_resp
 
     def post_execute(self, retval, code):

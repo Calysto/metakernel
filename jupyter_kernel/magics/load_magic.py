@@ -3,6 +3,7 @@
 # http://calicoproject.org/
 
 from jupyter_kernel import Magic, option
+import os
 
 class LoadMagic(Magic):
 
@@ -12,8 +13,8 @@ class LoadMagic(Magic):
             filename = os.path.expanduser(filename)
         filename = os.path.abspath(filename)
         text = open(filename).read()
-        self.kernel.payload["source"] = "set_next_input"
-        self.kernel.payload["text"] = text
+        self.kernel.payload.append({"source": "set_next_input",
+                                    "text": text})
 
 def register_magics(kernel):
     kernel.register_magics(LoadMagic)

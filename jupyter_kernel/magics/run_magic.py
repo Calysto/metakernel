@@ -3,6 +3,7 @@
 # http://calicoproject.org/
 
 from jupyter_kernel import Magic, option
+import os
 
 class RunMagic(Magic):
 
