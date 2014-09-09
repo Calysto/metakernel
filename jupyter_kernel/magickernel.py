@@ -386,7 +386,7 @@ class MagicKernel(Kernel):
 
         tokens = re.split('|'.join(split_str), info['rest'])
         if tokens:
-            info['obj'] = tokens[-1].rstrip()
+            info['obj'] = tokens[-1].strip()
 
         return info
 
