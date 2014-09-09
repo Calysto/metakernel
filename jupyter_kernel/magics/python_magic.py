@@ -16,7 +16,11 @@ else:
 
 
 class PythonMagic(Magic):
-    env = {}
+
+    def __init__(self, kernel):
+        super(PythonMagic, self).__init__(kernel)
+        self.env = globals()['__builtins__']
+        self.retval = None
 
     def line_python(self, *args):
         """%python CODE - evaluate code as Python"""
@@ -100,7 +104,10 @@ class PythonMagic(Magic):
             if not obj:
                 return default
 
-        return getattr(obj, '__doc__', default)
+        if level == 0:
+            return getattr(obj, '__doc__', str(help(obj)))
+        else:
+            return str(help(obj))
 
 
 def register_magics(kernel):
