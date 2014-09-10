@@ -22,9 +22,9 @@ class KernelMagic(Magic):
         """
         module = __import__(module_name)
         class_ = getattr(module, class_name)
-        class_.log = logging.Logger(".kernel")
-        class_.iopub_socket = self.kernel.iopub_socket
-        class_._parent_header = self.kernel._parent_header
+        # FIXME: monkeypatch to replace methods of class
+        #        with methods of instance
+        class_.subkernel(self.kernel)
         self.kernels[kernel_name] = class_()
         self.retval = self.kernels[kernel_name]
 

@@ -12,6 +12,7 @@ from .config import get_history_file, get_local_magics_dir
 import imp
 import re
 import inspect
+import logging
 
 
 class MagicKernel(Kernel):
@@ -22,6 +23,12 @@ class MagicKernel(Kernel):
 
     def __init__(self, *args, **kwargs):
         super(MagicKernel, self).__init__(*args, **kwargs)
+        if self.log is None:
+            # This occurs if we call as a stand-alone kernel
+            # (eg, not as a process)
+            # FIXME: take care of input/output, eg StringIO
+            #        make work without a session
+            self.log = logging.Logger(".magickernel")
         self.sticky_magics = {}
         self._i = None
         self._ii = None
@@ -42,6 +49,15 @@ class MagicKernel(Kernel):
         import jupyter_kernel
         jupyter_kernel.JUPYTER_INSTANCE = self
         self.set_variable("get_jupyter", jupyter_kernel.get_jupyter)
+
+    @classmethod
+    def subkernel(cls, kernel):
+        """
+        FIXME: monkeypatch to Make this kernel class be a subkernel to another.
+        """
+        cls.log = kernel.log
+        cls.iopub_socket = kernel.iopub_socket
+        cls._parent_header = kernel._parent_header
 
     #####################################
     # Methods which provide kernel - specific behavior

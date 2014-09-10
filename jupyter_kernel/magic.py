@@ -25,16 +25,17 @@ class Magic(object):
             args = []
 
         try:
-            func(*args, **kwargs)
-        except TypeError:
             try:
+                func(*args, **kwargs)
+            except TypeError:
                 func(old_args)
-            except Exception:
-                msg = "Error in calling magic '%s' on %s" % (name, mtype)
-                self.kernel.Error(msg)
-                self.kernel.Error(self.get_help(mtype, name))
-                # return dummy magic to end processing:
-                return Magic(self.kernel)
+        except Exception as exc:
+            msg = "Error in calling magic '%s' on %s:\n    %s\n    args: %s\n    kwargs: %s" % (
+                name, mtype, str(exc), args, kwargs)
+            self.kernel.Error(msg)
+            self.kernel.Error(self.get_help(mtype, name))
+            # return dummy magic to end processing:
+            return Magic(self.kernel)
         return self
 
     def get_help(self, mtype, name, level=0):
