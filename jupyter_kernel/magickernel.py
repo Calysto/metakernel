@@ -29,6 +29,12 @@ class MagicKernel(Kernel):
             # FIXME: take care of input/output, eg StringIO
             #        make work without a session
             self.log = logging.Logger(".magickernel")
+        else:
+            # Write has already been set
+            try:
+                sys.stdout.write = self.Write
+            except:
+                pass  # Can't change stdout
         self.sticky_magics = {}
         self._i = None
         self._ii = None
@@ -41,10 +47,6 @@ class MagicKernel(Kernel):
         self.plot_settings = dict(backend='inline', format=None, size=None)
         self.hist_file = get_history_file(self)
         self.reload_magics()
-        try:
-            sys.stdout.write = self.Write
-        except:
-            pass  # Can't change stdout
         # provide a way to get the current instance
         import jupyter_kernel
         jupyter_kernel.JUPYTER_INSTANCE = self
@@ -56,6 +58,7 @@ class MagicKernel(Kernel):
         FIXME: monkeypatch to Make this kernel class be a subkernel to another.
         """
         cls.log = kernel.log
+        cls.session = kernel.session
         cls.iopub_socket = kernel.iopub_socket
         cls._parent_header = kernel._parent_header
 
