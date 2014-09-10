@@ -8,9 +8,9 @@ import logging
 class KernelMagic(Magic):
     kernels = {}
 
-    def line_kernel(self, module_name, class_name, kernel_name):
+    def line_kernel(self, module_name, class_name, kernel_name="default"):
         """
-        %kernel MODULE CLASS NAME - construct a kernel for sending code.
+        %kernel MODULE CLASS [NAME] - construct a kernel for sending code.
 
         Also returns the kernel as output.
 
@@ -28,9 +28,9 @@ class KernelMagic(Magic):
         self.kernels[kernel_name] = class_()
         self.retval = self.kernels[kernel_name]
 
-    def cell_kernel(self, kernel_name):
+    def cell_kernel(self, kernel_name="default"):
         """
-        %%kernel NAME - send the cell code to the kernel.
+        %%kernel [NAME] - send the cell code to the kernel.
 
         Returns the result of the execution as output.
 
@@ -39,7 +39,7 @@ class KernelMagic(Magic):
             %%kernel bash
             ls -al 
 
-        Use `%kernel MODULE CLASS NAME` to create a kernel.
+        Use `%kernel MODULE CLASS [NAME]` to create a kernel.
         """
         self.retval = self.kernels[kernel_name].do_execute_direct(self.code)
         self.evaluate = False

@@ -13,13 +13,13 @@ class ParallelMagic(Magic):
     kernel_name = None
     retval = None
 
-    def line_parallel(self, module_name, class_name, kernel_name, ids=None):
+    def line_parallel(self, module_name, class_name, kernel_name="default", ids=None):
         """
         %parallel MODULE CLASS NAME ids[...] - construct an interface to the cluster.
 
         Example:
 
-            %parallel bash_kernel BashKernel bash 
+            %parallel bash_kernel BashKernel 
             %parallel bash_kernel BashKernel bash [0, 2, 4]
 
         Use %px or %%px to send code to the cluster.
@@ -45,6 +45,7 @@ kernel = %(class_name)s()
        "class_name": class_name}, block=True)
         self.retval = None
 
+    ## px --kernel NAME
     def line_px(self, expression):
         """
         %px EXPRESSION - send EXPRESSION to the cluster.
@@ -59,6 +60,7 @@ kernel = %(class_name)s()
         """
         self.retval = self.view["kernel.do_execute_direct(\"%s\")" % expression.replace('"', '\\"')]
 
+    ## px --kernel NAME
     def cell_px(self):
         """
         %%px - send cell to the cluster.
