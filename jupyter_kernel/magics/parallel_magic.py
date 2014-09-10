@@ -110,7 +110,12 @@ kernels['%(kernel_name)s'] = %(class_name)s()
         '-k', '--kernel_name', action='store', default=None,
         help='kernel name given to use for execution'
     )
-    def cell_px(self, kernel_name=None):
+    @option(
+        '-e', '--evaluate', action='store_true', default=False,
+        help=('evaluate code in the current kernel, too. The current ' +
+              'kernel should be of the same language as the cluster.')
+    )
+    def cell_px(self, kernel_name=None, evaluate=False):
         """
         %%px - send cell to the cluster.
 
@@ -125,7 +130,7 @@ kernels['%(kernel_name)s'] = %(class_name)s()
             kernel_name = self.kernel_name
         self.retval = self.view["kernels['%s'].do_execute_direct(\"%s\")" % (
             kernel_name, self._clean_code(self.code))]
-        self.evaluate = False
+        self.evaluate = evaluate
 
     def post_process(self, retval):
         return self.retval
