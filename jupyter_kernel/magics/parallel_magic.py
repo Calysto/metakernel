@@ -155,14 +155,11 @@ kernels['%(kernel_name)s'] = %(class_name)s()
         if kernel_name is None:
             kernel_name = self.kernel_name
 
-        # FIXME: horrible hack
-        self.view.execute("""
-import os
-os.kernels = kernels
-""")
-        self.retval = self.view_load_balanced.map_async(
-            lambda arg, kname=kernel_name, fname=function_name: os.kernels[kname].do_function_direct(fname, arg),
-            eval(args))
+        # To make sure we can find `kernels`:
+        from IPython.parallel.util import interactive
+        f = interactive(lambda arg, kname=kernel_name, fname=function_name: \
+                        kernels[kname].do_function_direct(fname, arg))
+        self.retval = self.view_load_balanced.map_async(f, eval(args))
 
     def post_process(self, retval):
         try:
