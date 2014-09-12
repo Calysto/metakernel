@@ -91,7 +91,12 @@ kernels['%(kernel_name)s'] = %(class_name)s()
         '-k', '--kernel_name', action='store', default=None,
         help='kernel name given to use for execution'
     )
-    def line_px(self, expression, kernel_name=None):
+    @option(
+        '-e', '--evaluate', action='store_true', default=False,
+        help=('evaluate code in the current kernel, too. The current ' +
+              'kernel should be of the same language as the cluster.')
+    )
+    def line_px(self, expression, kernel_name=None, evaluate=False):
         """
         %px EXPRESSION - send EXPRESSION to the cluster.
 
@@ -107,6 +112,8 @@ kernels['%(kernel_name)s'] = %(class_name)s()
             kernel_name = self.kernel_name
         self.retval = self.view["kernels['%s'].do_execute_direct(\"%s\")" % (
             kernel_name, self._clean_code(expression))]
+        if evaluate:
+            self.code = expression
 
     def _clean_code(self, expr):
         return expr.strip().replace('"', '\\"').replace("\n", "\\n")
@@ -139,8 +146,12 @@ kernels['%(kernel_name)s'] = %(class_name)s()
         self.evaluate = evaluate
 
     def post_process(self, retval):
-        if isinstance(self.retval, list) and not any(self.retval):
-            return None
+        try:
+            ## any will crash on numpy arrays
+            if isinstance(self.retval, list) and not any(self.retval):
+                return None
+        except:
+            pass
         return self.retval
 
 def register_magics(kernel):
