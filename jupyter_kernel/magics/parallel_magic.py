@@ -79,6 +79,12 @@ kernels['%(kernel_name)s'] = %(class_name)s()
        "class_name": class_name,
        "kernel_name": kernel_name}, 
                           block=True)
+
+        self.view["kernels['%s'].set_variable(\"cluster_size\", %s)" % (
+            kernel_name, len(self.client))]
+        self.client[:].scatter('cluster_rank', self.client.ids, flatten=True)
+        self.view["kernels['%s'].set_variable(\"cluster_rank\", cluster_rank)" % (
+            kernel_name)]
         self.retval = None
 
     @option(
@@ -133,6 +139,8 @@ kernels['%(kernel_name)s'] = %(class_name)s()
         self.evaluate = evaluate
 
     def post_process(self, retval):
+        if isinstance(self.retval, list) and not any(self.retval):
+            return None
         return self.retval
 
 def register_magics(kernel):
