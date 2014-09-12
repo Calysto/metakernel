@@ -15,6 +15,7 @@ slicer = Slice() ## instance to parse slices
 class ParallelMagic(Magic):
     client = None
     view = None
+    view_load_balanced = None
     module_name = None
     class_name = None
     kernel_name = None
@@ -65,6 +66,7 @@ class ParallelMagic(Magic):
                 for item in ids_slice:
                     view.append(self.client[item])
                 self.view = view
+        self.view_load_balanced = self.client.load_balanced_view()
         self.module_name = module_name
         self.class_name = class_name
         self.kernel_name = kernel_name
@@ -74,6 +76,7 @@ try:
 except:
     kernels = {}
 from %(module_name)s import %(class_name)s
+%(class_name)s.subkernel(get_ipython().parent)
 kernels['%(kernel_name)s'] = %(class_name)s()
 """ % {"module_name": module_name, 
        "class_name": class_name,
@@ -144,6 +147,22 @@ kernels['%(kernel_name)s'] = %(class_name)s()
         self.retval = self.view["kernels['%s'].do_execute_direct(\"%s\")" % (
             kernel_name, self._clean_code(self.code))]
         self.evaluate = evaluate
+
+    def line_pmap(self, function_name, args, kernel_name=None):
+        """
+        %pmap FUNCTION [ARGS1, ARGS2, ...] - call FUNCTION
+        """
+        if kernel_name is None:
+            kernel_name = self.kernel_name
+
+        # FIXME: horrible hack
+        self.view.execute("""
+import os
+os.kernels = kernels
+""")
+        self.retval = self.view_load_balanced.map_async(
+            lambda arg, kname=kernel_name, fname=function_name: os.kernels[kname].do_function_direct(fname, arg),
+            eval(args))
 
     def post_process(self, retval):
         try:
