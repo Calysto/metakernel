@@ -164,9 +164,10 @@ class MagicKernel(Kernel):
                 level = 1
             text = self.get_help_on(code, level)
             self.log.debug(text)
-            self.payload = [{"data": {"text/plain": text},
-                             "start_line_number": 0,
-                             "source": "page"}]
+            if text:
+                self.payload = [{"data": {"text/plain": text},
+                                 "start_line_number": 0,
+                                 "source": "page"}]
 
         elif info['magic'] or self.sticky_magics:
             retval = None

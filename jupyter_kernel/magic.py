@@ -1,5 +1,6 @@
 import optparse
 import inspect
+import os
 
 
 class Magic(object):
@@ -41,13 +42,17 @@ class Magic(object):
     def get_help(self, mtype, name, level=0):
         if hasattr(self, mtype + '_' + name):
             func = getattr(self, mtype + '_' + name)
-            if func.__doc__:
-                if level == 0:
-                    return func.__doc__.lstrip().split("\n", 1)[0]
-                else:
+            if level == 0:
+                if func.__doc__:
                     return func.__doc__.lstrip()
+                else:
+                    return "No help available for magic '%s' for %ss." % (name, mtype)
             else:
-                return "No help available for magic '%s' for %ss." % (name, mtype)
+                filename = inspect.getfile(func)
+                if filename and os.path.exists(filename):
+                    return open(filename).read()
+                else:
+                    return "No help available for magic '%s' for %ss." % (name, mtype)
         else:
             return "No such magic '%s' for %ss." % (name, mtype)
 

@@ -38,16 +38,19 @@ def test_get_help():
     d = Dummy(kernel)
 
     dummy_help = d.get_help('line', 'dummy', 0)
-    assert dummy_help == d.line_dummy.__doc__.lstrip().split("\n", 1)[0]
-
-    dummy_help = d.get_help('line', 'dummy', 1)
     assert dummy_help == d.line_dummy.__doc__.lstrip()
 
+    dummy_help = d.get_help('line', 'dummy', 1)
+    # will show this entire file, including this sentence
+    assert "# will show this entire file, including this sentence" in \
+            dummy_help
+
     spam_help = d.get_help('cell', 'spam', 0)
-    assert spam_help == d.cell_spam.__doc__.lstrip().split("\n", 1)[0]
+    assert spam_help == d.cell_spam.__doc__.lstrip()
 
     spam_help = d.get_help('cell', 'spam', 1)
-    assert spam_help == d.cell_spam.__doc__.lstrip()
+    assert "# will show this entire file, including this sentence" in \
+            spam_help
 
 
 def test_option():
