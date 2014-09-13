@@ -8,7 +8,30 @@ import json
 class ConnectInfoMagic(Magic):
 
     def line_connect_info(self):
-        """%connect_info - show connection information"""
+        """
+        %connect_info - show connection information
+
+        This line magic will show the connection information for this
+        language kernel instance. This information is only necessary
+        if you are interested in making additional connections to the
+        running kernel.
+
+        Example:
+            %connect_info
+
+        Paste the given JSON into a file, and connect with:
+
+            $> ipython <app> --existing <file>
+
+        or, if you are local, you can connect with just:
+
+            $> ipython <app> --existing %(key)s
+
+        or even just:
+            $> ipython <app> --existing
+
+        if this is the most recent Jupyter session you have started.
+        """
         connection_file = self.kernel.config["IPKernelApp"]["connection_file"]
         config = json.loads(open(connection_file).read())
         retval = """{

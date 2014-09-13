@@ -8,7 +8,18 @@ import os
 class CDMagic(Magic):
 
     def line_cd(self, path):
-        """%cd PATH - change current directory of session"""
+        """
+        %cd PATH - change current directory of session
+
+        This line magic is used to change the directory of the
+        notebook or console.
+
+        Note that this is not the same directory as used by
+        the %shell magics.
+
+        Example:
+            %cd ..
+        """
         try:
             os.chdir(path)
             retval = os.path.abspath(path)

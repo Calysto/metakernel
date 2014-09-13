@@ -27,12 +27,31 @@ class HelpMagic(Magic):
         return strings
 
     def line_help(self, text):
-        """%help TEXT - get help on the given text"""
+        """
+        %help TEXT - get help on the given text
+
+        This line magic shows the help for TEXT. Shows the help in the
+        system pager that opens at bottom of screen.
+
+        Example:
+            %help dir
+
+        """
         text = text.replace('%help', '').lstrip()
         return self.get_help_on(text, 0)
 
     def cell_help(self, text):
-        """%%help TEXT - get detailed help on the given text"""
+        """
+        %%help TEXT - get detailed help on the given text
+
+        This line magic looks like a cell magic, but it really gets
+        more detailed help on TEXT. Shows the help in the system
+        pager that opens at bottom of screen.
+
+        Example:
+           %%help dir
+
+        """
         text = text.replace('%%help', '').lstrip()
         return self.get_help_on(text, 1)
 

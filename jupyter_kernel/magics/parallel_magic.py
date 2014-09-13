@@ -150,7 +150,41 @@ kernels['%(kernel_name)s'] = %(class_name)s()
 
     def line_pmap(self, function_name, args, kernel_name=None):
         """
-        %pmap FUNCTION [ARGS1, ARGS2, ...] - call FUNCTION
+        %pmap FUNCTION [ARGS1,ARGS2,...] - ("parallel map") call a FUNCTION on args
+
+        This line magic will apply a function name to all of the
+        arguments given one at a time using a dynamic load balancing scheduler.
+
+        Currently, the args are provided as a Python expression (with no spaces).
+
+        You must first setup a cluster using the %parallel magic.
+
+        Examples:
+
+            %pmap function-name-in-language range(10)
+            %pmap function-name-in-language [1,2,3,4]
+            %pmap run_experiment range(1,100,5)
+            %pmap run_experiment ["test1","test2","test3"]
+            %pmap f [(1,4,7),(2,3,5),(7,2,2)]
+
+        The function name must be a function that is available on all
+        nodes in the cluster. For example, you could:
+
+            %%px
+            (define myfunc
+               (lambda (n)
+                 (+ n 1)))
+
+        to define myfunc on all machines (use %%px -e to also define
+        it in the running notebook or console). Then you can apply it
+        to a list of arguments:
+
+            %%pmap myfunc range(100)
+
+        The load balancer will run myfunc on the next available node
+        in the cluster.
+
+        Note: not all languages may support running a function via this magic.
         """
         if kernel_name is None:
             kernel_name = self.kernel_name

@@ -8,7 +8,15 @@ import os
 class LoadMagic(Magic):
 
     def line_load(self, filename):
-        """%load FILENAME - load code from filename into next cell"""
+        """
+        %load FILENAME - load code from filename into next cell
+
+        This line magic will get the contents of a file and load it
+        into the next cell.
+
+        Example:
+            %load myprog.py
+        """
         if filename.startswith("~"):
             filename = os.path.expanduser(filename)
         filename = os.path.abspath(filename)

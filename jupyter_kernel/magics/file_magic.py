@@ -12,7 +12,17 @@ class FileMagic(Magic):
         help='append onto an existing file'
     )
     def cell_file(self, filename, append=False):
-        """%%file [--append|-a] FILENAME - write contents of cell to file"""
+        """
+        %%file [--append|-a] FILENAME - write contents of cell to file
+
+        This cell magic will create or append the cell contents into/onto
+        a file.
+
+        Example:
+            %%file -a log.txt
+            This will append this line onto the file "log.txt"
+
+        """
         if filename.startswith("~"):
             filename = os.path.expanduser(filename)
         filename = os.path.abspath(filename)

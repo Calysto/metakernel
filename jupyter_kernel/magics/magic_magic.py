@@ -8,7 +8,13 @@ from jupyter_kernel import Magic
 class MagicMagic(Magic):
 
     def line_magic(self):
-        """%magic - show installed magics"""
+        """
+        %magic - show installed magics
+
+        This line magic shows all of the install magics, either from
+        the system magic folder, or your own private magic folder.
+
+        """
         line_magics = []
         cell_magics = []
 

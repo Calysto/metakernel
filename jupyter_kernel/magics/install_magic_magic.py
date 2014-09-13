@@ -13,7 +13,16 @@ import os
 class InstallMagicMagic(Magic):
 
     def line_install_magic(self, url):
-        """%install_magic URL - download and install magic from URL"""
+        """
+        %install_magic URL - download and install magic from URL
+
+        This line magic will copy the file at the URL into your 
+        personal magic folder.
+
+        Example:
+            %install_magic http://path/to/some/magic.py
+
+        """
         opener = urllib.URLopener()
         parts = urlparse.urlsplit(url)
         #('http', 'example.com', '/somefile.zip', '', '')

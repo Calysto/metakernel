@@ -22,7 +22,23 @@ class ShellMagic(Magic):
         self.start_process()
 
     def line_shell(self, *args):
-        """%shell COMMAND - run the line as a shell command"""
+        """
+        %shell COMMAND - run the line as a shell command
+
+        This line command will run the COMMAND in the bash shell.
+
+        Examples:
+            %shell ls -al
+            %shell cd
+
+        Note: this is a persistent connection to a shell. Thus, cd will 
+        change the shell and remember it. However, realize that this 
+        "current directory" is not the same one that the notebook or
+        console uses.
+
+        You can also use "!" instead of "%shell".
+
+        """
         command = " ".join(args)
         resp, error = self.eval(command)
         if error:
@@ -98,7 +114,23 @@ class ShellMagic(Magic):
         self._error_thread.start()
 
     def cell_shell(self):
-        """%%shell - run the contents of the cell as shell commands"""
+        """
+        %%shell - run the contents of the cell as shell commands
+
+        This shell command will run the cell contents in the bash shell.
+
+        Example:
+            %%shell
+               cd ..
+               ls -al
+    
+        Note: this is a persistent connection to a shell. Thus, cd will 
+        change the shell and remember it. However, realize that this 
+        "current directory" is not the same one that the notebook or
+        console uses.
+
+        You can also use "!!" instead of "%%shell".
+        """
         self.line_shell(self.code)
         self.evaluate = False
 

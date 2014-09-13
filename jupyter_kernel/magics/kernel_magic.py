@@ -17,13 +17,16 @@ class KernelMagic(Magic):
         """
         %kernel MODULE CLASS [-k NAME] - construct a kernel for sending code.
 
-        Also returns the kernel as output.
+        This line magic will contruct a kernel language so that you can
+        communicate.
 
         Example:
 
             %kernel bash_kernel BashKernel -k bash
 
         Use `%kx` or `%%kx` to send code to the kernel.
+
+        Also returns the kernel as output.
         """
         self.kernel_name = kernel_name
         module = __import__(module_name)
@@ -41,6 +44,10 @@ class KernelMagic(Magic):
     def cell_kx(self, kernel_name=None):
         """
         %%kx [-k NAME] - send the cell code to the kernel.
+
+        This cell magic will send the cell to be evaluated by
+        the kernel. The kernel must have been created use the
+        %%kernel magic.
 
         Returns the result of the execution as output.
 
@@ -63,6 +70,9 @@ class KernelMagic(Magic):
     def line_kx(self, code, kernel_name=None):
         """
         %kx CODE [-k NAME] - send the code to the kernel.
+
+        This line magic will send the CODE to the kernel
+        for execution.
 
         Returns the result of the execution as output.
 
