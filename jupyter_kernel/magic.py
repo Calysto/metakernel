@@ -3,6 +3,11 @@ import inspect
 import sys
 import os
 
+try:
+    _maxsize = sys.maxint
+except:
+    # python3
+    _maxsize = sys.maxsize
 
 class Magic(object):
 
@@ -141,7 +146,7 @@ def _trim(docstring, return_lines=False):
     indent = _min_indent(lines)
     # Remove indentation (first line is special):
     trimmed = [lines[0].strip()]
-    if indent < sys.maxint:
+    if indent < _maxsize:
         for line in lines[1:]:
             trimmed.append(line[indent:].rstrip())
     # Strip off trailing and leading blank lines:
@@ -159,7 +164,7 @@ def _min_indent(lines):
     """
     Determine minimum indentation (first line doesn't count):
     """
-    indent = sys.maxint
+    indent = _maxsize
     for line in lines[1:]:
         stripped = line.lstrip()
         if stripped:
@@ -174,7 +179,7 @@ def _indent(docstring, text):
         return text
     lines = docstring.expandtabs().splitlines()
     indent = _min_indent(lines)
-    if indent < sys.maxint:
+    if indent < _maxsize:
         newlines = _trim(text, return_lines=True)
         return "\n" + ("\n".join([(" " * indent) + line for line in newlines]))
     else:
