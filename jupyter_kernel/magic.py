@@ -1,5 +1,6 @@
 import optparse
 import inspect
+import sys
 import os
 
 
@@ -44,7 +45,7 @@ class Magic(object):
             func = getattr(self, mtype + '_' + name)
             if level == 0:
                 if func.__doc__:
-                    return func.__doc__.lstrip()
+                    return _trim(func.__doc__)
                 else:
                     return "No help available for magic '%s' for %ss." % (name, mtype)
             else:
@@ -83,17 +84,19 @@ def option(*args, **kwargs):
     """Return decorator that adds a magic option to a function.
     """
     def decorator(func):
+        help_text = ""
         if not getattr(func, 'has_options', False):
             func.has_options = True
             func.options = []
-            func.__doc__ += '\nOptions:\n-------'
+            help_text += 'Options:\n-------\n'
         try:
             option = optparse.Option(*args, **kwargs)
         except optparse.OptionError:
-            func.__doc__ += '\n' + args[0]
+            help_text += args[0] + "\n"
         else:
-            func.__doc__ += '\n' + _format_option(option)
+            help_text += _format_option(option) + "\n"
             func.options.append(option)
+        func.__doc__ += _indent(func.__doc__, help_text)
         return func
     return decorator
 
@@ -124,3 +127,55 @@ def _format_option(option):
     if not option.default == ('NO', 'DEFAULT'):
         output += '[default: %s]' % option.default
     return output
+
+def _trim(docstring, return_lines=False):
+    """
+    Trim of unnecessary leading indentations.
+    """
+    # from: http://legacy.python.org/dev/peps/pep-0257/
+    if not docstring:
+        return ''
+    # Convert tabs to spaces (following the normal Python rules)
+    # and split into a list of lines:
+    lines = docstring.expandtabs().splitlines()
+    indent = _min_indent(lines)
+    # Remove indentation (first line is special):
+    trimmed = [lines[0].strip()]
+    if indent < sys.maxint:
+        for line in lines[1:]:
+            trimmed.append(line[indent:].rstrip())
+    # Strip off trailing and leading blank lines:
+    while trimmed and not trimmed[-1]:
+        trimmed.pop()
+    while trimmed and not trimmed[0]:
+        trimmed.pop(0)
+    if return_lines:
+        return trimmed
+    else:
+        # Return a single string:
+        return '\n'.join(trimmed)
+
+def _min_indent(lines):
+    """
+    Determine minimum indentation (first line doesn't count):
+    """
+    indent = sys.maxint
+    for line in lines[1:]:
+        stripped = line.lstrip()
+        if stripped:
+            indent = min(indent, len(line) - len(stripped))
+    return indent
+
+def _indent(docstring, text):
+    """
+    Returns text indented at appropriate indententation level.
+    """
+    if not docstring:
+        return text
+    lines = docstring.expandtabs().splitlines()
+    indent = _min_indent(lines)
+    if indent < sys.maxint:
+        newlines = _trim(text, return_lines=True)
+        return "\n" + ("\n".join([(" " * indent) + line for line in newlines]))
+    else:
+        return "\n" + text

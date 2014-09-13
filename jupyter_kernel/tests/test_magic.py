@@ -9,16 +9,25 @@ class Dummy(Magic):
         help='Pixel size of plots, "width,height"'
          )
         def line_dummy(self, foo, size=None):
-            """%dummy [options] foo - Perform dummy operation on foo"""
+            """
+            %dummy [options] foo - Perform dummy operation on foo
+
+            This is additional information on dummy.
+
+            """
             self.foo = foo
             self.size = size
 
         def cell_spam(self):
-            """%spam - Cook some spam"""
+            """
+            %%spam - Cook some spam
+            """
             pass
 
         def line_eggs(self, style):
-            """%eggs STYLE - cook some eggs in the given style"""
+            """
+            %eggs STYLE - cook some eggs in the given style
+            """
             pass
 
 
@@ -38,7 +47,9 @@ def test_get_help():
     d = Dummy(kernel)
 
     dummy_help = d.get_help('line', 'dummy', 0)
-    assert dummy_help == d.line_dummy.__doc__.lstrip()
+    assert dummy_help.startswith("%dummy")
+    assert "    This is additional information on dummy" in d.line_dummy.__doc__, "Checking indents"
+    assert "\nThis is additional information on dummy" in dummy_help, "Checking indent removal"
 
     dummy_help = d.get_help('line', 'dummy', 1)
     # will show this entire file, including this sentence
@@ -46,7 +57,7 @@ def test_get_help():
             dummy_help
 
     spam_help = d.get_help('cell', 'spam', 0)
-    assert spam_help == d.cell_spam.__doc__.lstrip()
+    assert spam_help.startswith("%%spam"), spam_help
 
     spam_help = d.get_help('cell', 'spam', 1)
     assert "# will show this entire file, including this sentence" in \
