@@ -7,7 +7,7 @@ from jupyter_kernel import Magic
 
 class MagicMagic(Magic):
 
-    def line_magic(self):
+    def line_magic(self, line):
         """
         %magic - show installed magics
 
@@ -19,9 +19,9 @@ class MagicMagic(Magic):
         cell_magics = []
 
         for (name, magic) in self.kernel.line_magics.items():
-            line_magics.append(magic.get_help('line', name))
+            line_magics.append(magic.get_help('line', name).split("\n")[0])
         for (name, magic) in self.kernel.cell_magics.items():
-            cell_magics.append(magic.get_help('cell', name))
+            cell_magics.append(magic.get_help('cell', name).split("\n")[0])
 
         prefixes = self.kernel.magic_prefixes
         line_magics = ("\n    ".join(sorted(line_magics)))

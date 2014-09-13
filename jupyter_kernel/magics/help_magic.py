@@ -8,23 +8,23 @@ import re
 
 class HelpMagic(Magic):
 
-    def help_strings():
+    def help_strings(self):
         suffixes = [
-            "item{0}{0} - get detailed help on item",
-            "item{0} - get help on item",
+            "item{0}{0} - get detailed, technical information on item",
+            "item{0}  - get help on item",
         ]
         prefixes = [
-            "{0}{0}item - get detailed help on item",
-            "{0}item - get help on item",
+            "{0}{0}item - get detailed, technical information on item",
+            "{0}item  - get help on item",
         ]
         strings = []
-        if 'help' in self.kernel.suffixes:
-            strings += [s.format(self.kernel.suffixes['help'])
+        if 'help' in self.kernel.magic_suffixes:
+            strings += [s.format(self.kernel.magic_suffixes['help'])
                         for s in suffixes]
-        if 'help' in self.kernel.prefixes:
-            strings += [p.format(self.kernel.prefixes['help'])
+        if 'help' in self.kernel.magic_prefixes:
+            strings += [p.format(self.kernel.magic_prefixes['help'])
                         for p in prefixes]
-        return strings
+        return sorted(strings)
 
     def line_help(self, text):
         """
