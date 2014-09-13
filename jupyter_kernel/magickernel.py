@@ -118,13 +118,12 @@ class MagicKernel(Kernel):
         """
         self.Error("This language does not support \"%run filename\".")
 
-    def do_function_direct(self, function_name, args):
+    def do_function_direct(self, function_name, arg):
         """
         Call a function in the kernel language with args (as a single item).
         """
-        #self.Error("This language does not support \"%pmap function args\".")
-        return (function_name, args)
-
+        self.Error("This language does not support \"%pmap function args\".")
+        
     def restart_kernel(self):
         """Restart the kernel"""
         pass
