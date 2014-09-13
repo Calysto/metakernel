@@ -36,6 +36,7 @@ class EvalKernel(MagicKernel):
         """
         Call a function in the kernel language with args (as a single item).
         """
+        python_magic = self.line_magics['python']
         return python_magic.eval("%s(%s)" % (function_name, arg))
 
     def get_completions(self, info):
