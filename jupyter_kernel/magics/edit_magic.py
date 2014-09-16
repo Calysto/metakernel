@@ -8,7 +8,18 @@ import os
 class EditMagic(Magic):
 
     def line_edit(self, filename):
-        """%edit FILENAME - load code from filename into next cell for editing"""
+        """
+        %edit FILENAME - load code from filename into next cell for editing
+
+        This line magic will open the file in the next cell, and allow
+        you edit it.
+
+        This is a shortcut for %load, and appending a "%%file" as first line.
+
+        Example:
+            %edit myprogram.ss
+
+        """
         orig_filename = filename
         if filename.startswith("~"):
             filename = os.path.expanduser(filename)

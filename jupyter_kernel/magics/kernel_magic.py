@@ -7,30 +7,47 @@ import logging
 
 class KernelMagic(Magic):
     kernels = {}
+    kernel_name = None
 
-    def line_kernel(self, module_name, class_name, kernel_name):
+    @option(
+        '-k', '--kernel_name', action='store', default="default",
+        help='kernel name given to use for execution'
+    )
+    def line_kernel(self, module_name, class_name, kernel_name="default"):
         """
-        %kernel MODULE CLASS NAME - construct a kernel for sending code.
+        %kernel MODULE CLASS [-k NAME] - construct a kernel for sending code.
 
-        Also returns the kernel as output.
+        This line magic will contruct a kernel language so that you can
+        communicate.
 
         Example:
 
-            %kernel bash_kernel BashKernel bash
+            %kernel bash_kernel BashKernel -k bash
 
-        Use `%%kernel bash` to send code to the kernel.
+        Use `%kx` or `%%kx` to send code to the kernel.
+
+        Also returns the kernel as output.
         """
+        self.kernel_name = kernel_name
         module = __import__(module_name)
         class_ = getattr(module, class_name)
-        class_.log = logging.Logger(".kernel")
-        class_.iopub_socket = self.kernel.iopub_socket
-        class_._parent_header = self.kernel._parent_header
+        # FIXME: monkeypatch to replace methods of class
+        #        with methods of instance
+        class_.subkernel(self.kernel)
         self.kernels[kernel_name] = class_()
         self.retval = self.kernels[kernel_name]
 
-    def cell_kernel(self, kernel_name):
+    @option(
+        '-k', '--kernel_name', action='store', default=None,
+        help='kernel name given to use for execution'
+    )
+    def cell_kx(self, kernel_name=None):
         """
-        %%kernel NAME - send the cell code to the kernel.
+        %%kx [-k NAME] - send the cell code to the kernel.
+
+        This cell magic will send the cell to be evaluated by
+        the kernel. The kernel must have been created use the
+        %%kernel magic.
 
         Returns the result of the execution as output.
 
@@ -39,10 +56,35 @@ class KernelMagic(Magic):
             %%kernel bash
             ls -al 
 
-        Use `%kernel MODULE CLASS NAME` to create a kernel.
+        Use `%kernel MODULE CLASS [-k NAME]` to create a kernel.
         """
+        if kernel_name is None:
+            kernel_name = self.kernel_name
         self.retval = self.kernels[kernel_name].do_execute_direct(self.code)
         self.evaluate = False
+
+    @option(
+        '-k', '--kernel_name', action='store', default=None,
+        help='kernel name given to use for execution'
+    )
+    def line_kx(self, code, kernel_name=None):
+        """
+        %kx CODE [-k NAME] - send the code to the kernel.
+
+        This line magic will send the CODE to the kernel
+        for execution.
+
+        Returns the result of the execution as output.
+
+        Example:
+
+            %kernel ls -al 
+
+        Use `%kernel MODULE CLASS [-k NAME]` to create a kernel.
+        """
+        if kernel_name is None:
+            kernel_name = self.kernel_name
+        self.retval = self.kernels[kernel_name].do_execute_direct(code)
 
     def post_process(self, retval):
         return self.retval

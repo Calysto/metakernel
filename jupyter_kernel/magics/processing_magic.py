@@ -9,6 +9,21 @@ class ProcessingMagic(Magic):
     canvas_id = 0
 
     def cell_processing(self):
+        """
+        %%processing - run the cell in the language Processing
+
+        This cell magic will execute the contents of the cell as a
+        Processing program. This uses the Java-based Processing
+        language.
+        
+        Example:
+
+            %%processing
+            setup() {
+            }
+            draw() {
+            }
+        """
         self.canvas_id += 1
         """%%processing - run contents of cell as a Processing script"""
 

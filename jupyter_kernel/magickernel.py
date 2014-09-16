@@ -12,6 +12,7 @@ from .config import get_history_file, get_local_magics_dir
 import imp
 import re
 import inspect
+import logging
 
 
 class MagicKernel(Kernel):
@@ -22,6 +23,18 @@ class MagicKernel(Kernel):
 
     def __init__(self, *args, **kwargs):
         super(MagicKernel, self).__init__(*args, **kwargs)
+        if self.log is None:
+            # This occurs if we call as a stand-alone kernel
+            # (eg, not as a process)
+            # FIXME: take care of input/output, eg StringIO
+            #        make work without a session
+            self.log = logging.Logger(".magickernel")
+        else:
+            # Write has already been set
+            try:
+                sys.stdout.write = self.Write
+            except:
+                pass  # Can't change stdout
         self.sticky_magics = {}
         self._i = None
         self._ii = None
@@ -34,14 +47,20 @@ class MagicKernel(Kernel):
         self.plot_settings = dict(backend='inline', format=None, size=None)
         self.hist_file = get_history_file(self)
         self.reload_magics()
-        try:
-            sys.stdout.write = self.Write
-        except:
-            pass  # Can't change stdout
         # provide a way to get the current instance
         import jupyter_kernel
         jupyter_kernel.JUPYTER_INSTANCE = self
         self.set_variable("get_jupyter", jupyter_kernel.get_jupyter)
+
+    @classmethod
+    def subkernel(cls, kernel):
+        """
+        FIXME: monkeypatch to Make this kernel class be a subkernel to another.
+        """
+        cls.log = kernel.log
+        cls.session = kernel.session
+        cls.iopub_socket = kernel.iopub_socket
+        cls._parent_header = kernel._parent_header
 
     #####################################
     # Methods which provide kernel - specific behavior
@@ -93,6 +112,18 @@ class MagicKernel(Kernel):
         """
         pass
 
+    def do_execute_file(self, filename):
+        """
+        Execute a file in the kernel language.
+        """
+        self.Error("This language does not support \"%run filename\".")
+
+    def do_function_direct(self, function_name, arg):
+        """
+        Call a function in the kernel language with args (as a single item).
+        """
+        self.Error("This language does not support \"%pmap function args\".")
+        
     def restart_kernel(self):
         """Restart the kernel"""
         pass
@@ -122,7 +153,7 @@ class MagicKernel(Kernel):
             return kernel_resp
 
         info = self.parse_code(code)
-        payload = []
+        self.payload = []
         retval = None
 
         if info['magic'] and info['magic']['name'] == 'help':
@@ -133,9 +164,10 @@ class MagicKernel(Kernel):
                 level = 1
             text = self.get_help_on(code, level)
             self.log.debug(text)
-            payload = [{"data": {"text/plain": text},
-                        "start_line_number": 0,
-                        "source": "page"}]
+            if text:
+                self.payload = [{"data": {"text/plain": text},
+                                 "start_line_number": 0,
+                                 "source": "page"}]
 
         elif info['magic'] or self.sticky_magics:
             retval = None
@@ -168,7 +200,7 @@ class MagicKernel(Kernel):
 
         self.post_execute(retval, code)
 
-        kernel_resp['payload'] = payload
+        kernel_resp['payload'] = self.payload
         return kernel_resp
 
     def post_execute(self, retval, code):

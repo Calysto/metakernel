@@ -23,7 +23,18 @@ class PythonMagic(Magic):
         self.retval = None
 
     def line_python(self, *args):
-        """%python CODE - evaluate code as Python"""
+        """
+        %python CODE - evaluate code as Python
+
+        This line magic will evaluate the CODE (either expression or
+        statement) as Python code.
+
+        Examples:
+            %python x = 42
+            %python import math
+            %python x + math.pi
+
+        """
         code = " ".join(args)
         self.retval = self.eval(code)
 
@@ -44,7 +55,35 @@ class PythonMagic(Magic):
         help="Use the retval value from the Python cell as code in the kernel language."
     )
     def cell_python(self, eval_output=False):
-        """%%python - evaluate contents of cell as Python"""
+        """
+        %%python - evaluate contents of cell as Python
+
+        This cell magic will evaluate the cell (either expression or
+        statement) as Python code.
+
+        Unlike IPython's Python, this does not return the last expression.
+        To do that, you need to assign the last expression to the special
+        variable "retval".
+
+        The -e or --eval_output flag signals that the retval value expression
+        will be used as code for the cell to be evaluated by the host 
+        language.
+
+        Examples:
+            %%python 
+            x = 42
+
+            %%python 
+            import math
+            retval = x + math.pi
+
+            %%python -e
+            retval = "'(this is code in the kernel language)"
+
+            %%python -e
+            "'(this is code in the kernel language)"
+
+        """
         if self.code.strip():
             if eval_output:
                 self.eval(self.code)
