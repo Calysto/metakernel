@@ -23,8 +23,20 @@ class ShellMagic(Magic):
 
     def line_shell(self, *args):
         """%shell COMMAND - run the line as a shell command"""
+        # get in sync with the cwd
+        self.eval('cd %s' % os.getcwd())
+
         command = " ".join(args)
         resp, error = self.eval(command)
+
+        if self.cmd == 'cmd':
+            cwd, _ = self.eval('cd')
+        else:
+            cwd, _ = self.eval('pwd')
+
+        if os.path.exists(cwd):
+            os.chdir(cwd)
+
         if error:
             self.kernel.Error(error)
 
