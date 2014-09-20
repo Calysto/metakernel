@@ -34,34 +34,38 @@ class SpellMagic(Magic):
         '-l', '--list', action='store_true', default=False,
         help='list spells'
     )
-    def line_spell(self, name, delete=False, list=False):
+    @option(
+        '-s', '--show', action='store_true', default=False,
+        help='show spell'
+    )
+    def line_spell(self, name, delete=False, list=False, show=False):
         """
-        %spell [-l] [-d] [INCANTATION] - call a spell to perform it's magic
+        %spell NAME - execute a spell
+        %spell -l [all|learned|system] - list spells
+        %spell [-s] [-d] NAME - show or delete a spell
 
-        This line magic will execute the spell.
+        This line magic will execute, show, list, or delete the 
+        named spell.
 
-        Example:
+        Examples:
             %spell renumber-cells
+
+            %%spell test
+            print "Ok!"
+
+            %spell -l all
+
+            %spell -d test
         """
         if list:
-            retval = "Available spells:\n"
-            if name in ["all", "system"]:
-                retval += "    System:\n"
-                for spell in sorted(self.spells.keys()):
-                    retval += "        %s\n" % spell
-            if name in ["all", "learned"]:
-                retval += "    Learned:\n"
-                for spell in sorted(self.learned.keys()):
-                    retval += "        %s\n" % spell
+            self._list_spells(name)
+        elif show:
+            retval = "%%%%spell %s\n" % name
+            if name in self.spells:
+                retval += self.spells[name]
+            elif name in self.learned:
+                retval += self.learned[name]
             self.kernel.Print(retval)
-        elif name in self.spells:
-            if delete:
-                raise Exception("Can't delete system spell")
-            else:
-                self.code = self.code.strip()
-                if self.code: 
-                    self.code += "\n"
-                self.code += self.spells[name]
         elif name in self.learned:
             if delete:
                 del self.learned[name]
@@ -71,9 +75,35 @@ class SpellMagic(Magic):
                 if self.code: 
                     self.code += "\n"
                 self.code += self.learned[name]
+        elif name in self.spells:
+            if delete:
+                raise Exception("Can't delete system spell")
+            else:
+                self.code = self.code.strip()
+                if self.code: 
+                    self.code += "\n"
+                self.code += self.spells[name]
+        elif name == "":
+            self._list_spells()
         else:
-            raise Exception("No such spell: '%s'" % name)
+            self._list_spells(retval="No such spell: '%s'\n\n" % name,
+                              error=True)
         self.evaluate = True
+
+    def _list_spells(self, name="all", retval="", error=False):
+        retval += "Available spells:\n"
+        if name in ["all", "system"]:
+            retval += "    System:\n"
+            for spell in sorted(self.spells.keys()):
+                retval += "        %s\n" % spell
+        if name in ["all", "learned"]:
+            retval += "    Learned:\n"
+            for spell in sorted(self.learned.keys()):
+                retval += "        %s\n" % spell
+        if error:
+            self.kernel.Error(retval)
+        else:
+            self.kernel.Print(retval)
 
     def _load_spells(self):
         self.learned = {}
@@ -96,14 +126,18 @@ class SpellMagic(Magic):
 
     def cell_spell(self, name):
         """
-        %%spell INCANTATION - teach a spell
+        %%spell NAME - learn a new spell
 
-        This cell magic will teach the spell.
+        This cell magic will learn the spell in the
+        cell. The cell contents are just commands (magics
+        or code in the kernel language).
 
         Example:
-            %%spell COMMAND
+            %%spell test
+            print "Ok!"
 
-            CODE
+            %spell test
+            Ok!
         """
         self.learned[name] = self.code
         self._save_spells()

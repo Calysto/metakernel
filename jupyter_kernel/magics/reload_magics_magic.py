@@ -20,7 +20,7 @@ class ReloadMagicsMagic(Magic):
         automatically if you install a new magic.
         """
         self.kernel.reload_magics()
-        self.code += "%lsmagic\n" + self.code
+        self.code = "%lsmagic\n" + self.code
 
 def register_magics(kernel):
     kernel.register_magics(ReloadMagicsMagic)
