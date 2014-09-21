@@ -31,10 +31,9 @@ class ShellMagic(Magic):
             %shell ls -al
             %shell cd
 
-        Note: this is a persistent connection to a shell. Thus, cd will
-        change the shell and remember it. However, realize that this
-        "current directory" is not the same one that the notebook or
-        console uses.
+         Note: this is a persistent connection to a shell.
+         The working directory is synchronized to that of the notebook
+         before and after each call.
 
         You can also use "!" instead of "%shell".
 
@@ -136,10 +135,9 @@ class ShellMagic(Magic):
                cd ..
                ls -al
 
-        Note: this is a persistent connection to a shell. Thus, cd will
-        change the shell and remember it. However, realize that this
-        "current directory" is not the same one that the notebook or
-        console uses.
+       Note: this is a persistent connection to a shell.
+         The working directory is synchronized to that of the notebook
+         before and after each call.
 
         You can also use "!!" instead of "%%shell".
         """
