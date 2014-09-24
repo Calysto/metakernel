@@ -133,6 +133,9 @@ class MagicKernel(Kernel):
 
     def do_execute(self, code, silent, store_history=True, user_expressions=None,
                    allow_stdin=False):
+        # Set the ability for the kernel to get standard-in:
+        self._allow_stdin = allow_stdin
+        # Create a default response:
         kernel_resp = {
             'status': 'ok',
             # The base class increments the execution count
