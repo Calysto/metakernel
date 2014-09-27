@@ -112,6 +112,12 @@ class MagicKernel(Kernel):
         """
         pass
 
+    def do_execute_meta(self, code):
+        """
+        Execute meta code in the kernel.
+        """
+        raise Exception("This kernel does not implement meta commands")
+
     def do_execute_file(self, filename):
         """
         Execute a file in the kernel language.
@@ -194,12 +200,18 @@ class MagicKernel(Kernel):
                     break
             # Execute code, if any:
             if ((magic is None or magic.evaluate) and code.strip() != ""):
-                retval = self.do_execute_direct(code)
+                if code.startswith("~~META~~:"):
+                    retval = self.do_execute_meta(code[9:].strip())
+                else:
+                    retval = self.do_execute_direct(code)
             # Post-process magics:
             for magic in reversed(stack):
                 retval = magic.post_process(retval)
         else:
-            retval = self.do_execute_direct(code)
+            if code.startswith("~~META~~:"):
+                retval = self.do_execute_meta(code[9:].strip())
+            else:
+                retval = self.do_execute_direct(code)
 
         self.post_execute(retval, code)
 
