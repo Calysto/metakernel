@@ -70,7 +70,7 @@ function makeMarker() {
 
 function breakpoint_q(line) {
     var info = cell.code_mirror.lineInfo(line - 1);
-    return (info.gutterMarkers != null);
+    return (info && info.gutterMarkers != null);
 }
 
 var cell = IPython.notebook.get_selected_cell(); 
@@ -115,8 +115,6 @@ var kernel = IPython.notebook.kernel;
 function handle_output(out){
     var res = null;
     var data = null;
-    console.log(out);
-     // if output is a print statement
     if (out.msg_type == "stream") {
         res = out.content.data;
         document.getElementById("result_stream").innerText = res.toString() + document.getElementById("result_stream").innerText;
@@ -134,8 +132,6 @@ function handle_output(out){
             data = JSON.parse(str.substring(12, str.length - 1));
             var speed = Number(document.getElementById("speed").value);
             if (data) {
-                //console.log(data);
-                //console.log(breakpoint_q(data[0]));
                 var breakp = breakpoint_q(data[0]);
                 if (speed < 100 || !running || breakp) { // max_speed
                     highlight(cell, data);
