@@ -39,8 +39,8 @@ class DebugMagic(Magic):
   Inspect: <input type="text" id="inspect" onkeydown="if (event.keyCode == 13) inspector()"/>
   <table width="100%">
   <tr>
-    <td width="50%"><div id="result_stream"/></td>
-    <td width="50%"><div id="result_output"/></td>
+    <td width="50%" style="vertical-align: top"><div id="result_stream"/></td>
+    <td width="50%" style="vertical-align: top"><div id="result_output"/></td>
   </tr>
   </table>    
 </div>
