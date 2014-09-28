@@ -35,11 +35,25 @@ class DebugMagic(Magic):
   <button onclick="stop()">Stop</button>
   <button onclick="clear_breakpoints()">Clear Breakpoints</button>
   <button onclick="reset()">Reset</button><br/>
-  Speed: <input type="range" id="speed" min="1" max="10"/>
-  <div id="result_output"/>
+  Speed: <input type="range" id="speed" min="1" max="100"/>
+  Inspect: <input type="text" id="inspect" onkeydown="if (event.keyCode == 13) inspector()"/>
+  <table width="100%">
+  <tr>
+    <td width="50%"><div id="result_stream"/></td>
+    <td width="50%"><div id="result_output"/></td>
+  </tr>
+  </table>    
 </div>
 
 <script>
+
+function inspector() {
+    var v = document.getElementById("inspect").value;
+    document.getElementById("inspect").value = "";
+    var msg_id = kernel.execute("~~META~~: inspect " + v, 
+                                callbacks, 
+                                {silent: false});
+}
 
 function clear_breakpoints() {
     for (var n = 0 ; n < cell.code_mirror.doc.size; n++) {
@@ -101,41 +115,51 @@ var kernel = IPython.notebook.kernel;
 function handle_output(out){
     var res = null;
     var data = null;
+    console.log(out);
      // if output is a print statement
     if (out.msg_type == "stream") {
         res = out.content.data;
+        document.getElementById("result_stream").innerText = res.toString() + document.getElementById("result_stream").innerText;
     } else if (out.msg_type === "pyout") {
         // if output is a python object
         res = out.content.data["text/plain"];
+        document.getElementById("result_stream").innerText = res.toString() + document.getElementById("result_stream").innerText;
     } else if (out.msg_type == "pyerr") {
         // if output is a python error
         res = out.content.data["text/plain"];
+        document.getElementById("result_stream").innerText = res.toString() + document.getElementById("result_stream").innerText;
     } else if (out.msg_type == "execute_result") {
         var str = out.content.data["text/plain"];
-        data = JSON.parse(str.substring(1, str.length - 1));
-        if (data) {
-            //console.log(data);
-            //console.log(breakpoint_q(data[0]));
-            highlight(cell, data);
-        }
-        if (running) {
-            if (data && breakpoint_q(data[0])) {
-                //console.log("paused!");
-                pause();
-            } else {
-                //console.log("continue!");
-                
-                var speed = Number(document.getElementById("speed").value);
-                timer = setTimeout(step, 1000/speed);
+        if (str.indexOf("\\"highlight: ") >= 0) { // is a highlight response:
+            data = JSON.parse(str.substring(12, str.length - 1));
+            var speed = Number(document.getElementById("speed").value);
+            if (data) {
+                //console.log(data);
+                //console.log(breakpoint_q(data[0]));
+                var breakp = breakpoint_q(data[0]);
+                if (speed < 100 || !running || breakp) { // max_speed
+                    highlight(cell, data);
+                }
+            }
+            if (running) {
+                if (data && breakpoint_q(data[0])) {
+                    pause();
+                } else {
+                    timer = setTimeout(step, 2000/speed);
+                }
+            }
+        } else { // display result
+            res = str;
+            if (res.indexOf("u") == 0)
+                res = res.substring(2, res.length - 1) + "\\n";
+            if (res) {
+                document.getElementById("result_output").innerText = res.toString() + document.getElementById("result_output").innerText;
             }
         }
-        res = "";
     } else {
         // if output is something we haven't thought of
         res = out.toString();   
-    }
-    if (res) {
-        document.getElementById("result_output").innerText = res.toString() + document.getElementById("result_output").innerText;
+        document.getElementById("result_stream").innerText = res.toString() + document.getElementById("result_stream").innerText;
     }
 }
 
@@ -143,6 +167,7 @@ var callbacks = { 'iopub' : {'output' : handle_output}};
 
 function pause() {
     running = false;
+    document.getElementById("result_output").innerText = "Pause\\n" + document.getElementById("result_output").innerText;
     if (timer) {
         clearInterval(timer);
         timer = null;
@@ -166,11 +191,15 @@ function stop() {
     if (mt) {
         mt.clear();
     }
+    var msg_id = kernel.execute("~~META~~: stop", 
+                                callbacks, 
+                                {silent: false});
 }
 
 function reset() {
     stop();
     document.getElementById("result_output").innerText = "";
+    document.getElementById("result_stream").innerText = "";
     var msg_id = kernel.execute("~~META~~: reset", 
                                 callbacks, 
                                 {silent: false});
@@ -184,10 +213,8 @@ function reset() {
         time.sleep(.1)
         data = self.kernel.initialize_debug("\n" + self.code) ## add a line so line numbers will be correct
         time.sleep(.1)
-        try:
-            self.kernel.Display(Javascript("highlight(cell, %s);" % data))
-        except Exception as e:
-            self.kernel.Print(str(e))
+        if data.startswith("highlight: "):
+            self.kernel.Display(Javascript("highlight(cell, %s);" % data[11:]))
         time.sleep(.1)
         self.evaluate = False
 
