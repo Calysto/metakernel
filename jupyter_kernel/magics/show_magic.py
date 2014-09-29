@@ -7,22 +7,39 @@ import os
 
 class ShowMagic(Magic):
 
-    def cell_show(self):
+    @option(
+        '-o', '--output', action='store_true', default=False,
+        help='rather than showing the contents, show the results'
+    )
+    def cell_show(self, output=False):
         """
-        %%show - load cell contents into system pager
+        %%show [-o]- show cell contents or results in system pager
 
-        This cell magic will put the contents the cell into
-        the system pager.
+        This cell magic will put the contents or results of the cell
+        into the system pager.
 
-        Example:
+        Examples:
             %%show
-
             This information will appear in the pager.
+
+            %%show --output
+            retval = 54 * 54
         """
-        self.kernel.payload = [{"data": {"text/plain": self.code},
-                                "start_line_number": 0,
-                                "source": "page"}]
-        self.evaluate = False
+        self.show_output = output
+        if not output: # show contents
+            self.kernel.payload = [{"data": {"text/plain": self.code},
+                                    "start_line_number": 0,
+                                    "source": "page"}]
+            self.evaluate = False
+        else:
+            self.evaluate = True
+
+    def post_process(self, results):
+        if self.show_output:
+            self.kernel.payload = [{"data": {"text/plain": self.kernel.repr(results)},
+                                    "start_line_number": 0,
+                                    "source": "page"}]
+        return None
 
 def register_magics(kernel):
     kernel.register_magics(ShowMagic)
