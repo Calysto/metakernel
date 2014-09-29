@@ -27,10 +27,10 @@ class LSMagicMagic(Magic):
 
         out = [
             'Available line magics:',
-            '  '.join(sorted(line_magics)),
+            '  '.join(sorted([("%" + lm) for lm in line_magics])),
             '',
             'Available cell magics:',
-            '  '.join(sorted(cell_magics)),
+            '  '.join(sorted([("%%" + cm) for cm in cell_magics])),
         ]
         self.kernel.Print('\n'.join(out))
 
