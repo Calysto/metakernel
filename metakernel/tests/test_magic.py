@@ -1,5 +1,5 @@
-from jupyter_kernel import Magic, option
-from jupyter_kernel.tests.utils import get_kernel, get_log_text
+from metakernel import Magic, option
+from metakernel.tests.utils import get_kernel, get_log_text
 
 
 class Dummy(Magic):

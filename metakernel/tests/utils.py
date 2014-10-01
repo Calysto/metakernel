@@ -1,4 +1,4 @@
-from jupyter_kernel import MagicKernel
+from metakernel import MagicKernel
 from IPython.kernel.zmq import session as ss
 import zmq
 import logging

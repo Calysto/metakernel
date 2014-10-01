@@ -1,6 +1,6 @@
 import os
 import re
-from jupyter_kernel.tests.utils import get_kernel, get_log_text
+from metakernel.tests.utils import get_kernel, get_log_text
 
 
 def test_magics():
@@ -102,7 +102,7 @@ def test_sticky_magics():
 
 
 def test_other_kernels():
-    from jupyter_kernel import MagicKernel
+    from metakernel import MagicKernel
     class SchemeKernel(MagicKernel):
         magic_suffixes = {}
         def do_execute_direct(self, code):

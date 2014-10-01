@@ -1,5 +1,5 @@
 import os
-from jupyter_kernel.tests.utils import get_kernel, get_log_text
+from metakernel.tests.utils import get_kernel, get_log_text
 
 
 def test_shell_magic():

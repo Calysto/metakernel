@@ -48,9 +48,9 @@ class MagicKernel(Kernel):
         self.hist_file = get_history_file(self)
         self.reload_magics()
         # provide a way to get the current instance
-        import jupyter_kernel
-        jupyter_kernel.JUPYTER_INSTANCE = self
-        self.set_variable("get_jupyter", jupyter_kernel.get_jupyter)
+        import metakernel
+        metakernel.JUPYTER_INSTANCE = self
+        self.set_variable("get_jupyter", metakernel.get_jupyter)
 
     @classmethod
     def subkernel(cls, kernel):
@@ -95,10 +95,10 @@ class MagicKernel(Kernel):
 
     def get_local_magics_dir(self):
         """
-        Returns the path to local magics dir (eg ~/.ipython/jupyter_kernel/magics)
+        Returns the path to local magics dir (eg ~/.ipython/metakernel/magics)
         """
         base = get_ipython_dir()
-        return os.path.join(base, 'jupyter_kernel', 'magics')
+        return os.path.join(base, 'metakernel', 'magics')
 
     def get_completions(self, info):
         """
@@ -351,7 +351,7 @@ class MagicKernel(Kernel):
         # get base magic files and those relative to the current class
         # directory
         magic_files = []
-        # Make a jupyter_kernel/magics if it doesn't exist:
+        # Make a metakernel/magics if it doesn't exist:
         local_magics_dir = get_local_magics_dir()
         # Search all of the places there could be magics:
         paths = [os.path.join(os.path.dirname(os.path.abspath(__file__)), "magics"),
