@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-from jupyter_kernel import MagicKernel
+from metakernel import MagicKernel
 
 
 class EchoKernel(MagicKernel):
