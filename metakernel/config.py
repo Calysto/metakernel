@@ -5,10 +5,10 @@ import os
 def get_history_file(kernel):
     """Gets the history file for the kernel.
 
-    Histories are stored in ~/.ipython/jupyter_kernel/history
+    Histories are stored in ~/.ipython/metakernel/history
     """
     base = get_ipython_dir()
-    dname = os.path.join(base, 'jupyter_kernel', 'history')
+    dname = os.path.join(base, 'metakernel', 'history')
     if not os.path.exists(dname):
             os.makedirs(dname)
     if hasattr(kernel, 'implementation'):
@@ -25,11 +25,11 @@ def get_history_file(kernel):
 
 def get_local_magics_dir():
     """
-    Ensures that there is a ~/.ipython/jupyter_kernel/magics directory,
+    Ensures that there is a ~/.ipython/metakernel/magics directory,
     and returns the path to it.
     """
     base = get_ipython_dir()
-    dname = os.path.join(base, 'jupyter_kernel', 'magics')
+    dname = os.path.join(base, 'metakernel', 'magics')
     if not os.path.exists(dname):
         os.makedirs(dname)
     return dname
