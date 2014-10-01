@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) Calico Development Team.
+# Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
-# http://calicoproject.org/
 
-from jupyter_kernel import Magic
+
+from metakernel import Magic
 from IPython.display import HTML, Javascript
 
 class DebugMagic(Magic):

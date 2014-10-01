@@ -1,8 +1,7 @@
-# Copyright (c) Calico Development Team.
+# Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
-# http://calicoproject.org/
 
-from jupyter_kernel import Magic, option
+from metakernel import Magic, option
 import logging
 
 class Slice(object):

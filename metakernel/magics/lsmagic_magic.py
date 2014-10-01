@@ -1,9 +1,8 @@
-# Copyright (c) Calico Development Team.
+# Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
-# http://calicoproject.org/
 
 from IPython.core.magic import magic_escapes
-from jupyter_kernel import Magic
+from metakernel import Magic
 import os
 
 class LSMagicMagic(Magic):
