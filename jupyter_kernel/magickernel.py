@@ -114,9 +114,27 @@ class MagicKernel(Kernel):
 
     def do_execute_meta(self, code):
         """
-        Execute meta code in the kernel.
+        Execute meta code in the kernel. This uses the execute infrastructure
+        but allows JavaScript to talk directly to the kernel bypassing normal
+        processing.
+
+        When responding to the %%debug magic, the step and reset meta
+        commands can answer with a string in the format:
+        
+        "highlight: [start_line, start_col, end_line, end_col]" 
+        
+        for highlighting expressions in the frontend.
         """
-        raise Exception("This kernel does not implement meta commands")
+        if code == "reset":
+            raise Exception("This kernel does not implement this meta command")
+        elif code == "stop":
+            raise Exception("This kernel does not implement this meta command")
+        elif code == "step":
+            raise Exception("This kernel does not implement this meta command")
+        elif code.startswith("inspect "):
+            raise Exception("This kernel does not implement this meta command")
+        else:
+            raise Exception("Unknown meta command: '%s'" % code)
 
     def do_execute_file(self, filename):
         """
