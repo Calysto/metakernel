@@ -1,6 +1,6 @@
 
 *.pyc
-jupyter_kernel.egg-info/
+metakernel.egg-info/
 *_kernel/build/
 dist/
 MANIFEST

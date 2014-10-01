@@ -11,7 +11,7 @@ if svem_flag in sys.argv:
     sys.argv.remove(svem_flag)
 
 
-with open('jupyter_kernel/__init__.py', 'rb') as fid:
+with open('metakernel/__init__.py', 'rb') as fid:
     for line in fid:
         line = line.decode('utf-8')
         if line.startswith('__version__'):
@@ -19,16 +19,16 @@ with open('jupyter_kernel/__init__.py', 'rb') as fid:
             break
 
 
-setup(name='jupyter_kernel',
+setup(name='metakernel',
       version=version,
-      description='Jupyter Kernel Tools',
+      description='Metakernel for Jupyter',
       long_description=open('README.rst', 'rb').read().decode('utf-8'),
       author='Steven Silvester',
       author_email='steven.silvester@ieee.org',
-      url="https://github.com/blink1073/jupyter_kernel",
+      url="https://github.com/blink1073/metakernel",
       install_requires=['IPython'],
-      packages=['jupyter_kernel', 'jupyter_kernel.magics',
-                'jupyter_kernel.tests'],
+      packages=['metakernel', 'metakernel.magics',
+                'metakernel.tests'],
       classifiers=[
           'Framework :: IPython',
           'License :: OSI Approved :: BSD License',

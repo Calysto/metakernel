@@ -1,13 +1,13 @@
 A simple Jupyter/IPython kernel template which includes core magic functions.
 
-.. image:: https://badge.fury.io/py/jupyter_kernel.png/
-    :target: http://badge.fury.io/py/jupyter_kernel
+.. image:: https://badge.fury.io/py/metakernel.png/
+    :target: http://badge.fury.io/py/metakernel
 
-.. image:: https://pypip.in/d/jupyter_kernel/badge.png
-        :target: https://crate.io/packages/jupyter_kernel/
+.. image:: https://pypip.in/d/metakernel/badge.png
+        :target: https://crate.io/packages/metakernel/
 
-.. image:: https://coveralls.io/repos/blink1073/jupyter_kernel/badge.png?branch=master
-  :target: https://coveralls.io/r/blink1073/jupyter_kernel
+.. image:: https://coveralls.io/repos/blink1073/metakernel/badge.png?branch=master
+  :target: https://coveralls.io/r/blink1073/metakernel
 
 
 See IPython's docs on `wrapper kernels
@@ -27,10 +27,10 @@ Features
 
 Installation
 ----------------
-You can install jupyter_kernel through `pip`:
+You can install Metakernel through `pip`:
 
 
-`pip install jupyter_kernel --upgrade`
+`pip install metakernel --upgrade`
 
 
 
@@ -44,10 +44,10 @@ Documentation is available online_.
 For version information, see the Revision History_.
 
 
-.. _here: http://nbviewer.ipython.org/github/blink1073/jupyter_kernel/blob/master/examples/echo_kernel.ipynb?create=1
+.. _here: http://nbviewer.ipython.org/github/blink1073/metakernel/blob/master/examples/echo_kernel.ipynb?create=1
 
-.. _online: http://blink1073.github.io/jupyter_kernel/
+.. _online: http://blink1073.github.io/metakernel/
 
-.. _History: https://github.com/blink1073/jupyter_kernel/blob/master/HISTORY.rst
+.. _History: https://github.com/blink1073/metakernel/blob/master/HISTORY.rst
 
 

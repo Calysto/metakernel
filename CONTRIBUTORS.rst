@@ -10,4 +10,5 @@ Development Leads
 Patches and Suggestions
 ```````````````````````
 
+- Daniel Mendler @minad
 - Thomas Kluyver @takluyver

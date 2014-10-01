@@ -28,10 +28,10 @@ install:
     - travis_retry python setup.py install
 
 script:
-    -  nosetests --exe -v --with-doctest jupyter_kernel
+    -  nosetests --exe -v --with-doctest metakernel
 
 script:
-  - nosetests --exe -v --with-doctest --with-cov --cover-package jupyter_kernel;
+  - nosetests --exe -v --with-doctest --with-cov --cover-package metakernel;
 
 after_success:
     - coveralls

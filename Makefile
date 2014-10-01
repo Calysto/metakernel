@@ -1,8 +1,8 @@
-# Note: This is meant for Jupyter Kernel developer use only
+# Note: This is meant for Metaernel developer use only
 .PHONY: all clean test cover release gh-pages
 
 export TEST_ARGS=--exe -v --with-doctest
-export NAME=jupyter_kernel
+export NAME=metakernel
 export VERSION=`python -c "import $(NAME); print($(NAME).__version__)"`
 export GHP_MSG="Generated gh-pages for `git log master -1 --pretty=short --abbrev-commit`"
 

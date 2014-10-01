@@ -1,1 +1,1 @@
-# Configuration for coverage.py[run]branch = Truesource = jupyter_kernelinclude = */jupyter_kernel/*omit =    */setup.py[report]exclude_lines =    def __repr__    if __name__ == .__main__.:
+# Configuration for coverage.py[run]branch = Truesource = metakernelinclude = */metakernel/*omit =    */setup.py[report]exclude_lines =    def __repr__    if __name__ == .__main__.:
