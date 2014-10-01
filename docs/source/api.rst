@@ -2,9 +2,9 @@
 API Reference
 ********************
 
-Jupyter Kernel
+Metakernel
 =============
-.. module:: jupyter_kernel
+.. module:: metakernel
 .. autoclass:: MagicKernel
    :members:
 .. autoclass:: Magic

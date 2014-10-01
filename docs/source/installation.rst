@@ -1,7 +1,7 @@
 Installation
 ************************
 
-You can install jupyter_kernel through `pip`:
+You can install metakernel through `pip`:
 
 
-`pip install jupyter_kernel --upgrade`
+`pip install metakernel --upgrade`
