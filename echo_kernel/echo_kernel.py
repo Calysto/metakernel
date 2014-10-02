@@ -1,9 +1,9 @@
 from __future__ import print_function
 
-from metakernel import MagicKernel
+from metakernel import MetaKernel
 
 
-class EchoKernel(MagicKernel):
+class EchoKernel(MetaKernel):
     implementation = 'Echo'
     implementation_version = '1.0'
     language = 'no-op'

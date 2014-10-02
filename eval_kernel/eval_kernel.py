@@ -1,9 +1,9 @@
 from __future__ import print_function
 
-from metakernel import MagicKernel
+from metakernel import MetaKernel
 
 
-class EvalKernel(MagicKernel):
+class EvalKernel(MetaKernel):
     implementation = 'Eval'
     implementation_version = '1.0'
     language = 'python'

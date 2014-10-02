@@ -32,7 +32,7 @@ if svem_flag in sys.argv:
 setup(name='echo_kernel',
       version='0.5',
       description='A simple echo kernel for Jupyter/IPython',
-      long_description="A simple echo kernel for Jupyter/IPython, based on MagicKernel",
+      long_description="A simple echo kernel for Jupyter/IPython, based on MetaKernel",
       url="https://github.com/blink1073/metakernel/tree/master/echo_kernel",
       author='Douglas Blank',
       author_email='doug.blank@gmail.com',

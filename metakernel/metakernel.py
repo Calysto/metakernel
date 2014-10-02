@@ -14,21 +14,21 @@ import re
 import inspect
 import logging
 
-
-class MagicKernel(Kernel):
+class MetaKernel(Kernel):
 
     split_characters = "( )\n\;'\""
     magic_prefixes = dict(magic='%', shell='!', help='?')
     magic_suffixes = dict(help='?')
 
     def __init__(self, *args, **kwargs):
-        super(MagicKernel, self).__init__(*args, **kwargs)
+        super(MetaKernel, self).__init__(*args, **kwargs)
+        global JUPYTER_INSTANCE
         if self.log is None:
             # This occurs if we call as a stand-alone kernel
             # (eg, not as a process)
             # FIXME: take care of input/output, eg StringIO
             #        make work without a session
-            self.log = logging.Logger(".magickernel")
+            self.log = logging.Logger(".metakernel")
         else:
             # Write has already been set
             try:
@@ -48,9 +48,7 @@ class MagicKernel(Kernel):
         self.hist_file = get_history_file(self)
         self.reload_magics()
         # provide a way to get the current instance
-        import metakernel
-        metakernel.JUPYTER_INSTANCE = self
-        self.set_variable("get_jupyter", metakernel.get_jupyter)
+        self.set_variable("get_kernel", lambda: self)
 
     @classmethod
     def subkernel(cls, kernel):

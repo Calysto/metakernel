@@ -32,7 +32,7 @@ if svem_flag in sys.argv:
 setup(name='bash_kernel',
       version='0.1',
       description='A simple bash kernel for Jupyter/IPython',
-      long_description="A simple bash kernel for Jupyter/IPython, based on MagicKernel",
+      long_description="A simple bash kernel for Jupyter/IPython, based on MetaKernel",
       url="https://github.com/blink1073/metakernel/tree/master/bash_kernel",
       author='Steven Silvester',
       author_email='steven.silvester@ieee.org',

@@ -5,7 +5,7 @@ API Reference
 Metakernel
 =============
 .. module:: metakernel
-.. autoclass:: MagicKernel
+.. autoclass:: MetaKernel
    :members:
 .. autoclass:: Magic
   :members:

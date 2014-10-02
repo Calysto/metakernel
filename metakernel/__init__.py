@@ -1,13 +1,8 @@
-from .magickernel import MagicKernel
+from .metakernel import MetaKernel
 from .magic import Magic, option
 
-__all__ = ['Magic', 'MagicKernel', 'option']
+__all__ = ['Magic', 'MetaKernel', 'option']
 
 __version__ = '0.3'
 
-JUPYTER_INSTANCE = None
-
-def get_jupyter():
-    return JUPYTER_INSTANCE
-
-del magic, magickernel
+del magic, metakernel

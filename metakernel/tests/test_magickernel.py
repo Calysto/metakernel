@@ -102,8 +102,8 @@ def test_sticky_magics():
 
 
 def test_other_kernels():
-    from metakernel import MagicKernel
-    class SchemeKernel(MagicKernel):
+    from metakernel import MetaKernel
+    class SchemeKernel(MetaKernel):
         magic_suffixes = {}
         def do_execute_direct(self, code):
             return "OK"

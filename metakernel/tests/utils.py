@@ -1,4 +1,4 @@
-from metakernel import MagicKernel
+from metakernel import MetaKernel
 from IPython.kernel.zmq import session as ss
 import zmq
 import logging
@@ -8,7 +8,7 @@ try:
 except ImportError:
     from io import StringIO
 
-def get_kernel(kernel_class=MagicKernel):
+def get_kernel(kernel_class=MetaKernel):
     log = logging.getLogger('test')
     log.setLevel(logging.DEBUG)
 

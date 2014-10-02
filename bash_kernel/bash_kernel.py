@@ -1,9 +1,9 @@
 from __future__ import print_function
 
-from metakernel import MagicKernel
+from metakernel import MetaKernel
 
 
-class BashKernel(MagicKernel):
+class BashKernel(MetaKernel):
     implementation = 'Bash'
     implementation_version = '1.0'
     language = 'bash'

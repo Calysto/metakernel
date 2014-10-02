@@ -31,7 +31,7 @@ if svem_flag in sys.argv:
 setup(name='eval_kernel',
       version='0.4',
       description='A simple eval kernel for Jupyter/IPython',
-      long_description="A simple eval kernel for Jupyter/IPython, based on MagicKernel",
+      long_description="A simple eval kernel for Jupyter/IPython, based on MetaKernel",
       url="https://github.com/blink1073/metakernel/tree/master/eval_kernel",
       author='Douglas Blank',
       author_email='doug.blank@gmail.com',
