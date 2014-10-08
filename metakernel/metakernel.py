@@ -118,9 +118,9 @@ class MetaKernel(Kernel):
 
         When responding to the %%debug magic, the step and reset meta
         commands can answer with a string in the format:
-        
-        "highlight: [start_line, start_col, end_line, end_col]" 
-        
+
+        "highlight: [start_line, start_col, end_line, end_col]"
+
         for highlighting expressions in the frontend.
         """
         if code == "reset":
@@ -145,7 +145,7 @@ class MetaKernel(Kernel):
         Call a function in the kernel language with args (as a single item).
         """
         self.Error("This language does not support \"%pmap function args\".")
-        
+
     def restart_kernel(self):
         """Restart the kernel"""
         pass
@@ -290,7 +290,7 @@ class MetaKernel(Kernel):
         return {'status': 'ok', 'restart': restart}
 
     def do_complete(self, code, cursor_pos):
-        partial, start, cursor_pos = _parse_partial(code, cursor_pos, 
+        partial, start, cursor_pos = _parse_partial(code, cursor_pos,
                                                  self.split_characters)
         info = self.parse_code(partial, 0, cursor_pos)
         content = {
@@ -543,17 +543,17 @@ def _parse_partial(code, cursor_pos, split_characters):
     if cursor_pos == len(code):
         cursor_position = len(code) - 1
     # skip over non-interesting characters:
-    while (cursor_pos - 1 > 0 and 
+    while (cursor_pos - 1 > 0 and
            code[cursor_pos - 1] in split_characters):
         cursor_pos -= 1
     # include only interesting characters:
     start = cursor_pos
-    while (start - 1 >= 0 and 
+    while (start - 1 >= 0 and
            code[start - 1] not in split_characters):
         start -= 1
     return code[start:cursor_pos], start, cursor_pos
 
-        
+
 def _parse_code(code, prefixes, suffixes, start=0, end=-1):
     if end == -1:
         end = len(code)

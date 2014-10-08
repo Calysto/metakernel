@@ -15,7 +15,7 @@ class InstallMagicMagic(Magic):
         """
         %install_magic URL - download and install magic from URL
 
-        This line magic will copy the file at the URL into your 
+        This line magic will copy the file at the URL into your
         personal magic folder.
 
         Example:

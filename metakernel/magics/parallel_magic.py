@@ -28,7 +28,7 @@ class ParallelMagic(Magic):
     @option(
         '-i', '--ids', action='store', default=None,
         help='the machine ids to use from the cluster'
-        
+
     )
     def line_parallel(self, module_name, class_name, kernel_name="default", ids=None):
         """
@@ -36,7 +36,7 @@ class ParallelMagic(Magic):
 
         Example:
 
-            %parallel bash_kernel BashKernel 
+            %parallel bash_kernel BashKernel
             %parallel bash_kernel BashKernel -k bash
             %parallel bash_kernel BashKernel --i [0,2:5,9,...]
 
@@ -77,9 +77,9 @@ except:
 from %(module_name)s import %(class_name)s
 %(class_name)s.subkernel(get_ipython().parent)
 kernels['%(kernel_name)s'] = %(class_name)s()
-""" % {"module_name": module_name, 
+""" % {"module_name": module_name,
        "class_name": class_name,
-       "kernel_name": kernel_name}, 
+       "kernel_name": kernel_name},
                           block=True)
 
         self.view["kernels['%s'].set_variable(\"cluster_size\", %s)" % (
@@ -136,7 +136,7 @@ kernels['%(kernel_name)s'] = %(class_name)s()
 
         Example:
 
-            %%px 
+            %%px
             (define x 42)
 
         Use %parallel to initialize the cluster.

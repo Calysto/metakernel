@@ -18,7 +18,7 @@ class DebugMagic(Magic):
 
         Example:
             %%debug
-    
+
             (define x 1)
         """
 
@@ -42,7 +42,7 @@ class DebugMagic(Magic):
     <td width="50%" style="vertical-align: top"><div id="result_stream"/></td>
     <td width="50%" style="vertical-align: top"><div id="result_output"/></td>
   </tr>
-  </table>    
+  </table>
 </div>
 
 <script>
@@ -50,8 +50,8 @@ class DebugMagic(Magic):
 function inspector() {
     var v = document.getElementById("inspect").value;
     document.getElementById("inspect").value = "";
-    var msg_id = kernel.execute("~~META~~: inspect " + v, 
-                                callbacks, 
+    var msg_id = kernel.execute("~~META~~: inspect " + v,
+                                callbacks,
                                 {silent: false});
 }
 
@@ -73,7 +73,7 @@ function breakpoint_q(line) {
     return (info && info.gutterMarkers != null);
 }
 
-var cell = IPython.notebook.get_selected_cell(); 
+var cell = IPython.notebook.get_selected_cell();
 if (cell) {
     // The following can be replaced once get_prev_cell is fixed
     // see https://github.com/ipython/ipython/pull/6565
@@ -154,7 +154,7 @@ function handle_output(out){
         }
     } else {
         // if output is something we haven't thought of
-        res = out.toString();   
+        res = out.toString();
         document.getElementById("result_stream").innerText = res.toString() + document.getElementById("result_stream").innerText;
     }
 }
@@ -177,8 +177,8 @@ function play() {
 }
 
 function step() {
-    var msg_id = kernel.execute("~~META~~: step", 
-                                callbacks, 
+    var msg_id = kernel.execute("~~META~~: step",
+                                callbacks,
                                 {silent: false});
 }
 
@@ -187,8 +187,8 @@ function stop() {
     if (mt) {
         mt.clear();
     }
-    var msg_id = kernel.execute("~~META~~: stop", 
-                                callbacks, 
+    var msg_id = kernel.execute("~~META~~: stop",
+                                callbacks,
                                 {silent: false});
 }
 
@@ -196,8 +196,8 @@ function reset() {
     stop();
     document.getElementById("result_output").innerText = "";
     document.getElementById("result_stream").innerText = "";
-    var msg_id = kernel.execute("~~META~~: reset", 
-                                callbacks, 
+    var msg_id = kernel.execute("~~META~~: reset",
+                                callbacks,
                                 {silent: false});
 }
 

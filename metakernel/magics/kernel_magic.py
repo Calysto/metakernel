@@ -53,7 +53,7 @@ class KernelMagic(Magic):
         Example:
 
             %%kernel bash
-            ls -al 
+            ls -al
 
         Use `%kernel MODULE CLASS [-k NAME]` to create a kernel.
         """
@@ -77,7 +77,7 @@ class KernelMagic(Magic):
 
         Example:
 
-            %kernel ls -al 
+            %kernel ls -al
 
         Use `%kernel MODULE CLASS [-k NAME]` to create a kernel.
         """

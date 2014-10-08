@@ -10,7 +10,7 @@ class LSMagicMagic(Magic):
     def line_lsmagic(self):
         """
         %lsmagic - list the current line and cell magics
-        
+
         This line magic will list all of the available cell and line
         magics installed in the system and in your personal magic
         folder.

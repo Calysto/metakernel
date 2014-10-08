@@ -117,15 +117,15 @@ def test_other_kernels():
     assert "Sorry, no help is available on 'dir?'." == message, message
 
     content = kernel.do_inspect('dir', len('dir'))
-    assert (content['status'] == 'aborted' and 
+    assert (content['status'] == 'aborted' and
             content['found'] == False), "do_inspect should abort, and be not found"
 
     content = kernel.do_inspect('len(dir', len('len(dir'))
-    assert (content['status'] == 'aborted' and 
+    assert (content['status'] == 'aborted' and
             content['found'] == False), "do_inspect should abort, and be not found"
 
     content = kernel.do_inspect('(dir', len('(dir'))
-    assert (content['status'] == 'aborted' and 
+    assert (content['status'] == 'aborted' and
             content['found'] == False), "do_inspect should abort, and be not found"
 
     # Now change it so that there is help available:

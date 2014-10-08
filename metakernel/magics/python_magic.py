@@ -65,14 +65,14 @@ class PythonMagic(Magic):
         variable "retval".
 
         The -e or --eval_output flag signals that the retval value expression
-        will be used as code for the cell to be evaluated by the host 
+        will be used as code for the cell to be evaluated by the host
         language.
 
         Examples:
-            %%python 
+            %%python
             x = 42
 
-            %%python 
+            %%python
             import math
             retval = x + math.pi
 
@@ -86,7 +86,7 @@ class PythonMagic(Magic):
         if self.code.strip():
             if eval_output:
                 self.eval(self.code)
-                self.code = str(self.env["retval"]) if ("retval" in self.env and 
+                self.code = str(self.env["retval"]) if ("retval" in self.env and
                                                         self.env["retval"] != None) else ""
                 self.retval = None
                 self.env["retval"] = None

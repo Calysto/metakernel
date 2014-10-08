@@ -13,7 +13,7 @@ class SpellMagic(Magic):
         // We only keep the code cells.
         cells = cells.filter(function(c)
             {
-                return c instanceof IPython.CodeCell; 
+                return c instanceof IPython.CodeCell;
             })
         // We set the input prompt of all code cells.
         for (var i = 0; i < cells.length; i++) {
@@ -43,7 +43,7 @@ class SpellMagic(Magic):
         %spell -l [all|learned|system] - list spells
         %spell [-s] [-d] NAME - show or delete a spell
 
-        This line magic will execute, show, list, or delete the 
+        This line magic will execute, show, list, or delete the
         named spell.
 
         Examples:
@@ -71,7 +71,7 @@ class SpellMagic(Magic):
                 self._save_spells()
             else:
                 self.code = self.code.strip()
-                if self.code: 
+                if self.code:
                     self.code += "\n"
                 self.code += self.learned[name]
         elif name in self.spells:
@@ -79,7 +79,7 @@ class SpellMagic(Magic):
                 raise Exception("Can't delete system spell")
             else:
                 self.code = self.code.strip()
-                if self.code: 
+                if self.code:
                     self.code += "\n"
                 self.code += self.spells[name]
         elif name == "":
@@ -113,7 +113,7 @@ class SpellMagic(Magic):
                  os.path.join(local_magics_dir, "spells.json")]
         for spell_file in files:
             try:
-                data = ast.literal_eval(open(spell_file).read()) 
+                data = ast.literal_eval(open(spell_file).read())
             except:
                 continue
             self.learned.update(data)

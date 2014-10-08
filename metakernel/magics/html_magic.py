@@ -29,8 +29,8 @@ class HTMLMagic(Magic):
         HTML.
 
         Example:
-            %%html 
-    
+            %%html
+
             <script src="..."></script>
 
             <div>Contents of div tag</div>

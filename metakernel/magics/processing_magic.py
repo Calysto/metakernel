@@ -14,7 +14,7 @@ class ProcessingMagic(Magic):
         This cell magic will execute the contents of the cell as a
         Processing program. This uses the Java-based Processing
         language.
-        
+
         Example:
 
             %%processing

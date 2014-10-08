@@ -26,7 +26,7 @@ class LatexMagic(Magic):
         This cell magic will display the TEXT in the cell as LaTeX.
 
         Example:
-            %%latex 
+            %%latex
             x_1 = \dfrac{a}{b}
 
             x_2 = a^{n - 1}

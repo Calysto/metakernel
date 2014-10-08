@@ -5,8 +5,8 @@ import json
 import sys
 
 kernel_json = {
-    "argv": [sys.executable, 
-	     "-m", "eval_kernel", 
+    "argv": [sys.executable,
+	     "-m", "eval_kernel",
 	     "-f", "{connection_file}"],
     "display_name": "Eval",
     "language": "python"
@@ -17,7 +17,7 @@ class install_with_kernelspec(install):
         install.run(self)
         from IPython.kernel.kernelspec import KernelSpecManager
         from IPython.utils.path import ensure_dir_exists
-        destdir = os.path.join(KernelSpecManager().user_kernel_dir, 
+        destdir = os.path.join(KernelSpecManager().user_kernel_dir,
                                'eval_kernel')
         ensure_dir_exists(destdir)
         with open(os.path.join(destdir, 'kernel.json'), 'w') as f:
