@@ -22,7 +22,6 @@ class MetaKernel(Kernel):
 
     def __init__(self, *args, **kwargs):
         super(MetaKernel, self).__init__(*args, **kwargs)
-        global JUPYTER_INSTANCE
         if self.log is None:
             # This occurs if we call as a stand-alone kernel
             # (eg, not as a process)
