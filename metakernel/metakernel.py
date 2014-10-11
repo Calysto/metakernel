@@ -1,9 +1,6 @@
-try:
-    from IPython.kernel.zmq.kernelbase import Kernel
-    from IPython.utils.path import get_ipython_dir
-    from IPython.html.widgets import Widget
-except:
-    Kernel = object
+from IPython.kernel.zmq.kernelbase import Kernel
+from IPython.utils.path import get_ipython_dir
+from IPython.html.widgets import Widget
 import os
 import sys
 import glob
