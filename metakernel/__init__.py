@@ -1,7 +1,8 @@
-from .metakernel import MetaKernel
+from .metakernel import MetaKernel, MetaKernelAdapter, MetaMagicKernel
 from .magic import Magic, option
 
-__all__ = ['Magic', 'MetaKernel', 'option']
+# FIXME: Is this export magic good Python style?
+__all__ = ['Magic', 'MetaKernel', 'MetaKernelAdapter', 'MetaMagicKernel', 'option']
 
 __version__ = '0.3'
 

@@ -1,15 +1,8 @@
 from __future__ import print_function
 
-from metakernel import MetaKernel
+from metakernel import MetaMagicKernel, MetaKernelAdapter
 
-
-class EchoKernel(MetaKernel):
-    implementation = 'Echo'
-    implementation_version = '1.0'
-    language = 'no-op'
-    language_version = '0.1'
-    banner = "Echo kernel - as useful as a parrot"
-
+class EchoKernel(MetaMagicKernel):
     def get_usage(self):
         return "This is the echo kernel."
 
@@ -19,6 +12,14 @@ class EchoKernel(MetaKernel):
     def repr(self, data):
         return repr(data)
 
+class EchoKernelAdapter(MetaKernelAdapter):
+    implementation = 'Echo'
+    implementation_version = '1.0'
+    language = 'no-op'
+    language_version = '0.1'
+    banner = "Echo kernel - as useful as a parrot"
+    meta_class = EchoKernel
+
 if __name__ == '__main__':
     from IPython.kernel.zmq.kernelapp import IPKernelApp
-    IPKernelApp.launch_instance(kernel_class=EchoKernel)
+    IPKernelApp.launch_instance(kernel_class=EchoKernelAdapter)

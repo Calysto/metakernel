@@ -1,15 +1,8 @@
 from __future__ import print_function
 
-from metakernel import MetaKernel
+from metakernel import MetaMagicKernel, MetaKernelAdapter
 
-
-class BashKernel(MetaKernel):
-    implementation = 'Bash'
-    implementation_version = '1.0'
-    language = 'bash'
-    language_version = '0.1'
-    banner = "Bash kernel - interact with a bash prompt"
-
+class BashKernel(MetaMagicKernel):
     def get_usage(self):
         return "This is the bash kernel."
 
@@ -41,6 +34,14 @@ class BashKernel(MetaKernel):
     def repr(self, data):
         return data
 
+class BashKernelAdapter(MetaKernelAdapter):
+    implementation = 'Bash'
+    implementation_version = '1.0'
+    language = 'bash'
+    language_version = '0.1'
+    banner = "Bash kernel - interact with a bash prompt"
+    meta_class = BashKernel
+
 if __name__ == '__main__':
     from IPython.kernel.zmq.kernelapp import IPKernelApp
-    IPKernelApp.launch_instance(kernel_class=BashKernel)
+    IPKernelApp.launch_instance(kernel_class=BashKernelAdapter)

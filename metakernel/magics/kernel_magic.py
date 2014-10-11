@@ -30,10 +30,7 @@ class KernelMagic(Magic):
         self.kernel_name = kernel_name
         module = __import__(module_name)
         class_ = getattr(module, class_name)
-        # FIXME: monkeypatch to replace methods of class
-        #        with methods of instance
-        class_.subkernel(self.kernel)
-        self.kernels[kernel_name] = class_()
+        self.kernels[kernel_name] = class_(self.kernel)
         self.retval = self.kernels[kernel_name]
 
     @option(

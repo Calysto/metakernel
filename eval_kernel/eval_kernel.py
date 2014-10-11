@@ -1,15 +1,8 @@
 from __future__ import print_function
 
-from metakernel import MetaKernel
+from metakernel import MetaMagicKernel, MetaKernelAdapter
 
-
-class EvalKernel(MetaKernel):
-    implementation = 'Eval'
-    implementation_version = '1.0'
-    language = 'python'
-    language_version = '0.1'
-    banner = "Eval kernel - evaluates simple Python statements and expressions"
-
+class EvalKernel(MetaMagicKernel):
     def get_usage(self):
         return ("This is the Eval kernel. It implements a simple Python " +
                 "interpreter.")
@@ -47,6 +40,14 @@ class EvalKernel(MetaKernel):
         python_magic = self.line_magics['python']
         return python_magic.get_help_on(info, level, none_on_fail)
 
+class EvalKernelAdapter(MetaKernelAdapter):
+    implementation = 'Eval'
+    implementation_version = '1.0'
+    language = 'python'
+    language_version = '0.1'
+    banner = "Eval kernel - evaluates simple Python statements and expressions"
+    meta_class = EvalKernel
+
 if __name__ == '__main__':
     from IPython.kernel.zmq.kernelapp import IPKernelApp
-    IPKernelApp.launch_instance(kernel_class=EvalKernel)
+    IPKernelApp.launch_instance(kernel_class=EvalKernelAdapter)

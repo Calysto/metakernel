@@ -11,14 +11,65 @@ import re
 import inspect
 import logging
 
-class MetaKernel(Kernel):
+# Adapt a metakernel to work with ipython
+class MetaKernelAdapter(Kernel):
+    meta_class = None
 
+    def __init__(self, *args, **kwargs):
+        super(MetaKernelAdapter, self).__init__(*args, **kwargs)
+        self.meta = self.meta_class(self)
+
+    def do_execute(self, code, silent, store_history=True, user_expressions=None, allow_stdin=False):
+        return self.meta.do_execute(code, silent, store_history, user_expressions, allow_stdin)
+
+    def do_complete(self, code, cursor_pos):
+        return self.meta.do_complete(code, cursor_pos)
+
+    def do_inspect(self, code, cursor_pos, detail_level=0):
+        return self.meta.do_inspect(code, cursor_pos, detail_level)
+
+    def do_history(self, hist_access_type, output, raw, session=None, start=None, stop=None, n=None, pattern=None, unique=False):
+        return self.meta.do_history(hist_access_type, output, raw, session, start, stop, n, pattern, unique)
+
+    def do_shutdown(self, restart):
+        return self.meta.do_shutdown(restart)
+
+# Metakernel is just a delegator for now
+class MetaKernel(object):
+    def __init__(self, kernel):
+        self.kernel = kernel
+
+    def __getattr__(self, attrib):
+        return getattr(self.kernel, attrib)
+
+# Metakernel which calls other 0mq kernel
+# TODO Implement this properly
+class ZmqKernel(MetaKernel):
+    def do_execute(self, code, silent, store_history=True, user_expressions=None, allow_stdin=False):
+        return self.client.execute(code, silent, store_history, user_expressions, allow_stdin)
+
+    def do_complete(self, code, cursor_pos):
+        return self.client.complete(code, cursor_pos)
+
+    def do_inspect(self, code, cursor_pos, detail_level=0):
+        return self.client.inspect(code, cursor_pos, detail_level)
+
+    def do_history(self, hist_access_type, output, raw, session=None, start=None, stop=None, n=None, pattern=None, unique=False):
+        return self.client.history(hist_access_type, output, raw, session, start, stop, n, pattern, unique)
+
+    def do_shutdown(self, restart):
+        return self.client.shutdown(restart)
+
+# Meta kernel which supports magics
+# TODO Should be refactored as a delegator to an underlying kernel
+class MetaMagicKernel(MetaKernel):
     split_characters = "( )\n\;'\""
     magic_prefixes = dict(magic='%', shell='!', help='?')
     magic_suffixes = dict(help='?')
 
-    def __init__(self, *args, **kwargs):
-        super(MetaKernel, self).__init__(*args, **kwargs)
+    def __init__(self, kernel):
+        super(MetaMagicKernel, self).__init__(kernel)
+
         if self.log is None:
             # This occurs if we call as a stand-alone kernel
             # (eg, not as a process)
@@ -45,16 +96,6 @@ class MetaKernel(Kernel):
         self.reload_magics()
         # provide a way to get the current instance
         self.set_variable("get_kernel", lambda: self)
-
-    @classmethod
-    def subkernel(cls, kernel):
-        """
-        FIXME: monkeypatch to Make this kernel class be a subkernel to another.
-        """
-        cls.log = kernel.log
-        cls.session = kernel.session
-        cls.iopub_socket = kernel.iopub_socket
-        cls._parent_header = kernel._parent_header
 
     #####################################
     # Methods which provide kernel - specific behavior

@@ -69,6 +69,7 @@ class ParallelMagic(Magic):
         self.module_name = module_name
         self.class_name = class_name
         self.kernel_name = kernel_name
+        # TODO: Remove subkernel hack, use metakernel delegator instead
         self.view.execute("""
 try:
     kernels
