@@ -2,6 +2,8 @@ from __future__ import print_function
 
 from metakernel import MetaMagicKernel, MetaKernelAdapter
 
+# Todo don't rely on python magic. The magic should instead delegate to this kernel.
+# Todo Rename to PythonKernel
 class EvalKernel(MetaMagicKernel):
     def get_usage(self):
         return ("This is the Eval kernel. It implements a simple Python " +
@@ -40,14 +42,16 @@ class EvalKernel(MetaMagicKernel):
         python_magic = self.line_magics['python']
         return python_magic.get_help_on(info, level, none_on_fail)
 
+# Todo replace this with MetaKernelFactory
 class EvalKernelAdapter(MetaKernelAdapter):
     implementation = 'Eval'
     implementation_version = '1.0'
     language = 'python'
     language_version = '0.1'
     banner = "Eval kernel - evaluates simple Python statements and expressions"
-    meta_class = EvalKernel
+    metakernel_class = EvalKernel
 
 if __name__ == '__main__':
     from IPython.kernel.zmq.kernelapp import IPKernelApp
+    # Todo use MetaKernelFactory.make_kernel
     IPKernelApp.launch_instance(kernel_class=EvalKernelAdapter)

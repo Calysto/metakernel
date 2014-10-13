@@ -27,6 +27,7 @@ class KernelMagic(Magic):
 
         Also returns the kernel as output.
         """
+        # TODO replace this with MetaKernelFactory.make_metakernel
         self.kernel_name = kernel_name
         module = __import__(module_name)
         class_ = getattr(module, class_name)
@@ -56,7 +57,7 @@ class KernelMagic(Magic):
         """
         if kernel_name is None:
             kernel_name = self.kernel_name
-        self.retval = self.kernels[kernel_name].do_execute_direct(self.code)
+        self.retval = self.kernels[kernel_name].do_execute(self.code, False)
         self.evaluate = False
 
     @option(
@@ -80,7 +81,7 @@ class KernelMagic(Magic):
         """
         if kernel_name is None:
             kernel_name = self.kernel_name
-        self.retval = self.kernels[kernel_name].do_execute_direct(code)
+        self.retval = self.kernels[kernel_name].do_execute(code, False)
 
     def post_process(self, retval):
         return self.retval

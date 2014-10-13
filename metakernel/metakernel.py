@@ -1,6 +1,11 @@
 from IPython.kernel.zmq.kernelbase import Kernel
 from IPython.utils.path import get_ipython_dir
 from IPython.html.widgets import Widget
+from IPython.kernel.blocking import BlockingKernelClient
+from IPython.kernel.connect import ConnectionFileMixin
+from IPython.kernel import KernelManager
+from IPython.utils.path import get_ipython_dir
+import atexit
 import os
 import sys
 import glob
@@ -13,28 +18,29 @@ import logging
 
 # Adapt a metakernel to work with ipython
 class MetaKernelAdapter(Kernel):
-    meta_class = None
+    metakernel_class = None
 
     def __init__(self, *args, **kwargs):
         super(MetaKernelAdapter, self).__init__(*args, **kwargs)
-        self.meta = self.meta_class(self)
+        self.metakernel = self.metakernel_class(self)
 
     def do_execute(self, code, silent, store_history=True, user_expressions=None, allow_stdin=False):
-        return self.meta.do_execute(code, silent, store_history, user_expressions, allow_stdin)
+        return self.metakernel.do_execute(code, silent, store_history, user_expressions, allow_stdin)
 
     def do_complete(self, code, cursor_pos):
-        return self.meta.do_complete(code, cursor_pos)
+        return self.metakernel.do_complete(code, cursor_pos)
 
     def do_inspect(self, code, cursor_pos, detail_level=0):
-        return self.meta.do_inspect(code, cursor_pos, detail_level)
+        return self.metakernel.do_inspect(code, cursor_pos, detail_level)
 
     def do_history(self, hist_access_type, output, raw, session=None, start=None, stop=None, n=None, pattern=None, unique=False):
-        return self.meta.do_history(hist_access_type, output, raw, session, start, stop, n, pattern, unique)
+        return self.metakernel.do_history(hist_access_type, output, raw, session, start, stop, n, pattern, unique)
 
     def do_shutdown(self, restart):
-        return self.meta.do_shutdown(restart)
+        return self.metakernel.do_shutdown(restart)
 
 # Metakernel is just a delegator for now
+# Todo extend with get_variable, set_variable, plot settings, ...
 class MetaKernel(object):
     def __init__(self, kernel):
         self.kernel = kernel
@@ -44,21 +50,55 @@ class MetaKernel(object):
 
 # Metakernel which calls other 0mq kernel
 # TODO Implement this properly
-class ZmqKernel(MetaKernel):
+class ZmqKernel(MetaKernel, ConnectionFileMixin):
+    kernel_manager_class = KernelManager
+    kernel_client_class = BlockingKernelClient
+
+    def __init__(self, kernel):
+        super(ZmqKernel, self).__init__(kernel)
+
+        # Mostly from IPython/consoleapp.IPythonConsoleApp
+        self.kernel_manager = self.kernel_manager_class(
+            ip=self.ip,
+            session=self.session,
+            transport=self.transport,
+            shell_port=self.shell_port,
+            iopub_port=self.iopub_port,
+            stdin_port=self.stdin_port,
+            hb_port=self.hb_port,
+            connection_file=self.connection_file,
+            kernel_name='metakernel',
+            parent=self,
+            ipython_dir=get_ipython_dir())
+
+        self.kernel_manager.client_factory = self.kernel_client_class
+        self.kernel_manager.start_kernel()
+        atexit.register(self.kernel_manager.cleanup_ipc_files)
+        self.kernel_client = self.kernel_manager.client()
+        self.kernel_client.start_channels()
+
     def do_execute(self, code, silent, store_history=True, user_expressions=None, allow_stdin=False):
-        return self.client.execute(code, silent, store_history, user_expressions, allow_stdin)
+        return self.kernel_client.execute(code, silent, store_history, user_expressions, allow_stdin)
 
     def do_complete(self, code, cursor_pos):
-        return self.client.complete(code, cursor_pos)
+        return self.kernel_client.complete(code, cursor_pos)
 
     def do_inspect(self, code, cursor_pos, detail_level=0):
-        return self.client.inspect(code, cursor_pos, detail_level)
+        return self.kernel_client.inspect(code, cursor_pos, detail_level)
 
     def do_history(self, hist_access_type, output, raw, session=None, start=None, stop=None, n=None, pattern=None, unique=False):
-        return self.client.history(hist_access_type, output, raw, session, start, stop, n, pattern, unique)
+        return self.kernel_client.history(hist_access_type, output, raw, session, start, stop, n, pattern, unique)
 
     def do_shutdown(self, restart):
-        return self.client.shutdown(restart)
+        return self.kernel_client.shutdown(restart)
+
+# Todo implement
+class MetaKernelFactory(object):
+    def make_kernel(*args):
+        pass
+
+    def make_metakernel(*args):
+        pass
 
 # Meta kernel which supports magics
 # TODO Should be refactored as a delegator to an underlying kernel
@@ -201,7 +241,7 @@ class MetaMagicKernel(MetaKernel):
             'execution_count': self.execution_count,
             'payload': [],
             'user_expressions': {},
-        }
+            }
 
         # TODO: remove this when IPython fixes this
         # This happens at startup when the language is set to python
@@ -251,6 +291,7 @@ class MetaMagicKernel(MetaKernel):
                         break
                 else:
                     break
+
             # Execute code, if any:
             if ((magic is None or magic.evaluate) and code.strip() != ""):
                 if code.startswith("~~META~~:"):

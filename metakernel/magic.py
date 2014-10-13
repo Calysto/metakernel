@@ -39,6 +39,7 @@ class Magic(object):
         except Exception as exc:
             msg = "Error in calling magic '%s' on %s:\n    %s\n    args: %s\n    kwargs: %s" % (
                 name, mtype, str(exc), args, kwargs)
+            self.kernel.log.exception(exc)
             self.kernel.Error(msg)
             self.kernel.Error(self.get_help(mtype, name))
             # return dummy magic to end processing:

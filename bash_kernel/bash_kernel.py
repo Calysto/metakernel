@@ -34,14 +34,16 @@ class BashKernel(MetaMagicKernel):
     def repr(self, data):
         return data
 
+# Todo replace this with MetaKernelFactory
 class BashKernelAdapter(MetaKernelAdapter):
     implementation = 'Bash'
     implementation_version = '1.0'
     language = 'bash'
     language_version = '0.1'
     banner = "Bash kernel - interact with a bash prompt"
-    meta_class = BashKernel
+    metakernel_class = BashKernel
 
 if __name__ == '__main__':
     from IPython.kernel.zmq.kernelapp import IPKernelApp
+    # Todo use MetaKernelFactory.make_kernel
     IPKernelApp.launch_instance(kernel_class=BashKernelAdapter)
