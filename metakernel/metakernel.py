@@ -14,6 +14,7 @@ import re
 import inspect
 import logging
 
+
 class MetaKernel(Kernel):
 
     split_characters = "( )\n\;'\""
@@ -319,6 +320,16 @@ class MetaKernel(Kernel):
 
         if not info['magic'] or info['rest']:
             content['matches'].extend(_complete_path(info['obj']))
+        # TODO: translate this code
+        if info.full_obj and len(info.full_obj) > len(info.obj):
+            new_list = [c for c in comp_list if c.startswith(info.full_obj)]
+            if new_list:
+                pos = info.editor.get_position('cursor')
+                new_pos = pos + len(info.full_obj) - len(info.obj)
+                info.editor.set_cursor_position(new_pos)
+                completion_text = info.full_obj
+                comp_list = new_list
+
         content["matches"] = sorted(content["matches"])
 
         return content
