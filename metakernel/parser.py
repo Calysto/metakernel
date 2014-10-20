@@ -61,8 +61,22 @@ class Parser(object):
         Returns
         -------
         info : dict
-            Metadata about the parsed buffer.  With the following fields:
-        """
+            Metadata about the parsed buffer with the following items:
+            magic : dict, Magic info, see `_parse_magic`.
+            lines : int, Number of lines in code
+            line_num : int, Current line Number
+            line : str, Current line of text
+            column : int, Index in current line of text
+            obj : str, Matched object at the end of text
+            full_obj : str, Obj plus valid text to the right of cursor
+            help_obj : str, Full_obj or a function call.
+            start : int, Start index in buffer.
+            end: int, End index in buffer
+            pre: str, Text before start
+            mid : str, Text between start and end
+            post : str, Text after end
+            path_matches : list, File system path matches for text
+           """
         if end == -1:
             end = len(code)
         end = min(len(code), end)
@@ -130,6 +144,21 @@ class Parser(object):
         >>> a = ! ls -l
         >>> %time %python a = %paste
 
+        Returns
+        -------
+        info : dict
+            Information about the magic with the following items:
+            name : str, Name of magic
+            type : str, Type of magic {'line', 'cell', 'sticky'}
+            index : str, Index of end of magic in text
+            rest : str, Text after index
+            args : str, First line of "rest", the argument to the magic
+            code : str, Rest of lines of "rest", the cell block for the magic
+            arg_magic: dict, Information about a magic with an argument,
+                             can be nested
+            code_magic: dict, Information about a magic within code,
+                              can be nested.
+
         """
         info = {}
         pre_magics = {}
@@ -191,7 +220,7 @@ class Parser(object):
         return info
 
     def _get_path_matches(self, info):
-        """Get a list of matching paths.
+        """Get a list of matching file system paths.
 
         There are 3 types of matches:
         - start character and no quotes
