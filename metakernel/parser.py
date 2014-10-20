@@ -150,7 +150,7 @@ class Parser(object):
 
         Examples
         --------
-        >>> a = ! ls -l
+        >>> ! ls -l
         >>> %time %python a = %paste
 
         Returns
@@ -202,7 +202,7 @@ class Parser(object):
             info['type'] = types[len(pre)]
             info['index'] = code.index(pre + ws + obj) + len(pre + ws)
 
-        elif code.rstrip().endswith(self.help_suffix):
+        elif self.help_suffix and code.rstrip().endswith(self.help_suffix):
             info['name'] = 'help'
             nchars = code[-3:].count(self.help_suffix)
             info['type'] = types[nchars]
