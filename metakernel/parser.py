@@ -125,6 +125,11 @@ class Parser(object):
         -- it can be at the end of the line and takes precidence
         -- no code is executed when a help magic is present
 
+        Examples
+        --------
+        >>> a = ! ls -l
+        >>> %time %python a = %paste
+
         """
         info = {}
         pre_magics = {}
