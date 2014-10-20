@@ -139,8 +139,10 @@ class Parser(object):
 
         Notes
         -----
-        - magics can be nested
-        - magics return strings
+        - The first magic must start at the beginning of the line
+        - Magics can be nested
+        - Magics return strings
+        - Magics in a cell block must start 
 
         - help magic is special
         -- it can be at the end of the line and takes precidence
@@ -220,9 +222,15 @@ class Parser(object):
             arg_match = re.search(regex, lines[0])
             if arg_match:
                 info['arg_magic'] = self._parse_magic(info['rest'], False)
-            code_match = re.search(regex, info['code'])
-            if code_match:
-                info['code_magic'] = self._parse_magic(info['code'])
+            code_magics = []
+            regex = r'\A *%s' % regex
+            for line in info['code']:
+                code_match = re.search(regex, line)
+                if code_match:
+                    code_magics.append(self._parse_magic(info['code']))
+                else:
+                    code_magics.append(None)
+            info['code_magics'] = code_magics
         else:
             info['args'] = ''
             info['code'] = ''
