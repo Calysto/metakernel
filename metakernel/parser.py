@@ -139,14 +139,14 @@ class Parser(object):
 
         Notes
         -----
-        - The first magic must start at the beginning of the line
-        - Magics can be nested
-        - Magics return strings
-        - Magics in a cell block must start 
+        - The first magic must start at the beginning of the line.
+        - Magics can be nested.
+        - Magics return strings.
+        - Magics in a cell block must start at the beginning of a line.
 
-        - help magic is special
-        -- it can be at the end of the line and takes precidence
-        -- no code is executed when a help magic is present
+        - Help magic is special:
+        -- It can be at the end of the line and takes precidence.
+        -- No code is executed when a help magic is present.
 
         Examples
         --------
