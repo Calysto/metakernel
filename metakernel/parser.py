@@ -127,8 +127,15 @@ class Parser(object):
         info['path_matches'] = self._get_path_matches(info)
         return info
 
-    def _parse_magic(self, code):
+    def _parse_magic(self, code, pinned=True):
         """Find and parse magic calls in the buffer.
+
+        Parameters
+        ----------
+        code : str
+            Input text.
+        pinned : bool, optional
+            Whether the magic must occur at the start of the line.
 
         Notes
         -----
@@ -167,6 +174,8 @@ class Parser(object):
                 regex = r' *(\%s+)( *)(%s)' % (prefix, self.magic_regex)
             else:
                 regex = r' *(\%s+)(%s)' % (prefix, self.magic_regex)
+            if pinned:
+                regex = r'\A%s' % regex
             match = re.search(regex, code, re.UNICODE)
             if match:
                 pre_magics[name] = match.groups()
@@ -210,7 +219,7 @@ class Parser(object):
                                      self.magic_regex)
             arg_match = re.search(regex, lines[0])
             if arg_match:
-                info['arg_magic'] = self._parse_magic(info['rest'])
+                info['arg_magic'] = self._parse_magic(info['rest'], False)
             code_match = re.search(regex, info['code'])
             if code_match:
                 info['code_magic'] = self._parse_magic(info['code'])
