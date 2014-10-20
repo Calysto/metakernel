@@ -40,6 +40,7 @@ class Parser(object):
         full_path_regex = r'([\w/\.~][^\'"]*)\Z'
         self.full_path_regex = re.compile(r'[\'"]{0}|{0}'.format(
             full_path_regex), re.UNICODE)
+
         single_path_regex = r'([\w/\.~][^ ]*)\Z'
         self.single_path_regex = re.compile(single_path_regex, re.UNICODE)
 
@@ -143,7 +144,7 @@ class Parser(object):
         - Magics can be nested.
         - Magics return strings.
         - Magics in a cell block must start at the beginning of a line.
-        - If no valid magic is found, the block will be considered code 
+        - If no valid magic is found, the block will be considered code
           and handled by the kernel.
 
         - Help magic is special:
@@ -218,12 +219,15 @@ class Parser(object):
             lines = info['rest'].splitlines()
             info['args'] = lines[0].strip()
             info['code'] = '\n'.join(lines[1:])
+
              # look for other magics in the rest - recursive
             regex = r'(\%s+)(%s)' % (self.magic_prefixes['magic'],
                                      self.magic_regex)
+
             arg_match = re.search(regex, lines[0])
             if arg_match:
                 info['arg_magic'] = self._parse_magic(info['rest'], False)
+
             code_magics = []
             regex = r'\A *%s' % regex
             for line in info['code']:
@@ -233,6 +237,7 @@ class Parser(object):
                 else:
                     code_magics.append(None)
             info['code_magics'] = code_magics
+
         else:
             info['args'] = ''
             info['code'] = ''
@@ -255,10 +260,12 @@ class Parser(object):
             if path:
                 path = ''.join(path[0])
                 matches = _complete_path(path)
+
                 if len(path) > len(obj) and not path == '.':
                     matches = [m[len(path) - len(obj):] for m in matches]
                 elif path == '.':
                     matches = [m[1:] for m in matches if m.startswith('.')]
+
             return [m.strip() for m in matches if not m.strip() == obj]
 
         matches = get_regex_matches(self.full_path_regex)
