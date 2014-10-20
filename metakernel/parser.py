@@ -143,6 +143,8 @@ class Parser(object):
         - Magics can be nested.
         - Magics return strings.
         - Magics in a cell block must start at the beginning of a line.
+        - If no valid magic is found, the block will be considered code 
+          and handled by the kernel.
 
         - Help magic is special:
         -- It can be at the end of the line and takes precidence.
