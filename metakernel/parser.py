@@ -153,8 +153,8 @@ class Parser(object):
 
         Examples
         --------
-        >>> ! ls -l
-        >>> %time %python a = %paste
+        >>> ! ls -l  # doctest: +SKIP
+        >>> %time %python a = %paste  # doctest: +SKIP
 
         Returns
         -------
