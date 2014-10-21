@@ -120,7 +120,7 @@ def test_complete9():
 
 
 def test_nested_magics():
-    info = Parser().parse_code('a = %time %help %python')
+    info = Parser().parse_code('%time %help %python')
     assert info['magic']['name'] == 'time'
     assert info['magic']['arg_magic']['name'] == 'help'
     assert info['magic']['arg_magic']['arg_magic']['name'] == 'python'
