@@ -9,17 +9,18 @@ import sys
 import glob
 import base64
 from .config import get_history_file, get_local_magics_dir
+from .parser import Parser
 import imp
-import re
 import inspect
 import logging
 
 
 class MetaKernel(Kernel):
 
-    split_characters = "( )\n\;'\""
+    identifier_regex = r'[^\d\W]\w*'
+    func_call_regex = r'([^\d\W][\w\.]*)\([^\)\()]*\Z'
     magic_prefixes = dict(magic='%', shell='!', help='?')
-    magic_suffixes = dict(help='?')
+    help_suffix = '?'
 
     def __init__(self, *args, **kwargs):
         super(MetaKernel, self).__init__(*args, **kwargs)
@@ -50,6 +51,8 @@ class MetaKernel(Kernel):
         self.reload_magics()
         # provide a way to get the current instance
         self.set_variable("get_kernel", lambda: self)
+        self.parser = Parser(self.identifier_regex, self.func_call_regex,
+                             self.magic_prefixes, self.help_suffix)
 
     @classmethod
     def subkernel(cls, kernel):
@@ -178,7 +181,7 @@ class MetaKernel(Kernel):
         if not code.strip():
             return kernel_resp
 
-        info = self.parse_code(code)
+        info = self.parser.parse_code(code)
         self.payload = []
         retval = None
 
@@ -291,48 +294,41 @@ class MetaKernel(Kernel):
         return {'status': 'ok', 'restart': restart}
 
     def do_complete(self, code, cursor_pos):
-        partial, start, cursor_pos = _parse_partial(code, cursor_pos, 
-                                                 self.split_characters)
-        info = self.parse_code(partial, 0, cursor_pos)
+        info = self.parser.parse_code(code, 0, cursor_pos)
+
         content = {
             'matches': [],
-            'cursor_start': start,
-            'cursor_end': start + info['end'],
+            'cursor_start': info['start'],
+            'cursor_end': info['end'],
             'metadata': {},
             'status': 'ok'
         }
 
+        matches = info['path_matches']
         if info['magic']:
             if info['magic']['type'] == 'line':
                 magics = self.line_magics
             else:
                 magics = self.cell_magics
-            if info['rest'] and info['magic']['name'] in magics:
+            if info['magic']['name'] in magics:
                 magic = magics[info['magic']['name']]
-                content['matches'].extend(magic.get_completions(info))
+                matches.extend(magic.get_completions(info))
             else:
                 for name in magics.keys():
                     if name.startswith(info['magic']['name']):
-                        full_name = info['magic']['symbol'] + name
-                        content['matches'].append(full_name)
+                        content['matches'].append(info['magic']['full_name'])
         else:
-            content['matches'].extend(self.get_completions(info))
+            matches.extend(self.get_completions(info))
 
-        if not info['magic'] or info['rest']:
-            content['matches'].extend(_complete_path(info['obj']))
-        # TODO: translate this code
-        """
-        if info.full_obj and len(info.full_obj) > len(info.obj):
-            new_list = [c for c in comp_list if c.startswith(info.full_obj)]
+        if info['full_obj'] and len(info['full_obj']) > len(info['obj']):
+            new_list = [m for m in matches if m.startswith(info['full_obj'])]
             if new_list:
-                pos = info.editor.get_position('cursor')
-                new_pos = pos + len(info.full_obj) - len(info.obj)
-                info.editor.set_cursor_position(new_pos)
-                completion_text = info.full_obj
-                comp_list = new_list
-        """
+                content['cursor_end'] = (content['cursor_end'] +
+                                         len(info['full_obj']) -
+                                         len(info['obj']))
+                matches = new_list
 
-        content["matches"] = sorted(content["matches"])
+        content["matches"] = sorted(matches)
 
         return content
 
@@ -340,9 +336,9 @@ class MetaKernel(Kernel):
         # Object introspection
         if cursor_pos > len(code):
             return
-        partial, start, end = _parse_partial(code, cursor_pos, self.split_characters)
+
         content = {'status': 'aborted', 'data': {}, 'found': False}
-        docstring = self.get_help_on(partial, detail_level, none_on_fail=True)
+        docstring = self.get_help_on(code, detail_level, none_on_fail=True)
 
         if docstring:
             content["data"] = {"text/plain": docstring}
@@ -443,28 +439,14 @@ class MetaKernel(Kernel):
     def get_magic(self, text):
         # if first line matches a magic,
         # call magic.call_magic() and return magic object
-        info = self.parse_code(text)
+        info = self.parser.parse_code(text)
         magic = self.line_magics['magic']
         return magic.get_magic(info)
 
     def get_help_on(self, expr, level=0, none_on_fail=False):
-        info = self.parse_code(expr)
+        info = self.parser.parse_code(expr)
         help_magic = self.line_magics['help']
         return help_magic.get_help_on(info, level, none_on_fail)
-
-    def parse_code(self, code, start=0, end=-1):
-        info = _parse_code(code, self.magic_prefixes, self.magic_suffixes,
-                           start, end)
-
-        split_str = self.split_characters
-        if '|' in split_str and not r'\|' in split_str:
-            split_str = split_str.replace('|', r'\|')
-
-        tokens = re.split('|'.join(split_str), info['rest'])
-        if tokens:
-            info['obj'] = tokens[-1].strip()
-
-        return info
 
     def _get_sticky_magics(self):
         retval = ""
@@ -472,62 +454,6 @@ class MetaKernel(Kernel):
             retval += (key + " " +
                        " ".join(self.sticky_magics[key])).strip() + "\n"
         return retval
-
-
-def _listdir(root):
-    "List directory 'root' appending the path separator to subdirs."
-    res = []
-    root = os.path.expanduser(root)
-    try:
-        for name in os.listdir(root):
-            path = os.path.join(root, name)
-            if os.path.isdir(path):
-                name += os.sep
-            res.append(name)
-    except:
-        pass  # no need to report invalid paths
-    return res
-
-
-def _complete_path(path=None):
-    """Perform completion of filesystem path.
-
-    http://stackoverflow.com/questions/5637124/tab-completion-in-pythons-raw-input
-    """
-    if not path:
-        return _listdir('.')
-    dirname, rest = os.path.split(path)
-    tmp = dirname if dirname else '.'
-    res = [os.path.join(dirname, p)
-           for p in _listdir(tmp) if p.startswith(rest)]
-    # more than one match, or single match which does not exist (typo)
-    if len(res) > 1 or not os.path.exists(path):
-        return res
-    # resolved to a single directory, so return list of files below it
-    if os.path.isdir(path):
-        return [os.path.join(path, p) for p in _listdir(path)]
-    # exact file match terminates this completion
-    return [path + ' ']
-
-
-def _parse_magic(text, prefixes):
-    lines = text.split("\n")
-    command = lines[0]
-    shell_prefix = prefixes['shell']
-    if command.startswith(prefixes['magic']):
-        if " " in command:
-            command, args = command.split(" ", 1)
-        else:
-            args = ""
-    elif command.startswith('{0}{0}'.format(shell_prefix)):
-        args = command[2:]
-    elif command.startswith(shell_prefix):
-        args = command[1:]
-    else:
-        args = ""
-    code = "\n".join(lines[1:])
-    args = args.strip()
-    return command, args, code
 
 
 def _split_magics_code(code, prefixes):
@@ -550,90 +476,6 @@ def _split_magics_code(code, prefixes):
     if ret_code_str:
         ret_code_str += "\n"
     return (ret_magics_str, ret_code_str)
-
-
-def _parse_partial(code, cursor_pos, split_characters):
-    if cursor_pos == len(code):
-        cursor_position = len(code) - 1
-    # skip over non-interesting characters:
-    while (cursor_pos - 1 > 0 and 
-           code[cursor_pos - 1] in split_characters):
-        cursor_pos -= 1
-    # include only interesting characters:
-    start = cursor_pos
-    while (start - 1 >= 0 and 
-           code[start - 1] not in split_characters):
-        start -= 1
-    return code[start:cursor_pos], start, cursor_pos
-
-        
-def _parse_code(code, prefixes, suffixes, start=0, end=-1):
-    if end == -1:
-        end = len(code)
-    end = min(end, len(code))
-
-    start = min(start, len(code))
-    snip = code[start: end].rstrip()
-
-    info = dict(type=None, magic={}, end=end, obj='',
-                start=start, rest=snip, code=code)
-
-    tokens = snip.split()
-    if not tokens:
-        return info
-
-    # find magic characters - help overrides any others
-    pre_magics = {}
-    for (name, prefix) in prefixes.items():
-        pre = ''
-        while len(pre) < len(snip) and snip[len(pre)] == prefix:
-            pre += prefix
-        if pre:
-            pre_magics[name] = pre
-
-    post_magics = {}
-    for (name, suffix) in suffixes.items():
-        post = ''
-        while len(post) < len(snip) and snip[-len(post) - 1] == suffix:
-            post += suffix
-        if post:
-            post_magics[name] = post
-
-    if 'help' in pre_magics:
-        info['magic']['name'] = 'help'
-        info['magic']['symbol'] = pre_magics['help']
-        info['rest'] = info['rest'][len(pre_magics['help']):]
-
-    elif 'help' in post_magics:
-        info['magic']['name'] = 'help'
-        info['magic']['symbol'] = post_magics['help']
-        info['rest'] = info['rest'][:-len(post_magics['help'])]
-
-    elif 'shell' in pre_magics:
-        info['magic']['name'] = 'shell'
-        info['magic']['symbol'] = pre_magics['shell']
-        info['rest'] = info['rest'][len(pre_magics['shell']):]
-
-    elif 'magic' in pre_magics:
-        first = tokens[0]
-        info['magic']['name'] = first[len(pre_magics['magic']):]
-        info['magic']['symbol'] = pre_magics['magic']
-        info['rest'] = info['rest'][len(first):]
-
-    if info['magic']:
-        if len(info['magic']['symbol']) == 3:
-            info['magic']['type'] = 'sticky'
-        elif len(info['magic']['symbol']) == 2:
-            info['magic']['type'] = 'cell'
-        else:
-            info['magic']['type'] = 'line'
-
-        cmd, args, magic_code = _parse_magic(snip, prefixes)
-        info['magic']['cmd'] = cmd
-        info['magic']['args'] = args
-        info['magic']['code'] = magic_code
-
-    return info
 
 
 def _formatter(data, repr_func):

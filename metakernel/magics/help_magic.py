@@ -58,7 +58,7 @@ class HelpMagic(Magic):
     def get_help_on(self, info, level, none_on_fail=False):
 
         if info['magic'] and info['magic']['name'] == 'help':
-            code = info['rest'].rstrip()
+            code = info['post'].rstrip()
 
             magic_prefix = self.kernel.magic_prefixes['magic']
             if code.endswith(magic_prefix + 'help'):
@@ -70,7 +70,7 @@ class HelpMagic(Magic):
                 if code.startswith('help'):
                     code = code[len('help'):]
 
-            info = self.kernel.parse_code(code.lstrip())
+            info = self.kernel.parser.parse_code(code.lstrip())
 
         if info['magic']:
 
@@ -85,7 +85,7 @@ class HelpMagic(Magic):
             else:
                 magic = self.kernel.cell_magics.get(minfo['name'], None)
 
-            if not info['rest']:
+            if not info['post']:
                 if magic:
                     return magic.get_help(minfo['type'], minfo['name'], level)
                 elif not info['magic']['name']:

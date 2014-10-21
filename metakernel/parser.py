@@ -92,8 +92,12 @@ class Parser(object):
         info['lines'] = lines = code[:end].splitlines()
         info['line_num'] = line_num = len(lines)
 
-        info['line'] = line = lines[-1]
-        info['column'] = col = len(lines[-1])
+        if info['line_num']:
+            info['line'] = line = lines[-1]
+            info['column'] = col = len(lines[-1])
+        else:
+            info['line'] = line = ''
+            info['column'] = col = 0
 
         obj = re.search(self.id_regex, line).group()
 
@@ -190,26 +194,31 @@ class Parser(object):
         if 'help' in pre_magics:
             info['name'] = 'help'
             pre, obj = pre_magics['help']
+            info['full_name'] = pre + 'help'
             info['type'] = types[len(pre)]
             info['index'] = code.index(pre + obj)
+
+        elif self.help_suffix and code.rstrip().endswith(self.help_suffix):
+            info['name'] = 'help'
+            nchars = code[-3:].count(self.help_suffix)
+            info['type'] = types[nchars]
+            info['full_name'] = 'help' + nchars * self.help_suffix
+            info['index'] = len(code) - nchars
 
         elif 'magic' in pre_magics:
             pre, obj = pre_magics['magic']
             info['type'] = types[len(pre)]
             info['name'] = obj
+            info['full_name'] = pre + obj
             info['index'] = code.index(pre + obj) + len(pre + obj)
 
         elif 'shell' in pre_magics:
             info['name'] = 'shell'
             pre, ws, obj = pre_magics['shell']
             info['type'] = types[len(pre)]
+            info['full_name'] = pre + obj
             info['index'] = code.index(pre + ws + obj) + len(pre + ws)
 
-        elif self.help_suffix and code.rstrip().endswith(self.help_suffix):
-            info['name'] = 'help'
-            nchars = code[-3:].count(self.help_suffix)
-            info['type'] = types[nchars]
-            info['index'] = len(code) - nchars
         else:
             return info
 
