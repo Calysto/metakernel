@@ -313,7 +313,7 @@ class MetaKernel(Kernel):
                 magics = self.cell_magics
             if info['magic']['name'] in magics:
                 magic = magics[info['magic']['name']]
-                info = self.parse_code(info['magic']['name']['args'])
+                info = self.parser.parse_code(info['magic']['args'])
                 matches.extend(magic.get_completions(info))
             else:
                 for name in magics.keys():
