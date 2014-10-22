@@ -3,7 +3,6 @@
 
 
 from metakernel import Magic
-import re
 
 
 class HelpMagic(Magic):
@@ -18,8 +17,8 @@ class HelpMagic(Magic):
             "{0}item  - get help on item",
         ]
         strings = []
-        if 'help' in self.kernel.magic_suffixes:
-            strings += [s.format(self.kernel.magic_suffixes['help'])
+        if self.kernel.help_suffix:
+            strings += [s.format(self.kernel.help_suffix['help'])
                         for s in suffixes]
         if 'help' in self.kernel.magic_prefixes:
             strings += [p.format(self.kernel.magic_prefixes['help'])
@@ -57,6 +56,7 @@ class HelpMagic(Magic):
 
     def get_help_on(self, info, level, none_on_fail=False):
 
+        # TODO: handle nested stuff here
         if info['magic'] and info['magic']['name'] == 'help':
             code = info['post'].rstrip()
 

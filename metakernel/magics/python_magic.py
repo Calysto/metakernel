@@ -106,7 +106,7 @@ class PythonMagic(Magic):
         if jedi is None:
             return []
 
-        text = info['rest']
+        text = info['code']
         interpreter = Interpreter(text, [self.env])
 
         position = (info['line_num'], info['column'])
@@ -123,7 +123,7 @@ class PythonMagic(Magic):
     def get_help_on(self, info, level=0, none_on_fail=False):
         """Implement basic help for functions"""
 
-        if not info['rest']:
+        if not info['code']:
             return None if none_on_fail else ''
 
         last = info['obj']

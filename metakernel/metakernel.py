@@ -306,12 +306,14 @@ class MetaKernel(Kernel):
 
         matches = info['path_matches']
         if info['magic']:
+            # TODO: go down the parse tree here
             if info['magic']['type'] == 'line':
                 magics = self.line_magics
             else:
                 magics = self.cell_magics
             if info['magic']['name'] in magics:
                 magic = magics[info['magic']['name']]
+                info = self.parse_code(info['magic']['name']['args'])
                 matches.extend(magic.get_completions(info))
             else:
                 for name in magics.keys():
