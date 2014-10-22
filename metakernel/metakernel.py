@@ -483,40 +483,26 @@ def _split_magics_code(code, prefixes):
 def _formatter(data, repr_func):
     retval = {}
     retval["text/plain"] = repr_func(data)
-    if hasattr(data, "_repr_png_"):
-        obj = data._repr_png_()
+
+    img_lut = [("_repr_png_", "image/png"),
+               ("_repr_jpeg", "image/jpeg")]
+
+    for (attr, mimetype) in img_lut:
+        obj = getattr(data, attr, None)
         if obj:
-            retval["image/png"] = base64.encodestring(obj)
-    if hasattr(data, "_repr_jpeg_"):
-        obj = data._repr_jpeg_()
+            retval[mimetype] = base64.encodestring(obj)
+
+    lut = [("_repr_html_", "text/html"),
+           ("_repr_markdown_", "text/markdown"),
+           ("_repr_html_", "text/html"),
+           ("_repr_svg_", "image/svg+xml"),
+           ("_repr_latex_", "text/latex"),
+           ("_repr_json_", "application/json"),
+           ("_repr_javascript_", "application/javascript"),
+           ("_repr_pdf_", "application/pdf")]
+
+    for (attr, mimetype) in lut:
+        obj = getattr(data, attr, None)
         if obj:
-            retval["image/jpeg"] = base64.encodestring(obj)
-    if hasattr(data, "_repr_html_"):
-        obj = data._repr_html_()
-        if obj:
-            retval["text/html"] = obj
-    if hasattr(data, "_repr_markdown_"):
-        obj = data._repr_markdown_()
-        if obj:
-            retval["text/markdown"] = obj
-    if hasattr(data, "_repr_svg_"):
-        obj = data._repr_svg_()
-        if obj:
-            retval["image/svg+xml"] = obj
-    if hasattr(data, "_repr_latex_"):
-        obj = data._repr_latex_()
-        if obj:
-            retval["text/latex"] = obj
-    if hasattr(data, "_repr_json_"):
-        obj = data._repr_json_()
-        if obj:
-            retval["application/json"] = obj
-    if hasattr(data, "_repr_javascript_"):
-        obj = data._repr_javascript_()
-        if obj:
-            retval["application/javascript"] = obj
-    if hasattr(data, "_repr_pdf_"):
-        obj = data._repr_pdf_()
-        if obj:
-            retval["application/pdf"] = obj
+            retval[mimetype] = obj
     return retval
