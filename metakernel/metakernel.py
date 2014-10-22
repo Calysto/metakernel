@@ -485,7 +485,7 @@ def _formatter(data, repr_func):
     retval["text/plain"] = repr_func(data)
 
     img_lut = [("_repr_png_", "image/png"),
-               ("_repr_jpeg", "image/jpeg")]
+               ("_repr_jpeg_", "image/jpeg")]
 
     for (attr, mimetype) in img_lut:
         obj = getattr(data, attr, None)
