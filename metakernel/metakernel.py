@@ -484,10 +484,10 @@ def _formatter(data, repr_func):
     retval = {}
     retval["text/plain"] = repr_func(data)
 
-    img_lut = [("_repr_png_", "image/png"),
-               ("_repr_jpeg_", "image/jpeg")]
+    base64_lut = [("_repr_png_", "image/png"),
+                  ("_repr_jpeg_", "image/jpeg")]
 
-    for (attr, mimetype) in img_lut:
+    for (attr, mimetype) in base64_lut:
         obj = getattr(data, attr, None)
         if obj:
             retval[mimetype] = base64.encodestring(obj)
