@@ -38,7 +38,7 @@ def test_help():
 def test_complete():
     kernel = get_kernel()
     comp = kernel.do_complete('%connect_', len('%connect_'))
-    assert comp['matches'] == ['%connect_info'], comp
+    assert comp['matches'] == ['%connect_info'], str(comp['matches'])
 
     comp = kernel.do_complete('%%fil', len('%%fil'))
     assert comp['matches'] == ['%%file'], str(comp['matches'])
@@ -69,7 +69,7 @@ def test_path_complete():
 def test_ls_path_complete():
     kernel = get_kernel()
     comp = kernel.do_complete('! ls ~/.ipytho', len('! ls ~/.ipytho'))
-    assert 'ipython/' in comp['matches'], comp['matches']
+    assert comp['matches'] == ['ipython/'], comp
 
 
 def test_history():
