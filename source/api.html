@@ -5,11 +5,11 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>API Reference &mdash; Jupyter Kernel 0.3 documentation</title>
+    <title>API Reference &mdash; Metakernel 0.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/bootswatch-3.1.0/cosmo/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootswatch-3.2.0/cosmo/bootstrap.min.css" type="text/css" />
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     
     <script type="text/javascript">
@@ -26,9 +26,9 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
-    <script type="text/javascript" src="../_static/bootstrap-3.1.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.2.0/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
-    <link rel="top" title="Jupyter Kernel 0.3 documentation" href="../index.html" />
+    <link rel="top" title="Metakernel 0.3 documentation" href="../index.html" />
     <link rel="next" title="Information" href="info.html" />
     <link rel="prev" title="Installation" href="installation.html" />
 <meta charset='utf-8'>
@@ -52,7 +52,7 @@
           <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="../index.html">
-          Jupyter Kernel</a>
+          Metakernel</a>
         <span class="navbar-text navbar-version pull-left"><b>0.3</b></span>
       </div>
 
@@ -87,7 +87,7 @@
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
 <li><a class="reference internal" href="#">API Reference</a><ul>
-<li><a class="reference internal" href="#jupyter-kernel">Jupyter Kernel</a></li>
+<li><a class="reference internal" href="#module-metakernel">Metakernel</a></li>
 </ul>
 </li>
 </ul>
@@ -138,7 +138,7 @@
       <div class="col-md-3">
         <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
 <li><a class="reference internal" href="#">API Reference</a><ul>
-<li><a class="reference internal" href="#jupyter-kernel">Jupyter Kernel</a></li>
+<li><a class="reference internal" href="#module-metakernel">Metakernel</a></li>
 </ul>
 </li>
 </ul>
@@ -149,69 +149,117 @@
       
   <div class="section" id="api-reference">
 <h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="jupyter-kernel">
-<h2>Jupyter Kernel<a class="headerlink" href="#jupyter-kernel" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-jupyter_kernel"></span><dl class="class">
-<dt id="jupyter_kernel.MagicKernel">
-<em class="property">class </em><tt class="descclassname">jupyter_kernel.</tt><tt class="descname">MagicKernel</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#jupyter_kernel.MagicKernel" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="jupyter_kernel.MagicKernel.set_variable">
-<tt class="descname">set_variable</tt><big>(</big><em>name</em>, <em>value</em><big>)</big><a class="headerlink" href="#jupyter_kernel.MagicKernel.set_variable" title="Permalink to this definition">¶</a></dt>
+<div class="section" id="module-metakernel">
+<span id="metakernel"></span><h2>Metakernel<a class="headerlink" href="#module-metakernel" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="metakernel.MetaKernel">
+<em class="property">class </em><tt class="descclassname">metakernel.</tt><tt class="descname">MetaKernel</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#metakernel.MetaKernel" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="classmethod">
+<dt id="metakernel.MetaKernel.subkernel">
+<em class="property">classmethod </em><tt class="descname">subkernel</tt><big>(</big><em>kernel</em><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.subkernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>FIXME: monkeypatch to Make this kernel class be a subkernel to another.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="metakernel.MetaKernel.set_variable">
+<tt class="descname">set_variable</tt><big>(</big><em>name</em>, <em>value</em><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.set_variable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a variable in the kernel language.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="jupyter_kernel.MagicKernel.get_variable">
-<tt class="descname">get_variable</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#jupyter_kernel.MagicKernel.get_variable" title="Permalink to this definition">¶</a></dt>
+<dt id="metakernel.MetaKernel.get_variable">
+<tt class="descname">get_variable</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.get_variable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a variable from the kernel language.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="jupyter_kernel.MagicKernel.handle_plot_settings">
-<tt class="descname">handle_plot_settings</tt><big>(</big><big>)</big><a class="headerlink" href="#jupyter_kernel.MagicKernel.handle_plot_settings" title="Permalink to this definition">¶</a></dt>
+<dt id="metakernel.MetaKernel.handle_plot_settings">
+<tt class="descname">handle_plot_settings</tt><big>(</big><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.handle_plot_settings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handle the current plot settings</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="jupyter_kernel.MagicKernel.get_local_magics_dir">
-<tt class="descname">get_local_magics_dir</tt><big>(</big><big>)</big><a class="headerlink" href="#jupyter_kernel.MagicKernel.get_local_magics_dir" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the path to local magics dir (eg ~/.ipython/jupyter_kernel/magics)</p>
+<dt id="metakernel.MetaKernel.get_local_magics_dir">
+<tt class="descname">get_local_magics_dir</tt><big>(</big><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.get_local_magics_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the path to local magics dir (eg ~/.ipython/metakernel/magics)</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="jupyter_kernel.MagicKernel.add_complete">
-<tt class="descname">add_complete</tt><big>(</big><em>matches</em>, <em>token</em><big>)</big><a class="headerlink" href="#jupyter_kernel.MagicKernel.add_complete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add matches based on token from kernel.</p>
+<dt id="metakernel.MetaKernel.get_completions">
+<tt class="descname">get_completions</tt><big>(</big><em>info</em><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.get_completions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get completions from kernel based on info dict.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="jupyter_kernel.MagicKernel.do_history">
-<tt class="descname">do_history</tt><big>(</big><em>hist_access_type</em>, <em>output</em>, <em>raw</em>, <em>session=None</em>, <em>start=None</em>, <em>stop=None</em>, <em>n=None</em>, <em>pattern=None</em>, <em>unique=False</em><big>)</big><a class="headerlink" href="#jupyter_kernel.MagicKernel.do_history" title="Permalink to this definition">¶</a></dt>
+<dt id="metakernel.MetaKernel.do_execute_direct">
+<tt class="descname">do_execute_direct</tt><big>(</big><em>code</em><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.do_execute_direct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute code in the kernel language.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="metakernel.MetaKernel.do_execute_meta">
+<tt class="descname">do_execute_meta</tt><big>(</big><em>code</em><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.do_execute_meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute meta code in the kernel. This uses the execute infrastructure
+but allows JavaScript to talk directly to the kernel bypassing normal
+processing.</p>
+<p>When responding to the %%debug magic, the step and reset meta
+commands can answer with a string in the format:</p>
+<p>&#8220;highlight: [start_line, start_col, end_line, end_col]&#8221;</p>
+<p>for highlighting expressions in the frontend.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="metakernel.MetaKernel.do_execute_file">
+<tt class="descname">do_execute_file</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.do_execute_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute a file in the kernel language.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="metakernel.MetaKernel.do_function_direct">
+<tt class="descname">do_function_direct</tt><big>(</big><em>function_name</em>, <em>arg</em><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.do_function_direct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call a function in the kernel language with args (as a single item).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="metakernel.MetaKernel.restart_kernel">
+<tt class="descname">restart_kernel</tt><big>(</big><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.restart_kernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Restart the kernel</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="metakernel.MetaKernel.do_history">
+<tt class="descname">do_history</tt><big>(</big><em>hist_access_type</em>, <em>output</em>, <em>raw</em>, <em>session=None</em>, <em>start=None</em>, <em>stop=None</em>, <em>n=None</em>, <em>pattern=None</em>, <em>unique=False</em><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.do_history" title="Permalink to this definition">¶</a></dt>
 <dd><p>Access history at startup.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="jupyter_kernel.MagicKernel.do_shutdown">
-<tt class="descname">do_shutdown</tt><big>(</big><em>restart</em><big>)</big><a class="headerlink" href="#jupyter_kernel.MagicKernel.do_shutdown" title="Permalink to this definition">¶</a></dt>
+<dt id="metakernel.MetaKernel.do_shutdown">
+<tt class="descname">do_shutdown</tt><big>(</big><em>restart</em><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.do_shutdown" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shut down the app gracefully, saving history.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="jupyter_kernel.MagicKernel.update_plot_settings">
-<tt class="descname">update_plot_settings</tt><big>(</big><em>backend</em>, <em>size</em>, <em>format</em><big>)</big><a class="headerlink" href="#jupyter_kernel.MagicKernel.update_plot_settings" title="Permalink to this definition">¶</a></dt>
+<dt id="metakernel.MetaKernel.update_plot_settings">
+<tt class="descname">update_plot_settings</tt><big>(</big><em>backend</em>, <em>size</em>, <em>format</em><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.update_plot_settings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update the default plot settings for the kernel.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
-<dt id="jupyter_kernel.Magic">
-<em class="property">class </em><tt class="descclassname">jupyter_kernel.</tt><tt class="descname">Magic</tt><big>(</big><em>kernel</em><big>)</big><a class="headerlink" href="#jupyter_kernel.Magic" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="metakernel.Magic">
+<em class="property">class </em><tt class="descclassname">metakernel.</tt><tt class="descname">Magic</tt><big>(</big><em>kernel</em><big>)</big><a class="headerlink" href="#metakernel.Magic" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="metakernel.Magic.get_completions">
+<tt class="descname">get_completions</tt><big>(</big><em>info</em><big>)</big><a class="headerlink" href="#metakernel.Magic.get_completions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get completions based on info dict from magic.</p>
+</dd></dl>
+
+</dd></dl>
 
 <dl class="function">
-<dt id="jupyter_kernel.option">
-<tt class="descclassname">jupyter_kernel.</tt><tt class="descname">option</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#jupyter_kernel.option" title="Permalink to this definition">¶</a></dt>
+<dt id="metakernel.option">
+<tt class="descclassname">metakernel.</tt><tt class="descname">option</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#metakernel.option" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return decorator that adds a magic option to a function.</p>
 </dd></dl>
 
@@ -230,8 +278,8 @@
       
     </p>
     <p>
-        &copy; Copyright 2014 - 2014, Jupyter Kernel contributors.<br/>
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.<br/>
+        &copy; Copyright 2014 - 2014, Metakernel contributors.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.3.<br/>
     </p>
   </div>
 </footer>
