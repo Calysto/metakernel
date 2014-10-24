@@ -401,13 +401,13 @@ class MetaKernel(Kernel):
         end = kwargs["end"] if ("end" in kwargs) else "\n"
         message = " ".join(args) + end
         stream_content = {
-            'name': 'stdout', 'data': message, 'metadata': dict()}
+            'name': 'stdout', 'text': message, 'metadata': dict()}
         self.log.debug('Print: %s' % message)
         self.send_response(self.iopub_socket, 'stream', stream_content)
 
     def Write(self, message):
         stream_content = {
-            'name': 'stdout', 'data': message, 'metadata': dict()}
+            'name': 'stdout', 'text': message, 'metadata': dict()}
         self.log.debug('Write: %s' % message)
         self.send_response(self.iopub_socket, 'stream', stream_content)
 
@@ -416,7 +416,7 @@ class MetaKernel(Kernel):
         message = " ".join([str(a) for a in args]) + end
         self.log.debug('Error: %s' % message)
         stream_content = {
-            'name': 'stderr', 'data': message, 'metadata': dict()}
+            'name': 'stderr', 'text': message, 'metadata': dict()}
         self.send_response(self.iopub_socket, 'stream', stream_content)
 
     def update_plot_settings(self, backend, size, format):
