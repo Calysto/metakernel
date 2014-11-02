@@ -126,7 +126,7 @@ class Parser(object):
         info['start'] = end - len(obj)
         info['end'] = end
         info['pre'] = code[:start]
-        info['mid'] = code[start: end]
+        info['code'] = code[start: end]
         info['post'] = code[end:]
 
         info['path_matches'] = self._get_path_matches(info)
