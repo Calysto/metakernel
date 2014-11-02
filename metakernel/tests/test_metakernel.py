@@ -63,7 +63,7 @@ def test_path_complete():
     if os.path.isdir(path):
         assert path + os.sep in comp['matches']
     else:
-        assert path in comp['matches']
+        assert path in comp['matches'], comp['matches']
 
 
 def test_ls_path_complete():
