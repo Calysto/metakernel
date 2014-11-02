@@ -36,8 +36,7 @@ class HelpMagic(Magic):
             %help dir
 
         """
-        text = text.replace('%help', '').lstrip()
-        return self.get_help_on(text, 0)
+        return self.get_help_on(text, 0, False)
 
     def cell_help(self, text):
         """
@@ -51,54 +50,79 @@ class HelpMagic(Magic):
            %%help dir
 
         """
-        text = text.replace('%%help', '').lstrip()
-        return self.get_help_on(text, 1)
+        return self.get_help_on(text, 1, False)
 
-    def get_help_on(self, info, level, none_on_fail=False):
+    def get_help_on(self, text, level, none_on_fail=False):
+        """
+        Examples
+        ========
 
-        # TODO: handle nested stuff here
-        if info['magic'] and info['magic']['name'] == 'help':
-            code = info['post'].rstrip()
+        All of the following give help on np.ones using the %python magic:
 
-            magic_prefix = self.kernel.magic_prefixes['magic']
-            if code.endswith(magic_prefix + 'help'):
-                return self.get_help('line', 'help', level)
+        %help %python np.ones
+        %python np.ones?
 
-            if magic_prefix + 'help' in code:
-                while code.startswith(self.kernel.magic_prefixes['magic']):
-                    code = code[1:]
-                if code.startswith('help'):
-                    code = code[len('help'):]
+        To get help on a magic itself, we would write one of the following:
 
-            info = self.kernel.parser.parse_code(code.lstrip())
+        %python?
+        %help %python
+        ?%python
+        """
+        text = self._prep_text(text)
+
+        info = self.kernel.parse_code(text)
 
         if info['magic']:
-
-            if info['magic']['name'] == 'help':
-                return self.get_help('line', 'help', level)
 
             minfo = info['magic']
             errmsg = "No such %s magic '%s'" % (minfo['type'], minfo['name'])
 
             if minfo['type'] == 'line':
                 magic = self.kernel.line_magics.get(minfo['name'], None)
+
             else:
                 magic = self.kernel.cell_magics.get(minfo['name'], None)
 
-            if not info['post']:
-                if magic:
-                    return magic.get_help(minfo['type'], minfo['name'], level)
-                elif not info['magic']['name']:
-                    return self.kernel.get_usage()
+                if minfo['code']:
+                    info = self.kernel.parse_code(minfo['code'])
                 else:
-                    return errmsg
+                    info = self.kernel.parse_code(minfo['args'])
+
+            if magic:
+                info = self.kernel.parse_code(minfo['args'])
+                return magic.get_help_on(minfo['code'])
+
+            elif not info['magic']['name']:
+                return self.kernel.get_usage()
+
             else:
-                if magic:
-                    return magic.get_help_on(info, level)
-                else:
-                    return errmsg
+                return errmsg
+
         else:
             return self.kernel.get_kernel_help_on(info, level, none_on_fail)
+
+    def _prep_text(self, text):
+        text = text.strip()
+
+        magic = self.kernel.magic_prefix['magix']
+        prefix = self.kernel.magic_prefix['help']
+        suffix = self.kernel.magic_suffix
+
+        text = text.replace('{0}{0}help'.format(magic), '')
+        text = text.replace('{0}help'.format(magic), '')
+
+        if text.startswith('{0}{0}'.format(prefix)):
+            text = text[2:]
+        elif text.startswith('{0}'.format(prefix)):
+            text = text[1:]
+
+        if suffix:
+            if text.endswith('{0}{0}'.format(suffix)):
+                text = text[:-2]
+            elif text.endswith('{0}'.format(suffix)):
+                text = text[:-1]
+
+        return text
 
 
 def register_magics(kernel):
