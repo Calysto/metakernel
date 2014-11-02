@@ -1,5 +1,6 @@
 import os
 import re
+import subprocess
 from metakernel.tests.utils import get_kernel, get_log_text
 
 
@@ -63,7 +64,7 @@ def test_path_complete():
     if os.path.isdir(path):
         assert path + os.sep in comp['matches']
     else:
-        assert path in comp['matches'], (comp['matches'], os.system('ls'))
+        assert path in comp['matches'], (comp['matches'], path)
 
 
 def test_ls_path_complete():
