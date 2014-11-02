@@ -79,7 +79,11 @@ class HelpMagic(Magic):
 
             if minfo['type'] == 'line':
                 magic = self.kernel.line_magics.get(minfo['name'], None)
-                info = self.kernel.parse_code(minfo['args'])
+                if minfo['args']:
+                    info = self.kernel.parse_code(minfo['args'])
+                elif magic:
+                    return magic.get_help(minfo['type'], minfo['name'],
+                                          level)
 
             else:
                 magic = self.kernel.cell_magics.get(minfo['name'], None)

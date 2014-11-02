@@ -132,15 +132,13 @@ class Parser(object):
         info['path_matches'] = self._get_path_matches(info)
         return info
 
-    def _parse_magic(self, code, pinned=True):
+    def _parse_magic(self, code):
         """Find and parse magic calls in the buffer.
 
         Parameters
         ----------
         code : str
             Input text.
-        pinned : bool, optional
-            Whether the magic must occur at the start of the line.
 
         Notes
         -----
@@ -180,11 +178,11 @@ class Parser(object):
         pre_magics = {}
         for (name, prefix) in self.magic_prefixes.items():
             if name == 'shell':
-                regex = r' *(\%s+)( *)(%s)' % (prefix, self.magic_regex)
+                regex = r'\A *(\%s+)( *)(%s)' % (prefix, self.magic_regex)
+            elif name == 'help':
+                regex = r'\A *(\%s+)()' % prefix
             else:
-                regex = r' *(\%s+)(%s)' % (prefix, self.magic_regex)
-            if pinned:
-                regex = r'\A%s' % regex
+                regex = r'\A *(\%s+)(%s)' % (prefix, self.magic_regex)
             match = re.search(regex, code, re.UNICODE)
             if match:
                 pre_magics[name] = match.groups()
@@ -222,30 +220,12 @@ class Parser(object):
         else:
             return info
 
-        info['rest'] = code[info['index']:].strip()
+        info['rest'] = code[info['index']:].rstrip()
 
         if info['rest']:
             lines = info['rest'].splitlines()
             info['args'] = lines[0].strip()
             info['code'] = '\n'.join(lines[1:])
-
-             # look for other magics in the rest - recursive
-            regex = r'(\%s+)(%s)' % (self.magic_prefixes['magic'],
-                                     self.magic_regex)
-
-            arg_match = re.search(regex, lines[0])
-            if arg_match:
-                info['arg_magic'] = self._parse_magic(info['rest'], False)
-
-            code_magics = []
-            regex = r'\A *%s' % regex
-            for line in info['code']:
-                code_match = re.search(regex, line)
-                if code_match:
-                    code_magics.append(self._parse_magic(info['code']))
-                else:
-                    code_magics.append(None)
-            info['code_magics'] = code_magics
 
         else:
             info['args'] = ''

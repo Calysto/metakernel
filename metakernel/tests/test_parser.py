@@ -117,10 +117,3 @@ def test_complete9():
     p = get_parser()
     info = p.parse_code('fluff\n/tmp/Test ')
     assert 'Dir/' in info['path_matches'], info
-
-
-def test_nested_magics():
-    info = Parser().parse_code('%time %help %python')
-    assert info['magic']['name'] == 'time'
-    assert info['magic']['arg_magic']['name'] == 'help'
-    assert info['magic']['arg_magic']['arg_magic']['name'] == 'python'

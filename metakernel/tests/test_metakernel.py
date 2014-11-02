@@ -38,10 +38,10 @@ def test_help():
 def test_complete():
     kernel = get_kernel()
     comp = kernel.do_complete('%connect_', len('%connect_'))
-    assert comp['matches'] == ['%connect_info'], str(comp['matches'])
+    assert comp['matches'] == ['connect_info'], str(comp['matches'])
 
     comp = kernel.do_complete('%%fil', len('%%fil'))
-    assert comp['matches'] == ['%%file'], str(comp['matches'])
+    assert comp['matches'] == ['file'], str(comp['matches'])
 
 
 def test_inspect():
@@ -106,7 +106,7 @@ def test_sticky_magics():
 def test_other_kernels():
     from metakernel import MetaKernel
     class SchemeKernel(MetaKernel):
-        magic_suffixes = {}
+        help_suffix = {}
         def do_execute_direct(self, code):
             return "OK"
 
@@ -132,7 +132,7 @@ def test_other_kernels():
 
     # Now change it so that there is help available:
     kernel.get_kernel_help_on = lambda info, level=0, none_on_fail=False: \
-                                   "Help is available on '%s'." % info['code']
+                                   "Help is available on '%s'." % info['obj']
     content = kernel.do_inspect('dir', len('dir'))
     message = content["data"]["text/plain"]
     match = re.match("Help is available on '(.*)'", message)
