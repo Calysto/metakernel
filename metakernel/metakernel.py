@@ -463,8 +463,8 @@ class MetaKernel(Kernel):
         help_magic = self.line_magics['help']
         return help_magic.get_help_on(expr, level, none_on_fail)
 
-    def parse_code(self, code):
-        return self.parser.parse_code(code)
+    def parse_code(self, code, cursor_start=0, cursor_end=-1):
+        return self.parser.parse_code(code, cursor_start, cursor_end)
 
     def _get_sticky_magics(self):
         retval = ""
@@ -493,7 +493,7 @@ def _split_magics_code(code, prefixes):
     ret_code_str = "\n".join(ret_code)
     if ret_code_str:
         ret_code_str += "\n"
-    return (ret_magics_str, rcdet_code_str)
+    return (ret_magics_str, ret_code_str)
 
 
 def _formatter(data, repr_func):

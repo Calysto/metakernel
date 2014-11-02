@@ -90,7 +90,7 @@ class HelpMagic(Magic):
 
             if magic:
                 info = self.kernel.parse_code(minfo['args'])
-                return magic.get_help_on(minfo['code'])
+                return magic.get_help_on(info)
 
             elif not info['magic']['name']:
                 return self.kernel.get_usage()
@@ -104,9 +104,9 @@ class HelpMagic(Magic):
     def _prep_text(self, text):
         text = text.strip()
 
-        magic = self.kernel.magic_prefix['magix']
-        prefix = self.kernel.magic_prefix['help']
-        suffix = self.kernel.magic_suffix
+        magic = self.kernel.magic_prefixes['magic']
+        prefix = self.kernel.magic_prefixes['help']
+        suffix = self.kernel.help_suffix
 
         text = text.replace('{0}{0}help'.format(magic), '')
         text = text.replace('{0}help'.format(magic), '')
