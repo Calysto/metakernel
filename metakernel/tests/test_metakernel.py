@@ -59,7 +59,10 @@ def test_path_complete():
     comp = kernel.do_complete('~/.ipytho', len('~/.ipytho'))
     assert comp['matches'] == ['ipython/']
 
-    path = os.listdir(os.getcwd())[0]
+    paths = [p for p in os.listdir(os.getcwd())
+             if not p.startswith('.')]
+    path = paths[0]
+
     comp = kernel.do_complete(path, len(path) - 1)
     if os.path.isdir(path):
         assert path + os.sep in comp['matches']
