@@ -181,7 +181,7 @@ class MetaKernel(Kernel):
         if not code.strip():
             return kernel_resp
 
-        info = self.parser.parse_code(code)
+        info = self.parse_code(code)
         self.payload = []
         retval = None
 
@@ -294,7 +294,7 @@ class MetaKernel(Kernel):
         return {'status': 'ok', 'restart': restart}
 
     def do_complete(self, code, cursor_pos):
-        info = self.parser.parse_code(code, 0, cursor_pos)
+        info = self.parse_code(code, 0, cursor_pos)
 
         content = {
             'matches': [],
@@ -305,20 +305,34 @@ class MetaKernel(Kernel):
         }
 
         matches = info['path_matches']
+
         if info['magic']:
-            # TODO: go down the parse tree here
+
+            # if the last line contains another magic, use that
+            line_info = self.parse_code(info['line'])
+            if line_info['magic']:
+                info = line_info
+
             if info['magic']['type'] == 'line':
                 magics = self.line_magics
             else:
                 magics = self.cell_magics
+
             if info['magic']['name'] in magics:
                 magic = magics[info['magic']['name']]
-                info = self.parser.parse_code(info['magic']['args'])
+                info = info['magic']
+                if info['type'] == 'cell' and info['code']:
+                    info = self.parse_code(info['code'])
+                else:
+                    info = self.parse_code(info['args'])
+
                 matches.extend(magic.get_completions(info))
+
             else:
                 for name in magics.keys():
                     if name.startswith(info['magic']['name']):
                         content['matches'].append(info['magic']['full_name'])
+
         else:
             matches.extend(self.get_completions(info))
 
@@ -441,14 +455,16 @@ class MetaKernel(Kernel):
     def get_magic(self, text):
         # if first line matches a magic,
         # call magic.call_magic() and return magic object
-        info = self.parser.parse_code(text)
+        info = self.parse_code(text)
         magic = self.line_magics['magic']
         return magic.get_magic(info)
 
     def get_help_on(self, expr, level=0, none_on_fail=False):
-        info = self.parser.parse_code(expr)
         help_magic = self.line_magics['help']
-        return help_magic.get_help_on(info, level, none_on_fail)
+        return help_magic.get_help_on(expr, level, none_on_fail)
+
+    def parse_code(self, code):
+        return self.parser.parse_code(code)
 
     def _get_sticky_magics(self):
         retval = ""
@@ -477,7 +493,7 @@ def _split_magics_code(code, prefixes):
     ret_code_str = "\n".join(ret_code)
     if ret_code_str:
         ret_code_str += "\n"
-    return (ret_magics_str, ret_code_str)
+    return (ret_magics_str, rcdet_code_str)
 
 
 def _formatter(data, repr_func):
