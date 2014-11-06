@@ -192,6 +192,7 @@ class Parser(object):
         if 'help' in pre_magics:
             info['name'] = 'help'
             pre, obj = pre_magics['help']
+            info['prefix'] = pre
             info['full_name'] = pre + 'help'
             info['type'] = types[len(pre)]
             info['index'] = code.index(pre + obj)
@@ -199,12 +200,14 @@ class Parser(object):
         elif self.help_suffix and code.rstrip().endswith(self.help_suffix):
             info['name'] = 'help'
             nchars = code[-3:].count(self.help_suffix)
+            info['prefix'] = ''
             info['type'] = types[nchars]
             info['full_name'] = 'help' + nchars * self.help_suffix
             info['index'] = len(code) - nchars
 
         elif 'magic' in pre_magics:
             pre, obj = pre_magics['magic']
+            info['prefix'] = pre
             info['type'] = types[len(pre)]
             info['name'] = obj
             info['full_name'] = pre + obj
@@ -213,6 +216,7 @@ class Parser(object):
         elif 'shell' in pre_magics:
             info['name'] = 'shell'
             pre, ws, obj = pre_magics['shell']
+            info['prefix'] = pre
             info['type'] = types[len(pre)]
             info['full_name'] = pre + obj
             info['index'] = code.index(pre + ws + obj) + len(pre + ws)

@@ -39,10 +39,10 @@ def test_help():
 def test_complete():
     kernel = get_kernel()
     comp = kernel.do_complete('%connect_', len('%connect_'))
-    assert comp['matches'] == ['connect_info'], str(comp['matches'])
+    assert comp['matches'] == ['%connect_info'], str(comp['matches'])
 
     comp = kernel.do_complete('%%fil', len('%%fil'))
-    assert comp['matches'] == ['file'], str(comp['matches'])
+    assert comp['matches'] == ['%%file'], str(comp['matches'])
 
 
 def test_inspect():

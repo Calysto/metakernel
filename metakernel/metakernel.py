@@ -185,7 +185,6 @@ class MetaKernel(Kernel):
         self.payload = []
         retval = None
 
-        print(info)
         if info['magic'] and info['magic']['name'] == 'help':
 
             if info['magic']['type'] == 'line':
@@ -329,10 +328,15 @@ class MetaKernel(Kernel):
 
                 matches.extend(magic.get_completions(info))
 
-            else:
+            elif not info['magic']['code'] and not info['magic']['args']:
+                matches = []
                 for name in magics.keys():
                     if name.startswith(info['magic']['name']):
-                        matches.append(name)
+                        pre = info['magic']['prefix']
+                        matches.append(pre + name)
+                        info['start'] -= len(pre)
+                        info['full_obj'] = pre + info['full_obj']
+                        info['obj'] = pre + info['obj']
 
         else:
             matches.extend(self.get_completions(info))
