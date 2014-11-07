@@ -1,5 +1,6 @@
 import os
 import re
+import subprocess
 from metakernel.tests.utils import get_kernel, get_log_text
 
 
@@ -43,6 +44,10 @@ def test_complete():
     comp = kernel.do_complete('%%fil', len('%%fil'))
     assert comp['matches'] == ['%%file'], str(comp['matches'])
 
+    comp = kernel.do_complete('%%', len('%%'))
+    assert '%%file' in comp['matches']
+    assert '%%html' in comp['matches']
+
 
 def test_inspect():
     kernel = get_kernel()
@@ -56,19 +61,24 @@ def test_inspect():
 def test_path_complete():
     kernel = get_kernel()
     comp = kernel.do_complete('~/.ipytho', len('~/.ipytho'))
-    assert comp['matches'] == ['~' + os.sep + '.ipython' + os.sep]
+    assert comp['matches'] == ['ipython/']
 
-    path = os.listdir(os.getcwd())[0]
+    paths = [p for p in os.listdir(os.getcwd())
+             if not p.startswith('.')]
+    path = paths[0]
+
     comp = kernel.do_complete(path, len(path) - 1)
     if os.path.isdir(path):
         assert path + os.sep in comp['matches']
     else:
-        assert path in comp['matches']
+        assert path in comp['matches'], (comp['matches'], path)
+
 
 def test_ls_path_complete():
     kernel = get_kernel()
     comp = kernel.do_complete('! ls ~/.ipytho', len('! ls ~/.ipytho'))
-    assert comp['matches'] == ['~' + os.sep + '.ipython' + os.sep], str(comp['matches'])
+    assert comp['matches'] == ['ipython/'], comp
+
 
 def test_history():
     kernel = get_kernel()
@@ -104,7 +114,7 @@ def test_sticky_magics():
 def test_other_kernels():
     from metakernel import MetaKernel
     class SchemeKernel(MetaKernel):
-        magic_suffixes = {}
+        help_suffix = {}
         def do_execute_direct(self, code):
             return "OK"
 
@@ -130,7 +140,7 @@ def test_other_kernels():
 
     # Now change it so that there is help available:
     kernel.get_kernel_help_on = lambda info, level=0, none_on_fail=False: \
-                                   "Help is available on '%s'." % info['code']
+                                   "Help is available on '%s'." % info['obj']
     content = kernel.do_inspect('dir', len('dir'))
     message = content["data"]["text/plain"]
     match = re.match("Help is available on '(.*)'", message)

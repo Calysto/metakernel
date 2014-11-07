@@ -13,6 +13,9 @@ def test_shell_magic():
     assert '"hello"' in log_text
     assert '"goodbye"' in log_text
 
+    resp = kernel.do_complete('! di', len('! di'))
+    assert 'dir' in resp['matches']
+
 
 def test_plot_magic():
     kernel = get_kernel()
@@ -45,8 +48,7 @@ def test_help_magic():
     kernel = get_kernel()
     kernel.do_execute('?%magic', None)
     text = get_log_text(kernel)
-    print(text)
-    assert '%magic - show installed magics' in text
+    assert '%magic - show installed magics' in text, repr(text)
 
 
 def test_file_magic():

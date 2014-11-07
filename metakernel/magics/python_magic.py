@@ -1,8 +1,6 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-import sys
-import os
 from metakernel import Magic, option
 try:
     import jedi
@@ -108,20 +106,24 @@ class PythonMagic(Magic):
         if jedi is None:
             return []
 
-        text = info['rest']
+        text = info['code']
         interpreter = Interpreter(text, [self.env])
-        path = UserContext(text, (1, len(text))).get_path_until_cursor()
+
+        position = (info['line_num'], info['column'])
+        path = UserContext(text, position).get_path_until_cursor()
         path, dot, like = completion_parts(path)
         before = text[:len(text) - len(like)]
+
         completions = interpreter.completions()
 
         completions = [before + c.name_with_symbols for c in completions]
-        return completions
+
+        return [c[info['start']:] for c in completions]
 
     def get_help_on(self, info, level=0, none_on_fail=False):
         """Implement basic help for functions"""
 
-        if not info['rest']:
+        if not info['code']:
             return None if none_on_fail else ''
 
         last = info['obj']

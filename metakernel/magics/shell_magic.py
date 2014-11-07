@@ -146,12 +146,12 @@ class ShellMagic(Magic):
     def get_completions(self, info):
         if self.cmd == 'cmd':
             return []
-        cmd = 'compgen -cdfa %s' % info['obj']
+        cmd = 'compgen -cdfa "%s"' % info['code']
         completion_text, error = self.eval(cmd)
         return completion_text.split()
 
     def get_help_on(self, info, level=0):
-        expr = info['rest'].rstrip()
+        expr = info['code'].rstrip()
         if self.cmd == 'cmd':
             resp, error = self.eval('help %s' % expr)
         elif level == 0:

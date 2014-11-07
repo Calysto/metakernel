@@ -9,16 +9,18 @@ import sys
 import glob
 import base64
 from .config import get_history_file, get_local_magics_dir
+from .parser import Parser
 import imp
-import re
 import inspect
 import logging
 
+
 class MetaKernel(Kernel):
 
-    split_characters = "( )\n\;'\""
+    identifier_regex = r'[^\d\W]\w*'
+    func_call_regex = r'([^\d\W][\w\.]*)\([^\)\()]*\Z'
     magic_prefixes = dict(magic='%', shell='!', help='?')
-    magic_suffixes = dict(help='?')
+    help_suffix = '?'
 
     def __init__(self, *args, **kwargs):
         super(MetaKernel, self).__init__(*args, **kwargs)
@@ -49,6 +51,8 @@ class MetaKernel(Kernel):
         self.reload_magics()
         # provide a way to get the current instance
         self.set_variable("get_kernel", lambda: self)
+        self.parser = Parser(self.identifier_regex, self.func_call_regex,
+                             self.magic_prefixes, self.help_suffix)
 
     @classmethod
     def subkernel(cls, kernel):
@@ -290,36 +294,62 @@ class MetaKernel(Kernel):
         return {'status': 'ok', 'restart': restart}
 
     def do_complete(self, code, cursor_pos):
-        partial, start, cursor_pos = _parse_partial(code, cursor_pos, 
-                                                 self.split_characters)
-        info = self.parse_code(partial, 0, cursor_pos)
+        info = self.parse_code(code, 0, cursor_pos)
+
         content = {
             'matches': [],
-            'cursor_start': start,
-            'cursor_end': start + info['end'],
+            'cursor_start': info['start'],
+            'cursor_end': info['end'],
             'metadata': {},
             'status': 'ok'
         }
 
+        matches = info['path_matches']
+
         if info['magic']:
+
+            # if the last line contains another magic, use that
+            line_info = self.parse_code(info['line'])
+            if line_info['magic']:
+                info = line_info
+
             if info['magic']['type'] == 'line':
                 magics = self.line_magics
             else:
                 magics = self.cell_magics
-            if info['rest'] and info['magic']['name'] in magics:
+
+            if info['magic']['name'] in magics:
                 magic = magics[info['magic']['name']]
-                content['matches'].extend(magic.get_completions(info))
-            else:
+                info = info['magic']
+                if info['type'] == 'cell' and info['code']:
+                    info = self.parse_code(info['code'])
+                else:
+                    info = self.parse_code(info['args'])
+
+                matches.extend(magic.get_completions(info))
+
+            elif not info['magic']['code'] and not info['magic']['args']:
+                matches = []
                 for name in magics.keys():
                     if name.startswith(info['magic']['name']):
-                        full_name = info['magic']['symbol'] + name
-                        content['matches'].append(full_name)
-        else:
-            content['matches'].extend(self.get_completions(info))
+                        pre = info['magic']['prefix']
+                        matches.append(pre + name)
+                        info['start'] -= len(pre)
+                        info['full_obj'] = pre + info['full_obj']
+                        info['obj'] = pre + info['obj']
 
-        if not info['magic'] or info['rest']:
-            content['matches'].extend(_complete_path(info['obj']))
-        content["matches"] = sorted(content["matches"])
+        else:
+            matches.extend(self.get_completions(info))
+
+        if info['full_obj'] and len(info['full_obj']) > len(info['obj']):
+            new_list = [m for m in matches if m.startswith(info['full_obj'])]
+            if new_list:
+                content['cursor_end'] = (content['cursor_end'] +
+                                         len(info['full_obj']) -
+                                         len(info['obj']))
+                matches = new_list
+
+        content["matches"] = sorted(matches)
 
         return content
 
@@ -327,9 +357,9 @@ class MetaKernel(Kernel):
         # Object introspection
         if cursor_pos > len(code):
             return
-        partial, start, end = _parse_partial(code, cursor_pos, self.split_characters)
+
         content = {'status': 'aborted', 'data': {}, 'found': False}
-        docstring = self.get_help_on(partial, detail_level, none_on_fail=True)
+        docstring = self.get_help_on(code, detail_level, none_on_fail=True)
 
         if docstring:
             content["data"] = {"text/plain": docstring}
@@ -435,23 +465,11 @@ class MetaKernel(Kernel):
         return magic.get_magic(info)
 
     def get_help_on(self, expr, level=0, none_on_fail=False):
-        info = self.parse_code(expr)
         help_magic = self.line_magics['help']
-        return help_magic.get_help_on(info, level, none_on_fail)
+        return help_magic.get_help_on(expr, level, none_on_fail)
 
-    def parse_code(self, code, start=0, end=-1):
-        info = _parse_code(code, self.magic_prefixes, self.magic_suffixes,
-                           start, end)
-
-        split_str = self.split_characters
-        if '|' in split_str and not r'\|' in split_str:
-            split_str = split_str.replace('|', r'\|')
-
-        tokens = re.split('|'.join(split_str), info['rest'])
-        if tokens:
-            info['obj'] = tokens[-1].strip()
-
-        return info
+    def parse_code(self, code, cursor_start=0, cursor_end=-1):
+        return self.parser.parse_code(code, cursor_start, cursor_end)
 
     def _get_sticky_magics(self):
         retval = ""
@@ -459,62 +477,6 @@ class MetaKernel(Kernel):
             retval += (key + " " +
                        " ".join(self.sticky_magics[key])).strip() + "\n"
         return retval
-
-
-def _listdir(root):
-    "List directory 'root' appending the path separator to subdirs."
-    res = []
-    root = os.path.expanduser(root)
-    try:
-        for name in os.listdir(root):
-            path = os.path.join(root, name)
-            if os.path.isdir(path):
-                name += os.sep
-            res.append(name)
-    except:
-        pass  # no need to report invalid paths
-    return res
-
-
-def _complete_path(path=None):
-    """Perform completion of filesystem path.
-
-    http://stackoverflow.com/questions/5637124/tab-completion-in-pythons-raw-input
-    """
-    if not path:
-        return _listdir('.')
-    dirname, rest = os.path.split(path)
-    tmp = dirname if dirname else '.'
-    res = [os.path.join(dirname, p)
-           for p in _listdir(tmp) if p.startswith(rest)]
-    # more than one match, or single match which does not exist (typo)
-    if len(res) > 1 or not os.path.exists(path):
-        return res
-    # resolved to a single directory, so return list of files below it
-    if os.path.isdir(path):
-        return [os.path.join(path, p) for p in _listdir(path)]
-    # exact file match terminates this completion
-    return [path + ' ']
-
-
-def _parse_magic(text, prefixes):
-    lines = text.split("\n")
-    command = lines[0]
-    shell_prefix = prefixes['shell']
-    if command.startswith(prefixes['magic']):
-        if " " in command:
-            command, args = command.split(" ", 1)
-        else:
-            args = ""
-    elif command.startswith('{0}{0}'.format(shell_prefix)):
-        args = command[2:]
-    elif command.startswith(shell_prefix):
-        args = command[1:]
-    else:
-        args = ""
-    code = "\n".join(lines[1:])
-    args = args.strip()
-    return command, args, code
 
 
 def _split_magics_code(code, prefixes):
@@ -539,127 +501,29 @@ def _split_magics_code(code, prefixes):
     return (ret_magics_str, ret_code_str)
 
 
-def _parse_partial(code, cursor_pos, split_characters):
-    if cursor_pos == len(code):
-        cursor_position = len(code) - 1
-    # skip over non-interesting characters:
-    while (cursor_pos - 1 > 0 and 
-           code[cursor_pos - 1] in split_characters):
-        cursor_pos -= 1
-    # include only interesting characters:
-    start = cursor_pos
-    while (start - 1 >= 0 and 
-           code[start - 1] not in split_characters):
-        start -= 1
-    return code[start:cursor_pos], start, cursor_pos
-
-        
-def _parse_code(code, prefixes, suffixes, start=0, end=-1):
-    if end == -1:
-        end = len(code)
-    end = min(end, len(code))
-
-    start = min(start, len(code))
-    snip = code[start: end].rstrip()
-
-    info = dict(type=None, magic={}, end=end, obj='',
-                start=start, rest=snip, code=code)
-
-    tokens = snip.split()
-    if not tokens:
-        return info
-
-    # find magic characters - help overrides any others
-    pre_magics = {}
-    for (name, prefix) in prefixes.items():
-        pre = ''
-        while len(pre) < len(snip) and snip[len(pre)] == prefix:
-            pre += prefix
-        if pre:
-            pre_magics[name] = pre
-
-    post_magics = {}
-    for (name, suffix) in suffixes.items():
-        post = ''
-        while len(post) < len(snip) and snip[-len(post) - 1] == suffix:
-            post += suffix
-        if post:
-            post_magics[name] = post
-
-    if 'help' in pre_magics:
-        info['magic']['name'] = 'help'
-        info['magic']['symbol'] = pre_magics['help']
-        info['rest'] = info['rest'][len(pre_magics['help']):]
-
-    elif 'help' in post_magics:
-        info['magic']['name'] = 'help'
-        info['magic']['symbol'] = post_magics['help']
-        info['rest'] = info['rest'][:-len(post_magics['help'])]
-
-    elif 'shell' in pre_magics:
-        info['magic']['name'] = 'shell'
-        info['magic']['symbol'] = pre_magics['shell']
-        info['rest'] = info['rest'][len(pre_magics['shell']):]
-
-    elif 'magic' in pre_magics:
-        first = tokens[0]
-        info['magic']['name'] = first[len(pre_magics['magic']):]
-        info['magic']['symbol'] = pre_magics['magic']
-        info['rest'] = info['rest'][len(first):]
-
-    if info['magic']:
-        if len(info['magic']['symbol']) == 3:
-            info['magic']['type'] = 'sticky'
-        elif len(info['magic']['symbol']) == 2:
-            info['magic']['type'] = 'cell'
-        else:
-            info['magic']['type'] = 'line'
-
-        cmd, args, magic_code = _parse_magic(snip, prefixes)
-        info['magic']['cmd'] = cmd
-        info['magic']['args'] = args
-        info['magic']['code'] = magic_code
-
-    return info
-
-
 def _formatter(data, repr_func):
     retval = {}
     retval["text/plain"] = repr_func(data)
-    if hasattr(data, "_repr_png_"):
-        obj = data._repr_png_()
+
+    base64_lut = [("_repr_png_", "image/png"),
+                  ("_repr_jpeg_", "image/jpeg")]
+
+    for (attr, mimetype) in base64_lut:
+        obj = getattr(data, attr, None)
         if obj:
-            retval["image/png"] = base64.encodestring(obj)
-    if hasattr(data, "_repr_jpeg_"):
-        obj = data._repr_jpeg_()
+            retval[mimetype] = base64.encodestring(obj)
+
+    lut = [("_repr_html_", "text/html"),
+           ("_repr_markdown_", "text/markdown"),
+           ("_repr_html_", "text/html"),
+           ("_repr_svg_", "image/svg+xml"),
+           ("_repr_latex_", "text/latex"),
+           ("_repr_json_", "application/json"),
+           ("_repr_javascript_", "application/javascript"),
+           ("_repr_pdf_", "application/pdf")]
+
+    for (attr, mimetype) in lut:
+        obj = getattr(data, attr, None)
         if obj:
-            retval["image/jpeg"] = base64.encodestring(obj)
-    if hasattr(data, "_repr_html_"):
-        obj = data._repr_html_()
-        if obj:
-            retval["text/html"] = obj
-    if hasattr(data, "_repr_markdown_"):
-        obj = data._repr_markdown_()
-        if obj:
-            retval["text/markdown"] = obj
-    if hasattr(data, "_repr_svg_"):
-        obj = data._repr_svg_()
-        if obj:
-            retval["image/svg+xml"] = obj
-    if hasattr(data, "_repr_latex_"):
-        obj = data._repr_latex_()
-        if obj:
-            retval["text/latex"] = obj
-    if hasattr(data, "_repr_json_"):
-        obj = data._repr_json_()
-        if obj:
-            retval["application/json"] = obj
-    if hasattr(data, "_repr_javascript_"):
-        obj = data._repr_javascript_()
-        if obj:
-            retval["application/javascript"] = obj
-    if hasattr(data, "_repr_pdf_"):
-        obj = data._repr_pdf_()
-        if obj:
-            retval["application/pdf"] = obj
+            retval[mimetype] = obj
     return retval
