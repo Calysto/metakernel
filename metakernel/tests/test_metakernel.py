@@ -44,6 +44,10 @@ def test_complete():
     comp = kernel.do_complete('%%fil', len('%%fil'))
     assert comp['matches'] == ['%%file'], str(comp['matches'])
 
+    comp = kernel.do_complete('%%', len('%%'))
+    assert '%%file' in comp['matches']
+    assert '%%html' in comp['matches']
+
 
 def test_inspect():
     kernel = get_kernel()

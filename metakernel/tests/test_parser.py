@@ -23,6 +23,9 @@ def test_parser():
     info = p.parse_code('%lsmagic')
     assert info['help_obj'] == '%lsmagic'
 
+    info = p.parse_code('%')
+    assert info['magic']['type'] == 'line'
+
 
 def test_scheme_parser():
     function_call_regex = r'\(([^\d\W][\w\.]*)[^\)\()]*\Z'

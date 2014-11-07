@@ -13,6 +13,9 @@ def test_shell_magic():
     assert '"hello"' in log_text
     assert '"goodbye"' in log_text
 
+    resp = kernel.do_complete('! di', len('! di'))
+    assert 'dir' in resp['matches']
+
 
 def test_plot_magic():
     kernel = get_kernel()
