@@ -175,51 +175,54 @@ class Parser(object):
 
         """
         info = {}
+        code = code.lstrip()
+
         pre_magics = {}
         for (name, prefix) in self.magic_prefixes.items():
-            if name == 'shell':
-                regex = r'\A *(\%s+)( *)(%s)' % (prefix, self.magic_regex)
-            elif name == 'help':
-                regex = r'\A *(\%s+)()' % prefix
-            else:
-                regex = r'\A *(\%s+)(%s)' % (prefix, self.magic_regex)
-            match = re.search(regex, code, re.UNICODE)
+            match = re.match(r'(\%s+)' % prefix, code, re.UNICODE)
             if match:
-                pre_magics[name] = match.groups()
+                pre_magics[name] = match.groups()[0]
 
         types = ['none', 'line', 'cell', 'sticky']
 
         if 'help' in pre_magics:
             info['name'] = 'help'
-            pre, obj = pre_magics['help']
+            pre = pre_magics['help']
             info['prefix'] = pre
             info['full_name'] = pre + 'help'
             info['type'] = types[len(pre)]
-            info['index'] = code.index(pre + obj)
+            info['index'] = code.index(pre)
 
         elif self.help_suffix and code.rstrip().endswith(self.help_suffix):
             info['name'] = 'help'
-            nchars = code[-3:].count(self.help_suffix)
+            regex = r'(\%s+)\Z' % self.help_suffix
+            match = re.match(regex, code.strip, re.UNICODE)
+            suf = match.groups()[0]
             info['prefix'] = ''
-            info['type'] = types[nchars]
-            info['full_name'] = 'help' + nchars * self.help_suffix
-            info['index'] = len(code) - nchars
+            info['type'] = types[len(suf)]
+            info['full_name'] = 'help' + suf
+            info['index'] = len(code) - len(suf)
 
         elif 'magic' in pre_magics:
-            pre, obj = pre_magics['magic']
+            pre = pre_magics['magic']
             info['prefix'] = pre
             info['type'] = types[len(pre)]
+            match = re.match(self.magic_regex, code[len(pre):])
+            if match:
+                obj = match.group()
+            else:
+                obj = ''
             info['name'] = obj
             info['full_name'] = pre + obj
             info['index'] = code.index(pre + obj) + len(pre + obj)
 
         elif 'shell' in pre_magics:
             info['name'] = 'shell'
-            pre, ws, obj = pre_magics['shell']
+            pre = pre_magics['shell']
             info['prefix'] = pre
             info['type'] = types[len(pre)]
-            info['full_name'] = pre + obj
-            info['index'] = code.index(pre + ws + obj) + len(pre + ws)
+            info['full_name'] = pre
+            info['index'] = code.index(pre) + len(pre)
 
         else:
             return info
@@ -300,3 +303,8 @@ def _complete_path(path=None):
         return [os.path.join(path, p) for p in _listdir(path)]
     # exact file match terminates this completion
     return [path + ' ']
+
+
+if __name__ == '__main__':
+    p = Parser()
+    print(p.parse_code('! ls'))
