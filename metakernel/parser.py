@@ -196,8 +196,8 @@ class Parser(object):
         elif self.help_suffix and code.rstrip().endswith(self.help_suffix):
             info['name'] = 'help'
             regex = r'(\%s+)\Z' % self.help_suffix
-            match = re.match(regex, code.strip, re.UNICODE)
-            suf = match.groups()[0]
+            match = re.search(regex, code.strip(), re.UNICODE)
+            suf = match.group()
             info['prefix'] = ''
             info['type'] = types[len(suf)]
             info['full_name'] = 'help' + suf
@@ -303,8 +303,3 @@ def _complete_path(path=None):
         return [os.path.join(path, p) for p in _listdir(path)]
     # exact file match terminates this completion
     return [path + ' ']
-
-
-if __name__ == '__main__':
-    p = Parser()
-    print(p.parse_code('! ls'))
