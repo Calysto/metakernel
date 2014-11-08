@@ -120,3 +120,9 @@ def test_complete9():
     p = get_parser()
     info = p.parse_code('fluff\n/tmp/Test ')
     assert 'Dir/' in info['path_matches'], info
+
+
+def test_complete10():
+    p = get_parser()
+    info = p.parse_code('/tmp/Test\\ Dir')
+    assert 'Dir/test.txt' in info['path_matches']

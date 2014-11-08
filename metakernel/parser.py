@@ -255,7 +255,7 @@ class Parser(object):
 
         def get_regex_matches(regex):
             matches = []
-            path = re.findall(regex, line)
+            path = re.findall(regex, line.replace(r'\ ', ' '))
 
             if path:
                 path = ''.join(path[0])
