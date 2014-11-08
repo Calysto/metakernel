@@ -2,12 +2,14 @@ import optparse
 import inspect
 import sys
 import os
+import shlex
 
 try:
     _maxsize = sys.maxint
 except:
     # python3
     _maxsize = sys.maxsize
+
 
 class Magic(object):
 
@@ -28,8 +30,12 @@ class Magic(object):
             total_args = len(argspec.args) - len(argspec.defaults) - 1
         else:
             total_args = len(argspec.args) - 1
-        if total_args == 0 and argspec.varargs is None:
-            args = []
+
+        if total_args < len(args) and argspec.varargs is None:
+            if total_args:
+                args = args[:total_args - 1] + args[total_args - 1:]
+            else:
+                args = []
 
         try:
             try:
@@ -108,8 +114,10 @@ def option(*args, **kwargs):
 
 def _parse_args(func, args):
     """Parse the arguments given to a magic function"""
-    if not isinstance(args, list):
-        args = args.split()
+    if isinstance(args, list):
+        args = ' '.join(args)
+
+    args = _split_args(args)
 
     if not getattr(func, 'has_options', False):
         kwargs = dict()
@@ -122,6 +130,42 @@ def _parse_args(func, args):
     return args, kwargs
 
 
+def _split_args(args):
+    args = shlex.split(args)
+
+    new_args = []
+    temp = ''
+    for arg in args:
+        if arg.startswith('-'):
+            new_args.append(arg)
+
+        elif temp:
+
+            arg = temp + ' ' + arg
+            try:
+                arg = eval(arg)
+            except:
+                temp = arg
+            else:
+                new_args.append(arg)
+                temp = ''
+
+        elif arg.startswith(('(', '[', '{')) or '(' in arg:
+            temp = arg
+
+        else:
+            try:
+                arg = eval(arg)
+            except:
+                pass
+            new_args.append(arg)
+
+    if temp:
+        new_args.append(temp)
+
+    return new_args
+
+
 def _format_option(option):
     output = ''
     if option._short_opts:
@@ -132,6 +176,7 @@ def _format_option(option):
     if not option.default == ('NO', 'DEFAULT'):
         output += '[default: %s]' % option.default
     return output
+
 
 def _trim(docstring, return_lines=False):
     """

@@ -74,3 +74,12 @@ def test_option():
     assert ret == d
     assert d.foo == 'hey'
     assert d.size == '400,200'
+
+    ret = d.call_magic('line', 'dummy', '', 'hey there')
+    assert d.foo == 'hey there'
+
+    ret = d.call_magic('line', 'dummy', '', 'range(1, 10)')
+    assert d.foo == range(1, 10)
+
+    ret = d.call_magic('line', 'dummy', '', '[1, 2, 3]')
+    assert d.foo == [1, 2, 3]
