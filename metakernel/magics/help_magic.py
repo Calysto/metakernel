@@ -90,8 +90,11 @@ class HelpMagic(Magic):
 
                 if minfo['code']:
                     info = self.kernel.parse_code(minfo['code'])
-                else:
+                elif minfo['args']:
                     info = self.kernel.parse_code(minfo['args'])
+                else:
+                    return magic.get_help(minfo['type'], minfo['name'],
+                                          level)
 
             if magic:
                 return magic.get_help_on(info)
