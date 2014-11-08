@@ -38,11 +38,13 @@ class Parser(object):
         self.magic_regex = '|'.join([default_regex, identifier_regex])
 
         full_path_regex = r'([\w/\.~][^\'"]*)\Z'
-        self.full_path_regex = re.compile(r'[\'"]{0}|{0}'.format(
-            full_path_regex), re.UNICODE)
+        self.unquoted_path = re.compile(r'\A{0}| {0}'.format(full_path_regex),
+                                        re.UNICODE)
+        self.quoted_path = re.compile(r'[\'"]%s' % full_path_regex,
+                                      re.UNICODE)
 
         single_path_regex = r'([\w/\.~][^ ]*)\Z'
-        self.single_path_regex = re.compile(single_path_regex, re.UNICODE)
+        self.single_path = re.compile(single_path_regex, re.UNICODE)
 
         self.magic_prefixes = magic_prefixes
         self.help_suffix = help_suffix
@@ -254,6 +256,7 @@ class Parser(object):
         def get_regex_matches(regex):
             matches = []
             path = re.findall(regex, line)
+
             if path:
                 path = ''.join(path[0])
                 matches = _complete_path(path)
@@ -265,8 +268,14 @@ class Parser(object):
 
             return [m.strip() for m in matches if not m.strip() == obj]
 
-        matches = get_regex_matches(self.full_path_regex)
-        matches += get_regex_matches(self.single_path_regex)
+        matches = get_regex_matches(self.unquoted_path)
+        matches += get_regex_matches(self.single_path)
+        if os.name == 'nt':
+            matches = [m for m in matches if not ' ' in m]
+        else:
+            matches = [m.replace(' ', r'\ ') for m in matches]
+
+        matches += get_regex_matches(self.quoted_path)
 
         if os.path.isdir(info['obj']):
             matches.append(info['obj'] + os.sep)
