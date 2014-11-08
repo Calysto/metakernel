@@ -11,11 +11,11 @@ if kernel:
         text += "## `%" + magic + "`\n\n"
         text += kernel.get_help_on("%" + magic) + "\n\n"
 
-    text = "# Cell Magics\n\n"
+    text += "# Cell Magics\n\n"
     for magic in sorted(kernel.cell_magics.keys()):
         text += "## `%%" + magic + "`\n\n"
         text += kernel.get_help_on("%%" + magic) + "\n\n"
 
-    fp = open("MagicHelp.md", "w")
+    fp = open("metakernel/magics/README.md", "w")
     fp.write(text)
     fp.close()
