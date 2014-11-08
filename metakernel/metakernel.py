@@ -293,6 +293,26 @@ class MetaKernel(Kernel):
             self.restart_kernel()
         return {'status': 'ok', 'restart': restart}
 
+    def do_is_complete(self, code):
+        """
+        Given code as string, returns dictionary with 'status' representing
+        whether code is ready to evaluate. Possible values for status are:
+
+           'complete'   - ready to evaluate
+           'incomplete' - not yet ready
+           'invalid'    - invalid code
+           'unknown'    - unknown; the default unless overridden
+
+        Optionally, if 'status' is 'incomplete', you may indicate
+        an indentation string.
+
+        Example:
+
+            return {'status' : 'incomplete',
+                    'indent': ' ' * 4}
+        """
+        return {'status' : 'unknown'}
+
     def do_complete(self, code, cursor_pos):
         info = self.parse_code(code, 0, cursor_pos)
 
