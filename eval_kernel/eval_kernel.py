@@ -32,6 +32,10 @@ class EvalKernel(MetaKernel):
         python_magic = self.line_magics['python']
         return python_magic.eval(code.strip())
 
+    def do_execute_file(self, filename):
+        code = "".join(open(filename).readlines())
+        return self.do_execute_direct(code)
+
     def do_function_direct(self, function_name, arg):
         """
         Call a function in the kernel language with args (as a single item).
