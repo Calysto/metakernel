@@ -39,12 +39,14 @@ Documentation
 
 An example notebook can be viewed here_.
 
-Documentation is available online_.
+Documentation is available online_. Magics have interactive help_ (and online).
 
 For version information, see the Revision History_.
 
 
 .. _here: http://nbviewer.ipython.org/github/blink1073/metakernel/blob/master/examples/echo_kernel.ipynb?create=1
+
+.. _help: https://github.com/blink1073/metakernel/blob/master/metakernel/magics/README.md
 
 .. _online: http://blink1073.github.io/metakernel/
 
