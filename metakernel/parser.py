@@ -1,7 +1,7 @@
 import re
 import os
 
-IDENTIFIER_REGEX = r'[^\d\W]\w*'
+IDENTIFIER_REGEX = r'[^\d\W][\w\.]*'
 FUNC_CALL_REGEX = r'([^\d\W][\w\.]*)\([^\)\()]*\Z'
 MAGIC_PREFIXES = dict(magic='%', shell='!', help='?')
 HELP_SUFFIX = '?'
@@ -30,7 +30,7 @@ class Parser(object):
         """
         self.func_call_regex = re.compile(function_call_regex + '\Z',
                                           re.UNICODE)
-        default_regex = r'[^\d\W]\w*'
+        default_regex = r'[^\d\W][\w\.]*'
         self.id_regex = re.compile(r'(\{0}+{1}\Z|{2}\Z|\Z)'.format(
             magic_prefixes['magic'], default_regex,
             identifier_regex), re.UNICODE)
@@ -90,6 +90,7 @@ class Parser(object):
         info['magic'] = self._parse_magic(code[:end])
 
         info['lines'] = lines = code[:end].splitlines()
+
         info['line_num'] = line_num = len(lines)
 
         if info['line_num']:
@@ -266,6 +267,9 @@ class Parser(object):
 
         matches = get_regex_matches(self.full_path_regex)
         matches += get_regex_matches(self.single_path_regex)
+
+        if os.path.isdir(info['obj']):
+            matches.append(info['obj'] + os.sep)
 
         return list(set(matches))
 

@@ -64,14 +64,14 @@ def test_path_complete():
     assert comp['matches'] == ['ipython/']
 
     paths = [p for p in os.listdir(os.getcwd())
-             if not p.startswith('.')]
-    path = paths[0]
+             if not p.startswith('.') and not '-' in p]
 
-    comp = kernel.do_complete(path, len(path) - 1)
-    if os.path.isdir(path):
-        assert path + os.sep in comp['matches'], ("'%s' not in '%s'" % (path + os.sep, comp['matches']))
-    else:
-        assert path in comp['matches'], (comp['matches'], path)
+    for path in paths:
+        comp = kernel.do_complete(path, len(path) - 1)
+        if os.path.isdir(path):
+            assert path + os.sep in comp['matches'], ("'%s' not in '%s'" % (path + os.sep, comp['matches']))
+        else:
+            assert path in comp['matches'], (comp['matches'], path)
 
 
 def test_ls_path_complete():

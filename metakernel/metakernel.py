@@ -17,7 +17,7 @@ import logging
 
 class MetaKernel(Kernel):
 
-    identifier_regex = r'[^\d\W]\w*'
+    identifier_regex = r'[^\d\W][\w\.]*'
     func_call_regex = r'([^\d\W][\w\.]*)\([^\)\()]*\Z'
     magic_prefixes = dict(magic='%', shell='!', help='?')
     help_suffix = '?'
@@ -315,7 +315,7 @@ class MetaKernel(Kernel):
 
     def do_complete(self, code, cursor_pos):
         info = self.parse_code(code, 0, cursor_pos)
-
+        print(info)
         content = {
             'matches': [],
             'cursor_start': info['start'],
