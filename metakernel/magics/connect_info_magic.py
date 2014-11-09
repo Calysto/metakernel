@@ -6,7 +6,7 @@ import json
 
 class ConnectInfoMagic(Magic):
 
-    def line_connect_info(self):
+    def line_connect_info(self, dummy=None):
         """
         %connect_info - show connection information
 
@@ -32,7 +32,18 @@ class ConnectInfoMagic(Magic):
         if this is the most recent Jupyter session you have started.
         """
         connection_file = self.kernel.config["IPKernelApp"]["connection_file"]
-        config = json.loads(open(connection_file).read())
+        try:
+            config = json.loads(open(connection_file).read())
+        except:
+            config = {"stdin_port": "UNKNOWN",
+                      "shell_port": "UNKNOWN",
+                      "iopub_port": "UNKNOWN",
+                      "hb_port": "UNKNOWN",
+                      "ip": "UNKNOWN",
+                      "key": "UNKNOWN",
+                      "signature_scheme": "UNKNOWN",
+                      "transport": "UNKNOWN"
+            }
         retval = """{
   "stdin_port": %(stdin_port)s,
   "shell_port": %(shell_port)s,
