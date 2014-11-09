@@ -87,9 +87,10 @@ class ShellMagic(Magic):
         return resp, error
 
     def _read_errors(self):
-        buf = os.read(self.efid, 1024).decode('utf-8', 'replace')
-        self._error_queue.put(buf)
-        time.sleep(0.01)
+        while 1:
+            buf = os.read(self.efid, 1024).decode('utf-8', 'replace')
+            self._error_queue.put(buf)
+            time.sleep(0.01)
 
     def start_process(self):
         if not self.proc is None:
