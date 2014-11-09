@@ -1,5 +1,5 @@
 
-from metakernel.tests.utils import get_kernel, get_log_text
+from metakernel.tests.utils import get_kernel, get_log_text, clear_log_text
 
 
 def test_python_magic():
@@ -24,3 +24,29 @@ def test_python_magic2():
             return a + 1
         retval = test(2)''', None)
     assert '3' in get_log_text(kernel)
+
+
+def test_python_magic3():
+    kernel = get_kernel()
+    kernel.do_execute('%%python -e\n1 + 2', None)
+    magic = kernel.get_magic('%%python')
+    assert magic.retval is None
+
+    kernel = get_kernel()
+    kernel.do_execute('%%python\n1 + 2', None)
+    magic = kernel.get_magic('%%python')
+    assert magic.retval == 3
+
+
+def test_python_magic4():
+    kernel = get_kernel()
+    kernel.do_execute('?%python', None)
+    assert '%python CODE' in get_log_text(kernel)
+
+    clear_log_text(kernel)
+
+    ret = kernel.do_execute('?%python a', None)
+    assert ret['payload'][0]['data']['text/plain'] == 'No help available for "a"'
+    ret = kernel.do_execute('?%%python a.b', None)
+    assert ret['payload'][0]['data']['text/plain'] == 'No help available for "a.b"'
+
