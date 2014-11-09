@@ -8,3 +8,5 @@ docs/_build/
 build/
 examples/.ipynb_checkpoints
 examples/temp.txt
+*~
+*,cover

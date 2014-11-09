@@ -7,7 +7,7 @@ from IPython.display import HTML
 class ProcessingMagic(Magic):
     canvas_id = 0
 
-    def cell_processing(self):
+    def cell_processing(self, dummy=None):
         """
         %%processing - run the cell in the language Processing
 
