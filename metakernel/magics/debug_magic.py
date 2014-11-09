@@ -9,7 +9,7 @@ from IPython.display import HTML, Javascript
 
 class DebugMagic(Magic):
 
-    def cell_debug(self):
+    def cell_debug(self, dummy):
         """
         %%debug - step through the code expression by expression
 
