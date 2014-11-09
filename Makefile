@@ -16,12 +16,18 @@ clean:
 
 test: clean
 	python setup.py build
+	ipcluster start -n=3 &
+	sleep 3
 	export PYTHONWARNINGS="all"; cd build; nosetests $(TEST_ARGS)
+	ipcluster stop
 	make clean
 
 cover: clean
 	pip install nose-cov
+	ipcluster start -n=3 &
+	sleep 3
 	nosetests $(TEST_ARGS) --with-cov --cov $(NAME) $(NAME)
+	ipcluster stop
 	coverage annotate
 
 release: test gh-pages
