@@ -127,7 +127,20 @@ def _parse_args(func, args):
         value, args = parser.parse_args(args)
         kwargs = value.__dict__
 
-    return args, kwargs
+    new_args = []
+    for arg in args:
+        try:
+            new_args.append(eval(arg))
+        except:
+            new_args.append(arg)
+
+    for (key, value) in kwargs.items():
+        try:
+            kwargs[key] = eval(value)
+        except:
+            pass
+
+    return new_args, kwargs
 
 
 def _split_args(args):
@@ -143,7 +156,7 @@ def _split_args(args):
 
             arg = temp + ' ' + arg
             try:
-                arg = eval(arg)
+                eval(arg)
             except:
                 temp = arg
             else:
@@ -154,10 +167,6 @@ def _split_args(args):
             temp = arg
 
         else:
-            try:
-                arg = eval(arg)
-            except:
-                pass
             new_args.append(arg)
 
     if temp:
