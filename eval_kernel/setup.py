@@ -29,7 +29,7 @@ if svem_flag in sys.argv:
     sys.argv.remove(svem_flag)
 
 setup(name='eval_kernel',
-      version='0.4',
+      version='0.5',
       description='A simple eval kernel for Jupyter/IPython',
       long_description="A simple eval kernel for Jupyter/IPython, based on MetaKernel",
       url="https://github.com/blink1073/metakernel/tree/master/eval_kernel",
