@@ -9,6 +9,16 @@ except ImportError:
     from urllib import parse as urlparse
 import os
 
+try:
+    def download(url, filename):
+        opener = urllib.URLopener()
+        opener.retrieve(url, filename)
+except: # python3
+    def download(url, filename):
+        g = urllib.request.urlopen(url)
+        with open(filename) as f:
+            f.write(g.read())        
+
 class InstallMagicMagic(Magic):
 
     def line_install_magic(self, url):
@@ -22,14 +32,13 @@ class InstallMagicMagic(Magic):
             %install_magic http://path/to/some/magic.py
 
         """
-        opener = urllib.URLopener()
         parts = urlparse.urlsplit(url)
         #('http', 'example.com', '/somefile.zip', '', '')
         path = parts[2]
         filename = os.path.basename(path)
         magic_filename = os.path.join(self.kernel.get_local_magics_dir(), filename)
         try:
-            opener.retrieve(url, magic_filename)
+            download(url, magic_filename)
             self.kernel.Print("Downloaded '%s'." % magic_filename)
             self.code = "%reload_magics\n" + self.code
         except Exception as e:
