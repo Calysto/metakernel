@@ -2,6 +2,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 from metakernel import Magic, option
+import traceback
 try:
     import jedi
 except ImportError:
@@ -43,7 +44,8 @@ class PythonMagic(Magic):
             try:
                 exec(code.strip(), self.env)
             except Exception as exc:
-                return "Error: " + str(exc)
+                self.kernel.Error(traceback.format_exc())
+                return None
         if "retval" in self.env:
             return self.env["retval"]
 

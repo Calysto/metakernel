@@ -51,7 +51,7 @@ class ParallelMagic(Magic):
                 break
             except:
                 print("Waiting on cluster to start...")
-                time.sleep(count * 2)
+                time.sleep(2)
             count += 1
         if count == 6:
             raise Exception("Cluster was not started.")
@@ -63,7 +63,7 @@ class ParallelMagic(Magic):
                     break
                 except:
                     print("Waiting for engines...")
-                    time.sleep(count * 2)
+                    time.sleep(2)
                 count += 1
             if count == 6:
                 raise Exception("Engines were not started.")
@@ -78,13 +78,37 @@ class ParallelMagic(Magic):
             except:
                 ids_slice = slicer[:]
             if isinstance(ids_slice, (slice, int)):
-                self.view = self.client[ids_slice]
+                count = 1
+                while count <= 5:
+                    try:
+                        self.view = self.client[ids_slice]
+                        break
+                    except:
+                        print("Waiting for engines...")
+                        time.sleep(2)
+                    count += 1
+                if count == 6:
+                    raise Exception("Engines were not started.")
             else: # tuple of indexes/slices
-                # TEST: can we do this?
                 # FIXME: if so, handle Ellipsis
-                view = []
+                view = None
                 for item in ids_slice:
-                    view.append(self.client[item])
+                    count = 1
+                    while count <= 5:
+                        try:
+                            client = self.client[item]
+                            if view:
+                                ## FIXME: can't do this:
+                                view.append(client)
+                            else:
+                                view = client
+                            break
+                        except:
+                            print("Waiting on cluster to start...")
+                            time.sleep(2)
+                        count += 1
+                    if count == 6:
+                        raise Exception("Cluster was not started.")
                 self.view = view
         self.view_load_balanced = self.client.load_balanced_view()
         self.module_name = module_name
@@ -142,7 +166,7 @@ kernels['%(kernel_name)s'] = %(class_name)s()
                 break
             except:
                 print("Waiting on cluster clients to start...")
-                time.sleep(count * 2)
+                time.sleep(2)
             count += 1
         if count == 6:
             raise Exception("Cluster clients have not started.")
