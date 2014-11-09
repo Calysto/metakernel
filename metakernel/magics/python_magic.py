@@ -5,12 +5,11 @@ from metakernel import Magic, option
 import traceback
 try:
     import jedi
-except ImportError:
-    jedi = None
-else:
     from jedi import Interpreter
     from jedi.api.helpers import completion_parts
     from jedi.parser.user_context import UserContext
+except ImportError:
+    jedi = None
 
 
 class PythonMagic(Magic):

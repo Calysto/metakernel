@@ -18,8 +18,8 @@ try:
 except: # python3
     def download(url, filename):
         g = urllib.request.urlopen(url)
-        with open(filename, 'w') as f:
-            f.write(g.read().decode('utf-8'))        
+        with open(filename, 'wb') as f:
+            f.write(g.read())        
 
 class DownloadMagic(Magic):
 
