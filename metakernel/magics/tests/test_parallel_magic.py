@@ -1,5 +1,5 @@
 
-from metakernel.tests.utils import get_kernel, get_log_text
+from metakernel.tests.utils import get_kernel, get_log_text, EvalKernel
 import os
 import time
 
@@ -9,7 +9,6 @@ def setup_func():
     time.sleep(5) ## give the cluster time to start
 
 def test_parallel_magic():
-    from eval_kernel import EvalKernel
     kernel = get_kernel(EvalKernel)
     # start up an EvalKernel on each node:
     kernel.do_execute("%parallel eval_kernel EvalKernel", False)
