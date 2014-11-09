@@ -24,8 +24,11 @@ install:
     - python setup.py install
 
     - cd ..
-    - travis_retry pip install coveralls jedi eval_kernel
+    - travis_retry pip install coveralls jedi 
     - travis_retry python setup.py install
+    - cd eval_kernel
+    - travis_retry python setup.py install
+    - cd ..
 
 script:
     -  ipcluster start -n=3 &
