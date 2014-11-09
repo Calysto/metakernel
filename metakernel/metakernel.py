@@ -113,6 +113,14 @@ class MetaKernel(Kernel):
         """
         pass
 
+    def do_execute_file(self, filename):
+        """
+        Default code for running a file. Just opens the file, and sends
+        the text to do_execute_direct.
+        """
+        code = "".join(open(filename).readlines())
+        return self.do_execute_direct(code)
+
     def do_execute_meta(self, code):
         """
         Execute meta code in the kernel. This uses the execute infrastructure
@@ -146,12 +154,6 @@ class MetaKernel(Kernel):
         """
         #return "highlight: [%s, %s, %s, %s]" % (line1, col1, line2, col2)
         return ""
-
-    def do_execute_file(self, filename):
-        """
-        Execute a file in the kernel language.
-        """
-        self.Error("This language does not support \"%run filename\".")
 
     def do_function_direct(self, function_name, arg):
         """
