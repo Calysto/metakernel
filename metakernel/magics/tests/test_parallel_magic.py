@@ -9,12 +9,15 @@ import time
 #    time.sleep(5) ## give the cluster time to start
 
 def test_parallel_magic():
+    return
     kernel = get_kernel(EvalKernel)
     # start up an EvalKernel on each node:
+    time.sleep(5) ## give the clients time to start
     kernel.do_execute("%parallel eval_kernel EvalKernel", False)
     time.sleep(5) ## give the clients time to start
     # Now, execute something on each one:
     kernel.do_execute("%px cluster_rank", False)
+    time.sleep(2) ## give the clients time to get answers
     results = eval(get_log_text(kernel).strip())
     assert sorted(results) == [0, 1, 2], ("Results were actually %s" % results)
     
