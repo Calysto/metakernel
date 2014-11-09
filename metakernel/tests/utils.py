@@ -76,6 +76,11 @@ def get_kernel(kernel_class=MetaKernel):
     return kernel
 
 
+def clear_log_text(kernel):
+    kernel.log.handlers[0].stream.truncate(0)
+    kernel.log.handlers[0].stream.seek(0)
+
+
 def get_log_text(kernel):
     return kernel.log.handlers[0].stream.getvalue()
 

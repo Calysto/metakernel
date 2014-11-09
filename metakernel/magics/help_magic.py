@@ -69,6 +69,8 @@ class HelpMagic(Magic):
         ?%python
         """
         text = self._prep_text(text)
+        if not text:
+            return self.kernel.get_usage()
 
         info = self.kernel.parse_code(text)
 
