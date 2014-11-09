@@ -11,4 +11,7 @@ def test_download_magic():
     assert os.path.isfile("TEST.txt"), "File does not exist: TEST.txt"
 
 def teardown():
-    os.remove("TEST.txt")
+    try:
+        os.remove("TEST.txt")
+    except:
+        pass

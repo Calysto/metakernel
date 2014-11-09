@@ -10,6 +10,16 @@ except ImportError:
     from urllib import parse as urlparse
 import os
 
+try:
+    def download(url, filename):
+        opener = urllib.URLopener()
+        opener.retrieve(url, filename)
+except: # python3
+    def download(url, filename):
+        g = urllib.request.urlopen(url)
+        with open(filename) as f:
+            f.write(g.read())        
+
 class DownloadMagic(Magic):
 
     @option(
@@ -29,14 +39,13 @@ class DownloadMagic(Magic):
             %%download http://some/file/from/program.ss
 
         """
-        opener = urllib.URLopener()
         if filename is None:
             parts = urlparse.urlsplit(url)
             #('http', 'example.com', '/somefile.zip', '', '')
             path = parts[2]
             filename = os.path.basename(path)
         try:
-            opener.retrieve(url, filename)
+            download(url, filename)
             self.kernel.Print("Downloaded '%s'." % filename)
         except Exception as e:
             self.kernel.Error(str(e))
