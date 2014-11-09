@@ -1,5 +1,5 @@
 # Note: This is meant for Metaernel developer use only
-.PHONY: all clean test cover release gh-pages
+.PHONY: all clean test test_warn cover release gh-pages
 
 export TEST_ARGS=--exe -v --with-doctest
 export NAME=metakernel
@@ -15,6 +15,12 @@ clean:
 	/usr/bin/find . -name "*.pyc" -o -name "*.py,cover"| xargs rm -f
 
 test: clean
+	python setup.py build
+	ipcluster start -n=3 &
+	cd build; nosetests $(TEST_ARGS); ipcluster stop
+	make clean
+
+test_warn: clean
 	python setup.py build
 	ipcluster start -n=3 &
 	export PYTHONWARNINGS="all"; cd build; nosetests $(TEST_ARGS); ipcluster stop

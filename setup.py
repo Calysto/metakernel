@@ -28,7 +28,7 @@ setup(name='metakernel',
       url="https://github.com/blink1073/metakernel",
       install_requires=['IPython'],
       packages=['metakernel', 'metakernel.magics',
-                'metakernel.tests'],
+                'metakernel.tests', 'metakernel.magics.tests'],
       classifiers=[
           'Framework :: IPython',
           'License :: OSI Approved :: BSD License',
