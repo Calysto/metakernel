@@ -50,3 +50,6 @@ def test_python_magic4():
     ret = kernel.do_execute('?%%python a.b', None)
     assert ret['payload'][0]['data']['text/plain'] == 'No help available for "a.b"'
 
+    ret = kernel.do_execute('??%%python oct', None)
+    assert False, ret # ret['payload'][0]['data']['text/plain'] == 'No help available for "a.b"'
+
