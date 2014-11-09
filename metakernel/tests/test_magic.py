@@ -73,7 +73,7 @@ def test_option():
     ret = d.call_magic('line', 'dummy', '', 'hey -s400,200')
     assert ret == d
     assert d.foo == 'hey'
-    assert d.size == '400,200'
+    assert d.size == (400, 200)
 
     ret = d.call_magic('line', 'dummy', '', 'hey there')
     assert d.foo == 'hey there'
