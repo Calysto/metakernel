@@ -1,8 +1,3 @@
-try:
-    import thread as _thread
-except ImportError:
-    import _thread
-import threading
 
 from metakernel.tests.utils import get_kernel, get_log_text
 
@@ -35,12 +30,3 @@ def test_shell_magic2():
     log_text = get_log_text(kernel)
     assert '"hello"' in log_text
     assert '"goodbye"' in log_text
-
-
-def test_shell_interrupt():
-    def trigger_interrupt():
-        _thread.interrupt_main()
-
-    t = threading.Thread(target=trigger_interrupt)
-    t.start()
-    t.join()
