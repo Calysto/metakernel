@@ -1,3 +1,8 @@
+try:
+    import thread as _thread
+except ImportError:
+    import _thread
+import threading
 
 from metakernel.tests.utils import get_kernel, get_log_text
 
@@ -13,8 +18,11 @@ def test_shell_magic():
     helpstr = kernel.get_help_on('!dir')
     assert not 'Sorry, no help' in helpstr
 
-    helpstr = kernel.get_help_on('!dir', level=1)
+    helpstr = kernel.get_help_on('%%shell dir', level=1)
     assert not 'Sorry, no help' in helpstr
+
+    helpstr = kernel.get_help_on('!lkjalskdfj')
+    assert 'Sorry, no help' in helpstr
 
 
 def test_shell_magic2():
@@ -27,3 +35,12 @@ def test_shell_magic2():
     log_text = get_log_text(kernel)
     assert '"hello"' in log_text
     assert '"goodbye"' in log_text
+
+
+def test_shell_interrupt():
+    def trigger_interrupt():
+        _thread.interrupt_main()
+
+    t = threading.Thread(target=trigger_interrupt)
+    t.start()
+    t.join()

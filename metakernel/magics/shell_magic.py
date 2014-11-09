@@ -87,7 +87,7 @@ class ShellMagic(Magic):
         return resp, error
 
     def _read_errors(self):
-        while 1:
+        while 1:  # pragma: no cover
             buf = os.read(self.efid, 1024).decode('utf-8', 'replace')
             self._error_queue.put(buf)
             time.sleep(0.01)
@@ -98,7 +98,7 @@ class ShellMagic(Magic):
 
         try:
             subprocess.check_output('bash --version', shell=True)
-        except OSError as e:
+        except OSError as e:  # pragma: no cover
             if os.name == 'nt':
                 self.cmd = 'cmd'
                 self.separator = ' & '
