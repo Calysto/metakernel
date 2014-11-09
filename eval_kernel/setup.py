@@ -36,7 +36,7 @@ setup(name='eval_kernel',
       author='Douglas Blank',
       author_email='doug.blank@gmail.com',
       py_modules=['eval_kernel'],
-      install_requires=["metakernel"],
+      install_requires=["metakernel", "jedi"],
       cmdclass={'install': install_with_kernelspec},
       classifiers = [
           'Framework :: IPython',

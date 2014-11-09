@@ -1,3 +1,4 @@
+import traceback
 import optparse
 import inspect
 import sys
@@ -46,6 +47,7 @@ class Magic(object):
             msg = "Error in calling magic '%s' on %s:\n    %s\n    args: %s\n    kwargs: %s" % (
                 name, mtype, str(exc), args, kwargs)
             self.kernel.Error(msg)
+            self.kernel.Error(traceback.format_exc())
             self.kernel.Error(self.get_help(mtype, name))
             # return dummy magic to end processing:
             return Magic(self.kernel)

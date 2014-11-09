@@ -3,6 +3,7 @@
 
 from metakernel import Magic, option
 import logging
+import time
 
 class Slice(object):
     """Utility class for making slice ranges."""
@@ -43,9 +44,29 @@ class ParallelMagic(Magic):
         Use %px or %%px to send code to the cluster.
         """
         from IPython.parallel import Client
-        self.client = Client()
+        count = 1
+        while count <= 5:
+            try:
+                self.client = Client()
+                break
+            except:
+                print("Waiting on cluster to start...")
+                time.sleep(count * 2)
+            count += 1
+        if count == 6:
+            raise Exception("Cluster was not started.")
         if ids is None:
-            self.view = self.client[:]
+            count = 1
+            while count <= 5:
+                try:
+                    self.view = self.client[:]
+                    break
+                except:
+                    print("Waiting for engines...")
+                    time.sleep(count * 2)
+                count += 1
+            if count == 6:
+                raise Exception("Engines were not started.")
         else:
             # ids[:] = slice(None, None, None)
             # ids[1:3] = slice(1, 3, None)
@@ -113,8 +134,18 @@ kernels['%(kernel_name)s'] = %(class_name)s()
         expression = str(expression)
         if kernel_name is None:
             kernel_name = self.kernel_name
-        self.retval = self.view["kernels['%s'].do_execute_direct(\"%s\")" % (
-            kernel_name, self._clean_code(expression))]
+        count = 1
+        while count <= 5:
+            try:
+                self.retval = self.view["kernels['%s'].do_execute_direct(\"%s\")" % (
+                    kernel_name, self._clean_code(expression))]
+                break
+            except:
+                print("Waiting on cluster clients to start...")
+                time.sleep(count * 2)
+            count += 1
+        if count == 6:
+            raise Exception("Cluster clients have not started.")
         if evaluate:
             self.code = expression
 
