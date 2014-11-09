@@ -543,5 +543,5 @@ def _formatter(data, repr_func):
     for (attr, mimetype) in lut:
         obj = getattr(data, attr, None)
         if obj:
-            retval[mimetype] = obj
+            retval[mimetype] = obj()
     return retval
