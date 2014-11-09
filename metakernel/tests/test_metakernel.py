@@ -113,6 +113,12 @@ def test_sticky_magics():
     assert 'html removed from session magics' in text
 
 
+def test_shell_partial_quote():
+    kernel = get_kernel()
+    kernel.do_execute('%cd "/home/', False)
+    text = get_log_text(kernel)
+    assert """No such file or directory: '"/home/'""" in text, text
+
 def test_other_kernels():
     from metakernel import MetaKernel
     class SchemeKernel(MetaKernel):
