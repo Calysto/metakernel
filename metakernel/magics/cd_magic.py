@@ -20,6 +20,7 @@ class CDMagic(Magic):
         Example:
             %cd ..
         """
+        path = os.path.expanduser(path)
         try:
             os.chdir(path)
             retval = os.path.abspath(path)
