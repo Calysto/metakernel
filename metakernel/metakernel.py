@@ -137,6 +137,16 @@ class MetaKernel(Kernel):
         else:
             raise Exception("Unknown meta command: '%s'" % code)
 
+    def initialize_debug(self, code):
+        """
+        This function is used with the %%debug magic for highlighting
+        lines of code, and for initializing debug functions.
+
+        Return the empty string if highlighting is not supported.
+        """
+        #return "highlight: [%s, %s, %s, %s]" % (line1, col1, line2, col2)
+        return ""
+
     def do_execute_file(self, filename):
         """
         Execute a file in the kernel language.

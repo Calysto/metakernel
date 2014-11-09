@@ -38,6 +38,10 @@ class EvalKernel(MetaKernel):
         else:
             raise Exception("Unknown meta command: '%s'" % code)
 
+    def initialize_debug(self, code):
+        return "highlight: [%s, %s, %s, %s]" % (0, 0, 1, 0)
+
+
 def get_kernel(kernel_class=MetaKernel):
     log = logging.getLogger('test')
     log.setLevel(logging.DEBUG)
