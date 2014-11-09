@@ -24,7 +24,6 @@ class MetaKernel(Kernel):
 
     def __init__(self, *args, **kwargs):
         super(MetaKernel, self).__init__(*args, **kwargs)
-        global JUPYTER_INSTANCE
         if self.log is None:
             # This occurs if we call as a stand-alone kernel
             # (eg, not as a process)
@@ -50,7 +49,7 @@ class MetaKernel(Kernel):
         self.hist_file = get_history_file(self)
         self.reload_magics()
         # provide a way to get the current instance
-        self.set_variable("get_kernel", lambda: self)
+        self.set_variable("kernel", self)
         self.parser = Parser(self.identifier_regex, self.func_call_regex,
                              self.magic_prefixes, self.help_suffix)
 
@@ -315,7 +314,6 @@ class MetaKernel(Kernel):
 
     def do_complete(self, code, cursor_pos):
         info = self.parse_code(code, 0, cursor_pos)
-        print(info)
         content = {
             'matches': [],
             'cursor_start': info['start'],
