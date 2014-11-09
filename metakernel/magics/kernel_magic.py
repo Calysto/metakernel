@@ -83,6 +83,8 @@ class KernelMagic(Magic):
         """
         if kernel_name is None:
             kernel_name = self.kernel_name
+        # make sure the code is sent as a string for execution
+        code = str(code)
         self.retval = self.kernels[kernel_name].do_execute_direct(code)
 
     def post_process(self, retval):
