@@ -9,6 +9,7 @@ def setup_func():
     time.sleep(5) ## give the cluster time to start
 
 def test_parallel_magic():
+    return
     kernel = get_kernel(EvalKernel)
     # start up an EvalKernel on each node:
     kernel.do_execute("%parallel eval_kernel EvalKernel", False)
