@@ -22,6 +22,21 @@ class EvalKernel(MetaKernel):
         python_magic = self.line_magics['python']
         python_magic.env[name] = value
 
+    def do_execute_direct(self, code):
+        python_magic = self.line_magics['python']
+        return python_magic.eval(code.strip())
+
+    def do_execute_meta(self, code):
+        if code == "reset":
+            return "RESET"
+        elif code == "stop":
+            return "STOP"
+        elif code == "step":
+            return "STEP"
+        elif code.startswith("inspect "):
+            return "INSPECT"
+        else:
+            raise Exception("Unknown meta command: '%s'" % code)
 
 def get_kernel(kernel_class=MetaKernel):
     log = logging.getLogger('test')

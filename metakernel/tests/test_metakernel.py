@@ -1,8 +1,8 @@
 import os
 import re
 import subprocess
-from metakernel.tests.utils import get_kernel, get_log_text
-
+from metakernel.tests.utils import (get_kernel, get_log_text, EvalKernel, 
+                                    clear_log_text)
 
 def test_magics():
     kernel = get_kernel()
@@ -164,6 +164,28 @@ def test_other_kernels():
     match = re.match("Help is available on '(.*)'", message)
     assert match.groups()[0] == "dir", message + " for 'dir'"
 
+
+def test_do_execute_meta():
+    kernel = get_kernel(EvalKernel)
+    kernel.do_execute("~~META~~: reset")
+    text = get_log_text(kernel)
+    assert "RESET" in text, text
+    clear_log_text(kernel)
+
+    kernel.do_execute("~~META~~: stop")
+    text = get_log_text(kernel)
+    assert "STOP" in text, text
+    clear_log_text(kernel)
+
+    kernel.do_execute("~~META~~: step")
+    text = get_log_text(kernel)
+    assert "STEP" in text, text
+    clear_log_text(kernel)
+
+    kernel.do_execute("~~META~~: inspect something")
+    text = get_log_text(kernel)
+    assert "INSPECT" in text, text
+    clear_log_text(kernel)
 
 def teardown():
     if os.path.exists("TEST.txt"):
