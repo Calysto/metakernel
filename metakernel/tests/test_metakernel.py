@@ -1,6 +1,8 @@
 import os
 import re
 import subprocess
+from nose.tools import assert_raises
+
 from metakernel.tests.utils import (get_kernel, get_log_text, EvalKernel, 
                                     clear_log_text)
 
@@ -186,6 +188,30 @@ def test_do_execute_meta():
     text = get_log_text(kernel)
     assert "INSPECT" in text, text
     clear_log_text(kernel)
+
+
+def test_do_execute_meta2():
+    kernel = get_kernel()
+    for code in ['reset, stop', 'step', 'inspect ', 'garbage']:
+        assert_raises(Exception, kernel.do_execute, "~~META~~: %s" % code)
+
+
+def test_misc():
+    kernel = get_kernel()
+    assert kernel.do_execute_direct('garbage') is None
+    kernel.do_execute_file('hello.txt')
+    assert "This language does not support" in get_log_text(kernel)
+
+    clear_log_text(kernel)
+
+    kernel.do_function_direct('hello', 'world')
+    assert "This language does not support" in get_log_text(kernel)
+    kernel.restart_kernel()
+
+    ret = kernel.do_is_complete('hello\n')
+    assert ret == {'status': 'unknown'}
+
+    assert kernel.do_inspect('hello', 10) is None
 
 def teardown():
     if os.path.exists("TEST.txt"):
