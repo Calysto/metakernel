@@ -11,9 +11,9 @@ def test_latex_magic():
 
     clear_log_text(kernel)
 
-    text = get_log_text(kernel)
     kernel.do_execute("""%%latex
             x_1 = \dfrac{a}{b}
 
             x_2 = a^{n - 1}""")
+    text = get_log_text(kernel)
     assert "Display Data" in text
