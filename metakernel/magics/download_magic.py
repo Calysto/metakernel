@@ -11,6 +11,7 @@ except ImportError:
 import os
 
 try:
+    urllib.URLopener
     def download(url, filename):
         opener = urllib.URLopener()
         opener.retrieve(url, filename)
