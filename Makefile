@@ -16,20 +16,20 @@ clean:
 
 test: clean
 	python setup.py build
-	ipcluster start -n=3 &
-	cd build; nosetests $(TEST_ARGS); ipcluster stop
+	ipcluster2 start -n=3 &
+	cd build; nosetests $(TEST_ARGS); ipcluster2 stop
 	make clean
 
 test_warn: clean
 	python setup.py build
-	ipcluster start -n=3 &
-	export PYTHONWARNINGS="all"; cd build; nosetests $(TEST_ARGS); ipcluster stop
+	ipcluster2 start -n=3 &
+	export PYTHONWARNINGS="all"; cd build; nosetests $(TEST_ARGS); ipcluster2 stop
 	make clean
 
 cover: clean
 	pip install nose-cov
-	ipcluster start -n=3 &
-	nosetests $(TEST_ARGS) --with-cov --cov $(NAME) $(NAME); ipcluster stop
+	ipcluster2 start -n=3 &
+	nosetests $(TEST_ARGS) --with-cov --cov $(NAME) $(NAME); ipcluster2 stop
 	coverage annotate
 
 release: test gh-pages
