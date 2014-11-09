@@ -170,7 +170,12 @@ def _split_args(args):
                 temp = ''
 
         elif arg.startswith(('(', '[', '{')) or '(' in arg:
-            temp = arg
+            try:
+                eval(arg)
+            except:
+                temp = arg
+            else:
+                new_args.append(arg)
 
         else:
             new_args.append(arg)
