@@ -110,6 +110,7 @@ kernels['%(kernel_name)s'] = %(class_name)s()
 
         Use %parallel to initialize the cluster.
         """
+        expression = str(expression)
         if kernel_name is None:
             kernel_name = self.kernel_name
         self.retval = self.view["kernels['%s'].do_execute_direct(\"%s\")" % (
