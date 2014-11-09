@@ -148,7 +148,7 @@ def _split_args(args):
         args = shlex.split(args)
     except:
         # parse error; let's pass args along rather than crashing
-        pass 
+        args = args.split()
 
     new_args = []
     temp = ''
