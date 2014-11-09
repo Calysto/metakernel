@@ -6,7 +6,7 @@ from metakernel.tests.utils import (get_kernel, get_log_text, EvalKernel,
 def test_spell_magic():
     kernel = get_kernel(EvalKernel)
     kernel.do_execute("""%%spell testme
-print "ok"
+print("ok")
     """, False)
     kernel.do_execute("%spell testme", False)
     text = get_log_text(kernel)
