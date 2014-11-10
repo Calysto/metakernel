@@ -16,7 +16,7 @@ class PythonMagic(Magic):
 
     def __init__(self, kernel):
         super(PythonMagic, self).__init__(kernel)
-        self.env = globals()['__builtins__'].copy())
+        self.env = globals()['__builtins__'].copy()
         self.retval = None
 
     def line_python(self, *args):
