@@ -72,10 +72,11 @@ def test_path_complete():
     for path in paths:
         comp = kernel.do_complete(path, len(path) - 1)
 
-        if os.path.isdir(path) or ' ' in path:
+        if os.path.isdir(path):
             path = path.split()[-1]
             assert path + os.sep in comp['matches'], ("'%s' not in '%s'" % (path + os.sep, comp['matches']))
         else:
+            path = path.split()[-1]
             assert path in comp['matches'], (comp['matches'], path)
 
 
