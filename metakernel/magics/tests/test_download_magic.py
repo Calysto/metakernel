@@ -10,8 +10,17 @@ def test_download_magic():
     assert "Downloaded 'TEST.txt'" in text, text
     assert os.path.isfile("TEST.txt"), "File does not exist: TEST.txt"
 
+    clear_log_text(kernel)
+
+    kernel.do_execute("%download https://raw.githubusercontent.com/blink1073/metakernel/master/LICENSE.txt")
+    text = get_log_text(kernel)
+    assert "Downloaded 'LICENSE.txt'" in text, text
+    assert os.path.isfile("LICENSE.txt"), "File does not exist: LICENSE.txt"
+
+
 def teardown():
-    try:
-        os.remove("TEST.txt")
-    except:
-        pass
+    for fname in ['TEST.txt', 'LICENSE.txt']:
+        try:
+            os.remove(fname)
+        except:
+            pass
