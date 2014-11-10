@@ -16,7 +16,7 @@ install:
     # Pierre Carrier's PPA for PhantomJS and CasperJS
     - travis_retry sudo add-apt-repository -y ppa:pcarrier/ppa
     - time sudo apt-get update
-    - travis_retry sudo apt-get install pandoc casperjs libzmq3-dev graphviz
+    - travis_retry sudo apt-get install pandoc casperjs libzmq3-dev 
     - travis_retry pip install -f https://nipy.bic.berkeley.edu/wheelhouse/travis jinja2 sphinx pygments tornado requests mock pyzmq jsonschema jsonpointer mistune
 
     - travis_retry git clone --recursive https://github.com/ipython/ipython
@@ -25,8 +25,6 @@ install:
 
     - cd ..
     - travis_retry pip install coveralls jedi 
-    - travis_retry pip install pydot --allow-external pydot --allow-unverified pydot
-    - travis_retry pip install pyparsing==1.5.7  --allow-external pyparsing --allow-unverified pyparsing
     - travis_retry python setup.py install
     - cd eval_kernel
     - travis_retry python setup.py install
