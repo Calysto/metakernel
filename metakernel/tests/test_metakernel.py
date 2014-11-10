@@ -3,6 +3,7 @@ import re
 import subprocess
 from nose.tools import assert_raises
 
+from metakernel import MetaKernel
 from metakernel.tests.utils import (get_kernel, get_log_text, EvalKernel, 
                                     clear_log_text)
 
@@ -122,7 +123,6 @@ def test_shell_partial_quote():
     assert """No such file or directory: '"/home/'""" in text, text
 
 def test_other_kernels():
-    from metakernel import MetaKernel
     class SchemeKernel(MetaKernel):
         help_suffix = {}
         def do_execute_direct(self, code):
@@ -197,7 +197,11 @@ def test_do_execute_meta2():
 
 
 def test_misc():
-    kernel = get_kernel()
+    class TestKernel(MetaKernel):
+        def do_execute_file(self, filename):
+            self.Print("This language does not support running files")
+
+    kernel = get_kernel(TestKernel)
     assert kernel.do_execute_direct('garbage') is None
     kernel.do_execute_file('hello.txt')
     assert "This language does not support" in get_log_text(kernel)
