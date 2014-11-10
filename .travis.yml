@@ -25,6 +25,8 @@ install:
 
     - cd ..
     - travis_retry pip install coveralls jedi 
+    - travis_retry pip install pydot --allow-external pydot --allow-unverified pydot
+    - travis_retry pip install pyparsing==1.5.7  --allow-external pyparsing --allow-unverified pyparsing
     - travis_retry python setup.py install
     - cd eval_kernel
     - travis_retry python setup.py install
