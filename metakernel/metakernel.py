@@ -300,8 +300,10 @@ class MetaKernel(Kernel):
                 data = '\n'.join(self.hist_cache[-self.max_hist_cache:])
                 fid.write(data.encode('utf-8'))
         if restart:
+            self.Print("Restarting kernel...")
             self.reload_magics()
             self.restart_kernel()
+            self.Print("Done!")
         return {'status': 'ok', 'restart': restart}
 
     def do_is_complete(self, code):
