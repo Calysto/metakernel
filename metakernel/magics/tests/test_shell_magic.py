@@ -30,3 +30,10 @@ def test_shell_magic2():
     log_text = get_log_text(kernel)
     assert '"hello"' in log_text
     assert '"goodbye"' in log_text
+
+
+def test_shell_magic3():
+    kernel = get_kernel()
+    kernel.do_execute('!lalkjds')
+    text = get_log_text(kernel)
+    assert 'Error:' in text, text

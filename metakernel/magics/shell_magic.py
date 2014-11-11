@@ -18,6 +18,7 @@ class ShellMagic(Magic):
     def __init__(self, kernel):
         super(ShellMagic, self).__init__(kernel)
         self.proc = None
+        self.cmd = None
         self.start_process()
 
     def line_shell(self, *args):
@@ -95,18 +96,20 @@ class ShellMagic(Magic):
     def start_process(self):
         if not self.proc is None:
             self.proc.terminate()
+            self._error_queue.terminate()
 
-        try:
-            subprocess.check_output('bash --version', shell=True)
-        except OSError as e:  # pragma: no cover
-            if os.name == 'nt':
-                self.cmd = 'cmd'
-                self.separator = ' & '
+        if not self.cmd:
+            try:
+                subprocess.check_output('bash --version', shell=True)
+            except OSError as e:  # pragma: no cover
+                if os.name == 'nt':
+                    self.cmd = 'cmd'
+                    self.separator = ' & '
+                else:
+                    raise OSError(e)
             else:
-                raise OSError(e)
-        else:
-            self.cmd = 'bash'
-            self.separator = ';'
+                self.cmd = 'bash'
+                self.separator = ';'
 
         self.rfid, wpipe = os.pipe()
         rpipe, self.wfid = os.pipe()
