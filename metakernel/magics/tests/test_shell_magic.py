@@ -36,4 +36,4 @@ def test_shell_magic3():
     kernel = get_kernel()
     kernel.do_execute('!lalkjds')
     text = get_log_text(kernel)
-    assert 'Error:' in text, text
+    assert ': command not found' in text, text
