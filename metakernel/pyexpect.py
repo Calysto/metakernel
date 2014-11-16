@@ -21,16 +21,16 @@ except ImportError:
     pty = None
 
 
-class ExceptionPexpect(Exception):
+class ExceptionPyExpect(Exception):
     pass
 
 
-class EOF(ExceptionPexpect):
+class EOF(ExceptionPyExpect):
     '''Raised when EOF is read from a child.
     This usually means the child has exited.'''
 
 
-class TIMEOUT(ExceptionPexpect):
+class TIMEOUT(ExceptionPyExpect):
     '''Raised when a read time exceeds the timeout. '''
 
 
@@ -395,7 +395,7 @@ class spawn(ExpectBase):
             self.flush()
             if self.terminate() is None and force:
                 if self.kill() is None:
-                    raise ExceptionPexpect('Could not terminate the child.')
+                    raise ExceptionPyExpect('Could not terminate the child.')
             self.rchild = -1
 
     def sendcontrol(self, char):
@@ -433,7 +433,7 @@ class spawn(ExpectBase):
         example, instead of expecting the "password:" prompt you can wait for
         the child to set ECHO off::
 
-            p = pexpect.spawn('ssh user@example.com')
+            p = pyexpect.spawn('ssh user@example.com')
             p.waitnoecho()
             p.sendline(mypassword)
 
@@ -551,15 +551,15 @@ else:
     def u(s):
         return s.decode('utf-8')
 
-PEXPECT_PROMPT = u('[PEXPECT_PROMPT>')
-PEXPECT_CONTINUATION_PROMPT = u('[PEXPECT_PROMPT+')
+PYEXPECT_PROMPT = u('[PYEXPECT_PROMPT>')
+PYEXPECT_CONTINUATION_PROMPT = u('[PYEXPECT_PROMPT+')
 
 
 class REPLWrapper(object):
 
     """Wrapper for a REPL.
 
-    :param cmd_or_spawn: This can either be an instance of :class:`pexpect.spawn`
+    :param cmd_or_spawn: This can either be an instance of :class:`pyexpect.spawn`
       in which a REPL has already been started, or a str command to start a new
       REPL process.
     :param str orig_prompt: The prompt to expect at first.
@@ -575,8 +575,8 @@ class REPLWrapper(object):
     """
 
     def __init__(self, cmd_or_spawn, orig_prompt, prompt_change,
-                 new_prompt=PEXPECT_PROMPT,
-                 continuation_prompt=PEXPECT_CONTINUATION_PROMPT,
+                 new_prompt=PYEXPECT_PROMPT,
+                 continuation_prompt=PYEXPECT_CONTINUATION_PROMPT,
                  prompt_cmd=None,
                  echo=False,
                  extra_init_cmd=None):
@@ -629,7 +629,7 @@ class REPLWrapper(object):
           if a continuation prompt is found after sending input, :exc:`ValueError`
           will be raised.
         :param int timeout: How long to wait for the next prompt. -1 means the
-          default from the :class:`pexpect.spawn` object (default 30 seconds).
+          default from the :class:`pyexpect.spawn` object (default 30 seconds).
           None means to wait indefinitely.
         """
         # Split up multiline commands and feed them in bit-by-bit
