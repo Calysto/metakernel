@@ -107,7 +107,7 @@ class MetaKernel(Kernel):
         """
         return []
 
-    def do_execute_direct(self, code):
+    def do_execute_direct(self, code, silent=False):
         """
         Execute code in the kernel language.
         """
@@ -234,7 +234,7 @@ class MetaKernel(Kernel):
                 if code.startswith("~~META~~:"):
                     retval = self.do_execute_meta(code[9:].strip())
                 else:
-                    retval = self.do_execute_direct(code)
+                    retval = self.do_execute_direct(code, silent)
             # Post-process magics:
             for magic in reversed(stack):
                 retval = magic.post_process(retval)

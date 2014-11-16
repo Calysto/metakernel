@@ -30,14 +30,12 @@ class ProcessMetaKernel(MetaKernel):
         MetaKernel.__init__(self, **kwargs)
         self.wrapper = self.makeWrapper()
 
-    def do_execute(self, code, silent=False, store_history=True,
-                   user_expressions=None, allow_stdin=False):
-
-        # FIXME: need to handle magics here -----------------------------------
+    def do_execute_direct(self, code, silent=False):
 
         if not code.strip():
-            return {'status': 'ok', 'execution_count': self.execution_count,
-                    'payload': [], 'user_expressions': {}}
+            self.payload = {'status': 'ok', 'execution_count': self.execution_count,
+                    'payload': [], 'user_expressions': {}} 
+            return
 
         interrupted = False
         try:
@@ -52,21 +50,21 @@ class ProcessMetaKernel(MetaKernel):
             self._start()
 
         if not silent:
-            stream_content = {'name': 'stdout', 'text': output}
+            stream_content = {'name': 'stdout', 'data': output}
             self.send_response(self.iopub_socket, 'stream', stream_content)
 
         if interrupted:
-            return {'status': 'abort', 'execution_count': self.execution_count}
+            self.payload = {'status': 'abort', 'execution_count': self.execution_count}
 
         exitcode, trace = self.check_exitcode()
 
         self.log.info(output)
 
         if exitcode:
-            return {'status': 'error', 'execution_count': self.execution_count,
+            self.payload = {'status': 'error', 'execution_count': self.execution_count,
                     'ename': '', 'evalue': str(exitcode), 'traceback': trace}
         else:
-            return {'status': 'ok', 'execution_count': self.execution_count,
+            self.payload = {'status': 'ok', 'execution_count': self.execution_count,
                     'payload': [], 'user_expressions': {}}
 
     def check_exitcode(self):
