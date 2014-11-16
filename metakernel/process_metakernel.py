@@ -28,9 +28,15 @@ class ProcessMetaKernel(MetaKernel):
 
     def __init__(self, **kwargs):
         MetaKernel.__init__(self, **kwargs)
+        self.wrapper = None
+        self._start()
+
+    def _start(self):
+        if not self.wrapper is None:
+            self.wrapper.child.terminate()
         self.wrapper = self.makeWrapper()
 
-    def do_execute_direct(self, code, silent=False):
+    def do_execute_direct(self, code):
 
         if not code.strip():
             self.payload = {'status': 'ok', 'execution_count': self.execution_count,
@@ -49,16 +55,10 @@ class ProcessMetaKernel(MetaKernel):
             output = self.wrapper.child.before + 'Restarting'
             self._start()
 
-        if not silent:
-            stream_content = {'name': 'stdout', 'data': output}
-            self.send_response(self.iopub_socket, 'stream', stream_content)
-
         if interrupted:
             self.payload = {'status': 'abort', 'execution_count': self.execution_count}
 
         exitcode, trace = self.check_exitcode()
-
-        self.log.info(output)
 
         if exitcode:
             self.payload = {'status': 'error', 'execution_count': self.execution_count,
@@ -66,6 +66,8 @@ class ProcessMetaKernel(MetaKernel):
         else:
             self.payload = {'status': 'ok', 'execution_count': self.execution_count,
                     'payload': [], 'user_expressions': {}}
+
+        return output
 
     def check_exitcode(self):
         """

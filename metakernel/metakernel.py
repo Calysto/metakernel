@@ -234,7 +234,7 @@ class MetaKernel(Kernel):
                 if code.startswith("~~META~~:"):
                     retval = self.do_execute_meta(code[9:].strip())
                 else:
-                    retval = self.do_execute_direct(code, silent)
+                    retval = self.do_execute_direct(code)
             # Post-process magics:
             for magic in reversed(stack):
                 retval = magic.post_process(retval)
@@ -244,12 +244,12 @@ class MetaKernel(Kernel):
             else:
                 retval = self.do_execute_direct(code)
 
-        self.post_execute(retval, code)
+        self.post_execute(retval, code, silent)
 
         kernel_resp['payload'] = self.payload
         return kernel_resp
 
-    def post_execute(self, retval, code):
+    def post_execute(self, retval, code, silent):
         # Handle in's
         self.set_variable("_iii", self._iii)
         self.set_variable("_ii", self._ii)
@@ -270,7 +270,8 @@ class MetaKernel(Kernel):
             content = {'execution_count': self.execution_count,
                        'data': _formatter(retval, self.repr),
                        'metadata': dict()}
-            self.send_response(self.iopub_socket, 'execute_result', content)
+            if not silent:
+                self.send_response(self.iopub_socket, 'execute_result', content)
 
     def do_history(self, hist_access_type, output, raw, session=None,
                    start=None, stop=None, n=None, pattern=None, unique=False):
