@@ -517,8 +517,11 @@ class spawn(ExpectBase):
                 sig = signal.SIGKILL
             try:
                 self.proc.send_signal(sig)
-            except ProcessLookupError:
-                return 1
+            except OSError as e:
+                if e.errno == errno.ESRCH:
+                    return 1
+                else:
+                    raise e
             if sig in [signal.SIGTERM, signal.SIGKILL]:
                 time.sleep(self.delayafterclose)
 

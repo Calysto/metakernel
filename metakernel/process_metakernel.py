@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from metakernel import MetaKernel
 from metakernel.pyexpect import REPLWrapper, EOF, u
 
