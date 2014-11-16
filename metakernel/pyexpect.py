@@ -25,7 +25,13 @@ class ExceptionPexpect(Exception):
     pass
 
 
-EOF = chr(4)
+class EOF(ExceptionPexpect):
+    '''Raised when EOF is read from a child.
+    This usually means the child has exited.'''
+
+
+class TIMEOUT(ExceptionPexpect):
+    '''Raised when a read time exceeds the timeout. '''
 
 
 class ExpectBase(object):
@@ -98,14 +104,19 @@ class ExpectBase(object):
         t0 = time.time()
         while 1:
             try:
-                self._buf += self._read_queue.get_nowait()
+                incoming = self._read_queue.get_nowait()
             except Queue.Empty:
                 break
             else:
+                if incoming is None:
+                    raise EOF
+                else:
+                    self._buf += incoming
+
                 if size >= 0 and len(self._buf) >= size:
                     break
                 elif timeout > 0 and time.time() - t0 > timeout:
-                    break
+                    raise TIMEOUT
                 elif size == -1 and timeout == -1:
                     break
 
@@ -140,7 +151,7 @@ class ExpectBase(object):
                     print('Error', str(e))
 
             if not buf:
-                buf = EOF
+                buf = None
                 self._read_queue.put(buf)
                 return
 
@@ -174,12 +185,15 @@ class ExpectBase(object):
         if timeout in (None, -1):
             timeout = self.timeout
 
+        if eol is None:
+            eol = self.read_eol
+
         while time.time() - t0 < self.timeout:
-            line = self.readline(eol, timeout)
-            lines.append(line)
-            if EOF in line:
-                lines[-1] = line[:line.index(EOF)]
-                break
+            line = self.expect([eol, EOF], timeout)
+            if self.after == EOF:
+                return lines
+            else:
+                lines.append(line)
             if sizehint and len(lines) == sizehint:
                 break
         return lines
@@ -248,6 +262,18 @@ class ExpectBase(object):
             patterns = [patterns]
         patterns = [p for p in patterns if p]
 
+        if TIMEOUT in patterns:
+            allow_timeout = True
+            patterns = [p for p in patterns if not p == TIMEOUT]
+        else:
+            allow_timeout = False
+
+        if EOF in patterns:
+            allow_eof = True
+            patterns = [p for p in patterns if not p == EOF]
+        else:
+            allow_eof = False
+
         if escape:
             patterns = [re.escape(p) for p in patterns]
 
@@ -256,7 +282,15 @@ class ExpectBase(object):
 
         t0 = time.time()
 
-        buf = self.read_nonblocking(timeout=0)
+        try:
+            buf = self.read_nonblocking(timeout=0)
+        except EOF:
+            if allow_eof:
+                self.before = ''
+                self.after = EOF
+                return ''
+            else:
+                raise EOF
 
         while time.time() - t0 < timeout:
             if buf:
@@ -270,8 +304,22 @@ class ExpectBase(object):
                         self.after = buf[match.start(): match.end()]
                         self._buf = buf[match.end():]
                         return self.before
-            buf += self.read_nonblocking(timeout=0)
-        return buf
+            try:
+                buf += self.read_nonblocking(timeout=0)
+            except EOF:
+                if allow_eof:
+                    self.before, self._buf = buf, ''
+                    self.after = EOF
+                    return self.before
+                else:
+                    raise EOF
+
+        if allow_timeout:
+            self.before, self._buf = buf, ''
+            self.after = TIMEOUT
+            return self.before
+        else:
+            raise TIMEOUT
 
     def expect_exact(self, strings, timeout=None):
         """Look for a string or strings in a stream of data.
@@ -459,6 +507,9 @@ class spawn(ExpectBase):
             raise
 
         self.echo = state
+
+    def sendintr(self):
+        self.kill(signal.SIGINT)
 
     def kill(self, sig=None):
         if pty:
