@@ -664,7 +664,7 @@ def bash(command="bash -i", orig_prompt=re.compile('[$#]')):
     if os.name == 'nt':
         command = command.replace('-i', '')
         orig_prompt = '__repl_ready__'
-        prompt_cmd = 'echo "__repl_""ready__"'
+        prompt_cmd = 'echo __repl_ready__'
         prompt_change = None
 
     else:
