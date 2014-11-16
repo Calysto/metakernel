@@ -39,8 +39,9 @@ class ProcessMetaKernel(MetaKernel):
     def do_execute_direct(self, code):
 
         if not code.strip():
-            self.payload = {'status': 'ok', 'execution_count': self.execution_count,
-                    'payload': [], 'user_expressions': {}} 
+            self.payload = {'status': 'ok',
+                            'execution_count': self.execution_count,
+                            'payload': [], 'user_expressions': {}}
             return
 
         interrupted = False
@@ -56,16 +57,20 @@ class ProcessMetaKernel(MetaKernel):
             self._start()
 
         if interrupted:
-            self.payload = {'status': 'abort', 'execution_count': self.execution_count}
+            self.payload = {'status': 'abort',
+                            'execution_count': self.execution_count}
 
         exitcode, trace = self.check_exitcode()
 
         if exitcode:
-            self.payload = {'status': 'error', 'execution_count': self.execution_count,
-                    'ename': '', 'evalue': str(exitcode), 'traceback': trace}
+            self.payload = {'status': 'error',
+                            'execution_count': self.execution_count,
+                            'ename': '', 'evalue': str(exitcode),
+                            'traceback': trace}
         else:
-            self.payload = {'status': 'ok', 'execution_count': self.execution_count,
-                    'payload': [], 'user_expressions': {}}
+            self.payload = {'status': 'ok',
+                            'execution_count': self.execution_count,
+                            'payload': [], 'user_expressions': {}}
 
         return output
 
