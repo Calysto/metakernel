@@ -173,7 +173,7 @@ class MetaKernel(Kernel):
         # Set the ability for the kernel to get standard-in:
         self._allow_stdin = allow_stdin
         # Create a default response:
-        kernel_resp = {
+        self.kernel_resp = {
             'status': 'ok',
             # The base class increments the execution count
             'execution_count': self.execution_count,
@@ -184,13 +184,13 @@ class MetaKernel(Kernel):
         # TODO: remove this when IPython fixes this
         # This happens at startup when the language is set to python
         if '_usage.page_guiref' in code:
-            return kernel_resp
+            return self.kernel_resp
 
         if code and store_history:
             self.hist_cache.append(code.strip())
 
         if not code.strip():
-            return kernel_resp
+            return self.kernel_resp
 
         info = self.parse_code(code)
         self.payload = []
@@ -246,8 +246,10 @@ class MetaKernel(Kernel):
 
         self.post_execute(retval, code, silent)
 
-        kernel_resp['payload'] = self.payload
-        return kernel_resp
+        if 'payload' in self.kernel_resp:
+            self.kernel_resp['payload'] = self.payload
+
+        return self.kernel_resp
 
     def post_execute(self, retval, code, silent):
         # Handle in's

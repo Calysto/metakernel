@@ -29,6 +29,7 @@ class ProcessMetaKernel(MetaKernel):
     def __init__(self, **kwargs):
         MetaKernel.__init__(self, **kwargs)
         self.wrapper = None
+        self.repr = str
         self._start()
 
     def _start(self):
@@ -38,8 +39,10 @@ class ProcessMetaKernel(MetaKernel):
 
     def do_execute_direct(self, code):
 
+        self.payload = []
+
         if not code.strip():
-            self.payload = {'status': 'ok',
+            self.kernel_resp = {'status': 'ok',
                             'execution_count': self.execution_count,
                             'payload': [], 'user_expressions': {}}
             return
@@ -57,18 +60,18 @@ class ProcessMetaKernel(MetaKernel):
             self._start()
 
         if interrupted:
-            self.payload = {'status': 'abort',
+            self.kernel_resp = {'status': 'abort',
                             'execution_count': self.execution_count}
 
         exitcode, trace = self.check_exitcode()
 
         if exitcode:
-            self.payload = {'status': 'error',
+            self.kernel_resp = {'status': 'error',
                             'execution_count': self.execution_count,
                             'ename': '', 'evalue': str(exitcode),
                             'traceback': trace}
         else:
-            self.payload = {'status': 'ok',
+            self.kernel_resp = {'status': 'ok',
                             'execution_count': self.execution_count,
                             'payload': [], 'user_expressions': {}}
 
@@ -88,7 +91,7 @@ class BashKernel(ProcessMetaKernel):
     # Identifiers:
     implementation = 'bash_kernel'
     language = 'bash'
-    _banner = "Bash Kernel"
+    _banner = "Bash Kernel version 0.1"
 
     def makeWrapper(self):
         """Start a bash shell and return a :class:`REPLWrapper` object.
@@ -113,6 +116,11 @@ class BashKernel(ProcessMetaKernel):
         return REPLWrapper(command, orig_prompt, prompt_change,
                            prompt_cmd=prompt_cmd,
                            extra_init_cmd=extra_init_cmd)
+
+
+if __name__ == '__main__':
+    from IPython.kernel.zmq.kernelapp import IPKernelApp
+    IPKernelApp.launch_instance(kernel_class=BashKernel)
 
     def check_exitcode(self):
         return (int(self.wrapper.run_command('echo $?').rstrip()), [])

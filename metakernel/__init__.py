@@ -1,4 +1,4 @@
-from .metakernel import MetaKernel
+from ._metakernel import MetaKernel
 from . import pyexpect
 from .process_metakernel import ProcessMetaKernel
 from .magic import Magic, option
@@ -8,4 +8,4 @@ __all__ = ['Magic', 'MetaKernel', 'option']
 
 __version__ = '0.3'
 
-del magic, metakernel, parser, process_metakernel
+del magic, _metakernel, parser, process_metakernel

@@ -607,7 +607,7 @@ class REPLWrapper(object):
 
         self._expect_prompt()
 
-        if extra_init_cmd is not None:    
+        if extra_init_cmd is not None:
             self.run_command(extra_init_cmd)
 
     def set_prompt(self, orig_prompt, prompt_change):
@@ -618,7 +618,7 @@ class REPLWrapper(object):
         if self.prompt_cmd:
             self.child.sendline(self.prompt_cmd)
 
-        return self.child.expect([self.prompt, self.continuation_prompt],
+        return self.child.expect([self.prompt, self.continuation_prompt, EOF],
                                  timeout=timeout)
 
     def run_command(self, command, timeout=-1):

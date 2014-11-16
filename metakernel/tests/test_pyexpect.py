@@ -57,3 +57,10 @@ def test_posix():
     ret = r.run_command('echo $PATH')
     print(ret)
     assert ':/usr/local' in ret
+
+    r.child.sendline('exit')
+    ret = r.child.expect('exit')
+    print(ret)
+
+if __name__ == '__main__':
+    test_posix()
