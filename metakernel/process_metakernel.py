@@ -81,7 +81,7 @@ class ProcessMetaKernel(MetaKernel):
         return (0, None)
 
     def makeWrapper(self):
-        raise NotImplemented
+        raise NotImplementedError
 
 
 class BashKernel(ProcessMetaKernel):
@@ -94,12 +94,12 @@ class BashKernel(ProcessMetaKernel):
         """Start a bash shell and return a :class:`REPLWrapper` object.
 
         Note that this is equivalent :function:`metakernel.pyexpect.bash`,
-        but is here as an example of how to handle cross-platform.
+        but is used here as an example of how to be cross-platform.
         """
         if os.name == 'nt':
             command = 'bash'
             orig_prompt = '__repl_ready__'
-            prompt_cmd = 'echo "__repl_""ready__"'
+            prompt_cmd = 'echo __repl_ready__'
             prompt_change = None
 
         else:
