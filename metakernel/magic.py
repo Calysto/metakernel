@@ -147,7 +147,8 @@ def _parse_args(func, args):
 
 def _split_args(args):
     try:
-        args = shlex.split(args)
+        # do not use posix mode, to avoid eating quote characters
+        args = shlex.split(args, posix=False)
     except:
         # parse error; let's pass args along rather than crashing
         args = args.split()
