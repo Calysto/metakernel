@@ -100,7 +100,7 @@ class PyExpect(object):
 
     def read_nonblocking(self, size=-1, timeout=None):
         if self.closed:
-            raise ExceptionPyExpect('Attempted Operation on a Closed Object')
+            raise EOF('Attempted Operation on a Closed Object')
 
         if timeout in (None, -1):
             timeout = self.timeout
@@ -627,7 +627,7 @@ class REPLWrapper(object):
         if self.prompt_cmd:
             self.child.sendline(self.prompt_cmd)
 
-        return self.child.expect([self.prompt, self.continuation_prompt, EOF],
+        return self.child.expect([self.prompt, self.continuation_prompt],
                                  timeout=timeout)
 
     def run_command(self, command, timeout=-1):
