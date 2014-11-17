@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from metakernel import MetaKernel
 from metakernel.pyexpect import REPLWrapper, EOF, u
-
+from subprocess import check_output
 import os
 import re
 
@@ -91,7 +91,13 @@ class BashKernel(ProcessMetaKernel):
     # Identifiers:
     implementation = 'bash_kernel'
     language = 'bash'
-    _banner = "Bash Kernel version 0.1"
+
+    _banner = None
+    @property
+    def banner(self):
+        if self._banner is None:
+            self._banner = check_output(['bash', '--version']).decode('utf-8')
+        return self._banner
 
     def makeWrapper(self):
         """Start a bash shell and return a :class:`REPLWrapper` object.
@@ -117,10 +123,6 @@ class BashKernel(ProcessMetaKernel):
                            prompt_cmd=prompt_cmd,
                            extra_init_cmd=extra_init_cmd)
 
-
 if __name__ == '__main__':
     from IPython.kernel.zmq.kernelapp import IPKernelApp
     IPKernelApp.launch_instance(kernel_class=BashKernel)
-
-    def check_exitcode(self):
-        return (int(self.wrapper.run_command('echo $?').rstrip()), [])
