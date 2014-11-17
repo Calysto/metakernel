@@ -135,7 +135,7 @@ class ExpectBase(object):
                 try:
                     buf = os.read(self.rchild, BUFSIZE)
                 except OSError as e:
-                    print(e)
+                    pass
 
             elif hasattr(self.rchild, 'getvalue'):
                 current = self.rchild.tell()
@@ -379,6 +379,8 @@ class spawn(ExpectBase):
         if not pty:
             self.rchild = self.proc.stdout.fileno()
             self.wchild = self.proc.stdin.fileno()
+        else:
+            os.close(slave)
 
         ExpectBase.__init__(self, self.rchild, self.wchild,
                             read_eol, write_eol, timeout)
