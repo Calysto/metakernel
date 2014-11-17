@@ -53,3 +53,10 @@ def test_python_magic4():
     ret = kernel.do_execute('??%%python oct', None)
     assert ret['payload'][0]['data']['text/plain'].startswith('oct(number)')
 
+
+def test_python_magic5():
+    kernel = get_kernel()
+    kernel.do_execute("%python print('hello')")
+
+    assert 'hello' in get_log_text(kernel)
+
