@@ -34,7 +34,7 @@ class TIMEOUT(ExceptionPyExpect):
     '''Raised when a read time exceeds the timeout. '''
 
 
-class ExpectBase(object):
+class PyExpect(object):
 
     def __init__(self, rchild, wchild=None, read_eol='\n', write_eol='\n',
                  timeout=1e6, encoding='utf-8'):
@@ -52,6 +52,7 @@ class ExpectBase(object):
         self._buf = ''
         self.timeout = timeout
         self.encoding = encoding
+        self.closed = False
 
         if isinstance(rchild, str):
             if wchild == rchild:
@@ -66,7 +67,7 @@ class ExpectBase(object):
                     rchild = open(rchild, 'rb')
 
         if hasattr(rchild, 'close'):
-            atexit.regist(rchild.close)
+            atexit.register(rchild.close)
 
         if isinstance(wchild, str):
             wchild = open(wchild, 'w')
@@ -98,6 +99,9 @@ class ExpectBase(object):
         self._read_thread.start()
 
     def read_nonblocking(self, size=-1, timeout=None):
+        if self.closed:
+            raise ExceptionPyExpect('Attempted Operation on a Closed Object')
+
         if timeout in (None, -1):
             timeout = self.timeout
 
@@ -109,6 +113,7 @@ class ExpectBase(object):
                 break
             else:
                 if incoming is None:
+                    self.close()
                     raise EOF
                 else:
                     self._buf += incoming
@@ -243,6 +248,7 @@ class ExpectBase(object):
             self.rchild.close()
         if hasattr(self.wchild, 'close') and not self.rchild == self.wchild:
             self.wchild.close()
+        self.closed = True
 
     def expect(self, patterns, timeout=None, escape=False):
         """Look for a pattern or list of patterns in a stream of data.
@@ -302,20 +308,20 @@ class ExpectBase(object):
                     if match:
                         self.before = buf[:match.start()]
                         self.after = buf[match.start(): match.end()]
-                        self._buf = buf[match.end():]
+                        self._buf = buf[match.end():] + self._buf
                         return self.before
             try:
                 buf += self.read_nonblocking(timeout=0)
             except EOF:
                 if allow_eof:
-                    self.before, self._buf = buf, ''
+                    self.before = buf
                     self.after = EOF
                     return self.before
                 else:
                     raise EOF
 
         if allow_timeout:
-            self.before, self._buf = buf, ''
+            self.before = buf
             self.after = TIMEOUT
             return self.before
         else:
@@ -334,7 +340,7 @@ class ExpectBase(object):
         return self.expect(strings, timeout, escape=True)
 
 
-class spawn(ExpectBase):
+class spawn(PyExpect):
 
     def __init__(self, cmd, **kwargs):
 
@@ -382,7 +388,7 @@ class spawn(ExpectBase):
         else:
             os.close(slave)
 
-        ExpectBase.__init__(self, self.rchild, self.wchild,
+        super(spawn, self).__init__(self.rchild, self.wchild,
                             read_eol, write_eol, timeout)
         atexit.register(self.close)
 
@@ -398,6 +404,7 @@ class spawn(ExpectBase):
             if self.terminate() is None and force:
                 if self.kill() is None:
                     raise ExceptionPyExpect('Could not terminate the child.')
+            super(spawn, self).close()
             self.rchild = -1
 
     def sendcontrol(self, char):
