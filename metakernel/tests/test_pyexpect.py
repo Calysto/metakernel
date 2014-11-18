@@ -26,7 +26,7 @@ def test_windows():
     print(ret)
     assert ';C:' in ret
 
-    r.run_command('exit')
+    assert_raises(ExceptionPyExpect, r.run_command, 'exit')
     assert_raises(ExceptionPyExpect, r.run_command, 'dir')
 
 
@@ -37,10 +37,7 @@ def test_bash():
     print(ret)
     assert ':/usr/local' in ret
 
-    ret = r.run_command('exit')
-    print(ret)
-    assert 'exit' in ret
-
+    assert_raises(ExceptionPyExpect, r.run_command, 'exit')
     assert_raises(ExceptionPyExpect, r.run_command, 'ls')
 
 
@@ -66,5 +63,5 @@ def test_posix():
     print(ret)
     assert 'set_trace' in ret
 
-    ret = r.run_command('exit()')
+    assert_raises(ExceptionPyExpect, r.run_command, 'exit()')
     assert_raises(ExceptionPyExpect, r.run_command, 'help')
