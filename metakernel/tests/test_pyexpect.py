@@ -1,4 +1,4 @@
-from metakernel.pyexpect import spawn, bash, cmd, python, ExceptionPyExpect
+from metakernel.pyexpect import spawn, bash, cmd, python, EOF
 from numpy.testing.decorators import skipif
 from numpy.testing import assert_raises
 import os
@@ -26,8 +26,8 @@ def test_windows():
     print(ret)
     assert ';C:' in ret
 
-    assert_raises(ExceptionPyExpect, r.run_command, 'exit')
-    assert_raises(ExceptionPyExpect, r.run_command, 'dir')
+    assert_raises(EOF, r.run_command, 'exit')
+    assert_raises(EOF, r.run_command, 'dir')
 
 
 def test_bash():
@@ -37,8 +37,8 @@ def test_bash():
     print(ret)
     assert ':/usr/local' in ret
 
-    assert_raises(ExceptionPyExpect, r.run_command, 'exit')
-    assert_raises(ExceptionPyExpect, r.run_command, 'ls')
+    assert_raises(EOF, r.run_command, 'exit')
+    assert_raises(EOF, r.run_command, 'ls')
 
 
 @skipif(os.name == 'nt')
@@ -63,5 +63,5 @@ def test_posix():
     print(ret)
     assert 'set_trace' in ret
 
-    assert_raises(ExceptionPyExpect, r.run_command, 'exit()')
-    assert_raises(ExceptionPyExpect, r.run_command, 'help')
+    assert_raises(EOF, r.run_command, 'exit()')
+    assert_raises(EOF, r.run_command, 'help')
