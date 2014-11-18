@@ -114,7 +114,7 @@ class PyExpect(object):
             else:
                 if incoming is None:
                     self.close()
-                    raise EOF
+                    break
                 else:
                     self._buf += incoming
 
@@ -367,20 +367,13 @@ class spawn(PyExpect):
         else:
             self.echo = True
             master, slave = pty.openpty()
-            kwargs.update(dict(close_fds=True, bufsize=0, stdin=slave,
+            kwargs.update(dict(close_fds=True, bufsize=0,
+                               preexec_fn=os.setpgrp, stdin=slave,
                                stderr=slave, stdout=slave))
 
             self.rchild, self.wchild = master, master
 
-        # Signal handlers are inherited by forked processes, and we can't easily
-        # reset it from the subprocess. Since some apps ignore SIGINT except in
-        # message handlers, we need to temporarily reset the SIGINT handler here
-        # so that the child is interruptible.
-        sig = signal.signal(signal.SIGINT, signal.SIG_DFL)
-        try:
-            self.proc = subprocess.Popen(cmd, **kwargs)
-        finally:
-            signal.signal(signal.SIGINT, sig)
+        self.proc = subprocess.Popen(cmd, **kwargs)
 
         if not pty:
             self.rchild = self.proc.stdout.fileno()
@@ -389,7 +382,7 @@ class spawn(PyExpect):
             os.close(slave)
 
         super(spawn, self).__init__(self.rchild, self.wchild,
-                            read_eol, write_eol, timeout)
+                                    read_eol, write_eol, timeout)
         atexit.register(self.close)
 
     def close(self, force=True):
