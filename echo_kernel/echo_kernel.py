@@ -6,9 +6,17 @@ from metakernel import MetaKernel
 class EchoKernel(MetaKernel):
     implementation = 'Echo'
     implementation_version = '1.0'
-    language = 'no-op'
+    language = 'text'
     language_version = '0.1'
     banner = "Echo kernel - as useful as a parrot"
+    language_info = {
+        'mimetype': 'text/plain',
+        'language': 'text',
+        # ------ If different from 'language':
+        # 'codemirror_mode': 'language',
+        # 'pygments_lexer': 'language',
+        'file_extension': 'txt',
+    }
 
     def get_usage(self):
         return "This is the echo kernel."

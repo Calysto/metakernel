@@ -9,6 +9,14 @@ class EvalKernel(MetaKernel):
     language = 'python'
     language_version = '0.1'
     banner = "Eval kernel - evaluates simple Python statements and expressions"
+    language_info = {
+        'mimetype': 'text/x-python',
+        'language': 'python',
+        # ------ If different from 'language':
+        # 'codemirror_mode': 'language',
+        # 'pygments_lexer': 'language',
+        'file_extension': 'py',
+    }
 
     def get_usage(self):
         return ("This is the Eval kernel. It implements a simple Python " +

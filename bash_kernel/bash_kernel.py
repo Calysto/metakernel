@@ -9,6 +9,14 @@ class BashKernel(MetaKernel):
     language = 'bash'
     language_version = '0.1'
     banner = "Bash kernel - interact with a bash prompt"
+    language_info = {
+        'mimetype': 'text/x-bash',
+        'language': 'bash',
+        # ------ If different from 'language':
+        # 'codemirror_mode': 'language',
+        # 'pygments_lexer': 'language',
+        'file_extension': 'sh',
+    }
 
     def get_usage(self):
         return "This is the bash kernel."

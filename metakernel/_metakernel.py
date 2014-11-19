@@ -21,6 +21,14 @@ class MetaKernel(Kernel):
     func_call_regex = r'([^\d\W][\w\.]*)\([^\)\()]*\Z'
     magic_prefixes = dict(magic='%', shell='!', help='?')
     help_suffix = '?'
+    language_info = {
+        # 'mimetype': 'text/x-python',
+        # 'language': 'python',
+        # ------ If different from 'language':
+        # 'codemirror_mode': 'language',
+        # 'pygments_lexer': 'language',
+        # 'file_extension': 'py',
+    }
 
     def __init__(self, *args, **kwargs):
         super(MetaKernel, self).__init__(*args, **kwargs)
