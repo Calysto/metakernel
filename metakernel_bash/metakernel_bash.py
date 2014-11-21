@@ -3,19 +3,19 @@ from __future__ import print_function
 from metakernel import MetaKernel
 
 
-class BashKernel(MetaKernel):
-    implementation = 'Bash'
+class MetaKernelBash(MetaKernel):
+    implementation = 'MetaKernel Bash'
     implementation_version = '1.0'
     language = 'bash'
     language_version = '0.1'
-    banner = "Bash kernel - interact with a bash prompt"
+    banner = "MetaKernel Bash - interact with bash"
     language_info = {
         'mimetype': 'text/x-bash',
         'language': 'bash',
         # ------ If different from 'language':
         # 'codemirror_mode': 'language',
         # 'pygments_lexer': 'language',
-        'file_extension': 'sh',
+        'file_extension': '.sh',
     }
 
     def get_usage(self):
@@ -51,4 +51,4 @@ class BashKernel(MetaKernel):
 
 if __name__ == '__main__':
     from IPython.kernel.zmq.kernelapp import IPKernelApp
-    IPKernelApp.launch_instance(kernel_class=BashKernel)
+    IPKernelApp.launch_instance(kernel_class=MetaKernelBash)

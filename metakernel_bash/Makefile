@@ -2,8 +2,8 @@
 
 
 test:
-	python setup.py install
-	ipython console --kernel=bash_kernel
+	python setup.py install --user
+	ipython console --kernel=metakernel_bash
 
 all:
 	python setup.py register
