@@ -24,7 +24,8 @@ class install_with_kernelspec(install):
                 json.dump(kernel_json, f, sort_keys=True)
             # TODO: Copy resources once they're specified
             log.info('Installing kernel spec')
-            install_kernel_spec(td, 'metakernel_python', system=not self.user, replace=True)
+            #install_kernel_spec(td, 'metakernel_python', system=not self.user, replace=True)
+            install_kernel_spec(td, 'metakernel_python', system=False, replace=True)
 
 
 svem_flag = '--single-version-externally-managed'
