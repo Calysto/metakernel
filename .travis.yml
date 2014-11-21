@@ -27,7 +27,7 @@ install:
     - travis_retry pip install coveralls jedi 
     - travis_retry python setup.py install
     - cd metakernel_python
-    - python setup.py install
+    - python setup.py install --user
     - cd ..
 
 script:
