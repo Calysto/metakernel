@@ -32,7 +32,7 @@ if svem_flag in sys.argv:
     # Die, setuptools, die.
     sys.argv.remove(svem_flag)
 
-setup(name='metakernel_echo_kernel',
+setup(name='metakernel_echo',
       version='0.5',
       description='A simple echo kernel for Jupyter/IPython',
       long_description="A simple echo kernel for Jupyter/IPython, based on MetaKernel",
