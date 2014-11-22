@@ -1,6 +1,7 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+from __future__ import print_function
 from metakernel import Magic
 from metakernel.replwrap import cmd, bash
 import subprocess
@@ -58,12 +59,13 @@ class ShellMagic(Magic):
 
         if not self.cmd:
             try:
-                subprocess.check_output('bash --version', shell=True)
-            except OSError as e:  # pragma: no cover
+                subprocess.check_call('bash', stderr=subprocess.PIPE)
+            except Exception as e:  # pragma: no cover
+
                 if os.name == 'nt':
                     self.cmd = 'cmd'
                 else:
-                    raise OSError(e)
+                    raise(e)
             else:
                 self.cmd = 'bash'
 
