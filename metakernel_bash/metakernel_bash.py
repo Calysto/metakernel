@@ -26,9 +26,7 @@ class MetaKernelBash(MetaKernel):
             return
         self.log.debug('execute: %s' % code)
         shell_magic = self.line_magics['shell']
-        resp, error = shell_magic.eval(code.strip())
-        if error:
-            self.Error(error)
+        resp = shell_magic.eval(code.strip())
         self.log.debug('execute done')
         return resp.strip()
 
