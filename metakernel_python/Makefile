@@ -1,8 +1,8 @@
 .PHONY: all test
 
 test:
-	python setup.py install
-	ipython console --kernel=eval_kernel
+	python setup.py install --user
+	ipython console --kernel=metakernel_python
 
 all:
 	python setup.py register

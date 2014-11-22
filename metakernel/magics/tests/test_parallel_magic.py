@@ -6,7 +6,7 @@ import time
 def test_parallel_magic():
     kernel = get_kernel(EvalKernel)
     # start up an EvalKernel on each node:
-    kernel.do_execute("%parallel eval_kernel EvalKernel", False)
+    kernel.do_execute("%parallel metakernel_python MetaKernelPython", False)
     # Now, execute something on each one:
     kernel.do_execute("%px cluster_rank", False)
     results = get_log_text(kernel)

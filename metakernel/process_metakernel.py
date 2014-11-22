@@ -15,6 +15,14 @@ class ProcessMetaKernel(MetaKernel):
     implementation = 'process_kernel'
     implementation_version = __version__
     language = 'process'
+    language_info = {
+        # 'mimetype': 'text/x-python',
+        # 'language': 'python',
+        # ------ If different from 'language':
+        # 'codemirror_mode': 'language',
+        # 'pygments_lexer': 'language',
+        # 'file_extension': 'py',
+    }
 
     @property
     def language_version(self):
@@ -95,6 +103,14 @@ class BashKernel(ProcessMetaKernel):
     # Identifiers:
     implementation = 'bash_kernel'
     language = 'bash'
+    language_info = {
+        'mimetype': 'text/x-bash',
+        'language': 'bash',
+        # ------ If different from 'language':
+        # 'codemirror_mode': 'language',
+        # 'pygments_lexer': 'language',
+        'file_extension': 'sh',
+    }
 
     _banner = None
     @property

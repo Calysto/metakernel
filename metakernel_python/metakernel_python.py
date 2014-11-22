@@ -3,15 +3,23 @@ from __future__ import print_function
 from metakernel import MetaKernel
 
 
-class EvalKernel(MetaKernel):
-    implementation = 'Eval'
+class MetaKernelPython(MetaKernel):
+    implementation = 'MetaKernel Python'
     implementation_version = '1.0'
     language = 'python'
     language_version = '0.1'
-    banner = "Eval kernel - evaluates simple Python statements and expressions"
+    banner = "MetaKernel Python - evaluates Python statements and expressions"
+    language_info = {
+        'mimetype': 'text/x-python',
+        'language': 'python',
+        # ------ If different from 'language':
+        # 'codemirror_mode': 'language',
+        # 'pygments_lexer': 'language',
+        'file_extension': '.py',
+    }
 
     def get_usage(self):
-        return ("This is the Eval kernel. It implements a simple Python " +
+        return ("This is MetaKernel Python. It implements a Python " +
                 "interpreter.")
 
     def set_variable(self, name, value):
@@ -49,4 +57,4 @@ class EvalKernel(MetaKernel):
 
 if __name__ == '__main__':
     from IPython.kernel.zmq.kernelapp import IPKernelApp
-    IPKernelApp.launch_instance(kernel_class=EvalKernel)
+    IPKernelApp.launch_instance(kernel_class=MetaKernelPython)
