@@ -1,5 +1,6 @@
 from ._metakernel import MetaKernel
-from . import pyexpect
+from . import pexpect
+from . import replwrap
 from .process_metakernel import ProcessMetaKernel
 from .magic import Magic, option
 from .parser import Parser

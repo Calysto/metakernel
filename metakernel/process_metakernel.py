@@ -1,6 +1,7 @@
 from __future__ import absolute_import
-from metakernel import MetaKernel
-from metakernel.pyexpect import REPLWrapper, EOF, u
+from . import MetaKernel
+from .pexpect import EOF
+from .replwrap import REPLWrapper, u
 from subprocess import check_output
 import os
 import re
@@ -53,7 +54,10 @@ class ProcessMetaKernel(MetaKernel):
         except KeyboardInterrupt:
             self.wrapper.child.sendintr()
             interrupted = True
+            #import sys
+            #print('expecting prompt', file=sys.__stderr__)
             self.wrapper._expect_prompt()
+            #print('got prompt', file=sys.__stderr__)
             output = self.wrapper.child.before
         except EOF:
             output = self.wrapper.child.before + 'Restarting'
