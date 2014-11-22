@@ -2,7 +2,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 from metakernel import Magic
-from metakernel.pyexpect import cmd, bash
+from metakernel.replwrap import cmd, bash
 import subprocess
 import os
 
@@ -111,9 +111,6 @@ class ShellMagic(Magic):
             return resp
         else:
             return "Sorry, no help is available on '%s'." % expr
-
-    def __del__(self):
-        self.repl.child.terminate()
 
 
 def register_magics(kernel):

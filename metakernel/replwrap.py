@@ -3,6 +3,7 @@ import time
 import re
 import signal
 import os
+import atexit
 
 from . import pexpect
 
@@ -78,6 +79,8 @@ class REPLWrapper(object):
         if extra_init_cmd is not None:
             self.run_command(extra_init_cmd)
 
+        atexit.register(self.child.close)
+
     def sendline(self, line):
         self.child.sendline(line)
         if self.echo:
@@ -100,7 +103,7 @@ class REPLWrapper(object):
             try:
                 self._expect_prompt(timeout=1)
             except pexpect.TIMEOUT:
-                raise pexpect.TIMEOUT('REPL not responding to interrupt')
+                raise KeyboardInterrupt('REPL not responding to interrupt')
             raise KeyboardInterrupt
 
     def run_command(self, command, timeout=-1):

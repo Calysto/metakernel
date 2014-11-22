@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 from . import MetaKernel
-from .pexpect import EOF
+from .pexpect import EOF, TIMEOUT
 from .replwrap import REPLWrapper, u
 from subprocess import check_output
 import os
@@ -59,14 +59,11 @@ class ProcessMetaKernel(MetaKernel):
         interrupted = False
         try:
             output = self.wrapper.run_command(code.rstrip(), timeout=None)
-        except KeyboardInterrupt:
-            self.wrapper.child.sendintr()
+        except KeyboardInterrupt as e:
             interrupted = True
-            #import sys
-            #print('expecting prompt', file=sys.__stderr__)
-            self.wrapper._expect_prompt()
-            #print('got prompt', file=sys.__stderr__)
             output = self.wrapper.child.before
+            if 'REPL not responding to interrupt' in str(e):
+                output += '\n%s' % e
         except EOF:
             output = self.wrapper.child.before + 'Restarting'
             self._start()
@@ -126,20 +123,18 @@ class BashKernel(ProcessMetaKernel):
         but is used here as an example of how to be cross-platform.
         """
         if os.name == 'nt':
-            command = 'bash'
-            orig_prompt = '__repl_ready__'
-            prompt_cmd = 'echo __repl_ready__'
+            orig_prompt = u('__repl_ready__')
+            prompt_cmd = u('echo __repl_ready__')
             prompt_change = None
 
         else:
-            command = 'bash -i'
             prompt_change = u("PS1='{0}' PS2='{1}' PROMPT_COMMAND=''")
             prompt_cmd = None
             orig_prompt = re.compile('[$#]')
 
         extra_init_cmd = "export PAGER=cat"
 
-        return REPLWrapper(command, orig_prompt, prompt_change,
+        return REPLWrapper('bash', orig_prompt, prompt_change,
                            prompt_cmd=prompt_cmd,
                            extra_init_cmd=extra_init_cmd)
 
