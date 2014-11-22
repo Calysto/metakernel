@@ -1319,6 +1319,9 @@ class spawn(object):
 
         if not self.isalive():
             return True
+        if not pty:
+            self.kill(signal.SIGTERM)
+            return True
         try:
             self.kill(signal.SIGHUP)
             time.sleep(self.delayafterterminate)

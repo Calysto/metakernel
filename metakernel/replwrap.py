@@ -79,7 +79,7 @@ class REPLWrapper(object):
         if extra_init_cmd is not None:
             self.run_command(extra_init_cmd)
 
-        atexit.register(self.child.close)
+        atexit.register(self.child.terminate)
 
     def sendline(self, line):
         self.child.sendline(line)
