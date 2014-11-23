@@ -59,7 +59,8 @@ class ShellMagic(Magic):
 
         if not self.cmd:
             try:
-                subprocess.check_call('bash', stderr=subprocess.PIPE)
+                subprocess.check_call('bash --version', shell=True,
+                                      stderr=subprocess.PIPE)
             except Exception as e:  # pragma: no cover
 
                 if os.name == 'nt':
