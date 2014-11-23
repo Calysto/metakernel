@@ -2,9 +2,8 @@
 # Distributed under the terms of the Modified BSD License.
 
 from __future__ import print_function
-from metakernel import Magic
+from metakernel import Magic, pexpect
 from metakernel.replwrap import cmd, bash
-import subprocess
 import os
 
 
@@ -59,8 +58,7 @@ class ShellMagic(Magic):
 
         if not self.cmd:
             try:
-                subprocess.check_call('bash --version', shell=True,
-                                      stderr=subprocess.PIPE)
+                pexpect.which('bash')
             except Exception as e:  # pragma: no cover
 
                 if os.name == 'nt':
