@@ -4,6 +4,7 @@
 
 from metakernel import Magic, option
 import os
+import errno
 
 class FileMagic(Magic):
 
@@ -26,7 +27,16 @@ class FileMagic(Magic):
         if filename.startswith("~"):
             filename = os.path.expanduser(filename)
         filename = os.path.abspath(filename)
-
+        # Create the path of the file if dirs don't exist:
+        path = os.path.dirname(os.path.abspath(filename))
+        try:
+            os.makedirs(path)
+        except OSError as exc: # Python >2.5
+            if exc.errno == errno.EEXIST and os.path.isdir(path):
+                pass
+            else:
+                raise
+        # Create or append to file:
         if not append:
             message = "Created file '%s'." % filename
             if os.path.isfile(self.code):
