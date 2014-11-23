@@ -8,6 +8,9 @@ A simple Jupyter/IPython kernel template which includes core magic functions.
 
 .. image:: https://coveralls.io/repos/blink1073/metakernel/badge.png?branch=master
   :target: https://coveralls.io/r/blink1073/metakernel
+  
+.. image:: https://travis-ci.org/blink1073/metakernel.svg?branch=master
+  :target https://travis-ci.org/blink1073/metakernel
 
 
 See IPython's docs on `wrapper kernels
