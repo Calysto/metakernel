@@ -23,20 +23,17 @@ class Magic(object):
         self.code = code
         old_args = args
         mtype = mtype.replace('sticky', 'cell')
+
         func = getattr(self, mtype + '_' + name)
         args, kwargs = _parse_args(func, args)
 
-        argspec = inspect.getargspec(func)
-        if not argspec.defaults is None:
-            total_args = len(argspec.args) - len(argspec.defaults) - 1
-        else:
-            total_args = len(argspec.args) - 1
+        fargs = inspect.getargspec(func).args
+        if fargs[0] == 'self':
+            fargs = fargs[1:]
 
-        if total_args < len(args) and argspec.varargs is None:
-            if total_args:
-                args = args[:total_args - 1] + args[total_args - 1:]
-            else:
-                args = []
+        fargs = [f for f in fargs if not f in kwargs.keys()]
+        if len(args) > len(fargs):
+            args = args[:len(fargs)] + args[len(fargs):]
 
         try:
             try:
