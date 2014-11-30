@@ -27,12 +27,13 @@ class Magic(object):
         func = getattr(self, mtype + '_' + name)
         args, kwargs = _parse_args(func, args)
 
-        fargs = inspect.getargspec(func).args
+        arg_spec = inspect.getargspec(func)
+        fargs = arg_spec.args
         if fargs[0] == 'self':
             fargs = fargs[1:]
 
         fargs = [f for f in fargs if not f in kwargs.keys()]
-        if len(args) > len(fargs):
+        if len(args) > len(fargs) and not arg_spec.varargs:
             args = args[:len(fargs)] + args[len(fargs):]
 
         try:
