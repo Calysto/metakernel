@@ -34,7 +34,7 @@ class Magic(object):
 
         fargs = [f for f in fargs if not f in kwargs.keys()]
         if len(args) > len(fargs) and not arg_spec.varargs:
-            extra = ' '.join(str(s) for s in (args[len(fargs):]))
+            extra = ' '.join(str(s) for s in (args[len(fargs) - 1:]))
             args = args[:len(fargs) - 1] + [extra]
 
         try:
