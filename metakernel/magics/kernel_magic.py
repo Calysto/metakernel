@@ -2,6 +2,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 from metakernel import Magic, option
+import importlib
 import logging
 
 class KernelMagic(Magic):
@@ -28,7 +29,7 @@ class KernelMagic(Magic):
         Also returns the kernel as output.
         """
         self.kernel_name = kernel_name
-        module = __import__(module_name)
+        module = importlib.import_module(module_name)
         class_ = getattr(module, class_name)
         # FIXME: monkeypatch to replace methods of class
         #        with methods of instance
