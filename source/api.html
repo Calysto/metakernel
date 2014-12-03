@@ -58,7 +58,6 @@
 
         <div class="collapse navbar-collapse nav-collapse">
           <ul class="nav navbar-nav">
-            <li class="divider-vertical"></li>
             
             
               <li class="dropdown globaltoc-container">
@@ -192,8 +191,15 @@
 
 <dl class="method">
 <dt id="metakernel.MetaKernel.do_execute_direct">
-<tt class="descname">do_execute_direct</tt><big>(</big><em>code</em><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.do_execute_direct" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">do_execute_direct</tt><big>(</big><em>code</em>, <em>silent=False</em><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.do_execute_direct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute code in the kernel language.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="metakernel.MetaKernel.do_execute_file">
+<tt class="descname">do_execute_file</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.do_execute_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default code for running a file. Just opens the file, and sends
+the text to do_execute_direct.</p>
 </dd></dl>
 
 <dl class="method">
@@ -209,9 +215,11 @@ commands can answer with a string in the format:</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="metakernel.MetaKernel.do_execute_file">
-<tt class="descname">do_execute_file</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.do_execute_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Execute a file in the kernel language.</p>
+<dt id="metakernel.MetaKernel.initialize_debug">
+<tt class="descname">initialize_debug</tt><big>(</big><em>code</em><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.initialize_debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used with the %%debug magic for highlighting
+lines of code, and for initializing debug functions.</p>
+<p>Return the empty string if highlighting is not supported.</p>
 </dd></dl>
 
 <dl class="method">
@@ -236,6 +244,27 @@ commands can answer with a string in the format:</p>
 <dt id="metakernel.MetaKernel.do_shutdown">
 <tt class="descname">do_shutdown</tt><big>(</big><em>restart</em><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.do_shutdown" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shut down the app gracefully, saving history.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="metakernel.MetaKernel.do_is_complete">
+<tt class="descname">do_is_complete</tt><big>(</big><em>code</em><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.do_is_complete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given code as string, returns dictionary with &#8216;status&#8217; representing
+whether code is ready to evaluate. Possible values for status are:</p>
+<blockquote>
+<div>&#8216;complete&#8217;   - ready to evaluate
+&#8216;incomplete&#8217; - not yet ready
+&#8216;invalid&#8217;    - invalid code
+&#8216;unknown&#8217;    - unknown; the default unless overridden</div></blockquote>
+<p>Optionally, if &#8216;status&#8217; is &#8216;incomplete&#8217;, you may indicate
+an indentation string.</p>
+<p>Example:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>return {&#8216;status&#8217; <span class="classifier-delimiter">:</span> <span class="classifier">&#8216;incomplete&#8217;,</span></dt>
+<dd>&#8216;indent&#8217;: &#8216; &#8216; * 4}</dd>
+</dl>
+</div></blockquote>
 </dd></dl>
 
 <dl class="method">

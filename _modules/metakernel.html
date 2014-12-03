@@ -57,7 +57,6 @@
 
         <div class="collapse navbar-collapse nav-collapse">
           <ul class="nav navbar-nav">
-            <li class="divider-vertical"></li>
             
             
               <li class="dropdown globaltoc-container">
@@ -123,14 +122,18 @@
     <div class="col-md-9">
       
   <h1>Source code for metakernel</h1><div class="highlight"><pre>
-<span class="kn">from</span> <span class="nn">.metakernel</span> <span class="kn">import</span> <span class="n">MetaKernel</span>
+<span class="kn">from</span> <span class="nn">._metakernel</span> <span class="kn">import</span> <span class="n">MetaKernel</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">pexpect</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">replwrap</span>
+<span class="kn">from</span> <span class="nn">.process_metakernel</span> <span class="kn">import</span> <span class="n">ProcessMetaKernel</span>
 <span class="kn">from</span> <span class="nn">.magic</span> <span class="kn">import</span> <span class="n">Magic</span><span class="p">,</span> <span class="n">option</span>
+<span class="kn">from</span> <span class="nn">.parser</span> <span class="kn">import</span> <span class="n">Parser</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Magic&#39;</span><span class="p">,</span> <span class="s">&#39;MetaKernel&#39;</span><span class="p">,</span> <span class="s">&#39;option&#39;</span><span class="p">]</span>
 
 <span class="n">__version__</span> <span class="o">=</span> <span class="s">&#39;0.3&#39;</span>
 
-<span class="k">del</span> <span class="n">magic</span><span class="p">,</span> <span class="n">metakernel</span>
+<span class="k">del</span> <span class="n">magic</span><span class="p">,</span> <span class="n">_metakernel</span><span class="p">,</span> <span class="n">parser</span><span class="p">,</span> <span class="n">process_metakernel</span>
 </pre></div>
 
     </div>
