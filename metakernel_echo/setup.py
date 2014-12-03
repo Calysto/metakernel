@@ -25,7 +25,11 @@ class install_with_kernelspec(install):
                 json.dump(kernel_json, f, sort_keys=True)
             # TODO: Copy resources once they're specified
             log.info('Installing kernel spec')
-            install_kernel_spec(td, 'metakernel_echo', system=not self.user, replace=True)
+            try:
+                install_kernel_spec(td, 'metakernel_echo', system=not self.user, replace=True)
+            except:
+                install_kernel_spec(td, 'metakernel_echo', system=False, replace=True)
+
 
 svem_flag = '--single-version-externally-managed'
 if svem_flag in sys.argv:
@@ -33,7 +37,7 @@ if svem_flag in sys.argv:
     sys.argv.remove(svem_flag)
 
 setup(name='metakernel_echo',
-      version='0.5',
+      version='0.5.1',
       description='A simple echo kernel for Jupyter/IPython',
       long_description="A simple echo kernel for Jupyter/IPython, based on MetaKernel",
       url="https://github.com/blink1073/metakernel/tree/master/metakernel_echo",

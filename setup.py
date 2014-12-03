@@ -26,7 +26,7 @@ setup(name='metakernel',
       author='Steven Silvester',
       author_email='steven.silvester@ieee.org',
       url="https://github.com/blink1073/metakernel",
-      install_requires=['IPython'],
+      #install_requires=['IPython'], # add when IPython>=3.0
       packages=['metakernel', 'metakernel.magics',
                 'metakernel.tests', 'metakernel.magics.tests'],
       classifiers=[
