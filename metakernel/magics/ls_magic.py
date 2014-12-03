@@ -6,7 +6,7 @@ from metakernel import Magic, option
 import os
 
 class LSMagic(Magic):
-    def line_ls(self, path):
+    def line_ls(self, path="."):
         """
         %ls PATH - list files and directories under PATH
 
@@ -17,9 +17,10 @@ class LSMagic(Magic):
             %ls ..
         """
         path = os.path.expanduser(path)
-        retval = FileLinks(path)
-        if retval:
-            self.kernel.Display(retval)
+        self.retval = FileLinks(path)
+
+    def post_process(self, retval):
+        return self.retval
 
 
 def register_magics(kernel):
