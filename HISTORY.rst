@@ -3,10 +3,18 @@
 Release History
 ------------------------
 
+0.5.1 (2014-12-03)
+++++++++++++++++++
+- Add ProcessMetaKernel for subprocess-based kernels
+- Renamed XXX_kernel to metakernel_XXX
+- Reworked completion infrastructure
+- Reworked arg parser
+- Lots of bug fixes and updates to keep up with IPython 3.0.0-dev
+
 
 0.3.0 (2014-09-01)
 ++++++++++++++++++
-- Add gh-pages website: http://blink1073.github.io/jupyter_kernel
+- Add gh-pages website: http://blink1073.github.io/metakernel
 - Add example notebook for echo_kernel.
 - Add %python magic to interact with python shell.
 
