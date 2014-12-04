@@ -1,6 +1,6 @@
 from ._metakernel import MetaKernel
 from . import pexpect
-from . import replwrap
+from .replwrap import REPLWrapper, u
 from .process_metakernel import ProcessMetaKernel
 from .magic import Magic, option
 from .parser import Parser
