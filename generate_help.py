@@ -1,11 +1,13 @@
+from __future__ import print_function
 
-try:
-    kernel
-except:
+if "kernel" not in globals():
     print("This file is designed to run with ipython console --kernel eval_kernel")
     kernel = None
+else:
+    kernel = globals()["kernel"]
 
 if kernel:
+    print("Generating README.md...")
     text = "# Line Magics\n\n"
     for magic in sorted(kernel.line_magics.keys()):
         text += "## `%" + magic + "`\n\n"
@@ -19,3 +21,4 @@ if kernel:
     fp = open("metakernel/magics/README.md", "w")
     fp.write(text)
     fp.close()
+    print("done!")

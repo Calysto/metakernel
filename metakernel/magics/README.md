@@ -69,7 +69,7 @@ Example:
 
 ## `%help`
 
-
+This is MetaKernel Python. It implements a Python interpreter.
 
 ## `%html`
 
@@ -157,6 +157,16 @@ into the next cell.
 
 Example:
     %load myprog.py
+
+## `%ls`
+
+%ls PATH - list files and directories under PATH
+
+This line magic is used to list the directory contents.
+
+Examples:
+    %ls .
+    %ls ..
 
 ## `%lsmagic`
 
@@ -389,7 +399,7 @@ Options:
 
 ## `%%help`
 
-
+This is MetaKernel Python. It implements a Python interpreter.
 
 ## `%%html`
 

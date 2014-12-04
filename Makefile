@@ -46,3 +46,6 @@ gh-pages: clean
 	git pull origin master
 	make -C docs html
 	ghp-import -n -p -m $(GHP_MSG) docs/_build/html
+
+help: 
+	ipython console --kernel metakernel_python < generate_help.py

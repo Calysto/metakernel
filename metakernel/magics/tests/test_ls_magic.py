@@ -8,10 +8,10 @@ def test_ls_magic():
     kernel = get_kernel()
     kernel.do_execute("%ls")
     text = get_log_text(kernel)
-    assert "Display Data" in text, text
+    assert text.startswith("./"), text[:100]
     clear_log_text(kernel)
 
-    kernel.do_execute("%ls -d")
+    kernel.do_execute("%ls /tmp")
     text = get_log_text(kernel)
-    assert "Display Data" in text, text
+    assert text.startswith("/tmp/"), text[:100]
     clear_log_text(kernel)
