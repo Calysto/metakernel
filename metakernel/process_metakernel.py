@@ -93,8 +93,75 @@ class ProcessMetaKernel(MetaKernel):
         return (0, None)
 
     def makeWrapper(self):
+        """
+        In this method the REPLWrapper is created and returned.
+        REPLWrapper takes the name of the executable, and arguments
+        describing the executable prompt:
+
+        return REPLWrapper('bash', orig_prompt, prompt_change,
+                           prompt_cmd=prompt_cmd,
+                           extra_init_cmd=extra_init_cmd)
+
+        The parameters are:
+
+        :param orig_prompt: What the original prompt is (or is forced
+        to be by prompt_cmd).
+
+        :param prompt_cmd: Used when the prompt is not printed by default
+        (happens on Windows) to print something that we can search for.
+
+        :param prompt_change: Used to set the PS1/PS2 equivalents to
+        something that is easier to tell apart from everything else,
+        make sure it is a string with {0} and {1} in it for the
+        PS1/PS2 fill-ins.
+
+        See `metakernel.replwrap.REPLWrapper` for more details.
+
+        """
         raise NotImplementedError
 
+
+class DynamicKernel(ProcessMetaKernel):
+    def __init__(self, 
+                 executable,
+                 language,
+                 mimetype="text/plain",
+                 implementation="metakernel",
+                 file_extension='txt',
+                 orig_prompt=None,
+                 prompt_change=None,
+                 prompt_cmd=None,
+                 extra_init_cmd=None):
+        self.executable = executable
+        self.orig_prompt = orig_prompt
+        self.prompt_change = prompt_change
+        self.prompt_cmd = prompt_cmd
+        self.extra_init_cmd = extra_init_cmd
+        self.implementation = implementation
+        self.language = language
+        self.language_info['mimetype'] = mimetype
+        self.language_info['language'] = language
+        self.language_info['file_extension'] = file_extension
+        super(DynamicKernel, self).__init__()
+
+    def makeWrapper(self):
+        return REPLWrapper(self.executable, 
+                           u(self.orig_prompt), 
+                           self.prompt_change,
+                           prompt_cmd=self.prompt_cmd,
+                           extra_init_cmd=self.extra_init_cmd)
+
+    """
+    DynamicKernel(executable="bash",
+                  orig_prompt=re.compile('[$#]'),
+                  prompt_change=u("PS1='{0}' PS2='{1}' PROMPT_COMMAND=''"),
+                  prompt_cmd=None,
+                  extra_init_cmd="export PAGER=cat",
+                  implementation="bash_kernel",
+                  language="bash",
+                  mimetype="text/x-bash",
+                  file_extension="sh")
+    """
 
 class BashKernel(ProcessMetaKernel):
     # Identifiers:
