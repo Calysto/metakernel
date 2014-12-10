@@ -22,6 +22,13 @@ class EvalKernel(MetaKernel):
         python_magic = self.line_magics['python']
         python_magic.env[name] = value
 
+    def get_variable(self, name):
+        """
+        Get a variable from the kernel language.
+        """
+        python_magic = self.line_magics['python']
+        return python_magic.env[name]
+
     def do_execute_direct(self, code):
         python_magic = self.line_magics['python']
         return python_magic.eval(code.strip())
