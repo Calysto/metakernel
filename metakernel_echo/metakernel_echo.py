@@ -22,11 +22,6 @@ class MetaKernelEcho(MetaKernel):
         'file_extension': '.txt',
     }
 
-
-
-        'file_extension': '.txt',
-    }
-
     def get_usage(self):
         return "This is the echo kernel."
 
