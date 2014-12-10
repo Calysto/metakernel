@@ -11,10 +11,14 @@ class MetaKernelPython(MetaKernel):
     banner = "MetaKernel Python - evaluates Python statements and expressions"
     language_info = {
         'mimetype': 'text/x-python',
-        'language': 'python',
+        'name': 'python',
         # ------ If different from 'language':
-        # 'codemirror_mode': 'language',
+        # 'codemirror_mode': {
+        #    "version": 2,
+        #    "name": "ipython"
+        # }
         # 'pygments_lexer': 'language',
+        # 'version'       : "x.y.z",
         'file_extension': '.py',
     }
 

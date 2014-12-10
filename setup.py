@@ -27,8 +27,15 @@ setup(name='metakernel',
       author_email='steven.silvester@ieee.org',
       url="https://github.com/blink1073/metakernel",
       #install_requires=['IPython'], # add when IPython>=3.0
-      packages=['metakernel', 'metakernel.magics',
+      packages=['metakernel', 'metakernel.magics', 'metakernel.utils',
                 'metakernel.tests', 'metakernel.magics.tests'],
+
+      #include_data_files = True,
+      #package_data = {
+      #    'images': ['logo-64x64.png'],
+      #},
+      data_files = [("metakernel", ["images/logo-64x64.png", 
+                                    "images/logo-32x32.png"])],
       classifiers=[
           'Framework :: IPython',
           'License :: OSI Approved :: BSD License',

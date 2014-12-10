@@ -6,8 +6,13 @@ export NAME=metakernel
 export VERSION=`python -c "import $(NAME); print($(NAME).__version__)"`
 export GHP_MSG="Generated gh-pages for `git log master -1 --pretty=short --abbrev-commit`"
 
-all: clean
+all: install
+
+install: clean
 	python setup.py install
+	cd metakernel_python; python setup.py install
+	cd metakernel_echo; python setup.py install
+	cd metakernel_bash; python setup.py install
 
 clean:
 	rm -rf build
