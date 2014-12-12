@@ -30,26 +30,27 @@ class REPLWrapper(object):
     :param cmd_or_spawn: This can either be an instance of
     :class:`pexpect.spawn` in which a REPL has already been started,
     or a str command to start a new REPL process.
-    :param str orig_prompt: The prompt to expect at first.
-    :param str prompt_change: A command to change the prompt to something more
-      unique. If this is ``None``, the prompt will not be changed. This will
-      be formatted with the new and continuation prompts as positional
-      parameters, so you can use ``{}`` style formatting to insert them into
-      the command.
-    :param str new_prompt: The more unique prompt to expect after the change.
+    :param str prompt_regex:  Regular expression representing process prompt, eg ">>>" in Python.
+    :param str continuation_prompt_regex: Regular expression repesenting process continuation prompt, e.g. "..." in Python.
+    :param str prompt_change_cmd: Optional kernel command that sets continuation-of-line-prompts, eg PS1 and PS2, such as "..." in Python.
+        to something more unique. If this is ``None``, the prompt will not be
+        changed. This will be formatted with the new and continuation prompts
+        as positional parameters, so you can use ``{}`` style formatting to
+        insert them into the command.
+    :param str new_prompt_regex: The more unique prompt to expect after the change.
     :param str extra_init_cmd: Commands to do extra initialisation, such as
       disabling pagers.
-    :param str prompt_cmd: Command to generate the prompt, if one is not
-    printed by default after each command.
+    :param str prompt_emit_cmd: Optional kernel command that emits the prompt
+      when one is not emitted by default (typically happens on Windows only)
     :param bool echo: Whether the child should echo, or in the case
     of Windows, whether the child does echo.
     """
 
-    def __init__(self, cmd_or_spawn, orig_prompt, prompt_change,
-                 new_prompt=PEXPECT_PROMPT,
-                 continuation_prompt=PEXPECT_CONTINUATION_PROMPT,
+    def __init__(self, cmd_or_spawn, prompt_regex, prompt_change_cmd,
+                 new_prompt_regex=PEXPECT_PROMPT,
+                 continuation_prompt_regex=PEXPECT_CONTINUATION_PROMPT,
                  extra_init_cmd=None,
-                 prompt_cmd=None,
+                 prompt_emit_cmd=None,
                  echo=False):
         if isinstance(cmd_or_spawn, str):
             self.child = pexpect.spawnu(cmd_or_spawn, echo=echo)
@@ -63,16 +64,16 @@ class REPLWrapper(object):
             self.child.waitnoecho()
 
         self.echo = echo
-        self.prompt_cmd = prompt_cmd
+        self.prompt_emit_cmd = prompt_emit_cmd
 
-        if prompt_change is None:
-            self.prompt = orig_prompt
+        if prompt_change_cmd is None:
+            self.prompt = prompt_regex
         else:
-            self.set_prompt(orig_prompt,
-                            prompt_change.format(new_prompt,
-                                                 continuation_prompt))
-            self.prompt = new_prompt
-        self.continuation_prompt = continuation_prompt
+            self.set_prompt(prompt_regex,
+                            prompt_change_cmd.format(new_prompt_regex,
+                                                     continuation_prompt_regex))
+            self.prompt = new_prompt_regex
+        self.continuation_prompt_regex = continuation_prompt_regex
 
         self._expect_prompt()
 
@@ -86,15 +87,15 @@ class REPLWrapper(object):
         if self.echo:
             self.child.readline()
 
-    def set_prompt(self, orig_prompt, prompt_change):
-        self.child.expect(orig_prompt)
-        self.sendline(prompt_change)
+    def set_prompt(self, prompt_regex, prompt_change_cmd):
+        self.child.expect(prompt_regex)
+        self.sendline(prompt_change_cmd)
 
     def _expect_prompt(self, timeout=-1):
         if self.prompt_cmd:
             self.sendline(self.prompt_cmd)
         try:
-            return self.child.expect([self.prompt, self.continuation_prompt],
+            return self.child.expect([self.prompt, self.continuation_prompt_regex],
                                      timeout=timeout)
         except KeyboardInterrupt:
             self.child.sendintr()
@@ -149,25 +150,25 @@ def python(command="python"):
                        u("import sys; sys.ps1={0!r}; sys.ps2={1!r}"))
 
 
-def bash(command="bash", orig_prompt=re.compile('[$#]')):
+def bash(command="bash", prompt_regex=re.compile('[$#]')):
     """Start a bash shell and return a :class:`REPLWrapper` object."""
     if os.name == 'nt':
-        orig_prompt = u('__repl_ready__')
+        prompt_regex = u('__repl_ready__')
         prompt_cmd = u('echo __repl_ready__')
-        prompt_change = None
+        prompt_change_cmd = None
 
     else:
-        prompt_change = u("PS1='{0}' PS2='{1}' PROMPT_COMMAND=''")
+        prompt_change_cmd = u("PS1='{0}' PS2='{1}' PROMPT_COMMAND=''")
         prompt_cmd = None
 
     extra_init_cmd = "export PAGER=cat"
 
-    return REPLWrapper(command, orig_prompt, prompt_change,
+    return REPLWrapper(command, prompt_regex, prompt_change_cmd,
                        prompt_cmd=prompt_cmd, extra_init_cmd=extra_init_cmd)
 
 
-def cmd(command='cmd', orig_prompt=re.compile(r'[A-Z]:\\.*>')):
+def cmd(command='cmd', prompt_regex=re.compile(r'[A-Z]:\\.*>')):
     """"Start a cmd shell and return a :class:`REPLWrapper` object."""
     if not os.name == 'nt':
         raise OSError('cmd only available on Windows')
-    return REPLWrapper(command, orig_prompt, None, echo=True)
+    return REPLWrapper(command, prompt_regex, None, echo=True)

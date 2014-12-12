@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 from . import MetaKernel
-from .pexpect import EOF, TIMEOUT
+from .pexpect import EOF
 from .replwrap import REPLWrapper, u
 from subprocess import check_output
 import os
@@ -123,19 +123,19 @@ class BashKernel(ProcessMetaKernel):
         but is used here as an example of how to be cross-platform.
         """
         if os.name == 'nt':
-            orig_prompt = u('__repl_ready__')
-            prompt_cmd = u('echo __repl_ready__')
-            prompt_change = None
+            prompt_regex = u('__repl_ready__')
+            prompt_emit_cmd = u('echo __repl_ready__')
+            prompt_change_cmd = None
 
         else:
-            prompt_change = u("PS1='{0}' PS2='{1}' PROMPT_COMMAND=''")
-            prompt_cmd = None
-            orig_prompt = re.compile('[$#]')
+            prompt_change_cmd = u("PS1='{0}' PS2='{1}' PROMPT_COMMAND=''")
+            prompt_emit_cmd = None
+            prompt_regex = re.compile('[$#]')
 
         extra_init_cmd = "export PAGER=cat"
 
-        return REPLWrapper('bash', orig_prompt, prompt_change,
-                           prompt_cmd=prompt_cmd,
+        return REPLWrapper('bash', prompt_regex, prompt_change_cmd,
+                           prompt_emit_cmd=prompt_emit_cmd,
                            extra_init_cmd=extra_init_cmd)
 
 if __name__ == '__main__':
