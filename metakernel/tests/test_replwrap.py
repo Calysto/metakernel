@@ -72,8 +72,8 @@ class REPLWrapTestCase(unittest.TestCase):
 
         child = pexpect.spawnu('python', echo=False, timeout=5)
         # prompt_change=None should mean no prompt change
-        py = replwrap.REPLWrapper(child, replwrap.u(">>> "), prompt_change=None, continuation_prompt=replwrap.u(re.escape("... ")))
-        assert py.prompt == ">>> "
+        py = replwrap.REPLWrapper(child, replwrap.u(">>> "), prompt_change_cmd=None, continuation_prompt_regex=replwrap.u(re.escape("... ")))
+        assert py.prompt_regex == ">>> "
 
         res = py.run_command("for a in range(3): print(a)\n")
         assert res.strip().splitlines() == ['0', '1', '2']
