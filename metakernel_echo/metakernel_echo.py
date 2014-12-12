@@ -11,10 +11,14 @@ class MetaKernelEcho(MetaKernel):
     banner = "MetaKernel Echo - as useful as a parrot"
     language_info = {
         'mimetype': 'text/plain',
-        'language': 'text',
+        'name': 'text',
         # ------ If different from 'language':
-        # 'codemirror_mode': 'language',
+        # 'codemirror_mode': {
+        #    "version": 2,
+        #    "name": "ipython"
+        # }
         # 'pygments_lexer': 'language',
+        # 'version'       : "x.y.z",
         'file_extension': '.txt',
     }
 

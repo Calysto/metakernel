@@ -23,11 +23,15 @@ class MetaKernel(Kernel):
     help_suffix = '?'
     language_info = {
         # 'mimetype': 'text/x-python',
-        # 'language': 'python',
+        # 'name': 'python',
         # ------ If different from 'language':
-        # 'codemirror_mode': 'language',
+        # 'codemirror_mode': {
+        #    "version": 2,
+        #    "name": "ipython"
+        # }
         # 'pygments_lexer': 'language',
-        # 'file_extension': 'py',
+        # 'version'       : "x.y.z",
+        # 'file_extension': '.py',
     }
 
     def __init__(self, *args, **kwargs):
@@ -76,13 +80,13 @@ class MetaKernel(Kernel):
 
     def set_variable(self, name, value):
         """
-        Set a variable in the kernel language.
+        Set a variable to a Python-typed value.
         """
         pass
 
     def get_variable(self, name):
         """
-        Get a variable from the kernel language.
+        Lookup a variable name and return a Python-typed value.
         """
         pass
 

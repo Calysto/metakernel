@@ -36,7 +36,11 @@ class PythonMagic(Magic):
         self.retval = self.eval(code)
 
     def eval(self, code):
-        self.env["kernel"] = self.kernel
+        if "__builtins__" not in self.env:
+            ## __builtins__ get generated after an eval:
+            eval("1", self.env)
+            ## make kernel available in imports:
+            self.env["__builtins__"]["kernel"] = self.kernel
         try:
             return eval(code.strip(), self.env)
         except:

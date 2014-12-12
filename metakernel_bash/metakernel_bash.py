@@ -11,10 +11,14 @@ class MetaKernelBash(MetaKernel):
     banner = "MetaKernel Bash - interact with bash"
     language_info = {
         'mimetype': 'text/x-bash',
-        'language': 'bash',
+        'name': 'bash',
         # ------ If different from 'language':
-        # 'codemirror_mode': 'language',
+        # 'codemirror_mode': {
+        #    "version": 2,
+        #    "name": "ipython"
+        # }
         # 'pygments_lexer': 'language',
+        # 'version'       : "x.y.z",
         'file_extension': '.sh',
     }
 

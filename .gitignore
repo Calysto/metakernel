@@ -10,3 +10,4 @@ examples/.ipynb_checkpoints
 examples/temp.txt
 *~
 *,cover
+.cover*

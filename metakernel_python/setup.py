@@ -10,7 +10,7 @@ kernel_json = {
 	     "-m", "metakernel_python", 
 	     "-f", "{connection_file}"],
     "display_name": "MetaKernel Python",
-    "language": "python"
+    "name": "metakernel_python"
 }
 
 class install_with_kernelspec(install):
@@ -18,11 +18,12 @@ class install_with_kernelspec(install):
         install.run(self)
         from IPython.kernel.kernelspec import install_kernel_spec
         from IPython.utils.tempdir import TemporaryDirectory
+        from metakernel.utils.kernel import install_kernel_resources
         with TemporaryDirectory() as td:
             os.chmod(td, 0o755) # Starts off as 700, not user readable
             with open(os.path.join(td, 'kernel.json'), 'w') as f:
                 json.dump(kernel_json, f, sort_keys=True)
-            # TODO: Copy resources once they're specified
+            install_kernel_resources(td)
             log.info('Installing kernel spec')
             try:
                 install_kernel_spec(td, 'metakernel_python', system=not self.user, replace=True)

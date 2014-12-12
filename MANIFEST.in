@@ -1,17 +1,16 @@
 include *.txt
 include *.rst
 include Makefile
+recursive-include images *.png
 recursive-include docs *.rst
 recursive-include docs *.png
 recursive-include docs *.py
-recursive-include echo_kernel *.*
-prune echo_kernel/build
-recursive-include chatbot_kernel *.*
-prune chatbot_kernel/build
-recursive-include eval_kernel *.*
-prune eval_kernel/build
-recursive-include bash_kernel *.*
-prune bash_kernel/build
+recursive-include metakernel_echo *.*
+prune metakernel_echo/build
+recursive-include metakernel_python *.*
+prune metakernel_python/build
+recursive-include metakernel_bash *.*
+prune metakernel_bash/build
 prune .git
 prune docs/build
 prune dist
