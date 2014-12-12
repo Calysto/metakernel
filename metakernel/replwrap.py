@@ -67,12 +67,12 @@ class REPLWrapper(object):
         self.prompt_emit_cmd = prompt_emit_cmd
 
         if prompt_change_cmd is None:
-            self.prompt = prompt_regex
+            self.prompt_regex = prompt_regex
         else:
             self.set_prompt(prompt_regex,
                             prompt_change_cmd.format(new_prompt_regex,
                                                      continuation_prompt_regex))
-            self.prompt = new_prompt_regex
+            self.prompt_regex = new_prompt_regex
         self.continuation_prompt_regex = continuation_prompt_regex
 
         self._expect_prompt()
