@@ -92,14 +92,14 @@ class REPLWrapper(object):
         self.sendline(prompt_change_cmd)
 
     def _expect_prompt(self, timeout=-1):
-        if self.prompt_cmd:
-            self.sendline(self.prompt_cmd)
+        if self.prompt_emit_cmd:
+            self.sendline(self.prompt_emit_cmd)
         try:
-            return self.child.expect([self.prompt, self.continuation_prompt_regex],
+            return self.child.expect([self.prompt_regex, self.continuation_prompt_regex],
                                      timeout=timeout)
         except KeyboardInterrupt:
             self.child.sendintr()
-            if self.prompt_cmd:
+            if self.prompt_emit_cmd:
                 time.sleep(1.)
             try:
                 self._expect_prompt(timeout=1)
@@ -154,17 +154,18 @@ def bash(command="bash", prompt_regex=re.compile('[$#]')):
     """Start a bash shell and return a :class:`REPLWrapper` object."""
     if os.name == 'nt':
         prompt_regex = u('__repl_ready__')
-        prompt_cmd = u('echo __repl_ready__')
+        prompt_emit_cmd = u('echo __repl_ready__')
         prompt_change_cmd = None
 
     else:
         prompt_change_cmd = u("PS1='{0}' PS2='{1}' PROMPT_COMMAND=''")
-        prompt_cmd = None
+        prompt_emit_cmd = None
 
     extra_init_cmd = "export PAGER=cat"
 
     return REPLWrapper(command, prompt_regex, prompt_change_cmd,
-                       prompt_cmd=prompt_cmd, extra_init_cmd=extra_init_cmd)
+                       prompt_emit_cmd=prompt_emit_cmd,
+                       extra_init_cmd=extra_init_cmd)
 
 
 def cmd(command='cmd', prompt_regex=re.compile(r'[A-Z]:\\.*>')):
