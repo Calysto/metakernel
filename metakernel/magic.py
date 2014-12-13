@@ -11,6 +11,18 @@ except:
     # python3
     _maxsize = sys.maxsize
 
+class MagicOptionParser(optparse.OptionParser):
+    def error(self, msg):
+        self.print_usage(sys.stderr)
+        raise Exception(msg)
+
+    def exit(self, status=0, msg=None):
+        if msg:
+            sys.stderr.write(msg)
+        raise Exception(msg)
+
+    ## FIXME: override help to also stop processing
+    ## currently --help gives syntax error
 
 class Magic(object):
 
@@ -25,7 +37,11 @@ class Magic(object):
         mtype = mtype.replace('sticky', 'cell')
 
         func = getattr(self, mtype + '_' + name)
-        args, kwargs = _parse_args(func, args)
+        try:
+            args, kwargs = _parse_args(func, args, usage=self.get_help(mtype, name))
+        except Exception as e:
+            self.kernel.Error(e.message)
+            return
 
         arg_spec = inspect.getargspec(func)
         fargs = arg_spec.args
@@ -113,7 +129,7 @@ def option(*args, **kwargs):
     return decorator
 
 
-def _parse_args(func, args):
+def _parse_args(func, args, usage=None):
     """Parse the arguments given to a magic function"""
     if isinstance(args, list):
         args = ' '.join(args)
@@ -123,7 +139,7 @@ def _parse_args(func, args):
     if not getattr(func, 'has_options', False):
         kwargs = dict()
     else:
-        parser = optparse.OptionParser()
+        parser = MagicOptionParser(usage=usage)
         parser.add_options(func.options)
         value, args = parser.parse_args(args)
         kwargs = value.__dict__
