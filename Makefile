@@ -14,6 +14,12 @@ install: clean
 	cd metakernel_echo; python setup.py install
 	cd metakernel_bash; python setup.py install
 
+install3: clean
+	python3 setup.py install
+	cd metakernel_python; python3 setup.py install
+	cd metakernel_echo; python3 setup.py install
+	cd metakernel_bash; python3 setup.py install
+
 clean:
 	rm -rf build
 	rm -rf dist
