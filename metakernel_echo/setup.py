@@ -26,9 +26,9 @@ class install_with_kernelspec(install):
             install_kernel_resources(td)
             log.info('Installing kernel spec')
             try:
-                install_kernel_spec(td, 'metakernel_echo', system=not self.user, replace=True)
+                install_kernel_spec(td, 'metakernel_echo', replace=True)
             except:
-                install_kernel_spec(td, 'metakernel_echo', system=False, replace=True)
+                install_kernel_spec(td, 'metakernel_echo', user=self.user, replace=True)
 
 
 svem_flag = '--single-version-externally-managed'
