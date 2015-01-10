@@ -13,7 +13,6 @@ except:
 
 class MagicOptionParser(optparse.OptionParser):
     def error(self, msg):
-        self.print_usage(sys.stderr)
         raise Exception('Magic Parse error: "%s"' % msg)
 
     def exit(self, status=0, msg=None):
@@ -136,32 +135,27 @@ def _parse_args(func, args, usage=None):
 
     args = _split_args(args)
 
-    if not getattr(func, 'has_options', False):
-        kwargs = dict()
-    else:
+    kwargs = dict()
+    if getattr(func, 'has_options', False):
         parser = MagicOptionParser(usage=usage)
         parser.add_options(func.options)
 
         left = []
-        right = []
-        split = False
-        for arg in args:
-            if split:
-                right.append(arg)
-            elif arg == '--':
-                split = True
-            elif arg.startswith('-'):
-                if arg in parser.defaults.keys():
-                    split = True
-                    right.append(arg)
+        value = None
+        if '--' in args:
+            left = args[:args.index('--')]
+            value, args = parser.parse_args(args[args.index('--') + 1:])
+        else:
+            while args:
+                try:
+                    value, args = parser.parse_args(args)
+                except Exception:
+                    left.append(args.pop(0))
                 else:
-                    left.append(arg)
-            else:
-                left.append(arg)
-        value, args = parser.parse_args(right)
-        if left:
-            args = left + args
-        kwargs = value.__dict__
+                    break
+        args = left + args
+        if value:
+            kwargs = value.__dict__
 
     new_args = []
     for arg in args:
