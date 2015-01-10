@@ -52,7 +52,7 @@ class HelpMagic(Magic):
         """
         return self.get_help_on(text, 1, False)
 
-    def get_help_on(self, text, level, none_on_fail=False):
+    def get_help_on(self, text, level, none_on_fail=False, cursor_pos=-1):
         """
         Examples
         ========
@@ -72,7 +72,7 @@ class HelpMagic(Magic):
         if not text:
             return self.kernel.get_usage()
 
-        info = self.kernel.parse_code(text)
+        info = self.kernel.parse_code(text, cursor_end=cursor_pos)
 
         if info['magic']:
 

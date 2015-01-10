@@ -406,7 +406,8 @@ class MetaKernel(Kernel):
             return
 
         content = {'status': 'aborted', 'data': {}, 'found': False}
-        docstring = self.get_help_on(code, detail_level, none_on_fail=True)
+        docstring = self.get_help_on(code, detail_level, none_on_fail=True,
+             cursor_pos=cursor_pos)
 
         if docstring:
             content["data"] = {"text/plain": docstring}
@@ -511,9 +512,10 @@ class MetaKernel(Kernel):
         magic = self.line_magics['magic']
         return magic.get_magic(info)
 
-    def get_help_on(self, expr, level=0, none_on_fail=False):
+    def get_help_on(self, expr, level=0, none_on_fail=False,
+            cursor_pos=-1):
         help_magic = self.line_magics['help']
-        return help_magic.get_help_on(expr, level, none_on_fail)
+        return help_magic.get_help_on(expr, level, none_on_fail, cursor_pos)
 
     def parse_code(self, code, cursor_start=0, cursor_end=-1):
         return self.parser.parse_code(code, cursor_start, cursor_end)
