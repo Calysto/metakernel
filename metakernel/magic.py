@@ -14,7 +14,7 @@ except:
 class MagicOptionParser(optparse.OptionParser):
     def error(self, msg):
         self.print_usage(sys.stderr)
-        raise Exception(msg)
+        raise Exception('Magic Parse error: "%s"' % msg)
 
     def exit(self, status=0, msg=None):
         if msg:
@@ -40,8 +40,8 @@ class Magic(object):
         try:
             args, kwargs = _parse_args(func, args, usage=self.get_help(mtype, name))
         except Exception as e:
-            self.kernel.Error(e.message)
-            return
+            self.kernel.Error(str(e))
+            return self
 
         arg_spec = inspect.getargspec(func)
         fargs = arg_spec.args
@@ -141,7 +141,26 @@ def _parse_args(func, args, usage=None):
     else:
         parser = MagicOptionParser(usage=usage)
         parser.add_options(func.options)
-        value, args = parser.parse_args(args)
+
+        left = []
+        right = []
+        split = False
+        for arg in args:
+            if split:
+                right.append(arg)
+            elif arg == '--':
+                split = True
+            elif arg.startswith('-'):
+                if arg in parser.defaults.keys():
+                    split = True
+                    right.append(arg)
+                else:
+                    left.append(arg)
+            else:
+                left.append(arg)
+        value, args = parser.parse_args(right)
+        if left:
+            args = left + args
         kwargs = value.__dict__
 
     new_args = []
