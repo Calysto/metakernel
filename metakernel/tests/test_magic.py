@@ -83,3 +83,11 @@ def test_option():
 
     ret = d.call_magic('line', 'dummy', '', '[1, 2, 3]')
     assert d.foo == [1, 2, 3]
+
+    ret = d.call_magic('line', 'dummy', '', 'hey -l -s400,200')
+    assert d.size == (400, 200)
+    assert d.foo == "hey -l"
+
+    ret = d.call_magic('line', 'dummy', '', 'hey -s -- -s400,200')
+    assert d.size == (400, 200)
+    assert d.foo == "hey -s"
