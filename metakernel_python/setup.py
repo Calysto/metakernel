@@ -26,9 +26,10 @@ class install_with_kernelspec(install):
             install_kernel_resources(td)
             log.info('Installing kernel spec')
             try:
-                install_kernel_spec(td, 'metakernel_python', replace=True)
+                install_kernel_spec(td, 'metakernel_python', user=self.user,
+                                    replace=True)
             except:
-                install_kernel_spec(td, 'metakernel_python', user=True, 
+                install_kernel_spec(td, 'metakernel_python', user=not self.user,
                                     replace=True)
 
 

@@ -20,6 +20,7 @@ class MetaKernelBash(MetaKernel):
         # 'pygments_lexer': 'language',
         # 'version'       : "x.y.z",
         'file_extension': '.sh',
+        'help_links': MetaKernel.help_links,
     }
 
     def get_usage(self):
