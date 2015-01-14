@@ -1,7 +1,6 @@
 try:
     from IPython.kernel.zmq.kernelbase import Kernel
     from IPython.utils.path import get_ipython_dir
-    from IPython.html.widgets import Widget
 except:
     Kernel = object
 import os
@@ -472,6 +471,7 @@ class MetaKernel(Kernel):
                            {"data": content})
 
     def Display(self, *args):
+        from IPython.html.widgets import Widget
         for message in args:
             if isinstance(message, Widget):
                 self.log.debug('Display Widget')
