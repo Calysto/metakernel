@@ -6,11 +6,11 @@ A simple Jupyter/IPython kernel template which includes core magic functions.
 .. image:: https://pypip.in/d/metakernel/badge.png
         :target: https://crate.io/packages/metakernel/
 
-.. image:: https://coveralls.io/repos/blink1073/metakernel/badge.png?branch=master
-  :target: https://coveralls.io/r/blink1073/metakernel
+.. image:: https://coveralls.io/repos/Calysto/metakernel/badge.png?branch=master
+  :target: https://coveralls.io/r/Calysto/metakernel
   
-.. image:: https://travis-ci.org/blink1073/metakernel.svg
-  :target: https://travis-ci.org/blink1073/metakernel
+.. image:: https://travis-ci.org/Calysto/metakernel.svg
+  :target: https://travis-ci.org/Calysto/metakernel
 
 
 See IPython's docs on `wrapper kernels
@@ -47,12 +47,12 @@ Documentation is available online_. Magics have interactive help_ (and online).
 For version information, see the Revision History_.
 
 
-.. _here: http://nbviewer.ipython.org/github/blink1073/metakernel/blob/master/examples/echo_kernel.ipynb?create=1
+.. _here: http://nbviewer.ipython.org/github/Calysto/metakernel/blob/master/examples/echo_kernel.ipynb?create=1
 
-.. _help: https://github.com/blink1073/metakernel/blob/master/metakernel/magics/README.md
+.. _help: https://github.com/Calysto/metakernel/blob/master/metakernel/magics/README.md
 
-.. _online: http://blink1073.github.io/metakernel/
+.. _online: http://Calysto.github.io/metakernel/
 
-.. _History: https://github.com/blink1073/metakernel/blob/master/HISTORY.rst
+.. _History: https://github.com/Calysto/metakernel/blob/master/HISTORY.rst
 
 
