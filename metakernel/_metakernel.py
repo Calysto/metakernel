@@ -23,7 +23,7 @@ class MetaKernel(Kernel):
     help_links = [
         {
             'text': "MetaKernel Magics",
-            'url': "https://github.com/blink1073/metakernel/blob/master/metakernel/magics/README.md",
+            'url': "https://github.com/calysto/metakernel/blob/master/metakernel/magics/README.md",
         },
     ]
     language_info = {
