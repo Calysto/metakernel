@@ -14,7 +14,7 @@ Release History
 
 0.3.0 (2014-09-01)
 ++++++++++++++++++
-- Add gh-pages website: http://blink1073.github.io/metakernel
+- Add gh-pages website: http://calysto.github.io/metakernel
 - Add example notebook for echo_kernel.
 - Add %python magic to interact with python shell.
 
@@ -23,7 +23,7 @@ Release History
 ++++++++++++++++++
 
 - Completely refactored API for MagicKernel and Magic
--  Added %plot magic
+- Added %plot magic
 - Added test suite with Travis CI
 - Implemented all base Kernel methods with sane defaults.
 
