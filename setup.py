@@ -25,7 +25,7 @@ setup(name='metakernel',
       long_description=open('README.rst', 'rb').read().decode('utf-8'),
       author='Steven Silvester',
       author_email='steven.silvester@ieee.org',
-      url="https://github.com/blink1073/metakernel",
+      url="https://github.com/Calysto/metakernel",
       #install_requires=['IPython'], # add when IPython>=3.0
       packages=['metakernel', 'metakernel.magics', 'metakernel.utils',
                 'metakernel.tests', 'metakernel.magics.tests'],
