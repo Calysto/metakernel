@@ -1,7 +1,6 @@
 try:
     from IPython.kernel.zmq.kernelbase import Kernel
     from IPython.utils.path import get_ipython_dir
-    from IPython.html.widgets import Widget
 except:
     Kernel = object
 import os
@@ -21,6 +20,12 @@ class MetaKernel(Kernel):
     func_call_regex = r'([^\d\W][\w\.]*)\([^\)\()]*\Z'
     magic_prefixes = dict(magic='%', shell='!', help='?')
     help_suffix = '?'
+    help_links = [
+        {
+            'text': "MetaKernel Magics",
+            'url': "https://github.com/blink1073/metakernel/blob/master/metakernel/magics/README.md",
+        },
+    ]
     language_info = {
         # 'mimetype': 'text/x-python',
         # 'name': 'python',
@@ -32,6 +37,7 @@ class MetaKernel(Kernel):
         # 'pygments_lexer': 'language',
         # 'version'       : "x.y.z",
         # 'file_extension': '.py',
+        'help_links': help_links,
     }
 
     def __init__(self, *args, **kwargs):
@@ -465,6 +471,7 @@ class MetaKernel(Kernel):
                            {"data": content})
 
     def Display(self, *args):
+        from IPython.html.widgets import Widget
         for message in args:
             if isinstance(message, Widget):
                 self.log.debug('Display Widget')

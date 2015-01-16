@@ -25,9 +25,12 @@ class install_with_kernelspec(install):
                 json.dump(kernel_json, f, sort_keys=True)
             install_kernel_resources(td)
             log.info('Installing kernel spec')
-            install_kernel_spec(td, 'metakernel_bash', user=self.user, 
-                                replace=True)
-
+            try:
+                install_kernel_spec(td, 'metakernel_bash', user=self.user,
+                                    replace=True)
+            except:
+                install_kernel_spec(td, 'metakernel_bash', user=not self.user,
+                                    replace=True)
 
 svem_flag = '--single-version-externally-managed'
 if svem_flag in sys.argv:
