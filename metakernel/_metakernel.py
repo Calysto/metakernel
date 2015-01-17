@@ -1,7 +1,13 @@
+from warnings import filterwarnings
+filterwarnings('ignore', module='IPython.html.widgets')
+
 try:
     from IPython.kernel.zmq.kernelbase import Kernel
     from IPython.utils.path import get_ipython_dir
 except:
+    # This module won't be useful without IPython
+    # (other parts of metakernel may be useful)
+    # but we make it loadable anyway
     Kernel = object
 import os
 import sys
