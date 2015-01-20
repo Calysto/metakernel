@@ -5,11 +5,14 @@ import os
 import json
 import sys
 
+PY3 = sys.version_info[0] >= 3
+
 kernel_json = {
     "argv": [sys.executable, 
 	     "-m", "metakernel_python", 
 	     "-f", "{connection_file}"],
-    "display_name": "MetaKernel Python",
+    "display_name": "MetaKernel Python %i" % (3 if PY3 else 2),
+    "language": "python",
     "name": "metakernel_python"
 }
 

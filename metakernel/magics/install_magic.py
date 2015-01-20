@@ -23,6 +23,9 @@ class InstallMagic(Magic):
         elif package == "calico-document-tools":
             self.kernel.do_execute("!ipython install-nbextension https://bitbucket.org/ipre/calico/downloads/calico-document-tools-1.0.zip")
         self.enable_extension(package)
+        # FIXME: related %config:
+        ## // To turn off automatically creating closing parenthesis and bracket:
+        ## IPython.CodeCell.options_default.cm_config["autoCloseBrackets"] = "";
 
     def enable_extension(self, name):
         filename = "~/.ipython/profile_default/static/custom/custom.js"

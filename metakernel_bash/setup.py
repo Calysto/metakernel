@@ -10,6 +10,7 @@ kernel_json = {
 	     "-m", "metakernel_bash",
 	     "-f", "{connection_file}"],
     "display_name": "MetaKernel Bash",
+    "language": "bash",
     "name": "metakernel_bash",
 }
 
