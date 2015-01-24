@@ -80,12 +80,10 @@ class MetaKernel(Kernel):
     @classmethod
     def subkernel(cls, kernel):
         """
-        FIXME: monkeypatch to Make this kernel class be a subkernel to another.
+        Handle issues regarding making a kernel a subkernel to this
+        one. Used in %parallel and %kernel.
         """
-        cls.log = kernel.log
-        cls.session = kernel.session
-        cls.iopub_socket = kernel.iopub_socket
-        cls._parent_header = kernel._parent_header
+        pass
 
     #####################################
     # Methods which provide kernel - specific behavior
