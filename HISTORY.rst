@@ -3,6 +3,21 @@
 Release History
 ------------------------
 
+0.6.0 (2015-01-23)
+++++++++++++++++++
+- New home for MetaKernel in Calysto
+- Brought source up to date with current IPython master
+- Kernelspec installation issues resolved
+- New help_links and language in kernelspecs
+- get_help cursor fix
+- Handling of mixed args and options in magics
+- WIP: %install magic
+- New %set and %get magics
+- Added Dynamic process kernels
+- Added kernel logos
+- replwrap fixes
+
+
 0.5.1 (2014-12-03)
 ++++++++++++++++++
 - Add ProcessMetaKernel for subprocess-based kernels
