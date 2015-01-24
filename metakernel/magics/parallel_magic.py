@@ -42,6 +42,10 @@ class ParallelMagic(Magic):
             %parallel bash_kernel BashKernel -k bash
             %parallel bash_kernel BashKernel --i [0,2:5,9,...]
 
+        cluster_size and cluster_rank variables are set upon 
+        initialization of the remote node (if the kernel 
+        supports %set).
+
         Use %px or %%px to send code to the cluster.
         """
         from IPython.parallel import Client
@@ -153,6 +157,11 @@ kernels['%(kernel_name)s'] = %(class_name)s()
             %px sys.version
             %px -k scheme (define x 42)
             %px x
+            %px cluster_rank
+
+        cluster_size and cluster_rank variables are set upon 
+        initialization of the remote node (if the kernel 
+        supports %set).
 
         Use %parallel to initialize the cluster.
         """
