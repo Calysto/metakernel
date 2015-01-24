@@ -21,6 +21,7 @@ class ParallelMagic(Magic):
     kernel_name = None
     ids = None
     retval = None
+    retry = False
 
     @option(
         '-k', '--kernel_name', action='store', default="default",
@@ -158,18 +159,26 @@ kernels['%(kernel_name)s'] = %(class_name)s()
         expression = str(expression)
         if kernel_name is None:
             kernel_name = self.kernel_name
-        count = 1
-        while count <= 5:
+        if self.retry:
+            count = 1
+            while count <= 5:
+                try:
+                    self.retval = self.view["kernels['%s'].do_execute_direct(\"%s\")" % (
+                        kernel_name, self._clean_code(expression))]
+                    break
+                except:
+                    print("Waiting on cluster clients to start...")
+                    time.sleep(2)
+                count += 1
+            if count == 6:
+                raise Exception("Cluster clients have not started.")
+            self.retry = False
+        else:
             try:
                 self.retval = self.view["kernels['%s'].do_execute_direct(\"%s\")" % (
                     kernel_name, self._clean_code(expression))]
-                break
-            except:
-                print("Waiting on cluster clients to start...")
-                time.sleep(2)
-            count += 1
-        if count == 6:
-            raise Exception("Cluster clients have not started.")
+            except Exception as e:
+                self.retval = str(e)
         if evaluate:
             self.code = expression
 
