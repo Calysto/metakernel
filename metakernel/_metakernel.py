@@ -1,5 +1,6 @@
 try:
     from IPython.kernel.zmq.kernelbase import Kernel
+    from IPython.kernel.comm import CommManager
     from IPython.utils.path import get_ipython_dir
 except:
     Kernel = object
@@ -12,6 +13,11 @@ from .parser import Parser
 import imp
 import inspect
 import logging
+
+
+def lazy_import_handle_comm_opened(*args, **kwargs):
+    from IPython.html.widgets import Widget
+    Widget.handle_comm_opened(*args, **kwargs)
 
 
 class MetaKernel(Kernel):
@@ -63,6 +69,11 @@ class MetaKernel(Kernel):
         self.___ = None
         self.max_hist_cache = 1000
         self.hist_cache = []
+        self.comm_manager = CommManager(shell=None, parent=self,
+                                        kernel=self)
+        self.comm_manager.register_target('ipython.widget',
+            lazy_import_handle_comm_opened)
+
         self.plot_settings = dict(backend='inline', format=None, size=None)
         self.hist_file = get_history_file(self)
         self.reload_magics()
