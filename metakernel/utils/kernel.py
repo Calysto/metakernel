@@ -1,6 +1,7 @@
 import pkgutil
 import os
 
+
 def install_kernel_resources(destination, resource="metakernel", files=None):
     """
     Copy the resource files to the kernelspec folder.
