@@ -1,8 +1,15 @@
+from warnings import filterwarnings
+filterwarnings('ignore', module='IPython.html.widgets')
+
 try:
     from IPython.kernel.zmq.kernelbase import Kernel
     from IPython.kernel.comm import CommManager
     from IPython.utils.path import get_ipython_dir
+    from IPython.display import display as ipython_display
 except:
+    # This module won't be useful without IPython
+    # (other parts of metakernel may be useful)
+    # but we make it loadable anyway
     Kernel = object
 import os
 import sys
@@ -14,6 +21,9 @@ import imp
 import inspect
 import logging
 
+def lazy_import_handle_comm_opened(*args, **kwargs):
+    from IPython.html.widgets import Widget
+    Widget.handle_comm_opened(*args, **kwargs)
 
 def lazy_import_handle_comm_opened(*args, **kwargs):
     from IPython.html.widgets import Widget
@@ -29,7 +39,7 @@ class MetaKernel(Kernel):
     help_links = [
         {
             'text': "MetaKernel Magics",
-            'url': "https://github.com/blink1073/metakernel/blob/master/metakernel/magics/README.md",
+            'url': "https://github.com/calysto/metakernel/blob/master/metakernel/magics/README.md",
         },
     ]
     language_info = {
@@ -81,16 +91,21 @@ class MetaKernel(Kernel):
         self.set_variable("kernel", self)
         self.parser = Parser(self.identifier_regex, self.func_call_regex,
                              self.magic_prefixes, self.help_suffix)
+        self.comm_manager = CommManager(shell=None, parent=self,
+                                        kernel=self)
+        self.comm_manager.register_target('ipython.widget',
+                                          lazy_import_handle_comm_opened)
+        comm_msg_types = ['comm_open', 'comm_msg', 'comm_close']
+        for msg_type in comm_msg_types:
+            self.shell_handlers[msg_type] = getattr(self.comm_manager, msg_type)
 
     @classmethod
     def subkernel(cls, kernel):
         """
-        FIXME: monkeypatch to Make this kernel class be a subkernel to another.
+        Handle issues regarding making a kernel a subkernel to this
+        one. Used in %parallel and %kernel.
         """
-        cls.log = kernel.log
-        cls.session = kernel.session
-        cls.iopub_socket = kernel.iopub_socket
-        cls._parent_header = kernel._parent_header
+        pass
 
     #####################################
     # Methods which provide kernel - specific behavior
@@ -476,10 +491,7 @@ class MetaKernel(Kernel):
             self.cell_magics[name] = magic
 
     def display_widget(self, widget):
-        content = {"data": {"method": "display"},
-                   "comm_id": widget.model_id}
-        self.send_response(self.iopub_socket, "comm_open",
-                           {"data": content})
+        ipython_display(widget)
 
     def Display(self, *args):
         from IPython.html.widgets import Widget
