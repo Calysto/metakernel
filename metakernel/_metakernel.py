@@ -6,7 +6,7 @@ try:
     from IPython.kernel.zmq.kernelbase import Kernel
     from IPython.kernel.comm import CommManager
     from IPython.utils.path import get_ipython_dir
-    from IPython.display import display as ipython_display
+    from IPython.display import display as ipython_display, HTML
     from IPython.html.widgets import Widget
 except:
     # This module won't be useful without IPython
@@ -492,15 +492,14 @@ class MetaKernel(Kernel):
             self.cell_magics[name] = magic
 
     def display_widget(self, widget):
-        self.send_response(self.iopub_socket, 'clear_output',
-                           {'wait': True})
         ipython_display(widget)
 
     def Display(self, *args):
         from IPython.html.widgets import Widget
         for message in args:
-            with open('temp.txt', 'a') as fid:
-                fid.write('Display %s\n' % type(message))
+            if isinstance(message, HTML):
+                self.send_response(self.iopub_socket, 'clear_output',
+                                   {'wait': True})
             if isinstance(message, Widget):
                 self.log.debug('Display Widget')
                 self.display_widget(message)
@@ -515,8 +514,6 @@ class MetaKernel(Kernel):
         end = kwargs["end"] if ("end" in kwargs) else "\n"
         message = ""
         for item in args:
-            with open('temp.txt', 'a') as fid:
-                fid.write('Print %s\n' % type(item))
             if isinstance(item, Widget):
                 self.Display(item)
             else:
