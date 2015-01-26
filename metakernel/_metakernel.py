@@ -505,7 +505,7 @@ class MetaKernel(Kernel):
             else:
                 if message:
                     message += " "
-                message += str(args)
+                message += str(item)
         message += end
         stream_content = {
             'name': 'stdout', 'text': message, 'metadata': dict()}
