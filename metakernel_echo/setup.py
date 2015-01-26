@@ -5,11 +5,14 @@ import os
 import json
 import sys
 
+PY3 = sys.version_info[0] >= 3
+
 kernel_json = {
     "argv": [sys.executable,
 	     "-m", "metakernel_echo",
 	     "-f", "{connection_file}"],
-    "display_name": "MetaKernel Echo",
+    "display_name": "MetaKernel Echo %i" % (3 if PY3 else 2),
+    "language": "echo",
     "name": "metakernel_echo",
 }
 
@@ -38,10 +41,10 @@ if svem_flag in sys.argv:
     sys.argv.remove(svem_flag)
 
 setup(name='metakernel_echo',
-      version='0.5.1',
+      version='0.6.0',
       description='A simple echo kernel for Jupyter/IPython',
       long_description="A simple echo kernel for Jupyter/IPython, based on MetaKernel",
-      url="https://github.com/blink1073/metakernel/tree/master/metakernel_echo",
+      url="https://github.com/calysto/metakernel/tree/master/metakernel_echo",
       author='Douglas Blank',
       author_email='doug.blank@gmail.com',
       py_modules=['metakernel_echo'],

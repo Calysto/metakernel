@@ -10,6 +10,7 @@ kernel_json = {
 	     "-m", "metakernel_python", 
 	     "-f", "{connection_file}"],
     "display_name": "MetaKernel Python",
+    "language": "python",
     "name": "metakernel_python"
 }
 
@@ -26,11 +27,11 @@ class install_with_kernelspec(install):
             install_kernel_resources(td)
             log.info('Installing kernel spec')
             try:
-                install_kernel_spec(td, 'metakernel_python', user=self.user,
-                                    replace=True)
+                install_kernel_spec(td, 'metakernel_python', 
+                                    user=self.user, replace=True)
             except:
-                install_kernel_spec(td, 'metakernel_python', user=not self.user,
-                                    replace=True)
+                install_kernel_spec(td, 'metakernel_python', 
+                                    user=not self.user, replace=True)
 
 
 svem_flag = '--single-version-externally-managed'
@@ -38,11 +39,11 @@ if svem_flag in sys.argv:
     # Die, setuptools, die.
     sys.argv.remove(svem_flag)
 
-setup(name='metakernel_python',
-      version='0.5.1',
+setup(name='metakernel_python', 
+      version='0.6.0',
       description='A Python kernel for Jupyter/IPython',
       long_description="A Python kernel for Jupyter/IPython, based on MetaKernel",
-      url="https://github.com/blink1073/metakernel/tree/master/metakernel_python",
+      url="https://github.com/calysto/metakernel/tree/master/metakernel_python",
       author='Douglas Blank',
       author_email='doug.blank@gmail.com',
       py_modules=['metakernel_python'],

@@ -10,6 +10,7 @@ kernel_json = {
 	     "-m", "metakernel_bash",
 	     "-f", "{connection_file}"],
     "display_name": "MetaKernel Bash",
+    "language": "bash",
     "name": "metakernel_bash",
 }
 
@@ -38,10 +39,10 @@ if svem_flag in sys.argv:
     sys.argv.remove(svem_flag)
 
 setup(name='metakernel_bash',
-      version='0.5.1',
+      version='0.6.0',
       description='A Bash kernel for Jupyter/IPython',
       long_description="A Bash kernel for Jupyter/IPython, based on MetaKernel",
-      url="https://github.com/blink1073/metakernel/tree/master/metakernel_bash",
+      url="https://github.com/calysto/metakernel/tree/master/metakernel_bash",
       author='Steven Silvester',
       author_email='steven.silvester@ieee.org',
       py_modules=['metakernel_bash'],

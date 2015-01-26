@@ -26,6 +26,8 @@ class PythonMagic(Magic):
         This line magic will evaluate the CODE (either expression or
         statement) as Python code.
 
+        Note that the version of Python is that of the notebook server. 
+
         Examples:
             %python x = 42
             %python import math
@@ -70,6 +72,8 @@ class PythonMagic(Magic):
         The -e or --eval_output flag signals that the retval value expression
         will be used as code for the cell to be evaluated by the host 
         language.
+
+        Note that the version of Python is that of the notebook server. 
 
         Examples:
             %%python 
