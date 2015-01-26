@@ -1,3 +1,4 @@
+from __future__ import print_function
 from warnings import filterwarnings
 filterwarnings('ignore', module='IPython.html.widgets')
 
@@ -5,7 +6,8 @@ try:
     from IPython.kernel.zmq.kernelbase import Kernel
     from IPython.kernel.comm import CommManager
     from IPython.utils.path import get_ipython_dir
-    from IPython.display import display as ipython_display
+    from IPython.display import display as ipython_display, HTML
+    from IPython.html.widgets import Widget
 except:
     # This module won't be useful without IPython
     # (other parts of metakernel may be useful)
@@ -21,9 +23,10 @@ import imp
 import inspect
 import logging
 
+
 def lazy_import_handle_comm_opened(*args, **kwargs):
-    from IPython.html.widgets import Widget
     Widget.handle_comm_opened(*args, **kwargs)
+
 
 class MetaKernel(Kernel):
 
@@ -74,6 +77,11 @@ class MetaKernel(Kernel):
         self.___ = None
         self.max_hist_cache = 1000
         self.hist_cache = []
+        self.comm_manager = CommManager(shell=None, parent=self,
+                                        kernel=self)
+        self.comm_manager.register_target('ipython.widget',
+            lazy_import_handle_comm_opened)
+
         self.plot_settings = dict(backend='inline', format=None, size=None)
         self.hist_file = get_history_file(self)
         self.reload_magics()
@@ -163,9 +171,9 @@ class MetaKernel(Kernel):
 
         When responding to the %%debug magic, the step and reset meta
         commands can answer with a string in the format:
-        
-        "highlight: [start_line, start_col, end_line, end_col]" 
-        
+
+        "highlight: [start_line, start_col, end_line, end_col]"
+
         for highlighting expressions in the frontend.
         """
         if code == "reset":
@@ -194,7 +202,7 @@ class MetaKernel(Kernel):
         Call a function in the kernel language with args (as a single item).
         """
         self.Error("This language does not support \"%pmap function args\".")
-        
+
     def restart_kernel(self):
         """Restart the kernel"""
         pass
@@ -307,6 +315,9 @@ class MetaKernel(Kernel):
                        'data': _formatter(retval, self.repr),
                        'metadata': dict()}
             if not silent:
+                if isinstance(retval, Widget):
+                    self.Display(retval)
+                    return
                 self.send_response(self.iopub_socket, 'execute_result', content)
 
     def do_history(self, hist_access_type, output, raw, session=None,
@@ -486,6 +497,9 @@ class MetaKernel(Kernel):
     def Display(self, *args):
         from IPython.html.widgets import Widget
         for message in args:
+            if isinstance(message, HTML):
+                self.send_response(self.iopub_socket, 'clear_output',
+                                   {'wait': True})
             if isinstance(message, Widget):
                 self.log.debug('Display Widget')
                 self.display_widget(message)
