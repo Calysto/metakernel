@@ -8,6 +8,7 @@ try:
     from IPython.utils.path import get_ipython_dir
     from IPython.display import display as ipython_display, HTML
     from IPython.html.widgets import Widget
+    from IPython.core.formatters import IPythonDisplayFormatter
 except:
     # This module won't be useful without IPython
     # (other parts of metakernel may be useful)
@@ -96,6 +97,7 @@ class MetaKernel(Kernel):
         comm_msg_types = ['comm_open', 'comm_msg', 'comm_close']
         for msg_type in comm_msg_types:
             self.shell_handlers[msg_type] = getattr(self.comm_manager, msg_type)
+        self._ipy_formatter = IPythonDisplayFormatter()
 
     @classmethod
     def subkernel(cls, kernel):
@@ -502,7 +504,7 @@ class MetaKernel(Kernel):
                                    {'wait': True})
             if isinstance(message, Widget):
                 self.log.debug('Display Widget')
-                self.display_widget(message)
+                self._ipy_formatter(message)
             else:
                 self.log.debug('Display Data')
                 self.send_response(self.iopub_socket, 'display_data',
