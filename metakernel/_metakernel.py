@@ -496,8 +496,17 @@ class MetaKernel(Kernel):
                                     'metadata': dict()})
 
     def Print(self, *args, **kwargs):
+        from IPython.html.widgets import Widget
         end = kwargs["end"] if ("end" in kwargs) else "\n"
-        message = " ".join(args) + end
+        message = ""
+        for item in args:
+            if isinstance(item, Widget):
+                self.Display(item)
+            else:
+                if message:
+                    message += " "
+                message += str(args)
+        message += end
         stream_content = {
             'name': 'stdout', 'text': message, 'metadata': dict()}
         self.log.debug('Print: %s' % message)
