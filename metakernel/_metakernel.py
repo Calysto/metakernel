@@ -3,7 +3,9 @@ filterwarnings('ignore', module='IPython.html.widgets')
 
 try:
     from IPython.kernel.zmq.kernelbase import Kernel
+    from IPython.kernel.comm import CommManager
     from IPython.utils.path import get_ipython_dir
+    from IPython.display import display as ipython_display
 except:
     # This module won't be useful without IPython
     # (other parts of metakernel may be useful)
@@ -19,6 +21,9 @@ import imp
 import inspect
 import logging
 
+def lazy_import_handle_comm_opened(*args, **kwargs):
+    from IPython.html.widgets import Widget
+    Widget.handle_comm_opened(*args, **kwargs)
 
 class MetaKernel(Kernel):
 
@@ -76,6 +81,13 @@ class MetaKernel(Kernel):
         self.set_variable("kernel", self)
         self.parser = Parser(self.identifier_regex, self.func_call_regex,
                              self.magic_prefixes, self.help_suffix)
+        self.comm_manager = CommManager(shell=None, parent=self,
+                                        kernel=self)
+        self.comm_manager.register_target('ipython.widget',
+                                          lazy_import_handle_comm_opened)
+        comm_msg_types = ['comm_open', 'comm_msg', 'comm_close']
+        for msg_type in comm_msg_types:
+            self.shell_handlers[msg_type] = getattr(self.comm_manager, msg_type)
 
     @classmethod
     def subkernel(cls, kernel):
@@ -469,10 +481,7 @@ class MetaKernel(Kernel):
             self.cell_magics[name] = magic
 
     def display_widget(self, widget):
-        content = {"data": {"method": "display"},
-                   "comm_id": widget.model_id}
-        self.send_response(self.iopub_socket, "comm_open",
-                           {"data": content})
+        ipython_display(widget)
 
     def Display(self, *args):
         from IPython.html.widgets import Widget
