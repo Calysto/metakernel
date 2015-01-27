@@ -6,7 +6,7 @@ try:
     from IPython.kernel.zmq.kernelbase import Kernel
     from IPython.kernel.comm import CommManager
     from IPython.utils.path import get_ipython_dir
-    from IPython.display import display as ipython_display, HTML
+    from IPython.display import HTML
     from IPython.html.widgets import Widget
     from IPython.core.formatters import IPythonDisplayFormatter
 except:
@@ -493,11 +493,7 @@ class MetaKernel(Kernel):
         for name in cell_magics:
             self.cell_magics[name] = magic
 
-    def display_widget(self, widget):
-        ipython_display(widget)
-
     def Display(self, *args):
-        from IPython.html.widgets import Widget
         for message in args:
             if isinstance(message, HTML):
                 self.send_response(self.iopub_socket, 'clear_output',
@@ -512,7 +508,6 @@ class MetaKernel(Kernel):
                                     'metadata': dict()})
 
     def Print(self, *args, **kwargs):
-        from IPython.html.widgets import Widget
         end = kwargs["end"] if ("end" in kwargs) else "\n"
         message = ""
         for item in args:
