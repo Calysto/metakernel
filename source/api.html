@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>API Reference &mdash; Metakernel 0.5.1 documentation</title>
+    <title>API Reference &mdash; Metakernel 0.6.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.5.1',
+        VERSION:     '0.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -28,7 +28,7 @@
     <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="../_static/bootstrap-3.2.0/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
-    <link rel="top" title="Metakernel 0.5.1 documentation" href="../index.html" />
+    <link rel="top" title="Metakernel 0.6.0 documentation" href="../index.html" />
     <link rel="next" title="Information" href="info.html" />
     <link rel="prev" title="Installation" href="installation.html" />
 <meta charset='utf-8'>
@@ -53,7 +53,7 @@
         </button>
         <a class="navbar-brand" href="../index.html">
           Metakernel</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.5.1</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.6.0</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -156,7 +156,8 @@
 <dd><dl class="classmethod">
 <dt id="metakernel.MetaKernel.subkernel">
 <em class="property">classmethod </em><tt class="descname">subkernel</tt><big>(</big><em>kernel</em><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.subkernel" title="Permalink to this definition">¶</a></dt>
-<dd><p>FIXME: monkeypatch to Make this kernel class be a subkernel to another.</p>
+<dd><p>Handle issues regarding making a kernel a subkernel to this
+one. Used in %parallel and %kernel.</p>
 </dd></dl>
 
 <dl class="method">
