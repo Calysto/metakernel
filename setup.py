@@ -34,8 +34,8 @@ setup(name='metakernel',
       #package_data = {
       #    'images': ['logo-64x64.png'],
       #},
-      data_files = [("metakernel", ["metakernel/images/logo-64x64.png", 
-                                    "metakernel/images/logo-32x32.png"])],
+      data_files = [("metakernel/images", ["metakernel/images/logo-64x64.png", 
+                                           "metakernel/images/logo-32x32.png"])],
       classifiers=[
           'Framework :: IPython',
           'License :: OSI Approved :: BSD License',
