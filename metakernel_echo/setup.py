@@ -41,7 +41,7 @@ if svem_flag in sys.argv:
     sys.argv.remove(svem_flag)
 
 setup(name='metakernel_echo',
-      version='0.6.0',
+      version='0.7.0',
       description='A simple echo kernel for Jupyter/IPython',
       long_description="A simple echo kernel for Jupyter/IPython, based on MetaKernel",
       url="https://github.com/calysto/metakernel/tree/master/metakernel_echo",
