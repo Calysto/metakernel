@@ -601,7 +601,7 @@ def _split_magics_code(code, prefixes):
 
 def _formatter(data, repr_func):
     reprs = {}
-    obj = repr_func(data)
+    reprs['text/plain'] = repr_func(data)
 
     lut = [("_repr_png_", "image/png"),
            ("_repr_jpeg_", "image/jpeg"),
