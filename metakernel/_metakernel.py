@@ -83,7 +83,7 @@ class MetaKernel(Kernel):
         self.comm_manager.register_target('ipython.widget',
             lazy_import_handle_comm_opened)
 
-        self.plot_settings = dict(backend='inline', format=None, size=None)
+        self.plot_settings = dict(backend='inline')
         self.hist_file = get_history_file(self)
         self.reload_magics()
         # provide a way to get the current instance
