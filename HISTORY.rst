@@ -3,6 +3,16 @@
 Release History
 ------------------------
 
+0.8.0 (2015-01-31)
+++++++++++++++++++
+- Added support for IPython.display.Image for metakernels
+- Improved support for Display formatting
+
+0.7.0 (2015-01-29)
+++++++++++++++++++
+- BUG: Fixed handling of icon resource on install
+
+
 0.6.0 (2015-01-23)
 ++++++++++++++++++
 - New home for MetaKernel in Calysto
