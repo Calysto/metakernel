@@ -6,7 +6,7 @@ try:
     from IPython.kernel.zmq.kernelbase import Kernel
     from IPython.kernel.comm import CommManager
     from IPython.utils.path import get_ipython_dir
-    from IPython.display import HTML
+    from IPython.display import HTML, Image
     from IPython.html.widgets import Widget
     from IPython.core.formatters import IPythonDisplayFormatter
 except:
@@ -313,9 +313,13 @@ class MetaKernel(Kernel):
             self.___ = self.__
             self.__ = retval
             self.log.debug(retval)
-            content = {'execution_count': self.execution_count,
-                       'data': _formatter(retval, self.repr),
-                       'metadata': dict()}
+            try:
+                content = {'execution_count': self.execution_count,
+                           'data': _formatter(retval, self.repr),
+                           'metadata': dict()}
+            except Exception as e:
+                self.Error(e)
+                return
             if not silent:
                 if isinstance(retval, Widget):
                     self.Display(retval)
@@ -503,8 +507,13 @@ class MetaKernel(Kernel):
                 self._ipy_formatter(message)
             else:
                 self.log.debug('Display Data')
+                try:
+                    data = _formatter(message, self.repr)
+                except Exception as e:
+                    self.Error(e)
+                    return
                 self.send_response(self.iopub_socket, 'display_data',
-                                   {'data': _formatter(message, self.repr),
+                                   {'data': data,
                                     'metadata': dict()})
 
     def Print(self, *args, **kwargs):
@@ -591,18 +600,12 @@ def _split_magics_code(code, prefixes):
 
 
 def _formatter(data, repr_func):
-    retval = {}
-    retval["text/plain"] = repr_func(data)
+    reprs = {}
+    reprs['text/plain'] = repr_func(data)
 
-    base64_lut = [("_repr_png_", "image/png"),
-                  ("_repr_jpeg_", "image/jpeg")]
-
-    for (attr, mimetype) in base64_lut:
-        obj = getattr(data, attr, None)
-        if obj:
-            retval[mimetype] = base64.encodestring(obj)
-
-    lut = [("_repr_html_", "text/html"),
+    lut = [("_repr_png_", "image/png"),
+           ("_repr_jpeg_", "image/jpeg"),
+           ("_repr_html_", "text/html"),
            ("_repr_markdown_", "text/markdown"),
            ("_repr_html_", "text/html"),
            ("_repr_svg_", "image/svg+xml"),
@@ -614,8 +617,21 @@ def _formatter(data, repr_func):
     for (attr, mimetype) in lut:
         obj = getattr(data, attr, None)
         if obj:
+            reprs[mimetype] = obj
+
+    retval = {}
+    for (mimetype, value) in reprs.items():
+        try:
+            value = value()
+        except Exception:
+            pass
+        if not value:
+            continue
+        if isinstance(value, bytes):
             try:
-                retval[mimetype] = obj()
-            except:
-                pass # maybe a class, not instance
+                value = value.decode('utf-8')
+            except Exception:
+                value = base64.encodestring(value)
+                value = value.decode('utf-8')
+        retval[mimetype] = str(value)
     return retval
