@@ -549,9 +549,9 @@ class MetaKernel(Kernel):
     def update_plot_settings(self, backend, size, format):
         """Update the default plot settings for the kernel."""
         self.plot_settings['backend'] = backend
-        size = size or self.plot_settings['size']
+        size = size or self.plot_settings.get('size', None)
         self.plot_settings['size'] = size
-        format = format or self.plot_settings['format']
+        format = format or self.plot_settings.get('format', None)
         self.plot_settings['format'] = format
 
     def get_magic(self, text):

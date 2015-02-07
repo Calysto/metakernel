@@ -14,6 +14,10 @@ class PlotMagic(Magic):
         '-f', '--format', action='store', default='png',
         help='Plot format (png, svg or jpg).'
     )
+    @option(
+        '-r', '--resolution', action='store', default=96,
+        help='Resolution of plots, in DPI'
+    )
     def line_plot(self, backend, size=None, format=None):
         """
         %plot [options] backend - configure plotting for the session.
@@ -22,13 +26,14 @@ class PlotMagic(Magic):
         language.
 
         Examples:
-            %plot --format=png matplotlib
-            %plot -s 640,480 matplotlib
+            %plot qt --format=png
+            %plot inline -s 640,480
 
         Note: not all languages may support the %plot magic.
         """
         self.kernel.update_plot_settings(backend.lower(), size, format)
         self.kernel.handle_plot_settings()
+
 
 def register_magics(kernel):
     kernel.register_magics(PlotMagic)
