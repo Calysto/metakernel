@@ -22,7 +22,7 @@ class PlotMagic(Magic):
         '-r', '--resolution', action='store', default=96,
         help='Resolution in pixels per inch'
     )
-    def line_plot(self, **kwargs):
+    def line_plot(self, *args, **kwargs):
         """
         %plot [options] backend - configure plotting for the session.
 
@@ -30,12 +30,14 @@ class PlotMagic(Magic):
         language.
 
         Examples:
-            %plot --backend=qt --format=png
-            %plot -b inline -s 640,480
+            %plot qt --format=png
+            %plot inline -s 640,480
 
         Note: not all languages may support the %plot magic, and not all
         options may be supported.
         """
+        if args:
+            kwargs['backend'] = args[0]
         self.kernel.plot_settings.update(**kwargs)
         self.kernel.handle_plot_settings()
 
