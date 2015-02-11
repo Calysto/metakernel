@@ -26,8 +26,8 @@ class PlotMagic(Magic):
         language.
 
         Examples:
-            %plot qt --format=png
-            %plot inline -s 640,480
+            %plot --backend=qt --format=png
+            %plot -b inline -s 640,480
 
         Note: not all languages may support the %plot magic.
         """
