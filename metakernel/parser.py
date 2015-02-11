@@ -306,8 +306,13 @@ def _complete_path(path=None):
         return _listdir('.')
     dirname, rest = os.path.split(path)
     tmp = dirname if dirname else '.'
-    res = [os.path.join(dirname, p) for p in _listdir(tmp)
-           if p.startswith(rest)]
+    res = []
+    for p in _listdir(tmp):
+        try:
+            if p.startswith(rest):
+                res.append(os.path.join(dirname, p))
+        except UnicodeDecodeError:
+            pass # directory name does not allow join in Python 2.7
     # more than one match, or single match which does not exist (typo)
     if len(res) > 1 or not os.path.exists(path):
         return res

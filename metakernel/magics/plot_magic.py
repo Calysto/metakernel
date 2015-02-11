@@ -19,6 +19,7 @@ class PlotMagic(Magic):
         help='Backend selection'
     )
     def line_plot(self, backend=None, size=None, format=None):
+    def line_plot(self, backend=None, size=None, format=None, resolution=96):
         """
         %plot [options] backend - configure plotting for the session.
 
@@ -31,7 +32,7 @@ class PlotMagic(Magic):
 
         Note: not all languages may support the %plot magic.
         """
-        self.kernel.update_plot_settings(backend, size, format)
+        self.kernel.update_plot_settings(backend, size, format, resolution)
         self.kernel.handle_plot_settings()
 
 
