@@ -546,14 +546,6 @@ class MetaKernel(Kernel):
             'name': 'stderr', 'text': message, 'metadata': dict()}
         self.send_response(self.iopub_socket, 'stream', stream_content)
 
-    def update_plot_settings(self, backend, size, format):
-        """Update the default plot settings for the kernel."""
-        self.plot_settings['backend'] = backend
-        size = size or self.plot_settings.get('size', None)
-        self.plot_settings['size'] = size
-        format = format or self.plot_settings.get('format', None)
-        self.plot_settings['format'] = format
-
     def get_magic(self, text):
         # if first line matches a magic,
         # call magic.call_magic() and return magic object
