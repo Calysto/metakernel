@@ -18,7 +18,7 @@ class PlotMagic(Magic):
         '-r', '--resolution', action='store', default=96,
         help='Resolution of plots, in DPI'
     )
-    def line_plot(self, backend, size=None, format=None):
+    def line_plot(self, backend, size=None, format=None, resolution=96):
         """
         %plot [options] backend - configure plotting for the session.
 
