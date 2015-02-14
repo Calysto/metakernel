@@ -1,4 +1,4 @@
-A Jupyter/IPython kernel template which includes core magic functions (including help, command completion, parallel and distributed processing, downloads, and much more).
+A Jupyter/IPython kernel template which includes core magic functions (including help, command and file path completion, parallel and distributed processing, downloads, and much more).
 
 .. image:: https://badge.fury.io/py/metakernel.png/
     :target: http://badge.fury.io/py/metakernel
