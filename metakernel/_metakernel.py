@@ -23,6 +23,7 @@ from .parser import Parser
 import imp
 import inspect
 import logging
+import codecs
 
 
 def lazy_import_handle_comm_opened(*args, **kwargs):
@@ -525,7 +526,7 @@ class MetaKernel(Kernel):
             else:
                 if message:
                     message += " "
-                message += str(item)
+                message += codecs.encode(item, "utf-8")
         message += end
         stream_content = {
             'name': 'stdout', 'text': message, 'metadata': dict()}
