@@ -25,6 +25,7 @@ import inspect
 import logging
 import codecs
 
+PY3 = (sys.version_info[0] >= 3)
 
 def lazy_import_handle_comm_opened(*args, **kwargs):
     Widget.handle_comm_opened(*args, **kwargs)
@@ -526,7 +527,10 @@ class MetaKernel(Kernel):
             else:
                 if message:
                     message += " "
-                message += codecs.encode(item, "utf-8")
+                if PY3:
+                    message += str(item)
+                else:
+                    message += codecs.encode(item, "utf-8")
         message += end
         stream_content = {
             'name': 'stdout', 'text': message, 'metadata': dict()}
