@@ -73,7 +73,10 @@ except ImportError:
     pty = None
     import threading
     import subprocess
-    import Queue
+    try:
+        import Queue
+    except ImportError:
+        import queue as Queue
     import ctypes
 
 import os
@@ -1022,7 +1025,7 @@ class spawn(object):
                 self.flag_eof = True
                 return
 
-            self._read_queue.put(buf)
+            self._read_queue.put(buf.decode('utf-8'))
             time.sleep(0.001)
 
     def _winread(self, size, timeout):
@@ -1927,7 +1930,10 @@ class spawnu(spawn):
         return s
 
     def _coerce_read_string(self, s):
-        return self._decoder.decode(s, final=False)
+        try:
+            return self._decoder.decode(s, final=False)
+        except TypeError:
+            return s
 
     def _send(self, s):
         return super(spawnu, self)._send(s.encode(self.encoding, self.errors))
