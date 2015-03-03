@@ -109,6 +109,27 @@ class MetaKernel(Kernel):
         """
         pass
 
+    def makeSubkernelTo(self, main_kernel, display_function):
+        """
+        Handle issues regarding making this kernel be a subkernel to 
+        another. Used in making metakernels be magics for IPython.
+        """
+        self.session = main_kernel.session
+        self.Display = display_function
+
+    def makeSubkernelToIPython(self):
+        """
+        Run this method in an IPython kernel to set
+        this kernel's input/output settings.
+        """
+        from IPython import get_ipython
+        from IPython.display import display
+        ip = get_ipython()
+        if ip: # we are running under an IPython kernel
+            self.makeSubkernelTo(ip.parent, display)
+        else:
+            raise Exception("Need to run under an IPython kernel")
+
     #####################################
     # Methods which provide kernel - specific behavior
 
