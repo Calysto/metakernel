@@ -3,6 +3,13 @@
 Release History
 ------------------------
 
+0.9.0 (2015-03-03)
+++++++++++++++++++
+- Improved support for ProcessKernel on Windows
+- Improved %plot magic
+- Added metakernel.makSubKernel* helper methods
+
+
 0.8.0 (2015-01-31)
 ++++++++++++++++++
 - Added support for IPython.display.Image for metakernels
