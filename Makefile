@@ -43,7 +43,7 @@ cover: clean
 	nosetests $(TEST_ARGS) --with-cov --cov $(NAME) $(NAME); ipcluster2 stop
 	coverage annotate
 
-release: test gh-pages
+release: gh-pages
 	pip install wheel
 	python setup.py register
 	python setup.py bdist_wheel upload
