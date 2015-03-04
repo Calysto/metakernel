@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>API Reference &mdash; Metakernel 0.7.0 documentation</title>
+    <title>API Reference &mdash; Metakernel 0.9.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.7.0',
+        VERSION:     '0.9.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -28,7 +28,7 @@
     <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="../_static/bootstrap-3.2.0/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
-    <link rel="top" title="Metakernel 0.7.0 documentation" href="../index.html" />
+    <link rel="top" title="Metakernel 0.9.0 documentation" href="../index.html" />
     <link rel="next" title="Information" href="info.html" />
     <link rel="prev" title="Installation" href="installation.html" />
 <meta charset='utf-8'>
@@ -53,12 +53,11 @@
         </button>
         <a class="navbar-brand" href="../index.html">
           Metakernel</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.7.0</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.9.0</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
           <ul class="nav navbar-nav">
-            <li class="divider-vertical"></li>
             
             
               <li class="dropdown globaltoc-container">
@@ -99,11 +98,11 @@
               
                 
   <li>
-    <a href="installation.html" title="Previous Chapter: Installation"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm">&laquo; Installation</span>
+    <a href="installation.html" title="Previous Chapter: Installation"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Installation</span>
     </a>
   </li>
   <li>
-    <a href="info.html" title="Next Chapter: Information"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm">Information &raquo;</span>
+    <a href="info.html" title="Next Chapter: Information"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Information &raquo;</span>
     </a>
   </li>
               
@@ -159,6 +158,20 @@
 <em class="property">classmethod </em><tt class="descname">subkernel</tt><big>(</big><em>kernel</em><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.subkernel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handle issues regarding making a kernel a subkernel to this
 one. Used in %parallel and %kernel.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="metakernel.MetaKernel.makeSubkernelTo">
+<tt class="descname">makeSubkernelTo</tt><big>(</big><em>main_kernel</em>, <em>display_function</em><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.makeSubkernelTo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle issues regarding making this kernel be a subkernel to 
+another. Used in making metakernels be magics for IPython.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="metakernel.MetaKernel.makeSubkernelToIPython">
+<tt class="descname">makeSubkernelToIPython</tt><big>(</big><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.makeSubkernelToIPython" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run this method in an IPython kernel to set
+this kernel&#8217;s input/output settings.</p>
 </dd></dl>
 
 <dl class="method">
@@ -267,12 +280,6 @@ an indentation string.</p>
 <dd>&#8216;indent&#8217;: &#8216; &#8216; * 4}</dd>
 </dl>
 </div></blockquote>
-</dd></dl>
-
-<dl class="method">
-<dt id="metakernel.MetaKernel.update_plot_settings">
-<tt class="descname">update_plot_settings</tt><big>(</big><em>backend</em>, <em>size</em>, <em>format</em><big>)</big><a class="headerlink" href="#metakernel.MetaKernel.update_plot_settings" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the default plot settings for the kernel.</p>
 </dd></dl>
 
 </dd></dl>
