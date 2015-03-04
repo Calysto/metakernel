@@ -95,6 +95,7 @@ class REPLWrapper(object):
     def _expect_prompt(self, timeout=-1):
         if self.prompt_emit_cmd:
             self.sendline(self.prompt_emit_cmd)
+
         try:
             return self.child.expect([self.prompt_regex, self.continuation_prompt_regex],
                                      timeout=timeout)
@@ -130,14 +131,14 @@ class REPLWrapper(object):
 
         self.sendline(cmdlines[0])
         for line in cmdlines[1:]:
-            self._expect_prompt(timeout=1)
+            self._expect_prompt(timeout=-1)
             self.sendline(line)
 
         # Command was fully submitted, now wait for the next prompt
         if self._expect_prompt(timeout=timeout) == 1:
             # We got the continuation prompt - command was incomplete
             self.child.kill(signal.SIGINT)
-            self._expect_prompt(timeout=1)
+            self._expect_prompt(timeout=-1)
             raise ValueError("Continuation prompt found -"
                              " input was incomplete:\n" + command)
         return self.child.before
