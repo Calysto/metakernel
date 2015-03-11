@@ -492,10 +492,13 @@ class MetaKernel(Kernel):
         # Make a metakernel/magics if it doesn't exist:
         local_magics_dir = get_local_magics_dir()
         # Search all of the places there could be magics:
-        paths = [os.path.join(os.path.dirname(os.path.abspath(__file__)), "magics"),
-                 os.path.join(
-                     os.path.dirname(os.path.abspath(inspect.getfile(self.__class__))), "magics"),
-                 local_magics_dir]
+        paths = [local_magics_dir, 
+                 os.path.join(os.path.dirname(os.path.abspath(__file__)), "magics")]
+        try:
+            paths += [os.path.join(os.path.dirname(
+                os.path.abspath(inspect.getfile(self.__class__))), "magics")]
+        except:
+            pass
         for magic_dir in paths:
             sys.path.append(magic_dir)
             magic_files.extend(glob.glob(os.path.join(magic_dir, "*.py")))
