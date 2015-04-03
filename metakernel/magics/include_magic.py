@@ -13,8 +13,12 @@ class IncludeMagic(Magic):
         This line magic will get the contents of a file and include it
         in this cell evaluation.
 
-        Example:
+        You can have multiple %include's at the beginning of a cell,
+        and they will be included in order.
+
+        Examples:
             %include myprog.py
+            %include myprog1.py myprog2.py
         """
         text = ""
         filenames = filenames.split()
@@ -37,23 +41,6 @@ class IncludeMagic(Magic):
             self.code = "\n".join(new_lines)
         else:
             self.code = text  + self.code
-
-    def cell_include(self, filename, *args):
-        """
-        %%include FILENAME - include code from filename into this code
-
-        This line magic will get the contents of a file and include it
-        in this cell evaluation.
-
-        Example:
-            %%include myprog.py
-            print("Done!")
-        """
-        if filename.startswith("~"):
-            filename = os.path.expanduser(filename)
-        filename = os.path.abspath(filename)
-        text = open(filename).read()
-        self.code = text  + self.code
 
 def register_magics(kernel):
     kernel.register_magics(IncludeMagic)

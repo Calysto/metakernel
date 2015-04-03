@@ -18,7 +18,7 @@ def test_include_magic():
     assert ("AND " + "THIS") not in EXECUTION
 
     EXECUTION = ""
-    kernel.do_execute(("%%%%include %s\nAND" + " THIS") % FILE)
+    kernel.do_execute(("%%include %s\nAND" + " THIS") % FILE)
     assert "metakernel" in EXECUTION
     assert ("AND " + "THIS") in EXECUTION
 
