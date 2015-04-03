@@ -22,9 +22,9 @@ class IncludeMagic(Magic):
             if filename.startswith("~"):
                 filename = os.path.expanduser(filename)
             filename = os.path.abspath(filename)
-            text += open(filename).read()
-        if self.code.startswith("%"):
-            lines = self.code.split("\n")
+            text += open(filename).read() + "\n"
+        if self.code.lstrip().startswith("%"):
+            lines = self.code.lstrip().split("\n")
             new_lines = []
             need_to_insert = True
             for line in lines:
