@@ -67,6 +67,15 @@ This is a shortcut for %load, and appending a "%%file" as first line.
 Example:
     %edit myprogram.ss
 
+## `%get`
+
+%get VARIABLE - get a variable from the kernel in a Python-type.
+
+This line magic is used to get a variable.
+
+Examples:
+    %get x
+
 ## `%help`
 
 This is MetaKernel Python. It implements a Python interpreter.
@@ -80,6 +89,27 @@ HTML.
 
 Example:
     %html <u>This is underlined!</u>
+
+## `%include`
+
+%include FILENAME ... - include code from filename into this code
+
+This line magic will get the contents of a file and include it
+in this cell evaluation.
+
+You can have multiple %include's at the beginning of a cell,
+and they will be included in order.
+
+Examples:
+    %include myprog.py
+    %include myprog1.py myprog2.py
+
+## `%install`
+
+%install PACKAGE - install package
+
+Example:
+    %install calico-spell-check
 
 ## `%install_magic`
 
@@ -168,6 +198,10 @@ Examples:
     %ls .
     %ls ..
 
+Options:
+-------
+-r --recursive recursively descend into subdirectories [default: False]
+
 ## `%lsmagic`
 
 %lsmagic - list the current line and cell magics
@@ -196,6 +230,10 @@ Example:
     %parallel bash_kernel BashKernel -k bash
     %parallel bash_kernel BashKernel --i [0,2:5,9,...]
 
+cluster_size and cluster_rank variables are set upon
+initialization of the remote node (if the kernel
+supports %set).
+
 Use %px or %%px to send code to the cluster.
 
 Options:
@@ -211,13 +249,16 @@ This line magic will configure the plot settings for this
 language.
 
 Examples:
-    %plot --format=png matplotlib
-    %plot -s 640,480 matplotlib
+    %plot qt --format=png
+    %plot inline -s 640,480
 
-Note: not all languages may support the %plot magic.
+Note: not all languages may support the %plot magic, and not all
+options may be supported.
 
 Options:
 -------
+-r --resolution Resolution in pixels per inch [default: 96]
+-b --backend   Backend selection [default: inline]
 -f --format    Plot format (png, svg or jpg). [default: png]
 -s --size      Pixel size of plots, "width,height"
 
@@ -268,6 +309,11 @@ Example:
     %px sys.version
     %px -k scheme (define x 42)
     %px x
+    %px cluster_rank
+
+cluster_size and cluster_rank variables are set upon
+initialization of the remote node (if the kernel
+supports %set).
 
 Use %parallel to initialize the cluster.
 
@@ -282,6 +328,8 @@ Options:
 
 This line magic will evaluate the CODE (either expression or
 statement) as Python code.
+
+Note that the version of Python is that of the notebook server.
 
 Examples:
     %python x = 42
@@ -325,6 +373,16 @@ Example:
     %run filename.ss
 
 Note: not all languages may support %run.
+
+## `%set`
+
+%set VARIABLE VALUE - set a variable in the kernel.
+
+This line magic is used to set a variable to a Python value.
+
+Examples:
+    %set x 42
+    %set x [1, 2, 3]
 
 ## `%shell`
 
@@ -507,6 +565,8 @@ The -e or --eval_output flag signals that the retval value expression
 will be used as code for the cell to be evaluated by the host
 language.
 
+Note that the version of Python is that of the notebook server.
+
 Examples:
     %%python
     x = 42
@@ -589,4 +649,33 @@ Example:
 
 This just reports real time taken to execute a program. This
 may fluctuate with number of users, system, load, etc.
+
+## `%%tutor`
+
+%%tutor [--language=LANGUAGE] - show cell with
+Online Python Tutor.
+
+Examples:
+   %%tutor -l python3
+   a = 1
+   b = 1
+   a + b
+
+   [You will see an iframe with the pythontutor.com page
+   including the code above.]
+
+   %%tutor --language=java
+
+   public class Test {
+       public Test() {
+       }
+       public static void main(String[] args) {
+           int x = 1;
+           System.out.println("Hi");
+       }
+   }
+
+Options:
+-------
+-l --language  Possible languages to be displayed within the iframe. Possible values are: python2, python3, java, javascript
 

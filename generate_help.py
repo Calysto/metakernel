@@ -1,7 +1,10 @@
 from __future__ import print_function
 
 if "kernel" not in globals():
-    print("This file is designed to run with ipython console --kernel eval_kernel")
+    print("""This file is designed to run like:
+    ipython console --kernel metakernel_python
+    In [1]: %run generate_help.py
+""")
     kernel = None
 else:
     kernel = globals()["kernel"]
