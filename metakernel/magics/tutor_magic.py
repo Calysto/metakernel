@@ -33,12 +33,15 @@ class TutorMagic(Magic):
     @option(
         '-l', '--language', action='store', nargs = 1,
         help=("Possible languages to be displayed within the iframe. " +
-              "Possible values are: python2, python3, java, javascript")
+              "Possible values are: python, python2, python3, java, javascript")
     )
-    def cell_tutor(self, language="python3"):
+    def cell_tutor(self, language=None):
         """
         %%tutor [--language=LANGUAGE] - show cell with 
         Online Python Tutor.
+
+        Defaults to use the language of the current kernel.
+        'python' is an alias for 'python3'.
 
         Examples:
            %%tutor -l python3
@@ -60,7 +63,9 @@ class TutorMagic(Magic):
                }
            }
         """
-        if language not in ['python2', 'python3', 'java', 'javascript']:
+        if language is None:
+            language = self.kernel.language_info["name"]
+        if language not in ['python', 'python2', 'python3', 'java', 'javascript']:
             raise ValueError("{} not supported. Only the following options are allowed: "
                              "'python2', 'python3', 'java', 'javascript'".format(language))
         
@@ -68,13 +73,13 @@ class TutorMagic(Magic):
         url += quote(self.code)
         url += "&origin=opt-frontend.js&cumulative=false&heapPrimitives=false"
         url += "&textReferences=false&"
-        if language == "python3":
+        if language in ["python3", "python"]:
             url += "py=3&rawInputLstJSON=%5B%5D&curInstr=0&codeDivWidth=50%25&codeDivHeight=100%25"
-        if language == "python2":
+        elif language == "python2":
             url += "py=2&rawInputLstJSON=%5B%5D&curInstr=0&codeDivWidth=50%25&codeDivHeight=100%25"
-        if language == "java":
+        elif language == "java":
             url += "py=java&rawInputLstJSON=%5B%5D&curInstr=0&codeDivWidth=50%25&codeDivHeight=100%25"
-        if language == "javascript":
+        elif language == "javascript":
             url += "py=js&rawInputLstJSON=%5B%5D&curInstr=0&codeDivWidth=50%25&codeDivHeight=100%25"
         
         # Display the results in the output area
