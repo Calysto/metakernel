@@ -74,14 +74,14 @@ class TutorMagic(Magic):
         url += "&origin=opt-frontend.js&cumulative=false&heapPrimitives=false"
         url += "&textReferences=false&"
         if language in ["python3", "python"]:
-            url += "py=3&rawInputLstJSON=%5B%5D&curInstr=0&codeDivWidth=50%25&codeDivHeight=100%25"
+            url += "py=3&rawInputLstJSON=%5B%5D&curInstr=0&codeDivWidth=350&codeDivHeight=400"
         elif language == "python2":
-            url += "py=2&rawInputLstJSON=%5B%5D&curInstr=0&codeDivWidth=50%25&codeDivHeight=100%25"
+            url += "py=2&rawInputLstJSON=%5B%5D&curInstr=0&codeDivWidth=350&codeDivHeight=400"
         elif language == "java":
-            url += "py=java&rawInputLstJSON=%5B%5D&curInstr=0&codeDivWidth=50%25&codeDivHeight=100%25"
+            url += "py=java&rawInputLstJSON=%5B%5D&curInstr=0&codeDivWidth=350&codeDivHeight=400"
         elif language == "javascript":
-            url += "py=js&rawInputLstJSON=%5B%5D&curInstr=0&codeDivWidth=50%25&codeDivHeight=100%25"
-        
+            url += "py=js&rawInputLstJSON=%5B%5D&curInstr=0&codeDivWidth=350&codeDivHeight=400"
+
         # Display the results in the output area
         self.kernel.Display(IFrame(url, height=500, width="100%"))
         self.evaluate = False
