@@ -83,7 +83,7 @@ class TutorMagic(Magic):
             url += "py=js&rawInputLstJSON=%5B%5D&curInstr=0&codeDivWidth=50%25&codeDivHeight=100%25"
         
         # Display the results in the output area
-        self.kernel.Display(IFrame(url, height=350, width="100%"))
+        self.kernel.Display(IFrame(url, height=500, width="100%"))
         self.evaluate = False
 
 def register_magics(kernel):
