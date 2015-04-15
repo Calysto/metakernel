@@ -23,7 +23,10 @@ class DotMagic(Magic):
         except:
             raise Exception("You need to install pydot")
         graph = pydot.graph_from_dot_data(str(code))
-        html = HTML(graph.create_svg())
+        svg = graph.create_svg()
+        if hasattr(svg, "decode"):
+            svg = svg.decode("utf-8")
+        html = HTML(svg)
         self.kernel.Display(html)
 
     def cell_dot(self):
