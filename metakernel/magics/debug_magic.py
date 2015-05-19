@@ -116,7 +116,7 @@ function handle_output(out){
     var res = null;
     var data = null;
     if (out.msg_type == "stream") {
-        res = out.content.data;
+        res = out.content.text;
         document.getElementById("result_stream").innerText = res.toString() + document.getElementById("result_stream").innerText;
     } else if (out.msg_type === "pyout") {
         // if output is a python object
