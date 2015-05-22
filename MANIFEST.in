@@ -15,3 +15,9 @@ prune .git
 prune docs/build
 prune dist
 prune build
+prune docs
+prune metakernel_python/build
+prune metakernel_echo/build
+prune metakernel_bash/dist
+prune metakernel_python/dist
+prune metakernel_echo/dist
