@@ -628,7 +628,6 @@ def _formatter(data, repr_func):
            ("_repr_jpeg_", "image/jpeg"),
            ("_repr_html_", "text/html"),
            ("_repr_markdown_", "text/markdown"),
-           ("_repr_html_", "text/html"),
            ("_repr_svg_", "image/svg+xml"),
            ("_repr_latex_", "text/latex"),
            ("_repr_json_", "application/json"),
