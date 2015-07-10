@@ -26,14 +26,10 @@ setup(name='metakernel',
       author='Steven Silvester',
       author_email='steven.silvester@ieee.org',
       url="https://github.com/Calysto/metakernel",
-      #install_requires=['IPython'], # add when IPython>=3.0
+      install_requires=['IPython>=3.0'],
       packages=['metakernel', 'metakernel.magics', 'metakernel.utils',
                 'metakernel.tests', 'metakernel.magics.tests'],
-
-      #include_data_files = True,
-      #package_data = {
-      #    'images': ['logo-64x64.png'],
-      #},
+      include_data_files = True,
       data_files = [("metakernel/images", ["metakernel/images/logo-64x64.png", 
                                            "metakernel/images/logo-32x32.png"])],
       classifiers=[

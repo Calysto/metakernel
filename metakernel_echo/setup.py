@@ -1,8 +1,5 @@
 from distutils.command.install import install
 from distutils.core import setup
-from distutils import log
-import os
-import json
 import sys
 
 PY3 = sys.version_info[0] >= 3
@@ -16,24 +13,13 @@ kernel_json = {
     "name": "metakernel_echo",
 }
 
+
 class install_with_kernelspec(install):
+
     def run(self):
         install.run(self)
-        from IPython.kernel.kernelspec import install_kernel_spec
-        from IPython.utils.tempdir import TemporaryDirectory
-        from metakernel.utils.kernel import install_kernel_resources
-        with TemporaryDirectory() as td:
-            os.chmod(td, 0o755) # Starts off as 700, not user readable
-            with open(os.path.join(td, 'kernel.json'), 'w') as f:
-                json.dump(kernel_json, f, sort_keys=True)
-            install_kernel_resources(td)
-            log.info('Installing kernel spec')
-            try:
-                install_kernel_spec(td, 'metakernel_echo', user=self.user,
-                                    replace=True)
-            except:
-                install_kernel_spec(td, 'metakernel_echo', user=not self.user,
-                                    replace=True)
+        from metakernel.utils import install_spec
+        install_spec(kernel_json)
 
 svem_flag = '--single-version-externally-managed'
 if svem_flag in sys.argv:
