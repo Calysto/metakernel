@@ -3,6 +3,7 @@
 
 from metakernel import Magic, option
 import traceback
+import sys
 try:
     import jedi
     from jedi import Interpreter
@@ -11,6 +12,7 @@ try:
 except ImportError:
     jedi = None
 
+PY3 = sys.version_info[0] == 3
 
 class PythonMagic(Magic):
 
@@ -41,16 +43,27 @@ class PythonMagic(Magic):
         if "__builtins__" not in self.env:
             ## __builtins__ get generated after an eval:
             eval("1", self.env)
-            ## make kernel available in imports:
+            ## make 'kernel' and 'input' available:
             self.env["__builtins__"]["kernel"] = self.kernel
+            if PY3:
+                self.env["__builtins__"]["input"] = self.kernel.raw_input
+                self.env["input"] = self.kernel.raw_input
+            else:
+                def input(*args, **kwargs):
+                    return eval(self.kernel.raw_input(*args, **kwargs))
+                self.env["__builtins__"]["input"] = input
+                self.env["input"] = input
+                self.env["__builtins__"]["raw_input"] = self.kernel.raw_input = self.kernel.raw_input
+                self.env["raw_input"] = self.kernel.raw_input = self.kernel.raw_input
         try:
             return eval(code.strip(), self.env)
         except:
-            try:
-                exec(code.strip(), self.env)
-            except Exception as exc:
-                self.kernel.Error(traceback.format_exc())
-                return None
+            pass
+        try:
+            exec(code.strip(), self.env)
+        except Exception as exc:
+            self.kernel.Error(traceback.format_exc())
+            return None
         if "retval" in self.env:
             return self.env["retval"]
 
