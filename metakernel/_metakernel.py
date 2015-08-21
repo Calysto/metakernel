@@ -531,7 +531,8 @@ class MetaKernel(Kernel):
         for name in cell_magics:
             self.cell_magics[name] = magic
 
-    def Display(self, *args, clear_output=False):
+    def Display(self, *args, **kwargs):
+        clear_output = kwargs.get("clear_output", False)
         for message in args:
             if isinstance(message, HTML):
                 if clear_output:
