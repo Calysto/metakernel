@@ -3,7 +3,7 @@ from warnings import filterwarnings
 filterwarnings('ignore', module='IPython.html.widgets')
 
 try:
-    try: 
+    try:
         from IPython.kernel.zmq.kernelbase import Kernel
         from IPython.kernel.comm import CommManager
     except ImportError:
@@ -119,7 +119,7 @@ class MetaKernel(Kernel):
 
     def makeSubkernelTo(self, main_kernel, display_function):
         """
-        Handle issues regarding making this kernel be a subkernel to 
+        Handle issues regarding making this kernel be a subkernel to
         another. Used in making metakernels be magics for IPython.
         """
         self.session = main_kernel.session
@@ -500,7 +500,7 @@ class MetaKernel(Kernel):
         # Make a metakernel/magics if it doesn't exist:
         local_magics_dir = get_local_magics_dir()
         # Search all of the places there could be magics:
-        paths = [local_magics_dir, 
+        paths = [local_magics_dir,
                  os.path.join(os.path.dirname(os.path.abspath(__file__)), "magics")]
         try:
             paths += [os.path.join(os.path.dirname(
@@ -531,11 +531,12 @@ class MetaKernel(Kernel):
         for name in cell_magics:
             self.cell_magics[name] = magic
 
-    def Display(self, *args):
+    def Display(self, *args, clear_output=False):
         for message in args:
             if isinstance(message, HTML):
-                self.send_response(self.iopub_socket, 'clear_output',
-                                   {'wait': True})
+                if clear_output:
+                    self.send_response(self.iopub_socket, 'clear_output',
+                                       {'wait': True})
             if isinstance(message, Widget):
                 self.log.debug('Display Widget')
                 self._ipy_formatter(message)
