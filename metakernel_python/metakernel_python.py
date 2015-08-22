@@ -61,5 +61,8 @@ class MetaKernelPython(MetaKernel):
         return python_magic.get_help_on(info, level, none_on_fail)
 
 if __name__ == '__main__':
-    from IPython.kernel.zmq.kernelapp import IPKernelApp
+    try:
+        from ipykernel.kernelapp import IPKernelApp
+    except ImportError:
+        from IPython.kernel.zmq.kernelapp import IPKernelApp
     IPKernelApp.launch_instance(kernel_class=MetaKernelPython)
