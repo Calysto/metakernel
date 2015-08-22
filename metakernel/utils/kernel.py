@@ -19,7 +19,10 @@ def install_kernel_resources(destination, resource="metakernel", files=None):
 
 def install_spec(kernel_json):
     user = '--user' in sys.argv
-    from IPython.kernel.kernelspec import install_kernel_spec
+    try:
+        from ipykernel.kerspec import install_kernel_spec
+    except ImportError:
+        from IPython.kernel.kernelspec import install_kernel_spec
     from IPython.utils.tempdir import TemporaryDirectory
     with TemporaryDirectory() as td:
         os.chmod(td, 0o755)  # Starts off as 700, not user readable

@@ -1,23 +1,25 @@
 from __future__ import print_function
 from warnings import filterwarnings
+import warnings
 filterwarnings('ignore', module='IPython.html.widgets')
 
 try:
     try:
-        from IPython.kernel.zmq.kernelbase import Kernel
-        from IPython.kernel.comm import CommManager
-    except ImportError:
         from ipykernel.kernelbase import Kernel
         from ipykernel.comm import CommManager
-    from IPython.utils.path import get_ipython_dir
-    from IPython.display import HTML, Image
-    try:
-        from IPython.html.widgets import Widget
+        from IPython.paths import get_ipython_dir
     except ImportError:
+        from IPython.kernel.zmq.kernelbase import Kernel
+        from IPython.kernel.comm import CommManager
+        from IPython.utils.path import get_ipython_dir
+    from IPython.display import HTML
+    try:
         from ipywidgets.widgets.widget import Widget
+    except ImportError:
+        from IPython.html.widgets import Widget
     from IPython.core.formatters import IPythonDisplayFormatter
 except ImportError as e:
-    warinngs.warn("Cannot load module {name} so metakernel will not be available to IPython/jupyter.".format(name=e.name))
+    warnings.warn("Cannot load module {name} so metakernel will not be available to IPython/jupyter.".format(name=e.name))
     # This module won't be useful without IPython
     # (other parts of metakernel may be useful)
     # but we make it loadable anyway

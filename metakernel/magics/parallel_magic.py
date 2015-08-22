@@ -48,7 +48,10 @@ class ParallelMagic(Magic):
 
         Use %px or %%px to send code to the cluster.
         """
-        from IPython.parallel import Client
+        try:
+            from ipyparallel import Client
+        except ImportError:
+            from IPython.parallel import Client
         count = 1
         while count <= 5:
             try:
@@ -263,7 +266,10 @@ kernels['%(kernel_name)s'] = %(class_name)s()
             kernel_name = self.kernel_name
 
         # To make sure we can find `kernels`:
-        from IPython.parallel.util import interactive
+        try:
+            from ipyparallel.util import interactive
+        except ImportError:
+            from IPython.parallel.util import interactive
         f = interactive(lambda arg, kname=kernel_name, fname=function_name: \
                         kernels[kname].do_function_direct(fname, arg))
         self.retval = self.view_load_balanced.map_async(f, eval(args))

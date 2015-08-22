@@ -1,5 +1,8 @@
 from metakernel import MetaKernel
-from IPython.kernel.zmq import session as ss
+try:
+    from jupyter_client import session as ss
+except ImportError:
+    from IPython.kernel.zmq import session as ss
 import zmq
 import logging
 
@@ -7,6 +10,7 @@ try:
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
+
 
 class EvalKernel(MetaKernel):
     implementation = 'Eval'
