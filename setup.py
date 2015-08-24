@@ -30,7 +30,7 @@ setup(name='metakernel',
       packages=['metakernel', 'metakernel.magics', 'metakernel.utils',
                 'metakernel.tests', 'metakernel.magics.tests'],
       include_data_files = True,
-      data_files = [("metakernel/images", ["metakernel/images/logo-64x64.png", 
+      data_files = [("./metakernel/images", ["metakernel/images/logo-64x64.png", 
                                            "metakernel/images/logo-32x32.png"])],
       classifiers=[
           'Framework :: IPython',
