@@ -13,8 +13,11 @@ def install_kernel_resources(destination, resource="metakernel", files=None):
         files = ["logo-64x64.png", "logo-32x32.png"]
     for filename in files:
         data = pkgutil.get_data(resource, os.path.join('images', filename))
-        with open(os.path.join(destination, filename), "wb") as fp:
-            fp.write(data)
+        try:
+            with open(os.path.join(destination, filename), "wb") as fp:
+                fp.write(data)
+        except OSError:
+            pass
 
 
 def install_spec(kernel_json):
