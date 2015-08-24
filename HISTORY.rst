@@ -3,6 +3,10 @@
 Release History
 ------------------------
 
+0.10.0 (2015-08-24)
++++++++++++++++++++
+- Improved kernel spec install for kernels
+
 0.9.0 (2015-03-03)
 ++++++++++++++++++
 - Improved support for ProcessKernel on Windows
