@@ -19,7 +19,7 @@ try:
         from IPython.html.widgets import Widget
     from IPython.core.formatters import IPythonDisplayFormatter
 except ImportError as e:
-    warnings.warn("Cannot load module {name} so metakernel will not be available to IPython/jupyter.".format(name=e.name))
+    warnings.warn("Cannot load module {name} so metakernel will not be available to IPython/jupyter.".format(name=getattr(e, 'name', ''))
     # This module won't be useful without IPython
     # (other parts of metakernel may be useful)
     # but we make it loadable anyway
