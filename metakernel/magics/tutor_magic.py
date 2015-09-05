@@ -21,7 +21,7 @@ Magics to display pythontutor.com in the notebook.
 #-----------------------------------------------------------------------------
 
 from metakernel import Magic, option
-from IPython.display import display, IFrame
+from IPython.display import IFrame
 import sys
 if sys.version_info.major == 2 and sys.version_info.minor == 7:
     from urllib import quote
@@ -69,7 +69,7 @@ class TutorMagic(Magic):
             raise ValueError("{} not supported. Only the following options are allowed: "
                              "'python2', 'python3', 'java', 'javascript'".format(language))
         
-        url = "http://pythontutor.com/iframe-embed.html#code="
+        url = "https://pythontutor.com/iframe-embed.html#code="
         url += quote(self.code)
         url += "&origin=opt-frontend.js&cumulative=false&heapPrimitives=false"
         url += "&textReferences=false&"

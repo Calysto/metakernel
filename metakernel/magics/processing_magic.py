@@ -31,7 +31,7 @@ class ProcessingMagic(Magic):
         code = """
 <canvas id="canvas_%(id)s"></canvas>
 <script>
-require(["http://cs.brynmawr.edu/gxk2013/examples/tools/alphaChannels/processing.js"], function () {
+require([window.location.protocol + "//calysto.github.io/javascripts/processing/processing.js"], function () {
     var processingCode = %(code)s;
     var cc = Processing.compile(processingCode);
     var processingInstance = new Processing("canvas_%(id)s", cc);
