@@ -1,4 +1,4 @@
-from ._metakernel import MetaKernel
+from ._metakernel import MetaKernel, IPythonKernel, register_ipython_magics
 from . import pexpect
 from .replwrap import REPLWrapper, u
 from .process_metakernel import ProcessMetaKernel

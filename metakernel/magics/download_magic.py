@@ -16,6 +16,7 @@ try:
         opener = urllib.URLopener()
         opener.retrieve(url, filename)
 except: # python3
+    import urllib.request
     def download(url, filename):
         g = urllib.request.urlopen(url)
         with open(filename, 'wb') as f:
@@ -45,6 +46,14 @@ class DownloadMagic(Magic):
             #('http', 'example.com', '/somefile.zip', '', '')
             path = parts[2]
             filename = os.path.basename(path)
+            if filename != '':
+                basename, extname = os.path.splitext(filename)
+                if extname == '':
+                    filename += ".html"
+                filename = filename.replace("~", "")
+                filename = filename.replace("%20", "_")
+            else:
+                filename = "output.html"
         try:
             download(url, filename)
             self.kernel.Print("Downloaded '%s'." % filename)
@@ -54,3 +63,13 @@ class DownloadMagic(Magic):
 
 def register_magics(kernel):
     kernel.register_magics(DownloadMagic)
+
+def register_ipython_magics():
+    from metakernel import IPythonKernel
+    from IPython.core.magic import register_line_magic
+    kernel = IPythonKernel()
+    magic = DownloadMagic(kernel)
+
+    @register_line_magic
+    def download(line):
+        magic.line_download(line)

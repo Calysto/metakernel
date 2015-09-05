@@ -1,7 +1,8 @@
 from __future__ import print_function
-from warnings import filterwarnings
+
+import sys
 import warnings
-filterwarnings('ignore', module='IPython.html.widgets')
+warnings.filterwarnings('ignore', module='IPython.html.widgets')
 
 try:
     try:
@@ -580,8 +581,7 @@ class MetaKernel(Kernel):
         self.send_response(self.iopub_socket, 'stream', stream_content)
 
     def Error(self, *args, **kwargs):
-        end = kwargs["end"] if ("end" in kwargs) else "\n"
-        message = " ".join([str(a) for a in args]) + end
+        message = format_message(*args, **kwargs)
         self.log.debug('Error: %s' % message)
         stream_content = {
             'name': 'stderr', 'text': message, 'metadata': dict()}
@@ -667,3 +667,59 @@ def _formatter(data, repr_func):
                 value = value.decode('utf-8')
         retval[mimetype] = str(value)
     return retval
+
+def format_message(*args, **kwargs):
+    """
+    Format args like Print does.
+    """
+    end = kwargs["end"] if ("end" in kwargs) else "\n"
+    message = " ".join([str(a) for a in args]) + end
+    return message
+
+class IPythonKernel(object):
+    """
+    Class to make an IPython Kernel look like a MetaKernel Kernel.
+    """
+    language_info = {
+        'mimetype': 'text/x-python',
+        'name': 'python',
+        'file_extension': '.py',
+    }
+
+    def Display(self, *args, **kwargs):
+        from IPython.display import display
+        return display(*args, **kwargs)
+
+    def Error(self, *args, **kwargs):
+        sys.stderr.write(format_message(*args, **kwargs))
+
+    def Print(self, *args, **kwargs):
+        sys.stdout.write(format_message(*args, **kwargs))
+
+def register_ipython_magics(*magics):
+    """
+    Loads all magics (or specified magics) that have a
+    register_ipython_magics function defined.
+    """
+    if magics:
+        # filename is name of magic + "_magic.py"
+        magics = [name + "_magic.py" for name in magics]
+    local_magics_dir = get_local_magics_dir()
+    # Search all of the places there could be magics:
+    paths = [local_magics_dir,
+             os.path.join(os.path.dirname(os.path.abspath(__file__)), "magics")]
+
+    magic_files = []
+    for magic_dir in paths:
+        sys.path.append(magic_dir)
+        magic_files.extend(glob.glob(os.path.join(magic_dir, "*.py")))
+
+    for magic in magic_files:
+        basename = os.path.basename(magic)
+        if basename == "__init__.py":
+            continue
+        if magics is None or basename in magics:
+            module = __import__(os.path.splitext(basename)[0])
+            imp.reload(module)
+            if hasattr(module, "register_ipython_magics"):
+                module.register_ipython_magics()

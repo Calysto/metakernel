@@ -89,3 +89,13 @@ class TutorMagic(Magic):
 def register_magics(kernel):
     kernel.register_magics(TutorMagic)
 
+def register_ipython_magics():
+    from metakernel import IPythonKernel
+    from IPython.core.magic import register_cell_magic
+    kernel = IPythonKernel()
+    magic = TutorMagic(kernel)
+
+    @register_cell_magic
+    def tutor(line, cell):
+        magic.code = cell
+        magic.cell_tutor(language="python3")
