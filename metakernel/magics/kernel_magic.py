@@ -93,3 +93,33 @@ class KernelMagic(Magic):
 
 def register_magics(kernel):
     kernel.register_magics(KernelMagic)
+
+def register_ipython_magics():
+    from metakernel import IPythonKernel
+    from IPython.core.magic import register_line_magic, register_cell_magic
+    kernel = IPythonKernel()
+    magic = KernelMagic(kernel)
+
+    @register_line_magic
+    def kernel(line):
+        """
+        line is module_name, class_name[, kernel_name]
+        """
+        if line.strip().count(" ") == 1:
+            kernel_name = "default"
+            module_name, class_name = [item.strip() for item in line.strip().split(" ", 1)]
+        else:
+            module_name, class_name, kernel_name = [item.strip() for item in line.strip().split(" ", 2)]
+        magic.line_kernel(module_name, class_name, kernel_name)
+
+    @register_cell_magic
+    def kx(line, cell):
+        """
+        line is kernel_name, or "default"
+        """
+        if line.strip():
+            module_name = line.strip()
+        else:
+            module_name = "default"
+        magic.code = cell
+        magic.cell_kx(module_name)
