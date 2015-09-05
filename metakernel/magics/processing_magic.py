@@ -4,6 +4,8 @@
 from metakernel import Magic
 from IPython.display import HTML
 
+
+
 class ProcessingMagic(Magic):
     canvas_id = 0
 
@@ -26,7 +28,11 @@ class ProcessingMagic(Magic):
         self.canvas_id += 1
         """%%processing - run contents of cell as a Processing script"""
 
-        env = {"code": repr(self.code)[1:],
+        repr_code = repr(self.code)
+        if repr_code.startswith('u'):
+            repr_code = repr_code[1:]
+
+        env = {"code": repr_code,
                "id": self.canvas_id}
         code = """
 <canvas id="canvas_%(id)s"></canvas>
@@ -44,3 +50,16 @@ require([window.location.protocol + "//calysto.github.io/javascripts/processing/
 
 def register_magics(kernel):
     kernel.register_magics(ProcessingMagic)
+
+def register_ipython_magics():
+    from metakernel import IPythonKernel
+    from IPython.core.magic import register_cell_magic
+    kernel = IPythonKernel()
+    magic = ProcessingMagic(kernel)
+
+    @register_cell_magic
+    def processing(line, cell):
+        """
+        """
+        magic.code = cell
+        magic.cell_processing()

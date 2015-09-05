@@ -718,7 +718,7 @@ def register_ipython_magics(*magics):
         basename = os.path.basename(magic)
         if basename == "__init__.py":
             continue
-        if magics is None or basename in magics:
+        if len(magics) == 0 or basename in magics:
             module = __import__(os.path.splitext(basename)[0])
             imp.reload(module)
             if hasattr(module, "register_ipython_magics"):

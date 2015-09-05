@@ -55,3 +55,17 @@ class DotMagic(Magic):
 
 def register_magics(kernel):
     kernel.register_magics(DotMagic)
+
+def register_ipython_magics():
+    from metakernel import IPythonKernel
+    from IPython.core.magic import register_cell_magic
+    kernel = IPythonKernel()
+    magic = DotMagic(kernel)
+
+    @register_cell_magic
+    def dot(line, cell):
+        """
+        %%dot - evaluate cell contents as a dot diagram.
+        """
+        magic.code = cell
+        magic.cell_dot()
