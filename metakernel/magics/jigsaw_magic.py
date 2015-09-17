@@ -38,7 +38,7 @@ class JigsawMagic(Magic):
             download("https://calysto.github.io/jigsaw/" + language + ".html", 
                      language + ".html")
         # Display iframe:
-        iframe = """<iframe src="%s.html" width="100%%" height="350" style="resize: both; overflow: auto;"></frame>""" % filename
+        iframe = """<iframe src="%s.html" width="100%%" height="350" style="resize: both; overflow: auto;"></frame>""" % language
         self.kernel.Display(HTML(iframe))
 
 def register_magics(kernel):
