@@ -38,6 +38,16 @@ or even just:
 
 if this is the most recent Jupyter session you have started.
 
+## `%dot`
+
+%dot CODE - render code as Graphviz image
+
+This line magic will render the Graphiz CODE, and render
+it as an image.
+
+Example:
+    %dot graph A { a->b };
+
 ## `%download`
 
 %download URL [-f FILENAME] - download file from URL
@@ -131,6 +141,15 @@ JavaScript in the browser.
 Example:
     %javascript console.log("Print in the browser console")
 
+## `%jigsaw`
+
+%jigsaw LANGUAGE - show visual code editor/generator
+
+This line magic will allow visual code editing or generation.
+
+Example:
+    %jigsaw Processing
+
 ## `%kernel`
 
 %kernel MODULE CLASS [-k NAME] - construct a kernel for sending code.
@@ -212,6 +231,31 @@ folder.
 
 Example:
     %lsmagic
+
+## `%macro`
+
+%macro NAME - execute a macro
+%macro -l [all|learned|system] - list macros
+%macro [-s] [-d] NAME - show or delete a macro
+
+This line macro will execute, show, list, or delete the
+named macro.
+
+Examples:
+    %macro renumber-cells
+
+    %%macro test
+    print "Ok!"
+
+    %macro -l all
+
+    %macro -d test
+
+Options:
+-------
+-s --show      show macro [default: False]
+-l --list      list macros [default: False]
+-d --delete    delete a named macro [default: False]
 
 ## `%magic`
 
@@ -400,31 +444,6 @@ Examples:
 
 You can also use "!" instead of "%shell".
 
-## `%spell`
-
-%spell NAME - execute a spell
-%spell -l [all|learned|system] - list spells
-%spell [-s] [-d] NAME - show or delete a spell
-
-This line magic will execute, show, list, or delete the
-named spell.
-
-Examples:
-    %spell renumber-cells
-
-    %%spell test
-    print "Ok!"
-
-    %spell -l all
-
-    %spell -d test
-
-Options:
--------
--s --show      show spell [default: False]
--l --list      list spells [default: False]
--d --delete    delete a named spell [default: False]
-
 # Cell Magics
 
 ## `%%debug`
@@ -438,6 +457,18 @@ Example:
     %%debug
 
     (define x 1)
+
+## `%%dot`
+
+%%dot - render contents of cell as Graphviz image
+
+This cell magic will send the cell to the browser as
+HTML.
+
+Example:
+    %%dot
+
+    graph A { a->b };
 
 ## `%%file`
 
@@ -517,6 +548,21 @@ Example:
     x_1 = \dfrac{a}{b}
 
     x_2 = a^{n - 1}
+
+## `%%macro`
+
+%%macro NAME - learn a new macro
+
+This cell macro will learn the macro in the
+cell. The cell contents are just commands (macros
+or code in the kernel language).
+
+Example:
+    %%macro test
+    print "Ok!"
+
+    %macro test
+    Ok!
 
 ## `%%processing`
 
@@ -621,21 +667,6 @@ Options:
 -------
 -o --output    rather than showing the contents, show the results [default: False]
 
-## `%%spell`
-
-%%spell NAME - learn a new spell
-
-This cell magic will learn the spell in the
-cell. The cell contents are just commands (magics
-or code in the kernel language).
-
-Example:
-    %%spell test
-    print "Ok!"
-
-    %spell test
-    Ok!
-
 ## `%%time`
 
 %%time - show time to run cell
@@ -654,6 +685,9 @@ may fluctuate with number of users, system, load, etc.
 
 %%tutor [--language=LANGUAGE] - show cell with
 Online Python Tutor.
+
+Defaults to use the language of the current kernel.
+'python' is an alias for 'python3'.
 
 Examples:
    %%tutor -l python3
@@ -677,5 +711,5 @@ Examples:
 
 Options:
 -------
--l --language  Possible languages to be displayed within the iframe. Possible values are: python2, python3, java, javascript
+-l --language  Possible languages to be displayed within the iframe. Possible values are: python, python2, python3, java, javascript
 
