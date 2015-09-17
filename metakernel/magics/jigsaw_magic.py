@@ -34,9 +34,9 @@ class JigsawMagic(Magic):
             %jigsaw Processing
         """
         # Copy iframe html to here (must come from same domain):
-        if not os.path.isfile("Processing.html"):
-            download("https://calysto.github.io/jigsaw/" + language + ".html", 
-                     language + ".html")
+        ##if not os.path.isfile("Processing.html"):
+        download("https://calysto.github.io/jigsaw/" + language + ".html", 
+                 language + ".html")
         # Display iframe:
         iframe = """<iframe src="%s.html" width="100%%" height="350" style="resize: both; overflow: auto;"></frame>""" % language
         self.kernel.Display(HTML(iframe))
@@ -44,3 +44,12 @@ class JigsawMagic(Magic):
 def register_magics(kernel):
     kernel.register_magics(JigsawMagic)
 
+def register_ipython_magics():
+    from metakernel import IPythonKernel
+    from IPython.core.magic import register_line_magic
+    kernel = IPythonKernel()
+    magic = JigsawMagic(kernel)
+
+    @register_line_magic
+    def jigsaw(line):
+        magic.line_jigsaw(line)
