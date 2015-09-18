@@ -47,7 +47,7 @@ class JigsawMagic(Magic):
                  language + ".html")
         # Make up a random workspace name:
         if workspace is None:
-            workspace = ".jigsaw-workspace-" + (''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for i in range(6))) + ".xml"
+            workspace = "jigsaw-workspace-" + (''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for i in range(6))) + ".xml"
         # Display iframe:
         iframe = """
 <script>
