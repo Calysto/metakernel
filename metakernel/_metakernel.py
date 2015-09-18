@@ -592,7 +592,7 @@ class MetaKernel(Kernel):
         Given an line, such as "%download http://example.com/", parse
         and execute magic.
         """
-        return self.get_magic(text)
+        return self.get_magic(line)
 
     def get_magic(self, text):
         ## FIXME: Bad name, use call_magic instead.
