@@ -45,7 +45,7 @@ class MagicMagic(Magic):
             self.kernel.Print("    " + string)
         self.kernel.Print("")
 
-    def get_magic(self, info):
+    def get_magic(self, info, get_args=False):
 
         if not info['magic']:
             return None
@@ -73,8 +73,12 @@ class MagicMagic(Magic):
         else:
             # FIXME: Raise an error
             return None
-        return magic.call_magic(minfo['type'], minfo['name'],
-                                minfo['code'], minfo['args'])
+        if get_args:
+            return magic.get_args(minfo['type'], minfo['name'],
+                                  minfo['code'], minfo['args'])
+        else:
+            return magic.call_magic(minfo['type'], minfo['name'],
+                                    minfo['code'], minfo['args'])
 
 
 def register_magics(kernel):

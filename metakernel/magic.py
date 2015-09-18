@@ -30,6 +30,30 @@ class Magic(object):
         self.evaluate = True
         self.code = ''
 
+    def get_args(self, mtype, name, code, args) :
+        self.code = code
+        old_args = args
+        mtype = mtype.replace('sticky', 'cell')
+
+        func = getattr(self, mtype + '_' + name)
+        try:
+            args, kwargs = _parse_args(func, args, usage=self.get_help(mtype, name))
+        except Exception as e:
+            self.kernel.Error(str(e))
+            return self
+
+        arg_spec = inspect.getargspec(func)
+        fargs = arg_spec.args
+        if fargs[0] == 'self':
+            fargs = fargs[1:]
+
+        fargs = [f for f in fargs if not f in kwargs.keys()]
+        if len(args) > len(fargs) and not arg_spec.varargs:
+            extra = ' '.join(str(s) for s in (args[len(fargs) - 1:]))
+            args = args[:len(fargs) - 1] + [extra]
+
+        return (args, kwargs, old_args)
+
     def call_magic(self, mtype, name, code, args):
         self.code = code
         old_args = args

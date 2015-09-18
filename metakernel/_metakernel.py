@@ -587,12 +587,27 @@ class MetaKernel(Kernel):
             'name': 'stderr', 'text': message, 'metadata': dict()}
         self.send_response(self.iopub_socket, 'stream', stream_content)
 
+    def call_magic(self, line):
+        """
+        Given an line, such as "%download http://example.com/", parse
+        and execute magic.
+        """
+        return self.get_magic(text)
+
     def get_magic(self, text):
+        ## FIXME: Bad name, use call_magic instead.
         # if first line matches a magic,
         # call magic.call_magic() and return magic object
         info = self.parse_code(text)
         magic = self.line_magics['magic']
         return magic.get_magic(info)
+
+    def get_magic_args(self, text):
+        # if first line matches a magic,
+        # call magic.call_magic() and return magic args
+        info = self.parse_code(text)
+        magic = self.line_magics['magic']
+        return magic.get_magic(info, get_args=True)
 
     def get_help_on(self, expr, level=0, none_on_fail=False,
             cursor_pos=-1):
@@ -676,7 +691,7 @@ def format_message(*args, **kwargs):
     message = " ".join([str(a) for a in args]) + end
     return message
 
-class IPythonKernel(object):
+class IPythonKernel(MetaKernel):
     """
     Class to make an IPython Kernel look like a MetaKernel Kernel.
     """
@@ -685,6 +700,13 @@ class IPythonKernel(object):
         'name': 'python',
         'file_extension': '.py',
     }
+
+    def __init__(self):
+        from metakernel.magics.magic_magic import MagicMagic
+        self.line_magics = {'magic': MagicMagic(self)}
+        self.cell_magics = {}
+        self.parser = Parser(self.identifier_regex, self.func_call_regex,
+                             self.magic_prefixes, self.help_suffix)
 
     def Display(self, *args, **kwargs):
         from IPython.display import display

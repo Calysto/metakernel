@@ -145,4 +145,3 @@ class MacroMagic(Magic):
 def register_magics(kernel):
     kernel.register_magics(MacroMagic)
 
-

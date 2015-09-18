@@ -60,7 +60,12 @@ def register_ipython_magics():
     from IPython.core.magic import register_line_magic
     kernel = IPythonKernel()
     magic = JigsawMagic(kernel)
+    # Make magics callable:
+    kernel.line_magics["jigsaw"] = magic
 
     @register_line_magic
     def jigsaw(line):
-        magic.line_jigsaw(line)
+        """
+        Use the Jigsaw code visualizer and generator.
+        """
+        kernel.call_magic("%jigsaw " + line)

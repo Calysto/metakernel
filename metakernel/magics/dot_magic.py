@@ -61,6 +61,8 @@ def register_ipython_magics():
     from IPython.core.magic import register_cell_magic
     kernel = IPythonKernel()
     magic = DotMagic(kernel)
+    # Make magics callable:
+    kernel.cell_magics["dot"] = magic
 
     @register_cell_magic
     def dot(line, cell):
@@ -68,4 +70,4 @@ def register_ipython_magics():
         %%dot - evaluate cell contents as a dot diagram.
         """
         magic.code = cell
-        magic.cell_dot()
+        kernel.call_magic(line)
