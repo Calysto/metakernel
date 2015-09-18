@@ -49,7 +49,12 @@ class JigsawMagic(Magic):
         if workspace is None:
             workspace = ".jigsaw-workspace-" + (''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for i in range(6))) + ".xml"
         # Display iframe:
-        iframe = """<iframe src="%s.html?workspace=%s" width="100%%" height="350" style="resize: both; overflow: auto;"></frame>""" % (language, workspace)
+        iframe = """
+<script>
+   document.workspace_filename = "%s";
+</script>
+
+<iframe src="%s.html" width="100%%" height="350" style="resize: both; overflow: auto;"></frame>""" % (workspace, language)
         self.kernel.Display(HTML(iframe))
 
 def register_magics(kernel):
