@@ -55,13 +55,17 @@ class JigsawMagic(Magic):
             workspace.element = document.element;
             document.jigsaw_workspaces[workspace_filename] = workspace;
 
-            $([window.parent.IPython.events]).on('notebook_saved.Notebook', function() { 
-                try {
-                    document.jigsaw_save_workspace(workspace_filename); 
-                } catch(err) {
-                    // ignore failure, might not exist
-                }
-            });
+            try {
+                $([window.parent.IPython.events]).on('notebook_saved.Notebook', function() { 
+                    try {
+                        document.jigsaw_save_workspace(workspace_filename); 
+                    } catch(err) {
+                        // ignore failure, might not exist
+                    }
+                });
+            catch (err) {
+                // rendering for display
+            }
             
             var xml = document.jigsaw_loadXMLDoc(workspace_filename);
             if (xml === null) {
