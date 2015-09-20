@@ -1,6 +1,7 @@
 from distutils.command.install import install
 from distutils.core import setup
 import sys
+import os
 
 kernel_json = {
     "argv": [sys.executable, 
@@ -34,7 +35,7 @@ if svem_flag in sys.argv:
     sys.argv.remove(svem_flag)
 
 setup(name='metakernel_python', 
-      version='0.11.0',
+      version='0.11.1',
       description='A Python kernel for Jupyter/IPython',
       long_description="A Python kernel for Jupyter/IPython, based on MetaKernel",
       url="https://github.com/calysto/metakernel/tree/master/metakernel_python",
