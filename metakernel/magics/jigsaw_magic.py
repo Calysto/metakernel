@@ -108,7 +108,7 @@ class JigsawMagic(Magic):
                     //document.getElementById('code_output').value += res.toString();
                 }
             } else if (out.msg_type == "error") {
-                res = out.content.ename + ": " + out.content.evalue;
+                res = out.content.ename + ": " + out.content.evalue + "\\n";
                 // FIXME: out.traceback is Array of terminal color-coded [-codes
             } else {
                 // if output is something we haven't thought of
