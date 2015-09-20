@@ -51,7 +51,7 @@ class JigsawMagic(Magic):
 
         document.jigsaw_workspaces = {};
 
-        document.jigsaw_register_workspace = function(workspace_filename, workspace) {
+        document.jigsaw_register_workspace = function(workspace_filename, workspace, xml_init) {
             workspace.element = document.element;
             document.jigsaw_workspaces[workspace_filename] = workspace;
 
@@ -65,7 +65,7 @@ class JigsawMagic(Magic):
             
             var xml = document.jigsaw_loadXMLDoc(workspace_filename);
             if (xml === null) {
-                xml = document.getElementById('workspace');
+                xml = xml_init;
                 if (xml === null) {
                     xml = Blockly.Xml.textToDom('<xml id="workspace"><block type="procedures_defnoreturn" x="12" y="13"><field name="NAME">setup</field></block><block type="procedures_defnoreturn" x="13" y="113"><field name="NAME">draw</field></block></xml>');
                 }
