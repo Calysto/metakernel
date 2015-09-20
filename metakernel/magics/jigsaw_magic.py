@@ -63,7 +63,7 @@ class JigsawMagic(Magic):
                         // ignore failure, might not exist
                     }
                 });
-            catch (err) {
+            } catch (err) {
                 // rendering for display
             }
             
