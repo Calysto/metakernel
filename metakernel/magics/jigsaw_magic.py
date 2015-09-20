@@ -67,10 +67,10 @@ class JigsawMagic(Magic):
             if (xml === null) {
                 xml = xml_init;
                 if (xml === null) {
-                    xml = Blockly.Xml.textToDom('<xml id="workspace"><block type="procedures_defnoreturn" x="12" y="13"><field name="NAME">setup</field></block><block type="procedures_defnoreturn" x="13" y="113"><field name="NAME">draw</field></block></xml>');
+                    xml = Blockly.Xml.textToDom('<xml id="workspace"></xml>');
                 }
             } else {
-                xml = xml.children[0];
+                xml = xml.children[0]; // document
             }
             Blockly.Xml.domToWorkspace(workspace, xml);
         };
