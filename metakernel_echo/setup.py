@@ -1,5 +1,6 @@
 from distutils.command.install import install
 from distutils.core import setup
+from distutils import log
 import json
 import sys
 import os
@@ -38,7 +39,7 @@ if svem_flag in sys.argv:
     sys.argv.remove(svem_flag)
 
 setup(name='metakernel_echo',
-      version='0.11.2',
+      version='0.11.3',
       description='A simple echo kernel for Jupyter/IPython',
       long_description="A simple echo kernel for Jupyter/IPython, based on MetaKernel",
       url="https://github.com/calysto/metakernel/tree/master/metakernel_echo",
