@@ -113,10 +113,10 @@ class JigsawMagic(Magic):
             }
         };
         
-        document.jigsaw_generate = function(workspace_filename, insert_code) {
+        document.jigsaw_generate = function(workspace_filename, language, insert_code) {
             var workspace = document.jigsaw_workspaces[workspace_filename];
             var callbacks = { 'iopub' : {'output' : function(out) { document.jigsaw_handle_output(workspace_filename, out); }}};
-            var code = Blockly.Python.workspaceToCode(workspace);
+            var code = Blockly[language].workspaceToCode(workspace);
             if (insert_code == 1) {
                 var cell_index = document.jigsaw_get_cell(workspace.element);
                 var cell = IPython.notebook.insert_cell_at_index(0, cell_index + 1);
