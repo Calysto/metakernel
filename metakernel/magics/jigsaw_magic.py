@@ -2,27 +2,21 @@
 # Distributed under the terms of the Modified BSD License.
 
 from metakernel import Magic, option
-from IPython.display import HTML
+from IPython.display import HTML, Javascript
 import string
 import random
-import urllib
-try:
-    import urlparse
-except ImportError:
-    from urllib import parse as urlparse
 import os
 
 try:
-    urllib.URLopener
-    def download(url, filename):
-        opener = urllib.URLopener()
-        opener.retrieve(url, filename)
-except: # python3
     import urllib.request
-    def download(url, filename):
-        g = urllib.request.urlopen(url)
-        with open(filename, 'wb') as f:
-            f.write(g.read())        
+    urlopen = urllib.request.urlopen
+except: # python2
+    import urllib
+    urlopen = urllib.urlopen
+
+def download(url):
+    g = urlopen(url)
+    return g.read().decode("utf-8")
 
 class JigsawMagic(Magic):
 
@@ -39,22 +33,131 @@ class JigsawMagic(Magic):
         Examples:
             %jigsaw Processing
             %jigsaw Python
-            %jigsaw Processing --workspace prog1.xml
+            %jigsaw Processing --workspace workspace1
         """
         # Copy iframe html to here (must come from same domain):
-        ##if not os.path.isfile("Processing.html"):
-        download("https://calysto.github.io/jigsaw/" + language + ".html", 
-                 language + ".html")
         # Make up a random workspace name:
         if workspace is None:
-            workspace = "jigsaw-workspace-" + (''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for i in range(6))) + ".xml"
+            workspace = "jigsaw-workspace-" + (''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for i in range(6)))
+        workspace_filename = workspace + ".xml"
+        html_text = download("https://calysto.github.io/jigsaw/" + language + ".html")
+        html_filename = workspace + ".html"
+        html_text = html_text.replace("MYWORKSPACENAME", workspace_filename)
+        with open(html_filename, "w") as fp:
+            fp.write(html_text)
         # Display iframe:
-        iframe = """
-<script>
-   document.workspace_filename = "%s";
-</script>
+        script = """
+    if (document.jigsaw_register_workspace === undefined) {
 
-<iframe src="%s.html" width="100%%" height="350" style="resize: both; overflow: auto;"></frame>""" % (workspace, language)
+        document.jigsaw_workspaces = {};
+
+        document.jigsaw_register_workspace = function(workspace_filename, workspace) {
+            workspace.element = document.element;
+            document.jigsaw_workspaces[workspace_filename] = workspace;
+
+            $([window.parent.IPython.events]).on('notebook_saved.Notebook', function() { 
+                document.jigsaw_save_workspace(workspace_filename); 
+            });
+            
+            var xml = document.jigsaw_loadXMLDoc(workspace_filename);
+            if (xml === null) {
+                xml = Blockly.Xml.textToDom('<xml id="workspace"><block type="procedures_defnoreturn" x="12" y="13"><field name="NAME">setup</field></block><block type="procedures_defnoreturn" x="13" y="113"><field name="NAME">draw</field></block></xml>');
+            } else {
+                xml = xml.children[0];
+            }
+            Blockly.Xml.domToWorkspace(workspace, xml);
+        };
+
+        document.jigsaw_handle_output = function(workspace_filename, out) {
+            var workspace = document.jigsaw_workspaces[workspace_filename];
+            //var output_area = workspace.element.output_area;
+            var cell_index = document.jigsaw_get_cell(workspace.element);
+            var cell = IPython.notebook.get_cell(cell_index);
+            var res = null;
+            var data = null;
+            document.cell = cell;
+            document.out = out;
+            if (out.msg_type == "stream") {
+                res = out.content.text;
+                //document.getElementById('code_output').value += res.toString();
+            } else if (out.msg_type === "pyout") {
+                // if output is a python object
+                res = out.content.data["text/plain"];
+                //document.getElementById('code_output').value += res.toString(); 
+            } else if (out.msg_type == "pyerr") {
+                // if output is a python error
+                res = out.content.data["text/plain"];
+                //document.getElementById('code_output').value += res.toString();
+            } else if (out.msg_type == "execute_result") {
+                var str = out.content.data["text/plain"];
+                res = str;
+                if (res.indexOf("u") == 0)
+                    res = res.substring(2, res.length - 1) + "\\n";
+                if (res) {
+                    //document.getElementById('code_output').value += res.toString();
+                }
+            } else {
+                // if output is something we haven't thought of
+                res = out.toString();
+                //document.getElementById('code_output').value += res.toString();
+            }
+            if (res) {
+                cell.output_area.append_output({output_type: "stream", text: res.toString(), name: "output"})
+            }
+        };
+        
+        document.jigsaw_generate = function(workspace_filename, insert_code) {
+            var workspace = document.jigsaw_workspaces[workspace_filename];
+            var callbacks = { 'iopub' : {'output' : function(out) { document.jigsaw_handle_output(workspace_filename, out); }}};
+            var code = Blockly.Python.workspaceToCode(workspace);
+            if (insert_code == 1) {
+                var cell_index = document.jigsaw_get_cell(workspace.element);
+                var cell = IPython.notebook.insert_cell_at_index(0, cell_index + 1);
+                cell.set_text(code);
+            } else {
+                window.parent.IPython.notebook.kernel.execute(code,
+                                                              callbacks,
+                                                              {silent: false});
+            }
+        };
+        
+        document.jigsaw_save_workspace = function(workspace_filename) {
+            var workspace = document.jigsaw_workspaces[workspace_filename];
+            var xml = Blockly.Xml.workspaceToDom(workspace);
+            document.xml = xml;
+            if (xml !== undefined) {
+                console.log(xml);
+                //xml.style = "display: none";
+                //xml.id = "workspace";
+                var xml_text = Blockly.Xml.domToText(xml)
+                IPython.notebook.kernel.execute('%%file ' + workspace_filename + '\\n' + xml_text);
+            }
+        };
+        
+        document.jigsaw_loadXMLDoc = function(filename) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("GET", filename, false);
+            xhttp.send();
+            return xhttp.responseXML;
+        };
+    }
+
+    document.jigsaw_get_cell = function (element) {
+        var mydiv = element[0].parentNode.parentNode.parentNode.parentNode;
+        var cells = IPython.notebook.get_cells();
+        for (var i = 0; i < cells.length; i++) {
+            if (mydiv === cells[i].element[0]) {
+                return i;
+            }
+        }
+        return null;
+    };
+
+    document.element = element;
+"""
+        script = script.replace("MYWORKSPACENAME", workspace_filename);
+        iframe = """<iframe src="%s" width="100%%" height="350" style="resize: both; overflow: auto;"></frame>""" % html_filename
+        self.kernel.Display(Javascript(script))
         self.kernel.Display(HTML(iframe))
 
 def register_magics(kernel):
