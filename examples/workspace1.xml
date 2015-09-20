@@ -1,0 +1,1 @@
+<xml xmlns="http://www.w3.org/1999/xhtml"><block type="text_print" x="21" y="24"><value name="TEXT"><block type="variables_get"><field name="VAR">x</field></block></value></block></xml>

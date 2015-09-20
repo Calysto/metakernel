@@ -1,0 +1,423 @@
+<html>
+<head>
+  <script src="https://calysto.github.io/javascripts/blockly/blockly_compressed.js"></script>
+  <script src="https://calysto.github.io/javascripts/blockly/blocks_compressed.js"></script>
+  <script src="https://calysto.github.io/javascripts/blockly/python_compressed.js"></script>
+  <script src="https://calysto.github.io/javascripts/blockly/msg/js/en.js"></script>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    body {
+      background-color: #fff;
+      font-family: sans-serif;
+      overflow: hidden;
+    }
+    h1 {
+      font-weight: normal;
+      font-size: 140%;
+    }
+    table {
+      height: 100%;
+      width: 100%;
+    }
+    #blocklyArea {
+      height: 99%;
+    }
+  </style>
+    <script>
+        // New block types:
+        /*
+        Blockly.Blocks['import_statement'] = {
+          init: function() {
+            this.appendValueInput("import")
+                .setCheck("String")
+                .appendField("import");
+            this.setInputsInline(true);
+            this.setPreviousStatement(true);
+            this.setNextStatement(true);
+            this.setColour(20);
+            this.setTooltip('');
+            this.setHelpUrl('http://www.example.com/');
+          }
+        };
+        */
+        Blockly.Blocks['import_statement'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("import")
+                .appendField(new Blockly.FieldVariable("item"), "module");
+            this.setInputsInline(true);
+            this.setPreviousStatement(true);
+            this.setNextStatement(true);
+            this.setColour(20);
+            this.setTooltip('');
+            this.setHelpUrl('http://www.example.com/');
+          }
+        };
+
+        Blockly.Blocks['expression_statement'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("expression")
+                .appendField(new Blockly.FieldTextInput(""), "expression");
+            this.setInputsInline(true);
+            this.setPreviousStatement(true);
+            this.setNextStatement(true);
+            this.setColour(20);
+            this.setTooltip('');
+            this.setHelpUrl('http://www.example.com/');
+          }
+        };
+        
+        Blockly.Blocks['expression_value'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("expression")
+                .appendField(new Blockly.FieldTextInput(""), "expression");
+            this.setInputsInline(true);
+            this.setOutput(true);
+            this.setColour(20);
+            this.setTooltip('');
+            this.setHelpUrl('http://www.example.com/');
+          }
+        };
+
+        /*
+        Blockly.Blocks['call_function'] = {
+          init: function() {
+            this.appendValueInput("do")
+                .setCheck("String")
+                .appendField("do");
+            this.appendValueInput("arguments")
+                .setCheck("Array")
+                .appendField("with");
+            this.setInputsInline(true);
+            this.setOutput(true, null);
+            this.setColour(20);
+            this.setTooltip('');
+            this.setHelpUrl('http://www.example.com/');
+          }
+        };
+        */
+        // Conversions:
+        Blockly.Python['import_statement'] = function(block) {
+          //var value_import = Blockly.Python.valueToCode(block, 'import', Blockly.Python.ORDER_ATOMIC);
+          // remove quotes:
+          //var code = 'import ' + value_import.substring(1, value_import.length - 1) + "\n";
+          var module_name = block.getFieldValue("module")
+          var code = "import " + module_name + "\n";
+          return code;
+        };
+        
+        Blockly.Python['expression_statement'] = function(block) {
+            var text_expression = block.getFieldValue('expression');
+            // TODO: Assemble Python into code variable.
+            var code = text_expression + "\n";
+            return code;
+        };
+        
+        Blockly.Python['expression_value'] = function(block) {
+          var text_expression = block.getFieldValue('expression');
+          // TODO: Assemble Python into code variable.
+          var code = "(" + text_expression + ")";
+          // TODO: Change ORDER_NONE to the correct strength.
+          return [code, Blockly.Python.ORDER_NONE];
+        };
+        
+        /*
+        Blockly.Python['call_function'] = function(block) {
+          var value_do = Blockly.Python.valueToCode(block, 'do', Blockly.Python.ORDER_ATOMIC);
+          var value_arguments = Blockly.Python.valueToCode(block, 'arguments', Blockly.Python.ORDER_ATOMIC);
+          // TODO: Assemble Python into code variable.
+          window.parent.block = block;
+          var code = '...';
+          // TODO: Change ORDER_NONE to the correct strength.
+          return [code, Blockly.Python.ORDER_NONE];
+        };
+        */
+        
+        // Change behavior:
+        Blockly.Python.init = function(workspace) {
+          // Create a dictionary of definitions to be printed before the code.
+          Blockly.Python.definitions_ = Object.create(null);
+          // Create a dictionary mapping desired function names in definitions_
+          // to actual function names (to avoid collisions with user functions).
+          Blockly.Python.functionNames_ = Object.create(null);
+
+          if (!Blockly.Python.variableDB_) {
+            Blockly.Python.variableDB_ =
+                new Blockly.Names(Blockly.Python.RESERVED_WORDS_);
+          } else {
+            Blockly.Python.variableDB_.reset();
+          }
+          /* Don't init variables automatically:
+              var defvars = [];
+              var variables = Blockly.Variables.allVariables(workspace);
+              for (var i = 0; i < variables.length; i++) {
+                defvars[i] = Blockly.Python.variableDB_.getName(variables[i],
+                    Blockly.Variables.NAME_TYPE) + ' = None';
+              }
+              Blockly.Python.definitions_['variables'] = defvars.join('\n');
+          */
+       };
+    </script>
+</head>
+<body>
+
+  <xml id="toolbox" style="display: none">
+    <category name="Logic">
+      <block type="controls_if"></block>
+      <block type="logic_compare"></block>
+      <block type="logic_operation"></block>
+      <block type="logic_negate"></block>
+      <block type="logic_boolean"></block>
+      <block type="logic_null"></block>
+      <block type="logic_ternary"></block>
+    </category>
+    <category name="Loops">
+      <block type="controls_repeat_ext">
+        <value name="TIMES">
+          <block type="math_number">
+            <field name="NUM">10</field>
+          </block>
+        </value>
+      </block>
+      <block type="controls_whileUntil"></block>
+      <block type="controls_for">
+        <value name="FROM">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <value name="TO">
+          <block type="math_number">
+            <field name="NUM">10</field>
+          </block>
+        </value>
+        <value name="BY">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+      </block>
+      <block type="controls_forEach"></block>
+      <block type="controls_flow_statements"></block>
+    </category>
+    <category name="Math">
+      <block type="math_number"></block>
+      <block type="math_arithmetic"></block>
+      <block type="math_single"></block>
+      <block type="math_trig"></block>
+      <block type="math_constant"></block>
+      <block type="math_number_property"></block>
+      <block type="math_change">
+        <value name="DELTA">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+      </block>
+      <block type="math_round"></block>
+      <block type="math_on_list"></block>
+      <block type="math_modulo"></block>
+      <block type="math_constrain">
+        <value name="LOW">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <value name="HIGH">
+          <block type="math_number">
+            <field name="NUM">100</field>
+          </block>
+        </value>
+      </block>
+      <block type="math_random_int">
+        <value name="FROM">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <value name="TO">
+          <block type="math_number">
+            <field name="NUM">100</field>
+          </block>
+        </value>
+      </block>
+      <block type="math_random_float"></block>
+    </category>
+    <category name="Text">
+      <block type="text"></block>
+      <block type="text_join"></block>
+      <block type="text_append">
+        <value name="TEXT">
+          <block type="text"></block>
+        </value>
+      </block>
+      <block type="text_length"></block>
+      <block type="text_isEmpty"></block>
+      <block type="text_indexOf">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR">text</field>
+          </block>
+        </value>
+      </block>
+      <block type="text_charAt">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR">text</field>
+          </block>
+        </value>
+      </block>
+      <block type="text_getSubstring">
+        <value name="STRING">
+          <block type="variables_get">
+            <field name="VAR">text</field>
+          </block>
+        </value>
+      </block>
+      <block type="text_changeCase"></block>
+      <block type="text_trim"></block>
+      <block type="text_print"></block>
+      <block type="text_prompt_ext">
+        <value name="TEXT">
+          <block type="text"></block>
+        </value>
+      </block>
+    </category>
+    <category name="Lists">
+      <block type="lists_create_empty"></block>
+      <block type="lists_create_with"></block>
+      <block type="lists_repeat">
+        <value name="NUM">
+          <block type="math_number">
+            <field name="NUM">5</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_length"></block>
+      <block type="lists_isEmpty"></block>
+      <block type="lists_indexOf">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR">list</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_getIndex">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR">list</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_setIndex">
+        <value name="LIST">
+          <block type="variables_get">
+            <field name="VAR">list</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_getSublist">
+        <value name="LIST">
+          <block type="variables_get">
+            <field name="VAR">list</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_split">
+        <value name="DELIM">
+          <block type="text">
+            <field name="TEXT">,</field>
+          </block>
+        </value>
+      </block>
+    </category>
+    <category name="Color">
+      <block type="colour_picker"></block>
+      <block type="colour_random"></block>
+      <block type="colour_rgb">
+        <value name="RED">
+          <block type="math_number">
+            <field name="NUM">100</field>
+          </block>
+        </value>
+        <value name="GREEN">
+          <block type="math_number">
+            <field name="NUM">50</field>
+          </block>
+        </value>
+        <value name="BLUE">
+          <block type="math_number">
+            <field name="NUM">0</field>
+          </block>
+        </value>
+      </block>
+      <block type="colour_blend">
+        <value name="COLOUR1">
+          <block type="colour_picker">
+            <field name="COLOUR">#ff0000</field>
+          </block>
+        </value>
+        <value name="COLOUR2">
+          <block type="colour_picker">
+            <field name="COLOUR">#3333ff</field>
+          </block>
+        </value>
+        <value name="RATIO">
+          <block type="math_number">
+            <field name="NUM">0.5</field>
+          </block>
+        </value>
+      </block>
+    </category>
+    <sep></sep>
+    <category name="Variables" custom="VARIABLE"></category>
+    <category name="Functions" custom="PROCEDURE"></category>
+    <sep></sep>
+    <category name="Python">
+      <block type="import_statement"></block>
+      <block type="expression_statement"></block>
+      <block type="expression_value"></block>
+    </category>
+  </xml>
+
+  <xml id="workspace" style="display: none">
+  </xml>
+
+<table>
+<tr>
+<td>
+ <div id="blocklyDiv" style="height: 95%; width: 99%;"></div>
+</td>
+</tr>
+<tr>
+<td>
+<div style="text-align: center">
+    <button onclick="window.parent.document.jigsaw_generate('workspace2.xml', 'Python')">Run</button>
+    <button onclick="window.parent.document.jigsaw_generate('workspace2.xml', 'Python', 1)">Generate Python Code</button>
+    <button onclick="window.parent.document.jigsaw_clear_output('workspace2.xml')">Clear Cell Output</button>
+</div>
+</td>
+</tr>
+</table>
+
+  <script>
+      // Make Blockly available to notebook:
+      window.parent.Blockly = Blockly;
+      window.parent.DOMParser = DOMParser;
+
+      var workspace = Blockly.inject('blocklyDiv',
+        {media: 'https://calysto.github.io/javascripts/blockly/media/',
+         toolbox: document.getElementById('toolbox'),
+         zoom: {enabled: true}
+        });
+
+      var xml_init = document.getElementById('workspace');
+      window.parent.document.jigsaw_register_workspace("workspace2.xml", workspace, xml_init);
+  </script>
+</body>
+</html>
