@@ -181,7 +181,7 @@ class JigsawMagic(Magic):
     }
 """
         script = script.replace("MYWORKSPACENAME", workspace_filename);
-        iframe = """<iframe src="%s" width="100%%" height="350" style="resize: both; overflow: auto;"></frame>""" % html_filename
+        iframe = """<iframe src="%s" width="100%%" height="350" style="resize: both; overflow: auto;"></iframe>""" % html_filename
         self.kernel.Display(Javascript(script))
         self.kernel.Display(HTML(iframe))
 
