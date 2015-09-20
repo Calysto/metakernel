@@ -1,5 +1,6 @@
 from distutils.command.install import install
 from distutils.core import setup
+import json
 import sys
 import os
 
@@ -35,7 +36,7 @@ if svem_flag in sys.argv:
     sys.argv.remove(svem_flag)
 
 setup(name='metakernel_bash',
-      version='0.11.1',
+      version='0.11.2',
       description='A Bash kernel for Jupyter/IPython',
       long_description="A Bash kernel for Jupyter/IPython, based on MetaKernel",
       url="https://github.com/calysto/metakernel/tree/master/metakernel_bash",
