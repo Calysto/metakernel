@@ -65,7 +65,10 @@ class JigsawMagic(Magic):
             
             var xml = document.jigsaw_loadXMLDoc(workspace_filename);
             if (xml === null) {
-                xml = Blockly.Xml.textToDom('<xml id="workspace"><block type="procedures_defnoreturn" x="12" y="13"><field name="NAME">setup</field></block><block type="procedures_defnoreturn" x="13" y="113"><field name="NAME">draw</field></block></xml>');
+                xml = document.getElementById('workspace');
+                if (xml === null) {
+                    xml = Blockly.Xml.textToDom('<xml id="workspace"><block type="procedures_defnoreturn" x="12" y="13"><field name="NAME">setup</field></block><block type="procedures_defnoreturn" x="13" y="113"><field name="NAME">draw</field></block></xml>');
+                }
             } else {
                 xml = xml.children[0];
             }
@@ -147,6 +150,7 @@ class JigsawMagic(Magic):
     }
 
     document.jigsaw_get_cell = function (element) {
+        // FIXME: brittle and ugly:
         var mydiv = element[0].parentNode.parentNode.parentNode.parentNode;
         var cells = IPython.notebook.get_cells();
         for (var i = 0; i < cells.length; i++) {
@@ -161,7 +165,9 @@ class JigsawMagic(Magic):
         var workspace = document.jigsaw_workspaces[workspace_filename];
         var cell_index = document.jigsaw_get_cell(workspace.element);
         var cell = IPython.notebook.get_cell(cell_index);
-        cell.output_area.text("");
+        // FIXME: brittle and ugly:
+        cell.element[0].children[2].children[1].children[2].children[1].children[0].innerHTML = ""
+        cell.output_area.outputs[2].text = ""
     };
 
     document.element = element;
