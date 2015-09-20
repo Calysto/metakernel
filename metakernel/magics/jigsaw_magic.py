@@ -56,7 +56,11 @@ class JigsawMagic(Magic):
             document.jigsaw_workspaces[workspace_filename] = workspace;
 
             $([window.parent.IPython.events]).on('notebook_saved.Notebook', function() { 
-                document.jigsaw_save_workspace(workspace_filename); 
+                try {
+                    document.jigsaw_save_workspace(workspace_filename); 
+                } catch(err) {
+                    // ignore failure, might not exist
+                }
             });
             
             var xml = document.jigsaw_loadXMLDoc(workspace_filename);
