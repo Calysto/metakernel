@@ -69,7 +69,9 @@ def register_ipython_magics():
     from IPython.core.magic import register_line_magic
     kernel = IPythonKernel()
     magic = DownloadMagic(kernel)
+    # Make magics callable:
+    kernel.line_magics["download"] = magic
 
     @register_line_magic
     def download(line):
-        magic.line_download(line)
+        kernel.call_magic("%download " + line)

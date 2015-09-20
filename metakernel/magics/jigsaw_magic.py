@@ -102,7 +102,7 @@ class JigsawMagic(Magic):
                 //document.getElementById('code_output').value += res.toString();
             }
             if (res) {
-                cell.output_area.append_output({output_type: "stream", text: res.toString(), name: "output"})
+                cell.output_area.append_output({output_type: "stream", text: res.toString(), name: "output"});
             }
         };
         
@@ -151,6 +151,13 @@ class JigsawMagic(Magic):
             }
         }
         return null;
+    };
+
+    document.jigsaw_clear_output = function (workspace_filename) {
+        var workspace = document.jigsaw_workspaces[workspace_filename];
+        var cell_index = document.jigsaw_get_cell(workspace.element);
+        var cell = IPython.notebook.get_cell(cell_index);
+        cell.output_area.text("");
     };
 
     document.element = element;
