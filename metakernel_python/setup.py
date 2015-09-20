@@ -11,14 +11,22 @@ kernel_json = {
     "name": "metakernel_python"
 }
 
-
 class install_with_kernelspec(install):
-
     def run(self):
         install.run(self)
-        from metakernel.utils import install_spec
-        install_spec(kernel_json)
-
+        from IPython.kernel.kernelspec import install_kernel_spec
+        from IPython.utils.tempdir import TemporaryDirectory
+        with TemporaryDirectory() as td:
+            os.chmod(td, 0o755) # Starts off as 700, not user readable
+            with open(os.path.join(td, 'kernel.json'), 'w') as f:
+                json.dump(kernel_json, f, sort_keys=True)
+            log.info('Installing kernel spec')
+            try:
+                install_kernel_spec(td, 'metakernel_python', user=self.user,
+                                    replace=True)
+            except:
+                install_kernel_spec(td, 'metakernel_python', user=not self.user,
+                                    replace=True)
 
 svem_flag = '--single-version-externally-managed'
 if svem_flag in sys.argv:
@@ -26,7 +34,7 @@ if svem_flag in sys.argv:
     sys.argv.remove(svem_flag)
 
 setup(name='metakernel_python', 
-      version='0.7.0',
+      version='0.11.0',
       description='A Python kernel for Jupyter/IPython',
       long_description="A Python kernel for Jupyter/IPython, based on MetaKernel",
       url="https://github.com/calysto/metakernel/tree/master/metakernel_python",
