@@ -174,7 +174,11 @@ class JigsawMagic(Magic):
         cell.output_area.outputs[2].text = ""
     };
 
-    document.element = element;
+    try {
+        document.element = element;
+    } catch (err) {
+        // rendering
+    }
 """
         script = script.replace("MYWORKSPACENAME", workspace_filename);
         iframe = """<iframe src="%s" width="100%%" height="350" style="resize: both; overflow: auto;"></frame>""" % html_filename
