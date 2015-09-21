@@ -1,0 +1,990 @@
+<html>
+<head>
+  <script src="https://calysto.github.io/javascripts/blockly/blockly_compressed.js"></script>
+  <script src="https://calysto.github.io/javascripts/blockly/blocks_compressed.js"></script>
+  <script src="https://calysto.github.io/javascripts/blockly/java_compressed.js"></script>
+  <script src="https://calysto.github.io/javascripts/blockly/msg/js/en.js"></script>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    body {
+      background-color: #fff;
+      font-family: sans-serif;
+      overflow: hidden;
+    }
+    h1 {
+      font-weight: normal;
+      font-size: 140%;
+    }
+    table {
+      height: 100%;
+      width: 100%;
+    }
+    #blocklyArea {
+      height: 99%;
+    }
+  </style>
+    <script>
+        // New block types:        
+        Blockly.Blocks['processing_arc'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("arc   with:");
+            this.appendValueInput("x")
+                .appendField("x")
+                .setCheck("Number");
+            this.appendValueInput("y")
+                .appendField("y")
+                .setCheck("Number");
+            this.appendValueInput("width")
+                .appendField("width")
+                .setCheck("Number");
+            this.appendValueInput("height")
+                .appendField("height")
+                .setCheck("Number");
+            this.appendValueInput("start")
+                .appendField("start")
+                .setCheck("Number");
+            this.appendValueInput("stop")
+                .appendField("stop")
+                .setCheck("Number");
+            this.setInputsInline(true);
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(20);
+            this.setTooltip('Draw an arc at (x, y)');
+            this.setHelpUrl('http://processingjs.org/reference/arc_/');
+          }
+        };
+        Blockly.Blocks['processing_ellipse'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("ellipse   with:");
+            this.appendValueInput("x")
+                .appendField("x")
+                .setCheck("Number");
+            this.appendValueInput("y")
+                .appendField("y")
+                .setCheck("Number");
+            this.appendValueInput("width")
+                .appendField("width")
+                .setCheck("Number");
+            this.appendValueInput("height")
+                .appendField("height")
+                .setCheck("Number");
+            this.setInputsInline(true);
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(20);
+            this.setTooltip('Draw an ellipse at center (x, y)');
+            this.setHelpUrl('http://processingjs.org/reference/ellipse_/');
+          }
+        };
+        Blockly.Blocks['processing_line'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("line   with:");
+            this.appendValueInput("x1")
+                .appendField("x1")
+                .setCheck("Number");
+            this.appendValueInput("y1")
+                .appendField("y1")
+                .setCheck("Number");
+            this.appendValueInput("x2")
+                .appendField("x2")
+                .setCheck("Number");
+            this.appendValueInput("y2")
+                .appendField("y2")
+                .setCheck("Number");
+            this.setInputsInline(true);
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(20);
+            this.setTooltip('Draw a line between (x1, y1) and (x2, y2)');
+            this.setHelpUrl('http://processingjs.org/reference/line_/');
+          }
+        };
+        Blockly.Blocks['processing_point'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("point   with:");
+            this.appendValueInput("x")
+                .appendField("x")
+                .setCheck("Number");
+            this.appendValueInput("y")
+                .appendField("y")
+                .setCheck("Number");
+            this.setInputsInline(true);
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(20);
+            this.setTooltip('Draw a point at (x, y)');
+            this.setHelpUrl('http://processingjs.org/reference/point_/');
+          }
+        };
+        Blockly.Blocks['processing_quad'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("quad   with:");
+            this.appendValueInput("x1")
+                .appendField("x1")
+                .setCheck("Number");
+            this.appendValueInput("y1")
+                .appendField("y1")
+                .setCheck("Number");
+            this.appendValueInput("x2")
+                .appendField("x2")
+                .setCheck("Number");
+            this.appendValueInput("y2")
+                .appendField("y2")
+                .setCheck("Number");
+            this.appendValueInput("x3")
+                .appendField("x3")
+                .setCheck("Number");
+            this.appendValueInput("y3")
+                .appendField("y3")
+                .setCheck("Number");
+            this.appendValueInput("x4")
+                .appendField("x4")
+                .setCheck("Number");
+            this.appendValueInput("y4")
+                .appendField("y4")
+                .setCheck("Number");
+            this.setInputsInline(true);
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(20);
+            this.setTooltip('Draw a quadrilateral');
+            this.setHelpUrl('http://processingjs.org/reference/quad_/');
+          }
+        };
+        Blockly.Blocks['processing_rect'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("rect   with:");
+            this.appendValueInput("x")
+                .appendField("x")
+                .setCheck("Number");
+            this.appendValueInput("y")
+                .appendField("y")
+                .setCheck("Number");
+            this.appendValueInput("width")
+                .appendField("width")
+                .setCheck("Number");
+            this.appendValueInput("height")
+                .appendField("height")
+                .setCheck("Number");
+            this.setInputsInline(true);
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(20);
+            this.setTooltip('Draw a rectangle');
+            this.setHelpUrl('http://processingjs.org/reference/rect_/');
+          }
+        };
+        Blockly.Blocks['processing_triangle'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("triangle   with:");
+            this.appendValueInput("x1")
+                .appendField("x1")
+                .setCheck("Number");
+            this.appendValueInput("y1")
+                .appendField("y1")
+                .setCheck("Number");
+            this.appendValueInput("x2")
+                .appendField("x2")
+                .setCheck("Number");
+            this.appendValueInput("y2")
+                .appendField("y2")
+                .setCheck("Number");
+            this.appendValueInput("x3")
+                .appendField("x3")
+                .setCheck("Number");
+            this.appendValueInput("y3")
+                .appendField("y3")
+                .setCheck("Number");
+            this.setInputsInline(true);
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(20);
+            this.setTooltip('Draw a triangle');
+            this.setHelpUrl('http://processingjs.org/reference/triangle_/');
+          }
+        };
+        
+        Blockly.Blocks['processing_size'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("size   with:");
+            this.appendValueInput("width")
+                .appendField("width")
+                .setCheck("Number");
+            this.appendValueInput("height")
+                .appendField("height")
+                .setCheck("Number");
+            this.setInputsInline(true);
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(20);
+            this.setTooltip('Change the size of the canvas');
+            this.setHelpUrl('http://processingjs.org/reference/size_/');
+          }
+        };
+        // mouse
+        Blockly.Blocks['processing_mousex'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("mouseX");
+            this.setOutput(true, "Number");
+            this.setColour(20);
+            this.setTooltip('The horizontal location of the mouse');
+            this.setHelpUrl('http://processingjs.org/reference/mouseX/');
+          }
+        };        
+        Blockly.Blocks['processing_mousey'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("mouseY");
+            this.setOutput(true, "Number");
+            this.setColour(20);
+            this.setTooltip('The vertical location of the mouse');
+            this.setHelpUrl('http://processingjs.org/reference/mouseY/');
+          }
+        };        
+        Blockly.Blocks['processing_random'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("random   with:");
+            this.appendValueInput("high")
+                .appendField("high")
+                .setCheck("Number");
+            this.setInputsInline(true);
+            this.setOutput(true, "Number");
+            this.setColour(20);
+            this.setTooltip('Produces a random value between 0 and high');
+            this.setHelpUrl('http://processingjs.org/reference/random_/');
+          }
+        };        
+        Blockly.Blocks['processing_fill'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("fill   with:");
+            this.appendValueInput("red")
+                .appendField("red")
+                .setCheck("Number");
+            this.appendValueInput("green")
+                .appendField("green")
+                .setCheck("Number");
+            this.appendValueInput("blue")
+                .appendField("blue")
+                .setCheck("Number");
+            this.setInputsInline(true);
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(20);
+            this.setTooltip('Set the fill color for the following shapes');
+            this.setHelpUrl('http://processingjs.org/reference/fill_/');
+          }
+        };        
+        Blockly.Blocks['processing_background'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("background   with:");
+            this.appendValueInput("red")
+                .appendField("red")
+                .setCheck("Number");
+            this.appendValueInput("green")
+                .appendField("green")
+                .setCheck("Number");
+            this.appendValueInput("blue")
+                .appendField("blue")
+                .setCheck("Number");
+            this.setInputsInline(true);
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(20);
+            this.setTooltip('Set the background color');
+            this.setHelpUrl('http://processingjs.org/reference/background_/');
+          }
+        };        
+        Blockly.Blocks['processing_stroke'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("stroke   with:");
+            this.appendValueInput("red")
+                .appendField("red")
+                .setCheck("Number");
+            this.appendValueInput("green")
+                .appendField("green")
+                .setCheck("Number");
+            this.appendValueInput("blue")
+                .appendField("blue")
+                .setCheck("Number");
+            this.setInputsInline(true);
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(20);
+            this.setTooltip('Set the outline color for the following shapes');
+            this.setHelpUrl('http://processingjs.org/reference/stroke_/');
+          }
+        };        
+        Blockly.Blocks['processing_nofill'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("noFill");
+            this.setInputsInline(true);
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(20);
+            this.setTooltip('Turn off fill coloring for the following shapes');
+            this.setHelpUrl('http://processingjs.org/reference/nofill_/');
+          }
+        };        
+        Blockly.Blocks['processing_nostroke'] = {
+          init: function() {
+            this.appendDummyInput()
+                .appendField("noStroke");
+            this.setInputsInline(true);
+            this.setPreviousStatement(true, null);
+            this.setNextStatement(true, null);
+            this.setColour(20);
+            this.setTooltip('Turn off outline coloring for the following shapes');
+            this.setHelpUrl('http://processingjs.org/reference/nostroke_/');
+          }
+        };        
+        // Conversions:
+        // Java:
+        //arc()
+        Blockly.Java['processing_arc'] = function(block) {
+          var value_x = Blockly.Java.valueToCode(block, 'x', Blockly.Java.ORDER_ATOMIC);
+          var value_y = Blockly.Java.valueToCode(block, 'y', Blockly.Java.ORDER_ATOMIC);
+          var value_width = Blockly.Java.valueToCode(block, 'width', Blockly.Java.ORDER_ATOMIC);
+          var value_height = Blockly.Java.valueToCode(block, 'height', Blockly.Java.ORDER_ATOMIC);
+          var value_start = Blockly.Java.valueToCode(block, 'start', Blockly.Java.ORDER_ATOMIC);
+          var value_stop = Blockly.Java.valueToCode(block, 'stop', Blockly.Java.ORDER_ATOMIC);
+          var code = 'arc(' + value_x + ', ' + value_y + ', ' + value_width + ', ' + value_height + ', ' +
+                          value_start + ', ' + value_stop + ');\n';
+          return code;
+        };
+        //ellipse()
+        Blockly.Java['processing_ellipse'] = function(block) {
+          var value_x = Blockly.Java.valueToCode(block, 'x', Blockly.Java.ORDER_ATOMIC);
+          var value_y = Blockly.Java.valueToCode(block, 'y', Blockly.Java.ORDER_ATOMIC);
+          var value_width = Blockly.Java.valueToCode(block, 'width', Blockly.Java.ORDER_ATOMIC);
+          var value_height = Blockly.Java.valueToCode(block, 'height', Blockly.Java.ORDER_ATOMIC);
+          var code = 'ellipse(' + value_x + ', ' + value_y + ', ' + value_width + ', ' + value_height + ');\n';
+          return code;
+        };
+        //line()
+        Blockly.Java['processing_line'] = function(block) {
+          var value_x1 = Blockly.Java.valueToCode(block, 'x1', Blockly.Java.ORDER_ATOMIC);
+          var value_y1 = Blockly.Java.valueToCode(block, 'y1', Blockly.Java.ORDER_ATOMIC);
+          var value_x2 = Blockly.Java.valueToCode(block, 'x2', Blockly.Java.ORDER_ATOMIC);
+          var value_y2 = Blockly.Java.valueToCode(block, 'y2', Blockly.Java.ORDER_ATOMIC);
+          var code = 'line(' + value_x1 + ', ' + value_y1 + ', ' + value_x2 + ', ' + value_y2 + ');\n';
+          return code;
+        };
+        //point()
+        Blockly.Java['processing_point'] = function(block) {
+          var value_x = Blockly.Java.valueToCode(block, 'x', Blockly.Java.ORDER_ATOMIC);
+          var value_y = Blockly.Java.valueToCode(block, 'y', Blockly.Java.ORDER_ATOMIC);
+          var code = 'point(' + value_x + ', ' + value_y + ');\n';
+          return code;
+        };
+        //quad()
+        Blockly.Java['processing_quad'] = function(block) {
+          var value_x1 = Blockly.Java.valueToCode(block, 'x1', Blockly.Java.ORDER_ATOMIC);
+          var value_y1 = Blockly.Java.valueToCode(block, 'y1', Blockly.Java.ORDER_ATOMIC);
+          var value_x2 = Blockly.Java.valueToCode(block, 'x2', Blockly.Java.ORDER_ATOMIC);
+          var value_y2 = Blockly.Java.valueToCode(block, 'y2', Blockly.Java.ORDER_ATOMIC);
+          var value_x3 = Blockly.Java.valueToCode(block, 'x3', Blockly.Java.ORDER_ATOMIC);
+          var value_y3 = Blockly.Java.valueToCode(block, 'y3', Blockly.Java.ORDER_ATOMIC);
+          var value_x4 = Blockly.Java.valueToCode(block, 'x4', Blockly.Java.ORDER_ATOMIC);
+          var value_y4 = Blockly.Java.valueToCode(block, 'y4', Blockly.Java.ORDER_ATOMIC);
+          var code = 'quad(' + value_x1 + ', ' + value_y1 + ', ' 
+                           + value_x2 + ', ' + value_y2 + ', ' +
+                           + value_x3 + ', ' + value_y3 + ', ' +
+                           + value_x4 + ', ' + value_y4 +
+                          ');\n';
+          return code;
+        };
+        //rect()
+        Blockly.Java['processing_rect'] = function(block) {
+          var value_x = Blockly.Java.valueToCode(block, 'x', Blockly.Java.ORDER_ATOMIC);
+          var value_y = Blockly.Java.valueToCode(block, 'y', Blockly.Java.ORDER_ATOMIC);
+          var value_width = Blockly.Java.valueToCode(block, 'width', Blockly.Java.ORDER_ATOMIC);
+          var value_height = Blockly.Java.valueToCode(block, 'height', Blockly.Java.ORDER_ATOMIC);
+          var code = 'rect(' + value_x + ', ' + value_y + ', ' + value_width + ', ' + value_height + ');\n';
+          return code;
+        };
+        //triangle()
+        Blockly.Java['processing_triangle'] = function(block) {
+          var value_x1 = Blockly.Java.valueToCode(block, 'x1', Blockly.Java.ORDER_ATOMIC);
+          var value_y1 = Blockly.Java.valueToCode(block, 'y1', Blockly.Java.ORDER_ATOMIC);
+          var value_x2 = Blockly.Java.valueToCode(block, 'x2', Blockly.Java.ORDER_ATOMIC);
+          var value_y2 = Blockly.Java.valueToCode(block, 'y2', Blockly.Java.ORDER_ATOMIC);
+          var value_x3 = Blockly.Java.valueToCode(block, 'x3', Blockly.Java.ORDER_ATOMIC);
+          var value_y3 = Blockly.Java.valueToCode(block, 'y3', Blockly.Java.ORDER_ATOMIC);
+          var code = 'triangle(' + value_x1 + ', ' + value_y1 + ', '
+                             + value_x2 + ', ' + value_y2 + ', '
+                             + value_x3 + ', ' + value_y3
+                             + ');\n';
+          return code;
+        };
+        //size()
+        Blockly.Java['processing_size'] = function(block) {
+          var value_width = Blockly.Java.valueToCode(block, 'width', Blockly.Java.ORDER_ATOMIC);
+          var value_height = Blockly.Java.valueToCode(block, 'height', Blockly.Java.ORDER_ATOMIC);
+          var code = 'size(' + value_width + ', ' + value_height + ');\n';
+          return code;
+        };
+        //mouse
+        Blockly.Java['processing_mousex'] = function(block) {
+          var code = 'mouseX';
+          return [code, Blockly.Java.ORDER_ATOMIC];
+        };        
+        Blockly.Java['processing_mousey'] = function(block) {
+          var code = 'mouseY';
+          return [code, Blockly.Java.ORDER_ATOMIC];
+        };        
+	// color, setting
+        Blockly.Java['processing_fill'] = function(block) {
+          var value_red = Blockly.Java.valueToCode(block, 'red', Blockly.Java.ORDER_ATOMIC);
+          var value_green = Blockly.Java.valueToCode(block, 'green', Blockly.Java.ORDER_ATOMIC);
+          var value_blue = Blockly.Java.valueToCode(block, 'blue', Blockly.Java.ORDER_ATOMIC);
+          var code = 'fill(' + value_red + ', ' + value_green + ', ' + value_blue + ');\n';
+          return code;
+        };
+        Blockly.Java['processing_background'] = function(block) {
+          var value_red = Blockly.Java.valueToCode(block, 'red', Blockly.Java.ORDER_ATOMIC);
+          var value_green = Blockly.Java.valueToCode(block, 'green', Blockly.Java.ORDER_ATOMIC);
+          var value_blue = Blockly.Java.valueToCode(block, 'blue', Blockly.Java.ORDER_ATOMIC);
+          var code = 'background(' + value_red + ', ' + value_green + ', ' + value_blue + ');\n';
+          return code;
+        };
+        Blockly.Java['processing_stroke'] = function(block) {
+          var value_red = Blockly.Java.valueToCode(block, 'red', Blockly.Java.ORDER_ATOMIC);
+          var value_green = Blockly.Java.valueToCode(block, 'green', Blockly.Java.ORDER_ATOMIC);
+          var value_blue = Blockly.Java.valueToCode(block, 'blue', Blockly.Java.ORDER_ATOMIC);
+          var code = 'stroke(' + value_red + ', ' + value_green + ', ' + value_blue + ');\n';
+          return code;
+        };
+        Blockly.Java['processing_nostroke'] = function(block) {
+          var code = 'noStroke();\n';
+          return code;
+        };
+        Blockly.Java['processing_nofill'] = function(block) {
+          var code = 'noFill();\n';
+          return code;
+        };
+	// random
+        Blockly.Java['processing_random'] = function(block) {
+          var value_high = Blockly.Java.valueToCode(block, 'high', Blockly.Java.ORDER_ATOMIC);
+          var code = 'random(' + value_high + ')';
+          return [code, Blockly.Java.ORDER_ATOMIC];
+        };
+
+    </script>
+</head>
+<body>
+
+<xml id="toolbox" style="display: none">
+    <category name="Logic">
+      <block type="controls_if"></block>
+      <block type="logic_compare"></block>
+      <block type="logic_operation"></block>
+      <block type="logic_negate"></block>
+      <block type="logic_boolean"></block>
+      <block type="logic_null"></block>
+      <block type="logic_ternary"></block>
+    </category>
+    <category name="Loops">
+      <block type="controls_repeat_ext">
+        <value name="TIMES">
+          <block type="math_number">
+            <field name="NUM">10</field>
+          </block>
+        </value>
+      </block>
+      <block type="controls_whileUntil"></block>
+      <block type="controls_for">
+        <value name="FROM">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <value name="TO">
+          <block type="math_number">
+            <field name="NUM">10</field>
+          </block>
+        </value>
+        <value name="BY">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+      </block>
+      <block type="controls_forEach"></block>
+      <block type="controls_flow_statements"></block>
+    </category>
+    <category name="Math">
+      <block type="math_number"></block>
+      <block type="math_arithmetic"></block>
+      <block type="math_single"></block>
+      <block type="math_trig"></block>
+      <block type="math_constant"></block>
+      <block type="math_number_property"></block>
+      <block type="math_change">
+        <value name="DELTA">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+      </block>
+      <block type="math_round"></block>
+      <block type="math_on_list"></block>
+      <block type="math_modulo"></block>
+      <block type="math_constrain">
+        <value name="LOW">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <value name="HIGH">
+          <block type="math_number">
+            <field name="NUM">100</field>
+          </block>
+        </value>
+      </block>
+      <block type="math_random_int">
+        <value name="FROM">
+          <block type="math_number">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <value name="TO">
+          <block type="math_number">
+            <field name="NUM">100</field>
+          </block>
+        </value>
+      </block>
+      <block type="math_random_float"></block>
+    </category>
+    <category name="Text">
+      <block type="text"></block>
+      <block type="text_join"></block>
+      <block type="text_append">
+        <value name="TEXT">
+          <block type="text"></block>
+        </value>
+      </block>
+      <block type="text_length"></block>
+      <block type="text_isEmpty"></block>
+      <block type="text_indexOf">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR">text</field>
+          </block>
+        </value>
+      </block>
+      <block type="text_charAt">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR">text</field>
+          </block>
+        </value>
+      </block>
+      <block type="text_getSubstring">
+        <value name="STRING">
+          <block type="variables_get">
+            <field name="VAR">text</field>
+          </block>
+        </value>
+      </block>
+      <block type="text_changeCase"></block>
+      <block type="text_trim"></block>
+      <block type="text_print"></block>
+      <block type="text_prompt_ext">
+        <value name="TEXT">
+          <block type="text"></block>
+        </value>
+      </block>
+    </category>
+    <category name="Lists">
+      <block type="lists_create_empty"></block>
+      <block type="lists_create_with"></block>
+      <block type="lists_repeat">
+        <value name="NUM">
+          <block type="math_number">
+            <field name="NUM">5</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_length"></block>
+      <block type="lists_isEmpty"></block>
+      <block type="lists_indexOf">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR">list</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_getIndex">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR">list</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_setIndex">
+        <value name="LIST">
+          <block type="variables_get">
+            <field name="VAR">list</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_getSublist">
+        <value name="LIST">
+          <block type="variables_get">
+            <field name="VAR">list</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_split">
+        <value name="DELIM">
+          <block type="text">
+            <field name="TEXT">,</field>
+          </block>
+        </value>
+      </block>
+    </category>
+    <sep></sep>
+    <category name="Variables" custom="VARIABLE"></category>
+    <category name="Functions" custom="PROCEDURE"></category>
+    <sep></sep>
+    <category name="Processing">
+        <category name="Shape">
+            <category name="2D Primitives">
+                <block type="processing_arc">
+                    <value name="x">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="y">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="width">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="height">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="start">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="stop">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                </block>
+                <block type="processing_ellipse">
+                    <value name="x">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="y">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="width">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="height">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                </block>
+                <block type="processing_line">
+                    <value name="x1">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="y1">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="x2">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="y2">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                </block>
+                <block type="processing_point">
+                    <value name="x">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="y">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                </block>
+                <block type="processing_quad">
+                    <value name="x1">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="y1">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="x2">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="y2">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="x3">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="y3">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="x4">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="y4">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                </block>
+                <block type="processing_rect">
+                    <value name="x">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="y">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="width">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="height">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                </block>
+                <block type="processing_triangle">
+                    <value name="x1">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="y1">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="x2">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="y2">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="x3">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="y3">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                </block>
+            </category>
+        </category>
+        <category name="Structure">
+            <block type="processing_size">
+                <value name="width">
+                    <block type="math_number">
+                        <field name="NUM">100</field>
+                    </block>
+                </value>
+                <value name="height">
+                    <block type="math_number">
+                        <field name="NUM">100</field>
+                    </block>
+                </value>
+            </block>
+        </category>
+        <category name="Input">
+            <category name="Mouse">
+                <block type="processing_mousex"></block>
+                <block type="processing_mousey"></block>
+            </category>
+        </category>        
+        <category name="Color">
+            <category name="Setting">
+                <block type="processing_background">
+                    <value name="red">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="green">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="blue">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+		</block>
+                <block type="processing_fill">
+                    <value name="red">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="green">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="blue">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+		</block>
+                <block type="processing_nofill">
+		</block>
+                <block type="processing_nostroke">
+		</block>
+                <block type="processing_stroke">
+                    <value name="red">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="green">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+                    <value name="blue">
+                        <block type="math_number">
+                            <field name="NUM">0</field>
+                        </block>
+                    </value>
+		</block>
+            </category>
+        </category>
+        <category name="Math">
+            <category name="Random">
+                <block type="processing_random">
+                    <value name="high">
+                        <block type="math_number">
+                            <field name="NUM">1.0</field>
+                        </block>
+                    </value>
+		</block>
+            </category>
+        </category>
+    </category>
+  </xml>
+
+
+    <xml id="workspace" style="display: none">
+      <block type="procedures_defnoreturn" x="0" y="0">
+        <field name="NAME">setup</field>
+      </block>
+      <block type="procedures_defnoreturn" x="0" y ="86">
+        <field name="NAME">draw</field>
+      </block>
+    </xml>
+    
+<table>
+<tr>
+<td>
+ <div id="blocklyDiv" style="height: 95%; width: 99%;"></div>
+</td>
+</tr>
+<tr>
+<td>
+<div style="text-align: center">
+    <button onclick="window.parent.document.jigsaw_generate('processing1.xml', 'Java', 1)">Generate Processing Code</button>
+</div>
+</td>
+</tr>
+</table>
+
+  <script>
+      // Make Blockly available to notebook:
+      window.parent.Blockly = Blockly;
+      window.parent.DOMParser = DOMParser;
+
+      var workspace = Blockly.inject('blocklyDiv',
+        {media: 'https://calysto.github.io/javascripts/blockly/media/',
+         toolbox: document.getElementById('toolbox'),
+         zoom: {enabled: true}
+        });
+
+      var xml_init = document.getElementById('workspace');
+      window.parent.document.jigsaw_register_workspace("processing1.xml", workspace, xml_init);
+  </script>
+</body>
+</html>
