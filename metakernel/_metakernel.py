@@ -41,6 +41,11 @@ PY3 = (sys.version_info[0] >= 3)
 def lazy_import_handle_comm_opened(*args, **kwargs):
     Widget.handle_comm_opened(*args, **kwargs)
 
+def get_metakernel():
+    """
+    Get the MetaKernel instance.
+    """
+    return MetaKernel.meta_kernel
 
 class MetaKernel(Kernel):
 
@@ -67,9 +72,12 @@ class MetaKernel(Kernel):
         # 'file_extension': '.py',
         'help_links': help_links,
     }
+    meta_kernel = None
 
     def __init__(self, *args, **kwargs):
         super(MetaKernel, self).__init__(*args, **kwargs)
+        if MetaKernel.meta_kernel is None:
+            MetaKernel.meta_kernel = self
         if self.log is None:
             # This occurs if we call as a stand-alone kernel
             # (eg, not as a process)
@@ -533,6 +541,10 @@ class MetaKernel(Kernel):
             self.line_magics[name] = magic
         for name in cell_magics:
             self.cell_magics[name] = magic
+
+    def clear_output(self, wait=False):
+        self.send_response(self.iopub_socket, 'clear_output',
+                           {'wait': wait})
 
     def Display(self, *args, **kwargs):
         clear_output = kwargs.get("clear_output", False)
