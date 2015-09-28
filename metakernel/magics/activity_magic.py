@@ -34,7 +34,7 @@ class Activity(object):
     def load_json(self, json_text):
         from IPython.html import widgets
         # Allow use of widgets:
-        json = eval(json_text, {key: getattr(widgets, key) for key in dir(widgets)})
+        json = eval(json_text.strip(), {key: getattr(widgets, key) for key in dir(widgets)})
         if json.get("results_filename", None):
             self.results_filename = json["results_filename"]
         if json.get("instructor", None):
@@ -215,9 +215,26 @@ class ActivityMagic(Magic):
         activity = Activity()
         activity.load(filename)
         os.chmod(activity.results_filename, 0o777)
-        # Ok, let's test it:
+        # Ok, let's test it (MetaKernel):
         self.code = "%activity " + filename
 
 def register_magics(kernel):
     kernel.register_magics(ActivityMagic)
 
+def register_ipython_magics():
+    from metakernel import IPythonKernel
+    from IPython.core.magic import register_line_magic, register_cell_magic
+    kernel = IPythonKernel()
+    magic = ActivityMagic(kernel)
+    # Make magics callable:
+    kernel.line_magics["activity"] = magic
+    kernel.cell_magics["activity"] = magic
+
+    @register_line_magic
+    def activity(line):
+        kernel.call_magic("%activity " + line)
+
+    @register_cell_magic
+    def activity(line, cell):
+        magic.code = cell
+        magic.cell_activity(line)
