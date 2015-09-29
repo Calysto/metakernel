@@ -3,6 +3,12 @@
 Release History
 ------------------------
 
+0.11.1 (2015-09-28)
++++++++++++++++++++
+- Added activity and jigsaw magics
+- MetaKernel Magics can be used from IPython
+- Renamed Spell Magics to Macro Magics
+
 0.10.0 (2015-08-24)
 +++++++++++++++++++
 - Improved kernel spec install for kernels
