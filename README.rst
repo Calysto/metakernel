@@ -40,14 +40,14 @@ You can install Metakernel through `pip`:
 Documentation
 -----------------------
 
-An example notebook can be viewed here_.
+Example notebooks can be viewed here_.
 
 Documentation is available online_. Magics have interactive help_ (and online).
 
 For version information, see the Revision History_.
 
 
-.. _here: http://nbviewer.ipython.org/github/Calysto/metakernel/blob/master/examples/echo_kernel.ipynb?create=1
+.. _here: http://nbviewer.ipython.org/github/Calysto/metakernel/tree/master/examples/
 
 .. _help: https://github.com/Calysto/metakernel/blob/master/metakernel/magics/README.md
 
