@@ -17,7 +17,7 @@ class Activity(object):
         self.questions = []
         self.filename = None
         self.results_filename = None
-        self.instructor = None
+        self.instructors = []
 
     def load(self, filename):
         if filename.startswith("~"):
@@ -37,8 +37,9 @@ class Activity(object):
         json = eval(json_text.strip(), {key: getattr(widgets, key) for key in dir(widgets)})
         if json.get("results_filename", None):
             self.results_filename = json["results_filename"]
-        if json.get("instructor", None):
-            self.instructor = json["instructor"]
+        if json.get("instructors", []):
+            for instructor in json["instructors"]:
+                self.instructors.append(instructor)
         if json["activity"] == "poll":
             self.index = 0
             for item in json["items"]:
@@ -65,12 +66,16 @@ class Activity(object):
         self.set_question(self.questions[index].question)
         self.set_id(self.questions[index].id)
         self.results_html.visible = False
-        self.results_button.visible = getpass.getuser() == self.instructor
+        self.results_button.visible = (getpass.getuser() in self.instructors)
+        self.prev_button.disabled = index == 0
+        self.next_button.disabled = index == len(self.questions) - 1
         for i in range(5):
             self.choice_row_list[i].visible = False
+            self.buttons[i].visible = False
         for i in range(len(self.questions[index].options)):
             self.choice_widgets[i].value = self.questions[index].options[i]
             self.choice_row_list[i].visible = True
+            self.buttons[i].visible = True
         
     def create_widget(self):
         self.id_widget = widgets.HTML("")
@@ -82,7 +87,6 @@ class Activity(object):
             self.choice_row_list.append(widgets.HBox([widgets.HTML("<b>%s</b>)&nbsp;&nbsp;" % count), 
                                                       self.choice_widgets[-1]]))
         self.buttons = []
-        # FIXME: get from options:
         for i in range(1, 5 + 1):
             button = widgets.Button(description = str(i))
             button.on_click(self.handle_submit)
@@ -96,10 +100,14 @@ class Activity(object):
         self.prev_button = widgets.Button(description="Previous")
         self.prev_button.on_click(self.handle_prev)
         self.results_html = widgets.HTML("")
-        self.top_level = widgets.HBox([widgets.VBox([self.id_widget, self.question_widget] + self.choice_row_list +
-                                                    [self.respond_row_widgets, 
-                                                     widgets.HBox([self.prev_button, self.results_button, self.next_button])]),
-                                       self.results_html])
+        self.top_margin = widgets.HTML("")
+        self.top_margin.height = "100px"
+        right_stack = widgets.VBox([self.top_margin, self.results_html])
+        self.stack = widgets.VBox([self.id_widget, self.question_widget] + self.choice_row_list +
+                                  [self.respond_row_widgets, 
+                                   widgets.HBox([self.prev_button, self.results_button, self.next_button])])
+        self.stack.width = "75%"
+        self.top_level = widgets.HBox([self.stack, right_stack])
 
     def set_question(self, question):
         self.question_widget.value = "<h1>%s</h1>" % question
@@ -109,7 +117,6 @@ class Activity(object):
         self.id = id
 
     def handle_results(self, sender):
-        index = list(range(5))
         data = {}
         with open(self.results_filename) as fp:
             line = fp.readline()
@@ -118,8 +125,7 @@ class Activity(object):
                     id, user, time, choice = line.split("::")
                     data[user.strip()] = choice.strip()
                 line = fp.readline()
-        # FIXME: get from options:
-        choices = {str(i): 0 for i in range(1, 5 + 1)}
+        choices = {str(i): 0 for i in range(1, len(self.questions[self.index].options) + 1)}
         for datum in data.values():
             if datum not in choices:
                 choices[datum] = 0
@@ -194,7 +200,7 @@ class ActivityMagic(Magic):
         Example:
             %%activity /home/teacher/activity1
             {"activity": "poll",
-             "instructor": "teacher01",
+             "instructors": ["teacher01"],
              "results_file": "/home/teacher/activity1.results",
              "items": [{"id": "...",
                         "type": "multiple choice",
@@ -216,13 +222,14 @@ class ActivityMagic(Magic):
         activity.load(filename)
         os.chmod(activity.results_filename, 0o777)
         # Ok, let's test it (MetaKernel):
-        self.code = "%activity " + filename
+        self.line_activity(filename)
 
 def register_magics(kernel):
     kernel.register_magics(ActivityMagic)
 
 def register_ipython_magics():
     from metakernel import IPythonKernel
+    from metakernel.utils import add_docs
     from IPython.core.magic import register_line_magic, register_cell_magic
     kernel = IPythonKernel()
     magic = ActivityMagic(kernel)
@@ -231,10 +238,12 @@ def register_ipython_magics():
     kernel.cell_magics["activity"] = magic
 
     @register_line_magic
+    @add_docs(magic.line_activity.__doc__)
     def activity(line):
         kernel.call_magic("%activity " + line)
 
     @register_cell_magic
+    @add_docs(magic.cell_activity.__doc__)
     def activity(line, cell):
         magic.code = cell
         magic.cell_activity(line)
