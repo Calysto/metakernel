@@ -3,7 +3,7 @@
 Release History
 ------------------------
 
-0.11.1 (2015-09-28)
+0.11.0 (2015-09-28)
 +++++++++++++++++++
 - Added activity and jigsaw magics
 - MetaKernel Magics can be used from IPython
