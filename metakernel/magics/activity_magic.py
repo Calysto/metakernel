@@ -1,7 +1,10 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from IPython.html import widgets
+try:
+    from ipwidgets import widgets
+except:
+    from IPython.html import widgets
 from metakernel import Magic, option
 import os
 import fcntl
@@ -32,7 +35,6 @@ class Activity(object):
         touch(self.results_filename)
 
     def load_json(self, json_text):
-        from IPython.html import widgets
         # Allow use of widgets:
         json = eval(json_text.strip(), {key: getattr(widgets, key) for key in dir(widgets)})
         if json.get("results_filename", None):
