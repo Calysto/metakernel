@@ -123,6 +123,9 @@ class ParallelMagic(Magic):
         self.class_name = class_name
         self.kernel_name = kernel_name
         self.view.execute("""
+import os
+for key, value in %(env)s:
+    os.environ[key] = value
 try:
     kernels
 except:
@@ -132,7 +135,8 @@ from %(module_name)s import %(class_name)s
 kernels['%(kernel_name)s'] = %(class_name)s()
 """ % {"module_name": module_name, 
        "class_name": class_name,
-       "kernel_name": kernel_name}, 
+       "kernel_name": kernel_name,
+       "env": str(self.kernel.env)}, 
                           block=True)
 
         self.view["kernels['%s'].set_variable(\"cluster_size\", %s)" % (
