@@ -124,7 +124,7 @@ class ParallelMagic(Magic):
         self.kernel_name = kernel_name
         self.view.execute("""
 import os
-for key, value in %(env)s:
+for key, value in %(env)s.items():
     os.environ[key] = value
 try:
     kernels
