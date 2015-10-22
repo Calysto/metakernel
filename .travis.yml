@@ -22,7 +22,7 @@ install:
     - |
       if [[ $TRAVIS_PYTHON_VERSION == 3.3 ]]; then
        travis_retry git clone --depth=50 --branch=3.x --recursive https://github.com/ipython/ipython
-       cd ipython && python setup.py install
+       cd ipython; python setup.py install; cd ..
       else
         travis_retry pip install jupyter ipyparallel 
       fi;
