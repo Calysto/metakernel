@@ -19,10 +19,8 @@ install:
     - travis_retry sudo apt-get install pandoc casperjs libzmq3-dev 
     - travis_retry pip install -f https://nipy.bic.berkeley.edu/wheelhouse/travis jinja2 sphinx pygments tornado requests mock pyzmq jsonschema jsonpointer mistune
 
-    - travis_retry pip install jupyter ipyparallel
+    - travis_retry pip install jupyter ipyparallel coveralls jedi
 
-    - cd ..
-    - travis_retry pip install coveralls jedi 
     - travis_retry python setup.py install
     - cd metakernel_python
     - python setup.py install
