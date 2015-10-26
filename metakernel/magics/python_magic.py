@@ -56,7 +56,7 @@ class PythonMagic(Magic):
                 self.env["__builtins__"]["raw_input"] = self.kernel.raw_input = self.kernel.raw_input
                 self.env["raw_input"] = self.kernel.raw_input = self.kernel.raw_input
         try:
-            return eval(code.strip(), self.env, dict())
+            return eval(code.strip(), self.env)
         except:
             pass
         try:
