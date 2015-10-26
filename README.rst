@@ -32,10 +32,11 @@ Installation
 ----------------
 You can install Metakernel through `pip`:
 
-
 `pip install metakernel --upgrade`
 
+If it's not already installed, you also need ipywidgets:
 
+`pip install ipywidgets`
 
 Documentation
 -----------------------
