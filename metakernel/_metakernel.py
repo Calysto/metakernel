@@ -17,7 +17,10 @@ try:
     try:
         from ipywidgets.widgets.widget import Widget
     except ImportError:
-        from IPython.html.widgets import Widget
+        try:
+            from IPython.html.widgets import Widget
+        except ImportError:
+            Widget = None
     from IPython.core.formatters import IPythonDisplayFormatter
 except ImportError as e:
     warnings.warn("Cannot load module {name} so metakernel will not be available to IPython/jupyter.".format(name=getattr(e, 'name', '')))
@@ -39,6 +42,8 @@ import codecs
 PY3 = (sys.version_info[0] >= 3)
 
 def lazy_import_handle_comm_opened(*args, **kwargs):
+    if Widget is None:
+        return
     Widget.handle_comm_opened(*args, **kwargs)
 
 def get_metakernel():
@@ -364,7 +369,7 @@ class MetaKernel(Kernel):
                 self.Error(e)
                 return
             if not silent:
-                if isinstance(retval, Widget):
+                if Widget and isinstance(retval, Widget):
                     self.Display(retval)
                     return
                 self.send_response(self.iopub_socket, 'execute_result', content)
@@ -554,7 +559,7 @@ class MetaKernel(Kernel):
                 if clear_output:
                     self.send_response(self.iopub_socket, 'clear_output',
                                        {'wait': True})
-            if isinstance(message, Widget):
+            if Widget and isinstance(message, Widget):
                 self.log.debug('Display Widget')
                 self._ipy_formatter(message)
             else:
@@ -572,7 +577,7 @@ class MetaKernel(Kernel):
         end = kwargs["end"] if ("end" in kwargs) else "\n"
         message = ""
         for item in args:
-            if isinstance(item, Widget):
+            if Widget and isinstance(item, Widget):
                 self.Display(item)
             else:
                 if message:
