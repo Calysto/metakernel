@@ -225,6 +225,7 @@ class ActivityMagic(Magic):
         os.chmod(activity.results_filename, 0o777)
         # Ok, let's test it (MetaKernel):
         self.line_activity(filename)
+        self.evaluate = False
 
 def register_magics(kernel):
     kernel.register_magics(ActivityMagic)
