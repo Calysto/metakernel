@@ -21,6 +21,8 @@ class Activity(object):
         self.filename = None
         self.results_filename = None
         self.instructors = []
+        self.show_initial = True
+        self.last_id = None
 
     def load(self, filename):
         if filename.startswith("~"):
@@ -119,6 +121,13 @@ class Activity(object):
         self.id = id
 
     def handle_results(self, sender):
+        # write out when we show the Results:
+        self.handle_submit(sender)
+        if self.last_id == self.questions[self.index].id:
+            self.show_initial = not self.show_initial
+        else:
+            self.show_initial = True
+            self.last_id = self.questions[self.index].id
         data = {}
         with open(self.results_filename) as fp:
             line = fp.readline()
@@ -126,7 +135,12 @@ class Activity(object):
                 if "::" in line:
                     id, user, time, choice = line.split("::")
                     if self.questions[self.index].id == id:
-                        data[user.strip()] = choice.strip()
+                        if choice.strip() != "Results":
+                            if self.show_initial:
+                                if user.strip() not in data:
+                                    data[user.strip()] = choice.strip()
+                            else: # shows last
+                                data[user.strip()] = choice.strip()
                 line = fp.readline()
         choices = {str(i): 0 for i in range(1, len(self.questions[self.index].options) + 1)}
         for datum in data.values():
