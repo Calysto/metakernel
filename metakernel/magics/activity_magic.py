@@ -125,7 +125,8 @@ class Activity(object):
             while line:
                 if "::" in line:
                     id, user, time, choice = line.split("::")
-                    data[user.strip()] = choice.strip()
+                    if self.questions[self.index].id == id:
+                        data[user.strip()] = choice.strip()
                 line = fp.readline()
         choices = {str(i): 0 for i in range(1, len(self.questions[self.index].options) + 1)}
         for datum in data.values():
