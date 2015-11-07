@@ -60,7 +60,7 @@ class PythonMagic(Magic):
         except:
             pass
         try:
-            exec(code.strip(), self.env)
+            exec(code.strip(), self.env) in globals(), locals()
         except Exception as exc:
             self.kernel.Error(traceback.format_exc())
             return None
