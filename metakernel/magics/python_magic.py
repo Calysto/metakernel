@@ -14,6 +14,15 @@ except ImportError:
 
 PY3 = sys.version_info[0] == 3
 
+def exec_code(code, env, kernel):
+    try:
+        exec(code, env) 
+    except Exception as exc:
+        kernel.Error(traceback.format_exc())
+        return None
+    if "retval" in env:
+        return env["retval"]
+
 class PythonMagic(Magic):
 
     def __init__(self, kernel):
@@ -59,13 +68,7 @@ class PythonMagic(Magic):
             return eval(code.strip(), self.env)
         except:
             pass
-        try:
-            exec(code.strip(), self.env)
-        except Exception as exc:
-            self.kernel.Error(traceback.format_exc())
-            return None
-        if "retval" in self.env:
-            return self.env["retval"]
+        return exec_code(code.strip(), self.env, self.kernel)
 
     @option(
         "-e", "--eval_output", action="store_true", default=False,
