@@ -146,7 +146,6 @@ class REPLWrapper(object):
                              " input was incomplete:\n" + command)
 
         text += self.child.before
-        print('hello', text)
         return text
 
 
