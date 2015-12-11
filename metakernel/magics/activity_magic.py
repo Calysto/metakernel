@@ -7,7 +7,6 @@ except:
     from IPython.html import widgets
 from metakernel import Magic, option
 import os
-import fcntl
 import getpass
 import datetime
 
@@ -159,6 +158,7 @@ class Activity(object):
 
     def handle_submit(self, sender):
         from metakernel.display import clear_output
+        import fcntl
         with open(self.results_filename, "a+") as g:
             fcntl.flock(g, fcntl.LOCK_EX)
             g.write("%s::%s::%s::%s\n" % (self.id, getpass.getuser(), datetime.datetime.today(), sender.description))
