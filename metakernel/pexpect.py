@@ -1663,7 +1663,7 @@ class spawn(object):
         Like :meth:`expect`, passing ``async=True`` will make this return an
         asyncio coroutine.
         '''
-        if timeout in [None, -1]:
+        if timeout == -1:
             timeout = self.timeout
 
         exp = Expecter(self, searcher_re(pattern_list), searchwindowsize)
@@ -1687,7 +1687,7 @@ class spawn(object):
         Like :meth:`expect`, passing ``async=True`` will make this return an
         asyncio coroutine.
         '''
-        if timeout in [None,  -1]:
+        if timeout == -1:
             timeout = self.timeout
 
         if (isinstance(pattern_list, self.allowed_string_types) or
