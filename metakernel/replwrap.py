@@ -133,7 +133,7 @@ class REPLWrapper(object):
 
         self.sendline(cmdlines[0])
         for line in cmdlines[1:]:
-            self._expect_prompt(timeout=-1)
+            self._expect_prompt(timeout=timeout)
             text += self.child.before
             self.sendline(line)
 
