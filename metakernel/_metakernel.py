@@ -698,8 +698,12 @@ def _formatter(data, repr_func):
             except Exception:
                 value = base64.encodestring(value)
                 value = value.decode('utf-8')
-        retval[mimetype] = str(value)
+        try:
+            retval[mimetype] = str(value)
+        except:
+            retval[mimetype] = value
     return retval
+
 
 def format_message(*args, **kwargs):
     """

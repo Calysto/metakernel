@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from . import MetaKernel
 from .pexpect import EOF
-from .replwrap import REPLWrapper, u
+from .replwrap import REPLWrapper, u, PY3
 from subprocess import check_output
 import os
 import re
@@ -38,7 +38,7 @@ class ProcessMetaKernel(MetaKernel):
     def __init__(self, **kwargs):
         MetaKernel.__init__(self, **kwargs)
         self.wrapper = None
-        self.repr = str
+        self.repr = str if PY3 else lambda x: x.encode('utf-8')
         self._start()
 
     def _start(self):
@@ -122,7 +122,7 @@ class ProcessMetaKernel(MetaKernel):
 
 
 class DynamicKernel(ProcessMetaKernel):
-    def __init__(self, 
+    def __init__(self,
                  executable,
                  language,
                  mimetype="text/plain",
@@ -145,8 +145,8 @@ class DynamicKernel(ProcessMetaKernel):
         super(DynamicKernel, self).__init__()
 
     def makeWrapper(self):
-        return REPLWrapper(self.executable, 
-                           u(self.orig_prompt), 
+        return REPLWrapper(self.executable,
+                           u(self.orig_prompt),
                            self.prompt_change,
                            prompt_cmd=self.prompt_cmd,
                            extra_init_cmd=self.extra_init_cmd)
