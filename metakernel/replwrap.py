@@ -122,9 +122,6 @@ class REPLWrapper(object):
           default from the :class:`pexpect.spawn` object (default 30 seconds).
           None means to wait indefinitely.
         """
-        sys.__stdout__.write('****%s\n' % printer)
-        sys.__stdout__.flush()
-
         # Split up multiline commands and feed them in bit-by-bit
         cmdlines = command.splitlines()
         # splitlines ignores trailing newlines - add it back in manually
