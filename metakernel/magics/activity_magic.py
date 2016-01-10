@@ -2,8 +2,8 @@
 # Distributed under the terms of the Modified BSD License.
 
 try:
-    from ipwidgets import widgets
-except:
+    from ipywidgets import widgets
+except ImportError:
     from IPython.html import widgets
 from metakernel import Magic, option
 import os
