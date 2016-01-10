@@ -110,7 +110,7 @@ class REPLWrapper(object):
                 raise KeyboardInterrupt('REPL not responding to interrupt')
             raise KeyboardInterrupt
 
-    def run_command(self, command, timeout=-1, printer=None):
+    def run_command(self, command, timeout=-1, stream_handler=None):
         """Send a command to the REPL, wait for and return output.
 
         :param str command: The command to send. Trailing newlines are
@@ -131,7 +131,7 @@ class REPLWrapper(object):
             raise ValueError("No command was given")
 
         text = ''
-        expect_line = printer is not None
+        expect_line = stream_handler is not None
         self.sendline(cmdlines[0])
         for line in cmdlines[1:]:
             while 1:
@@ -139,7 +139,7 @@ class REPLWrapper(object):
                                           expect_line=expect_line)
                 text += self.child.before
                 if val == 2:
-                    printer(self.child.before)
+                    stream_handler(self.child.before)
                 else:
                     break
             self.sendline(line)
@@ -150,7 +150,7 @@ class REPLWrapper(object):
                                       expect_line=expect_line)
             text += self.child.before
             if val == 2:
-                printer(self.child.before + self.child.linesep)
+                stream_handler(self.child.before + self.child.linesep)
             elif val == 1:
                 # We got the continuation prompt - command was incomplete
                 self.child.kill(signal.SIGINT)
