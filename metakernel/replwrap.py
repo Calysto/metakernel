@@ -194,6 +194,3 @@ def cmd(command='cmd', prompt_regex=re.compile(r'[A-Z]:\\.*>')):
         raise OSError('cmd only available on Windows')
     return REPLWrapper(command, prompt_regex, None, echo=True)
 
-
-if __name__ == '__main__':
-    bash()
