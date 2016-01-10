@@ -92,13 +92,14 @@ class REPLWrapper(object):
         self.child.expect(prompt_regex)
         self.sendline(prompt_change_cmd)
 
-    def _expect_prompt(self, timeout=-1):
+    def _expect_prompt(self, expect_line=False, timeout=-1):
         if self.prompt_emit_cmd:
             self.sendline(self.prompt_emit_cmd)
-
+        expects = [self.prompt_regex, self.continuation_prompt_regex]
+        if expect_line:
+            expects += [self.child.linesep]
         try:
-            return self.child.expect([self.prompt_regex, self.continuation_prompt_regex],
-                                     timeout=timeout)
+            return self.child.expect(expects, timeout=timeout)
         except KeyboardInterrupt:
             self.child.sendintr()
             if self.prompt_emit_cmd:
@@ -109,7 +110,7 @@ class REPLWrapper(object):
                 raise KeyboardInterrupt('REPL not responding to interrupt')
             raise KeyboardInterrupt
 
-    def run_command(self, command, timeout=-1):
+    def run_command(self, command, timeout=-1, stream_handler=None):
         """Send a command to the REPL, wait for and return output.
 
         :param str command: The command to send. Trailing newlines are
@@ -130,22 +131,34 @@ class REPLWrapper(object):
             raise ValueError("No command was given")
 
         text = ''
-
+        expect_line = stream_handler is not None
         self.sendline(cmdlines[0])
         for line in cmdlines[1:]:
-            self._expect_prompt(timeout=timeout)
-            text += self.child.before
+            while 1:
+                val = self._expect_prompt(timeout=timeout,
+                                          expect_line=expect_line)
+                text += self.child.before
+                if val == 2:
+                    stream_handler(self.child.before)
+                else:
+                    break
             self.sendline(line)
 
         # Command was fully submitted, now wait for the next prompt
-        if self._expect_prompt(timeout=timeout) == 1:
-            # We got the continuation prompt - command was incomplete
-            self.child.kill(signal.SIGINT)
-            self._expect_prompt(timeout=-1)
-            raise ValueError("Continuation prompt found -"
-                             " input was incomplete:\n" + command)
-
-        text += self.child.before
+        while 1:
+            val = self._expect_prompt(timeout=timeout,
+                                      expect_line=expect_line)
+            text += self.child.before
+            if val == 2:
+                stream_handler(self.child.before + self.child.linesep)
+            elif val == 1:
+                # We got the continuation prompt - command was incomplete
+                self.child.kill(signal.SIGINT)
+                self._expect_prompt(timeout=-1)
+                raise ValueError("Continuation prompt found -"
+                                 " input was incomplete:\n" + command)
+            else:
+                break
         return text
 
 
@@ -180,3 +193,4 @@ def cmd(command='cmd', prompt_regex=re.compile(r'[A-Z]:\\.*>')):
     if not os.name == 'nt':
         raise OSError('cmd only available on Windows')
     return REPLWrapper(command, prompt_regex, None, echo=True)
+

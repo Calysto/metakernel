@@ -5,6 +5,7 @@ from __future__ import print_function
 from metakernel import Magic, pexpect
 from metakernel.replwrap import cmd, bash
 import os
+import sys
 
 
 class ShellMagic(Magic):
@@ -50,7 +51,7 @@ class ShellMagic(Magic):
             self.kernel.Print(resp)
 
     def eval(self, cmd):
-        return self.repl.run_command(cmd)
+        return self.repl.run_command(cmd, stream_handler=sys.stdout.write)
 
     def start_process(self):
         if not self.repl is None:

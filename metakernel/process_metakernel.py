@@ -46,8 +46,11 @@ class ProcessMetaKernel(MetaKernel):
             self.wrapper.child.terminate()
         self.wrapper = self.makeWrapper()
 
-    def do_execute_direct(self, code):
-
+    def do_execute_direct(self, code, stream_handler=None):
+        """Execute the code in the subprocess.
+        Use the stream_handler to process lines as they are emitted
+        by the subprocess.
+        """
         self.payload = []
 
         if not code.strip():
@@ -57,8 +60,12 @@ class ProcessMetaKernel(MetaKernel):
             return
 
         interrupted = False
+        output = ''
         try:
-            output = self.wrapper.run_command(code.rstrip(), timeout=None)
+            output = self.wrapper.run_command(code.rstrip(), timeout=None,
+                                     stream_handler=stream_handler)
+            if stream_handler is not None:
+                output = ''
         except KeyboardInterrupt as e:
             interrupted = True
             output = self.wrapper.child.before
