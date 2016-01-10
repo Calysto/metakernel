@@ -62,8 +62,10 @@ class ProcessMetaKernel(MetaKernel):
         interrupted = False
         output = ''
         try:
-            self.wrapper.run_command(code.rstrip(), timeout=None,
+            output = self.wrapper.run_command(code.rstrip(), timeout=None,
                                      stream_handler=stream_handler)
+            if stream_handler is not None:
+                output = ''
         except KeyboardInterrupt as e:
             interrupted = True
             output = self.wrapper.child.before
