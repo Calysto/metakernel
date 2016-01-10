@@ -57,8 +57,10 @@ class ProcessMetaKernel(MetaKernel):
             return
 
         interrupted = False
+        output = ''
         try:
-            output = self.wrapper.run_command(code.rstrip(), timeout=None)
+            self.wrapper.run_command(code.rstrip(), timeout=None,
+                                     printer=self.Print)
         except KeyboardInterrupt as e:
             interrupted = True
             output = self.wrapper.child.before
