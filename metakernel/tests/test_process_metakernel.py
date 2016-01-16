@@ -1,4 +1,6 @@
 
+from IPython.display import HTML
+
 from metakernel.tests.utils import get_kernel, get_log_text
 from metakernel.process_metakernel import BashKernel
 
@@ -17,3 +19,6 @@ def test_process_metakernel():
     kernel.do_execute('lalkjds')
     text = get_log_text(kernel)
     assert ': command not found' in text, text
+    
+    html = HTML("some html")
+    kernel.Display(html)
