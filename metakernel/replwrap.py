@@ -92,12 +92,12 @@ class REPLWrapper(object):
         self.child.expect(prompt_regex)
         self.sendline(prompt_change_cmd)
 
-    def _expect_prompt(self, expect_line=False, timeout=-1):
-        if self.prompt_emit_cmd:
+    def _expect_prompt(self, expect_line=False, timeout=-1, send_prompt_emit=True):
+        if self.prompt_emit_cmd and send_prompt_emit:
             self.sendline(self.prompt_emit_cmd)
         expects = [self.prompt_regex, self.continuation_prompt_regex]
         if expect_line:
-            expects += [self.child.linesep]
+            expects += [u(self.child.linesep)]
         try:
             return self.child.expect(expects, timeout=timeout)
         except KeyboardInterrupt:
@@ -122,43 +122,23 @@ class REPLWrapper(object):
           default from the :class:`pexpect.spawn` object (default 30 seconds).
           None means to wait indefinitely.
         """
-        # Split up multiline commands and feed them in bit-by-bit
-        cmdlines = command.splitlines()
-        # splitlines ignores trailing newlines - add it back in manually
-        if command.endswith('\n'):
-            cmdlines.append('')
-        if not cmdlines:
+        if not command:
             raise ValueError("No command was given")
 
         text = ''
         expect_line = stream_handler is not None
-        self.sendline(cmdlines[0])
-        for line in cmdlines[1:]:
-            while 1:
-                val = self._expect_prompt(timeout=timeout,
-                                          expect_line=expect_line)
-                text += self.child.before
-                if val == 2:
-                    stream_handler(self.child.before)
-                else:
-                    break
-            self.sendline(line)
-
-        # Command was fully submitted, now wait for the next prompt
+        self.sendline(command)
+        val = 0
         while 1:
             val = self._expect_prompt(timeout=timeout,
-                                      expect_line=expect_line)
+                                      expect_line=expect_line, send_prompt_emit=val != 2)
             text += self.child.before
             if val == 2:
-                stream_handler(self.child.before + self.child.linesep)
-            elif val == 1:
-                # We got the continuation prompt - command was incomplete
-                self.child.kill(signal.SIGINT)
-                self._expect_prompt(timeout=-1)
-                raise ValueError("Continuation prompt found -"
-                                 " input was incomplete:\n" + command)
+                if self.child.before:
+                    stream_handler(self.child.before)
             else:
                 break
+
         return text
 
 
