@@ -193,6 +193,8 @@ class REPLWrapper(object):
             elif val != 2:
                 break
 
+        return text
+
 
 def python(command="python"):
     """Start a Python shell and return a :class:`REPLWrapper` object."""
