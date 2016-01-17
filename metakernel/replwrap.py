@@ -137,7 +137,7 @@ class REPLWrapper(object):
                                       expect_line=expect_line,
                                       send_prompt_emit=val != 2)
             text += self.child.before
-            if self.child.before:
+            if self.child.before and expect_line:
                 stream_handler(self.child.before)
             if val != 2:
                 break
@@ -171,7 +171,7 @@ class REPLWrapper(object):
                 val = self._expect_prompt(timeout=timeout,
                                           expect_line=expect_line)
                 text += self.child.before
-                if self.child.before:
+                if self.child.before and expect_line:
                     stream_handler(self.child.before)
                 if val != 2:
                     break
@@ -182,7 +182,7 @@ class REPLWrapper(object):
             val = self._expect_prompt(timeout=timeout,
                                       expect_line=expect_line)
             text += self.child.before
-            if self.child.before:
+            if self.child.before and expect_line:
                 stream_handler(self.child.before)
             if val == 1:
                 # We got the continuation prompt - command was incomplete
