@@ -94,7 +94,6 @@ class REPLWrapper(object):
 
     def _expect_prompt(self, expect_line=False, timeout=-1, send_prompt_emit=True):
         if self.prompt_emit_cmd and send_prompt_emit:
-            print(self.prompt_emit_cmd)
             self.sendline(self.prompt_emit_cmd)
         expects = [self.prompt_regex, self.continuation_prompt_regex]
         if expect_line:
@@ -138,7 +137,6 @@ class REPLWrapper(object):
                                       expect_line=expect_line,
                                       send_prompt_emit=val != 2)
             text += self.child.before
-            print(self.child.before, self.child.after)
             if self.child.before:
                 stream_handler(self.child.before)
             if val != 2:
