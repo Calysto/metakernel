@@ -3,6 +3,10 @@
 Release History
 ------------------------
 
+0.12.0 (2016-01-17)
++++++++++++++++++++
+- Fixes for process metakernel
+
 0.11.0 (2015-09-28)
 +++++++++++++++++++
 - Added activity and jigsaw magics
