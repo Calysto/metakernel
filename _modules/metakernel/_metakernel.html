@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>metakernel._metakernel &mdash; Metakernel 0.11.8 documentation</title>
+    <title>metakernel._metakernel &mdash; Metakernel 0.12 documentation</title>
     
     <link rel="stylesheet" href="../../_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.11.8',
+        VERSION:     '0.12',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -28,7 +28,7 @@
     <script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
-    <link rel="top" title="Metakernel 0.11.8 documentation" href="../../index.html" />
+    <link rel="top" title="Metakernel 0.12 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
@@ -52,7 +52,7 @@
         </button>
         <a class="navbar-brand" href="../../index.html">
           Metakernel</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.11.8</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.12</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -119,7 +119,7 @@
         <div id="sidebar" class="bs-sidenav" role="complementary">
         </div>
       </div>
-    <div class="col-md-9 content">
+    <div class="col-md-9">
       
   <h1>Source code for metakernel._metakernel</h1><div class="highlight"><pre>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
@@ -176,7 +176,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">MetaKernel</span><span class="o">.</span><span class="n">meta_kernel</span>
 
-<div class="viewcode-block" id="MetaKernel"><a class="viewcode-back" href="../../source/api.html#metakernel.MetaKernel">[docs]</a><span class="k">class</span> <span class="nc">MetaKernel</span><span class="p">(</span><span class="n">Kernel</span><span class="p">):</span>
+<div class="viewcode-block" id="MetaKernel"><a class="viewcode-back" href="../../source/api.html#metakernel.MetaKernel">[docs]</a><span class="k">class</span> <span class="nc">MetaKernel</span><span class="p">(</span><span class="n">Kernel</span><span class="p">):</span></div>
 
     <span class="n">identifier_regex</span> <span class="o">=</span> <span class="s">r&#39;[^\d\W][\w\.]*&#39;</span>
     <span class="n">func_call_regex</span> <span class="o">=</span> <span class="s">r&#39;([^\d\W][\w\.]*)\([^\)\()]*\Z&#39;</span>
@@ -251,22 +251,22 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="MetaKernel.subkernel"><a class="viewcode-back" href="../../source/api.html#metakernel.MetaKernel.subkernel">[docs]</a>    <span class="k">def</span> <span class="nf">subkernel</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">kernel</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">subkernel</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">kernel</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Handle issues regarding making a kernel a subkernel to this</span>
 <span class="sd">        one. Used in %parallel and %kernel.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
-</div>
-<div class="viewcode-block" id="MetaKernel.makeSubkernelTo"><a class="viewcode-back" href="../../source/api.html#metakernel.MetaKernel.makeSubkernelTo">[docs]</a>    <span class="k">def</span> <span class="nf">makeSubkernelTo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">main_kernel</span><span class="p">,</span> <span class="n">display_function</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">makeSubkernelTo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">main_kernel</span><span class="p">,</span> <span class="n">display_function</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Handle issues regarding making this kernel be a subkernel to</span>
 <span class="sd">        another. Used in making metakernels be magics for IPython.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">main_kernel</span><span class="o">.</span><span class="n">session</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Display</span> <span class="o">=</span> <span class="n">display_function</span>
-</div>
-<div class="viewcode-block" id="MetaKernel.makeSubkernelToIPython"><a class="viewcode-back" href="../../source/api.html#metakernel.MetaKernel.makeSubkernelToIPython">[docs]</a>    <span class="k">def</span> <span class="nf">makeSubkernelToIPython</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">makeSubkernelToIPython</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run this method in an IPython kernel to set</span>
 <span class="sd">        this kernel&#39;s input/output settings.</span>
@@ -281,19 +281,19 @@
 
     <span class="c">#####################################</span>
     <span class="c"># Methods which provide kernel - specific behavior</span>
-</div>
-<div class="viewcode-block" id="MetaKernel.set_variable"><a class="viewcode-back" href="../../source/api.html#metakernel.MetaKernel.set_variable">[docs]</a>    <span class="k">def</span> <span class="nf">set_variable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">set_variable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set a variable to a Python-typed value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
-</div>
-<div class="viewcode-block" id="MetaKernel.get_variable"><a class="viewcode-back" href="../../source/api.html#metakernel.MetaKernel.get_variable">[docs]</a>    <span class="k">def</span> <span class="nf">get_variable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">get_variable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Lookup a variable name and return a Python-typed value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
-</div>
+
     <span class="k">def</span> <span class="nf">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
@@ -306,38 +306,38 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="s">&quot;Sorry, no help is available on &#39;</span><span class="si">%s</span><span class="s">&#39;.&quot;</span> <span class="o">%</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;code&#39;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="MetaKernel.handle_plot_settings"><a class="viewcode-back" href="../../source/api.html#metakernel.MetaKernel.handle_plot_settings">[docs]</a>    <span class="k">def</span> <span class="nf">handle_plot_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">handle_plot_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Handle the current plot settings&quot;&quot;&quot;</span>
         <span class="k">pass</span>
-</div>
-<div class="viewcode-block" id="MetaKernel.get_local_magics_dir"><a class="viewcode-back" href="../../source/api.html#metakernel.MetaKernel.get_local_magics_dir">[docs]</a>    <span class="k">def</span> <span class="nf">get_local_magics_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">get_local_magics_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the path to local magics dir (eg ~/.ipython/metakernel/magics)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">base</span> <span class="o">=</span> <span class="n">get_ipython_dir</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="s">&#39;metakernel&#39;</span><span class="p">,</span> <span class="s">&#39;magics&#39;</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="MetaKernel.get_completions"><a class="viewcode-back" href="../../source/api.html#metakernel.MetaKernel.get_completions">[docs]</a>    <span class="k">def</span> <span class="nf">get_completions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">get_completions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get completions from kernel based on info dict.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[]</span>
-</div>
-<div class="viewcode-block" id="MetaKernel.do_execute_direct"><a class="viewcode-back" href="../../source/api.html#metakernel.MetaKernel.do_execute_direct">[docs]</a>    <span class="k">def</span> <span class="nf">do_execute_direct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">do_execute_direct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Execute code in the kernel language.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
-</div>
-<div class="viewcode-block" id="MetaKernel.do_execute_file"><a class="viewcode-back" href="../../source/api.html#metakernel.MetaKernel.do_execute_file">[docs]</a>    <span class="k">def</span> <span class="nf">do_execute_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">do_execute_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Default code for running a file. Just opens the file, and sends</span>
 <span class="sd">        the text to do_execute_direct.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">code</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">())</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_execute_direct</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="MetaKernel.do_execute_meta"><a class="viewcode-back" href="../../source/api.html#metakernel.MetaKernel.do_execute_meta">[docs]</a>    <span class="k">def</span> <span class="nf">do_execute_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">do_execute_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Execute meta code in the kernel. This uses the execute infrastructure</span>
 <span class="sd">        but allows JavaScript to talk directly to the kernel bypassing normal</span>
@@ -360,8 +360,8 @@
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;This kernel does not implement this meta command&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Unknown meta command: &#39;</span><span class="si">%s</span><span class="s">&#39;&quot;</span> <span class="o">%</span> <span class="n">code</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="MetaKernel.initialize_debug"><a class="viewcode-back" href="../../source/api.html#metakernel.MetaKernel.initialize_debug">[docs]</a>    <span class="k">def</span> <span class="nf">initialize_debug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">initialize_debug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function is used with the %%debug magic for highlighting</span>
 <span class="sd">        lines of code, and for initializing debug functions.</span>
@@ -370,20 +370,20 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c">#return &quot;highlight: [%s, %s, %s, %s]&quot; % (line1, col1, line2, col2)</span>
         <span class="k">return</span> <span class="s">&quot;&quot;</span>
-</div>
-<div class="viewcode-block" id="MetaKernel.do_function_direct"><a class="viewcode-back" href="../../source/api.html#metakernel.MetaKernel.do_function_direct">[docs]</a>    <span class="k">def</span> <span class="nf">do_function_direct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function_name</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">do_function_direct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function_name</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Call a function in the kernel language with args (as a single item).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span><span class="s">&quot;This language does not support </span><span class="se">\&quot;</span><span class="s">%pmap function args</span><span class="se">\&quot;</span><span class="s">.&quot;</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="MetaKernel.restart_kernel"><a class="viewcode-back" href="../../source/api.html#metakernel.MetaKernel.restart_kernel">[docs]</a>    <span class="k">def</span> <span class="nf">restart_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">restart_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Restart the kernel&quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
     <span class="c">############################################</span>
     <span class="c"># Implement base class methods</span>
-</div>
+
     <span class="k">def</span> <span class="nf">do_execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">store_history</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">user_expressions</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                    <span class="n">allow_stdin</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="c"># Set the ability for the kernel to get standard-in:</span>
@@ -498,7 +498,7 @@
                     <span class="k">return</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iopub_socket</span><span class="p">,</span> <span class="s">&#39;execute_result&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
 
-<div class="viewcode-block" id="MetaKernel.do_history"><a class="viewcode-back" href="../../source/api.html#metakernel.MetaKernel.do_history">[docs]</a>    <span class="k">def</span> <span class="nf">do_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hist_access_type</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">raw</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">do_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hist_access_type</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">raw</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                    <span class="n">start</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Access history at startup.</span>
@@ -516,8 +516,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">hist_cache</span> <span class="o">=</span> <span class="n">history</span>
         <span class="n">history</span> <span class="o">=</span> <span class="p">[(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">history</span><span class="p">]</span>
         <span class="k">return</span> <span class="p">{</span><span class="s">&#39;history&#39;</span><span class="p">:</span> <span class="n">history</span><span class="p">}</span>
-</div>
-<div class="viewcode-block" id="MetaKernel.do_shutdown"><a class="viewcode-back" href="../../source/api.html#metakernel.MetaKernel.do_shutdown">[docs]</a>    <span class="k">def</span> <span class="nf">do_shutdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">restart</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">do_shutdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">restart</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Shut down the app gracefully, saving history.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -531,8 +531,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">restart_kernel</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Print</span><span class="p">(</span><span class="s">&quot;Done!&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span><span class="s">&#39;status&#39;</span><span class="p">:</span> <span class="s">&#39;ok&#39;</span><span class="p">,</span> <span class="s">&#39;restart&#39;</span><span class="p">:</span> <span class="n">restart</span><span class="p">}</span>
-</div>
-<div class="viewcode-block" id="MetaKernel.do_is_complete"><a class="viewcode-back" href="../../source/api.html#metakernel.MetaKernel.do_is_complete">[docs]</a>    <span class="k">def</span> <span class="nf">do_is_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">do_is_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Given code as string, returns dictionary with &#39;status&#39; representing</span>
 <span class="sd">        whether code is ready to evaluate. Possible values for status are:</span>
@@ -551,7 +551,7 @@
 <span class="sd">                    &#39;indent&#39;: &#39; &#39; * 4}</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span><span class="s">&#39;status&#39;</span> <span class="p">:</span> <span class="s">&#39;unknown&#39;</span><span class="p">}</span>
-</div>
+
     <span class="k">def</span> <span class="nf">do_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">cursor_pos</span><span class="p">):</span>
         <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_code</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">cursor_pos</span><span class="p">)</span>
         <span class="n">content</span> <span class="o">=</span> <span class="p">{</span>
@@ -729,13 +729,13 @@
             <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;stderr&#39;</span><span class="p">,</span> <span class="s">&#39;text&#39;</span><span class="p">:</span> <span class="n">message</span><span class="p">,</span> <span class="s">&#39;metadata&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">()}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iopub_socket</span><span class="p">,</span> <span class="s">&#39;stream&#39;</span><span class="p">,</span> <span class="n">stream_content</span><span class="p">)</span>
 
-<div class="viewcode-block" id="MetaKernel.call_magic"><a class="viewcode-back" href="../../source/api.html#metakernel.MetaKernel.call_magic">[docs]</a>    <span class="k">def</span> <span class="nf">call_magic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">call_magic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Given an line, such as &quot;%download http://example.com/&quot;, parse</span>
 <span class="sd">        and execute magic.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_magic</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-</div>
+
     <span class="k">def</span> <span class="nf">get_magic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="c">## FIXME: Bad name, use call_magic instead.</span>
         <span class="c"># if first line matches a magic,</span>
@@ -766,7 +766,7 @@
                        <span class="s">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sticky_magics</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
         <span class="k">return</span> <span class="n">retval</span>
 
-</div>
+
 <span class="k">def</span> <span class="nf">_split_magics_code</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">prefixes</span><span class="p">):</span>
     <span class="n">lines</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
     <span class="n">ret_magics</span> <span class="o">=</span> <span class="p">[]</span>
@@ -904,8 +904,8 @@
       
     </p>
     <p>
-        &copy; Copyright 2014 - 2015, Metakernel contributors.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.<br/>
+        &copy; Copyright 2014 - 2016, Metakernel contributors.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3.<br/>
     </p>
   </div>
 </footer>
