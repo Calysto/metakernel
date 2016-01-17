@@ -13,12 +13,12 @@ version_pat = re.compile(r'version (\d+(\.\d+)+)')
 
 class TextOutput(object):
     """Wrapper for text output whose repr is the text itself.
-    
+
     This avoids `repr(output)` adding quotation marks around already-rendered text.
     """
     def __init__(self, output):
         self.output = output
-    
+
     def __repr__(self):
         return self.output
 
@@ -73,7 +73,7 @@ class ProcessMetaKernel(MetaKernel):
         interrupted = False
         output = ''
         try:
-            output = self.wrapper.run_command(code.rstrip(), timeout=None,
+            output = self.wrapper.run_command(code.rstrip(), timeout=-1,
                                      stream_handler=stream_handler)
             if stream_handler is not None:
                 output = ''

@@ -1031,9 +1031,11 @@ class spawn(object):
     def _winread(self, size, timeout):
         t0 = time.time()
         buf = ''
-        while (time.time() - t0) < timeout and len(buf) < size:
+        if timeout is None or timeout == -1:
+            timeout = 30
+        while len(buf) < size:
             try:
-                incoming = self._read_queue.get_nowait()
+                incoming = self._read_queue.get(True, 1e-3)
             except Queue.Empty:
                 break
             except KeyboardInterrupt:
@@ -1045,6 +1047,10 @@ class spawn(object):
                     raise EOF('End of File')
 
                 buf += incoming
+
+            if (time.time() - t0) >= timeout:
+                break
+
         if len(buf) > size:
             self.buffer = buf[size:]
             buf = buf[:size]
