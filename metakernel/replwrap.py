@@ -94,6 +94,7 @@ class REPLWrapper(object):
 
     def _expect_prompt(self, expect_line=False, timeout=-1, send_prompt_emit=True):
         if self.prompt_emit_cmd and send_prompt_emit:
+            print(self.prompt_emit_cmd)
             self.sendline(self.prompt_emit_cmd)
         expects = [self.prompt_regex, self.continuation_prompt_regex]
         if expect_line:
@@ -122,6 +123,9 @@ class REPLWrapper(object):
           default from the :class:`pexpect.spawn` object (default 30 seconds).
           None means to wait indefinitely.
         """
+        if not self.prompt_emit_cmd:
+            return self._run_split_command(command, timeout, stream_handler)
+
         if not command:
             raise ValueError("No command was given")
 
@@ -131,15 +135,65 @@ class REPLWrapper(object):
         val = 0
         while 1:
             val = self._expect_prompt(timeout=timeout,
-                                      expect_line=expect_line, send_prompt_emit=val != 2)
+                                      expect_line=expect_line,
+                                      send_prompt_emit=val != 2)
             text += self.child.before
-            if val == 2:
-                if self.child.before:
-                    stream_handler(self.child.before)
-            else:
+            print(self.child.before, self.child.after)
+            if self.child.before:
+                stream_handler(self.child.before)
+            if val != 2:
                 break
 
         return text
+
+    def _run_split_command(self, command, timeout=-1, stream_handler=None):
+        """Send a command to the REPL, wait for and return output.
+        :param str command: The command to send. Trailing newlines are
+        not needed.
+          This should be a complete block of input that will trigger execution;
+          if a continuation prompt is found after sending input,
+          :exc:`ValueError` will be raised.
+        :param int timeout: How long to wait for the next prompt. -1 means the
+          default from the :class:`pexpect.spawn` object (default 30 seconds).
+          None means to wait indefinitely.
+        """
+        # Split up multiline commands and feed them in bit-by-bit
+        cmdlines = command.splitlines()
+        # splitlines ignores trailing newlines - add it back in manually
+        if command.endswith('\n'):
+            cmdlines.append('')
+        if not cmdlines:
+            raise ValueError("No command was given")
+
+        text = ''
+        expect_line = stream_handler is not None
+        self.sendline(cmdlines[0])
+        for line in cmdlines[1:]:
+            while 1:
+                val = self._expect_prompt(timeout=timeout,
+                                          expect_line=expect_line)
+                text += self.child.before
+                if self.child.before:
+                    stream_handler(self.child.before)
+                if val != 2:
+                    break
+            self.sendline(line)
+
+        # Command was fully submitted, now wait for the next prompt
+        while 1:
+            val = self._expect_prompt(timeout=timeout,
+                                      expect_line=expect_line)
+            text += self.child.before
+            if self.child.before:
+                stream_handler(self.child.before)
+            if val == 1:
+                # We got the continuation prompt - command was incomplete
+                self.child.kill(signal.SIGINT)
+                self._expect_prompt(timeout=-1)
+                raise ValueError("Continuation prompt found -"
+                                 " input was incomplete:\n" + command)
+            elif val != 2:
+                break
 
 
 def python(command="python"):
