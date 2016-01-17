@@ -68,8 +68,13 @@ class ShellMagic(Magic):
                 else:
                     raise(e)
             else:
-                self.cmd = 'bash'
-                self.repl = bash()
+                if pexpect.which('bash'):
+                    self.cmd = 'bash'
+                    self.repl = bash()
+                else:
+                    self.cmd = 'sh'
+                    self.repl = bash(command='sh')
+
 
     def cell_shell(self):
         """
