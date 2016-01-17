@@ -64,15 +64,17 @@ class ShellMagic(Magic):
 
                 if os.name == 'nt':
                     self.cmd = 'cmd'
+                    self.repl = cmd()
                 else:
                     raise(e)
             else:
-                self.cmd = 'bash'
+                if pexpect.which('bash'):
+                    self.cmd = 'bash'
+                    self.repl = bash()
+                else:
+                    self.cmd = 'sh'
+                    self.repl = bash(command='sh')
 
-        if self.cmd == 'cmd':
-            self.repl = cmd()
-        else:
-            self.repl = bash()
 
     def cell_shell(self):
         """
