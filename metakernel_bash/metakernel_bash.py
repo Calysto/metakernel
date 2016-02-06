@@ -31,9 +31,8 @@ class MetaKernelBash(MetaKernel):
             return
         self.log.debug('execute: %s' % code)
         shell_magic = self.line_magics['shell']
-        resp = shell_magic.eval(code.strip())
+        shell_magic.eval(code.strip())
         self.log.debug('execute done')
-        return resp.strip()
 
     def get_completions(self, info):
         shell_magic = self.line_magics['shell']

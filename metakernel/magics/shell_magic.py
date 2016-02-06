@@ -51,7 +51,7 @@ class ShellMagic(Magic):
             self.kernel.Print(resp)
 
     def eval(self, cmd):
-        return self.repl.run_command(cmd, stream_handler=sys.stdout.write)
+        return self.repl.run_command(cmd, stream_handler=self.kernel.Print)
 
     def start_process(self):
         if not self.repl is None:
@@ -74,7 +74,6 @@ class ShellMagic(Magic):
                 else:
                     self.cmd = 'sh'
                     self.repl = bash(command='sh')
-
 
     def cell_shell(self):
         """
