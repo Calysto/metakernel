@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>metakernel._metakernel &mdash; Metakernel 0.12.3 documentation</title>
+    <title>metakernel._metakernel &mdash; Metakernel 0.12.4 documentation</title>
     
     <link rel="stylesheet" href="../../_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.12.3',
+        VERSION:     '0.12.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -28,7 +28,7 @@
     <script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
-    <link rel="top" title="Metakernel 0.12.3 documentation" href="../../index.html" />
+    <link rel="top" title="Metakernel 0.12.4 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
@@ -52,7 +52,7 @@
         </button>
         <a class="navbar-brand" href="../../index.html">
           Metakernel</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.12.3</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.12.4</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -122,11 +122,11 @@
     <div class="col-md-9">
       
   <h1>Source code for metakernel._metakernel</h1><div class="highlight"><pre>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="s">&#39;IPython.html.widgets&#39;</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="s1">&#39;IPython.html.widgets&#39;</span><span class="p">)</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="k">try</span><span class="p">:</span>
@@ -147,10 +147,10 @@
             <span class="n">Widget</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="kn">from</span> <span class="nn">IPython.core.formatters</span> <span class="kn">import</span> <span class="n">IPythonDisplayFormatter</span>
 <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&quot;Cannot load module {name} so metakernel will not be available to IPython/jupyter.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)))</span>
-    <span class="c"># This module won&#39;t be useful without IPython</span>
-    <span class="c"># (other parts of metakernel may be useful)</span>
-    <span class="c"># but we make it loadable anyway</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Cannot load module {name} so metakernel will not be available to IPython/jupyter.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)))</span>
+    <span class="c1"># This module won&#39;t be useful without IPython</span>
+    <span class="c1"># (other parts of metakernel may be useful)</span>
+    <span class="c1"># but we make it loadable anyway</span>
     <span class="n">Kernel</span> <span class="o">=</span> <span class="nb">object</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -178,28 +178,28 @@
 
 <div class="viewcode-block" id="MetaKernel"><a class="viewcode-back" href="../../source/api.html#metakernel.MetaKernel">[docs]</a><span class="k">class</span> <span class="nc">MetaKernel</span><span class="p">(</span><span class="n">Kernel</span><span class="p">):</span></div>
 
-    <span class="n">identifier_regex</span> <span class="o">=</span> <span class="s">r&#39;[^\d\W][\w\.]*&#39;</span>
-    <span class="n">func_call_regex</span> <span class="o">=</span> <span class="s">r&#39;([^\d\W][\w\.]*)\([^\)\()]*\Z&#39;</span>
-    <span class="n">magic_prefixes</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">magic</span><span class="o">=</span><span class="s">&#39;%&#39;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="s">&#39;!&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;?&#39;</span><span class="p">)</span>
-    <span class="n">help_suffix</span> <span class="o">=</span> <span class="s">&#39;?&#39;</span>
+    <span class="n">identifier_regex</span> <span class="o">=</span> <span class="s1">r&#39;[^\d\W][\w\.]*&#39;</span>
+    <span class="n">func_call_regex</span> <span class="o">=</span> <span class="s1">r&#39;([^\d\W][\w\.]*)\([^\)\()]*\Z&#39;</span>
+    <span class="n">magic_prefixes</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">magic</span><span class="o">=</span><span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="s1">&#39;!&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;?&#39;</span><span class="p">)</span>
+    <span class="n">help_suffix</span> <span class="o">=</span> <span class="s1">&#39;?&#39;</span>
     <span class="n">help_links</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">{</span>
-            <span class="s">&#39;text&#39;</span><span class="p">:</span> <span class="s">&quot;MetaKernel Magics&quot;</span><span class="p">,</span>
-            <span class="s">&#39;url&#39;</span><span class="p">:</span> <span class="s">&quot;https://github.com/calysto/metakernel/blob/master/metakernel/magics/README.md&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s2">&quot;MetaKernel Magics&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s2">&quot;https://github.com/calysto/metakernel/blob/master/metakernel/magics/README.md&quot;</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">]</span>
     <span class="n">language_info</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="c"># &#39;mimetype&#39;: &#39;text/x-python&#39;,</span>
-        <span class="c"># &#39;name&#39;: &#39;python&#39;,</span>
-        <span class="c"># ------ If different from &#39;language&#39;:</span>
-        <span class="c"># &#39;codemirror_mode&#39;: {</span>
-        <span class="c">#    &quot;version&quot;: 2,</span>
-        <span class="c">#    &quot;name&quot;: &quot;ipython&quot;</span>
-        <span class="c"># }</span>
-        <span class="c"># &#39;pygments_lexer&#39;: &#39;language&#39;,</span>
-        <span class="c"># &#39;version&#39;       : &quot;x.y.z&quot;,</span>
-        <span class="c"># &#39;file_extension&#39;: &#39;.py&#39;,</span>
-        <span class="s">&#39;help_links&#39;</span><span class="p">:</span> <span class="n">help_links</span><span class="p">,</span>
+        <span class="c1"># &#39;mimetype&#39;: &#39;text/x-python&#39;,</span>
+        <span class="c1"># &#39;name&#39;: &#39;python&#39;,</span>
+        <span class="c1"># ------ If different from &#39;language&#39;:</span>
+        <span class="c1"># &#39;codemirror_mode&#39;: {</span>
+        <span class="c1">#    &quot;version&quot;: 2,</span>
+        <span class="c1">#    &quot;name&quot;: &quot;ipython&quot;</span>
+        <span class="c1"># }</span>
+        <span class="c1"># &#39;pygments_lexer&#39;: &#39;language&#39;,</span>
+        <span class="c1"># &#39;version&#39;       : &quot;x.y.z&quot;,</span>
+        <span class="c1"># &#39;file_extension&#39;: &#39;.py&#39;,</span>
+        <span class="s1">&#39;help_links&#39;</span><span class="p">:</span> <span class="n">help_links</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="n">meta_kernel</span> <span class="o">=</span> <span class="bp">None</span>
 
@@ -208,17 +208,17 @@
         <span class="k">if</span> <span class="n">MetaKernel</span><span class="o">.</span><span class="n">meta_kernel</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">MetaKernel</span><span class="o">.</span><span class="n">meta_kernel</span> <span class="o">=</span> <span class="bp">self</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="c"># This occurs if we call as a stand-alone kernel</span>
-            <span class="c"># (eg, not as a process)</span>
-            <span class="c"># FIXME: take care of input/output, eg StringIO</span>
-            <span class="c">#        make work without a session</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">(</span><span class="s">&quot;.metakernel&quot;</span><span class="p">)</span>
+            <span class="c1"># This occurs if we call as a stand-alone kernel</span>
+            <span class="c1"># (eg, not as a process)</span>
+            <span class="c1"># FIXME: take care of input/output, eg StringIO</span>
+            <span class="c1">#        make work without a session</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">(</span><span class="s2">&quot;.metakernel&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c"># Write has already been set</span>
+            <span class="c1"># Write has already been set</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Write</span>
             <span class="k">except</span><span class="p">:</span>
-                <span class="k">pass</span>  <span class="c"># Can&#39;t change stdout</span>
+                <span class="k">pass</span>  <span class="c1"># Can&#39;t change stdout</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sticky_magics</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_i</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ii</span> <span class="o">=</span> <span class="bp">None</span>
@@ -230,21 +230,21 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">hist_cache</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">comm_manager</span> <span class="o">=</span> <span class="n">CommManager</span><span class="p">(</span><span class="n">shell</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
                                         <span class="n">kernel</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">comm_manager</span><span class="o">.</span><span class="n">register_target</span><span class="p">(</span><span class="s">&#39;ipython.widget&#39;</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comm_manager</span><span class="o">.</span><span class="n">register_target</span><span class="p">(</span><span class="s1">&#39;ipython.widget&#39;</span><span class="p">,</span>
             <span class="n">lazy_import_handle_comm_opened</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">plot_settings</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="s">&#39;inline&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_settings</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="s1">&#39;inline&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hist_file</span> <span class="o">=</span> <span class="n">get_history_file</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reload_magics</span><span class="p">()</span>
-        <span class="c"># provide a way to get the current instance</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_variable</span><span class="p">(</span><span class="s">&quot;kernel&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="c1"># provide a way to get the current instance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_variable</span><span class="p">(</span><span class="s2">&quot;kernel&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">identifier_regex</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_call_regex</span><span class="p">,</span>
                              <span class="bp">self</span><span class="o">.</span><span class="n">magic_prefixes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">help_suffix</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">comm_manager</span> <span class="o">=</span> <span class="n">CommManager</span><span class="p">(</span><span class="n">shell</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
                                         <span class="n">kernel</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">comm_manager</span><span class="o">.</span><span class="n">register_target</span><span class="p">(</span><span class="s">&#39;ipython.widget&#39;</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comm_manager</span><span class="o">.</span><span class="n">register_target</span><span class="p">(</span><span class="s1">&#39;ipython.widget&#39;</span><span class="p">,</span>
                                           <span class="n">lazy_import_handle_comm_opened</span><span class="p">)</span>
-        <span class="n">comm_msg_types</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;comm_open&#39;</span><span class="p">,</span> <span class="s">&#39;comm_msg&#39;</span><span class="p">,</span> <span class="s">&#39;comm_close&#39;</span><span class="p">]</span>
+        <span class="n">comm_msg_types</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;comm_open&#39;</span><span class="p">,</span> <span class="s1">&#39;comm_msg&#39;</span><span class="p">,</span> <span class="s1">&#39;comm_close&#39;</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">msg_type</span> <span class="ow">in</span> <span class="n">comm_msg_types</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">shell_handlers</span><span class="p">[</span><span class="n">msg_type</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comm_manager</span><span class="p">,</span> <span class="n">msg_type</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ipy_formatter</span> <span class="o">=</span> <span class="n">IPythonDisplayFormatter</span><span class="p">()</span>
@@ -274,13 +274,13 @@
         <span class="kn">from</span> <span class="nn">IPython</span> <span class="kn">import</span> <span class="n">get_ipython</span>
         <span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
         <span class="n">ip</span> <span class="o">=</span> <span class="n">get_ipython</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">ip</span><span class="p">:</span> <span class="c"># we are running under an IPython kernel</span>
+        <span class="k">if</span> <span class="n">ip</span><span class="p">:</span> <span class="c1"># we are running under an IPython kernel</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">makeSubkernelTo</span><span class="p">(</span><span class="n">ip</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">display</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Need to run under an IPython kernel&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Need to run under an IPython kernel&quot;</span><span class="p">)</span>
 
-    <span class="c">#####################################</span>
-    <span class="c"># Methods which provide kernel - specific behavior</span>
+    <span class="c1">#####################################</span>
+    <span class="c1"># Methods which provide kernel - specific behavior</span>
 
     <span class="k">def</span> <span class="nf">set_variable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -298,13 +298,13 @@
         <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_usage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s">&quot;This is a usage statement.&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;This is a usage statement.&quot;</span>
 
     <span class="k">def</span> <span class="nf">get_kernel_help_on</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">none_on_fail</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">none_on_fail</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">None</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s">&quot;Sorry, no help is available on &#39;</span><span class="si">%s</span><span class="s">&#39;.&quot;</span> <span class="o">%</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;code&#39;</span><span class="p">]</span>
+            <span class="k">return</span> <span class="s2">&quot;Sorry, no help is available on &#39;</span><span class="si">%s</span><span class="s2">&#39;.&quot;</span> <span class="o">%</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">handle_plot_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Handle the current plot settings&quot;&quot;&quot;</span>
@@ -315,7 +315,7 @@
 <span class="sd">        Returns the path to local magics dir (eg ~/.ipython/metakernel/magics)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">base</span> <span class="o">=</span> <span class="n">get_ipython_dir</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="s">&#39;metakernel&#39;</span><span class="p">,</span> <span class="s">&#39;magics&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="s1">&#39;metakernel&#39;</span><span class="p">,</span> <span class="s1">&#39;magics&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_completions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -334,7 +334,7 @@
 <span class="sd">        Default code for running a file. Just opens the file, and sends</span>
 <span class="sd">        the text to do_execute_direct.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">code</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">())</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">())</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_execute_direct</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">do_execute_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
@@ -350,16 +350,16 @@
 
 <span class="sd">        for highlighting expressions in the frontend.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">code</span> <span class="o">==</span> <span class="s">&quot;reset&quot;</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;This kernel does not implement this meta command&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">code</span> <span class="o">==</span> <span class="s">&quot;stop&quot;</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;This kernel does not implement this meta command&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">code</span> <span class="o">==</span> <span class="s">&quot;step&quot;</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;This kernel does not implement this meta command&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">code</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;inspect &quot;</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;This kernel does not implement this meta command&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">code</span> <span class="o">==</span> <span class="s2">&quot;reset&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;This kernel does not implement this meta command&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">code</span> <span class="o">==</span> <span class="s2">&quot;stop&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;This kernel does not implement this meta command&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">code</span> <span class="o">==</span> <span class="s2">&quot;step&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;This kernel does not implement this meta command&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">code</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;inspect &quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;This kernel does not implement this meta command&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Unknown meta command: &#39;</span><span class="si">%s</span><span class="s">&#39;&quot;</span> <span class="o">%</span> <span class="n">code</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unknown meta command: &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="n">code</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">initialize_debug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -368,38 +368,38 @@
 
 <span class="sd">        Return the empty string if highlighting is not supported.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c">#return &quot;highlight: [%s, %s, %s, %s]&quot; % (line1, col1, line2, col2)</span>
-        <span class="k">return</span> <span class="s">&quot;&quot;</span>
+        <span class="c1">#return &quot;highlight: [%s, %s, %s, %s]&quot; % (line1, col1, line2, col2)</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">do_function_direct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function_name</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Call a function in the kernel language with args (as a single item).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span><span class="s">&quot;This language does not support </span><span class="se">\&quot;</span><span class="s">%pmap function args</span><span class="se">\&quot;</span><span class="s">.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span><span class="s2">&quot;This language does not support </span><span class="se">\&quot;</span><span class="s2">%pmap function args</span><span class="se">\&quot;</span><span class="s2">.&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">restart_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Restart the kernel&quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
-    <span class="c">############################################</span>
-    <span class="c"># Implement base class methods</span>
+    <span class="c1">############################################</span>
+    <span class="c1"># Implement base class methods</span>
 
     <span class="k">def</span> <span class="nf">do_execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">store_history</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">user_expressions</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                    <span class="n">allow_stdin</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-        <span class="c"># Set the ability for the kernel to get standard-in:</span>
+        <span class="c1"># Set the ability for the kernel to get standard-in:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_allow_stdin</span> <span class="o">=</span> <span class="n">allow_stdin</span>
-        <span class="c"># Create a default response:</span>
+        <span class="c1"># Create a default response:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kernel_resp</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&#39;status&#39;</span><span class="p">:</span> <span class="s">&#39;ok&#39;</span><span class="p">,</span>
-            <span class="c"># The base class increments the execution count</span>
-            <span class="s">&#39;execution_count&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">execution_count</span><span class="p">,</span>
-            <span class="s">&#39;payload&#39;</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="s">&#39;user_expressions&#39;</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;ok&#39;</span><span class="p">,</span>
+            <span class="c1"># The base class increments the execution count</span>
+            <span class="s1">&#39;execution_count&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">execution_count</span><span class="p">,</span>
+            <span class="s1">&#39;payload&#39;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">&#39;user_expressions&#39;</span><span class="p">:</span> <span class="p">{},</span>
         <span class="p">}</span>
 
-        <span class="c"># TODO: remove this when IPython fixes this</span>
-        <span class="c"># This happens at startup when the language is set to python</span>
-        <span class="k">if</span> <span class="s">&#39;_usage.page_guiref&#39;</span> <span class="ow">in</span> <span class="n">code</span><span class="p">:</span>
+        <span class="c1"># TODO: remove this when IPython fixes this</span>
+        <span class="c1"># This happens at startup when the language is set to python</span>
+        <span class="k">if</span> <span class="s1">&#39;_usage.page_guiref&#39;</span> <span class="ow">in</span> <span class="n">code</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_resp</span>
 
         <span class="k">if</span> <span class="n">code</span> <span class="ow">and</span> <span class="n">store_history</span><span class="p">:</span>
@@ -412,83 +412,83 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">payload</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">retval</span> <span class="o">=</span> <span class="bp">None</span>
 
-        <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;magic&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;magic&#39;</span><span class="p">][</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;help&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;magic&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;magic&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;help&#39;</span><span class="p">:</span>
 
-            <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;magic&#39;</span><span class="p">][</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;line&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;magic&#39;</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;line&#39;</span><span class="p">:</span>
                 <span class="n">level</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">level</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_help_on</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">text</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">payload</span> <span class="o">=</span> <span class="p">[{</span><span class="s">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s">&quot;text/plain&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">},</span>
-                                 <span class="s">&quot;start_line_number&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-                                 <span class="s">&quot;source&quot;</span><span class="p">:</span> <span class="s">&quot;page&quot;</span><span class="p">}]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">payload</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;text/plain&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">},</span>
+                                 <span class="s2">&quot;start_line_number&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                                 <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="s2">&quot;page&quot;</span><span class="p">}]</span>
 
-        <span class="k">elif</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;magic&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">sticky_magics</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;magic&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">sticky_magics</span><span class="p">:</span>
             <span class="n">retval</span> <span class="o">=</span> <span class="bp">None</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sticky_magics</span><span class="p">:</span>
                 <span class="n">magics</span><span class="p">,</span> <span class="n">code</span> <span class="o">=</span> <span class="n">_split_magics_code</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">magic_prefixes</span><span class="p">)</span>
                 <span class="n">code</span> <span class="o">=</span> <span class="n">magics</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_sticky_magics</span><span class="p">()</span> <span class="o">+</span> <span class="n">code</span>
             <span class="n">stack</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="c"># Handle magics:</span>
+            <span class="c1"># Handle magics:</span>
             <span class="n">magic</span> <span class="o">=</span> <span class="bp">None</span>
-            <span class="n">prefixes</span> <span class="o">=</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_prefixes</span><span class="p">[</span><span class="s">&#39;shell&#39;</span><span class="p">],</span>
-                         <span class="bp">self</span><span class="o">.</span><span class="n">magic_prefixes</span><span class="p">[</span><span class="s">&#39;magic&#39;</span><span class="p">]))</span>
+            <span class="n">prefixes</span> <span class="o">=</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">magic_prefixes</span><span class="p">[</span><span class="s1">&#39;shell&#39;</span><span class="p">],</span>
+                         <span class="bp">self</span><span class="o">.</span><span class="n">magic_prefixes</span><span class="p">[</span><span class="s1">&#39;magic&#39;</span><span class="p">]))</span>
             <span class="k">while</span> <span class="n">code</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefixes</span><span class="p">):</span>
                 <span class="n">magic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_magic</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">magic</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                     <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">magic</span><span class="p">)</span>
                     <span class="n">code</span> <span class="o">=</span> <span class="n">magic</span><span class="o">.</span><span class="n">get_code</span><span class="p">()</span>
-                    <span class="c"># signal to exit, maybe error or no block</span>
+                    <span class="c1"># signal to exit, maybe error or no block</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">magic</span><span class="o">.</span><span class="n">evaluate</span><span class="p">:</span>
                         <span class="k">break</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">break</span>
-            <span class="c"># Execute code, if any:</span>
-            <span class="k">if</span> <span class="p">((</span><span class="n">magic</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">magic</span><span class="o">.</span><span class="n">evaluate</span><span class="p">)</span> <span class="ow">and</span> <span class="n">code</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">code</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;~~META~~:&quot;</span><span class="p">):</span>
+            <span class="c1"># Execute code, if any:</span>
+            <span class="k">if</span> <span class="p">((</span><span class="n">magic</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">magic</span><span class="o">.</span><span class="n">evaluate</span><span class="p">)</span> <span class="ow">and</span> <span class="n">code</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">code</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;~~META~~:&quot;</span><span class="p">):</span>
                     <span class="n">retval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_execute_meta</span><span class="p">(</span><span class="n">code</span><span class="p">[</span><span class="mi">9</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">retval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_execute_direct</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
-            <span class="c"># Post-process magics:</span>
+            <span class="c1"># Post-process magics:</span>
             <span class="k">for</span> <span class="n">magic</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">stack</span><span class="p">):</span>
                 <span class="n">retval</span> <span class="o">=</span> <span class="n">magic</span><span class="o">.</span><span class="n">post_process</span><span class="p">(</span><span class="n">retval</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">code</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;~~META~~:&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">code</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;~~META~~:&quot;</span><span class="p">):</span>
                 <span class="n">retval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_execute_meta</span><span class="p">(</span><span class="n">code</span><span class="p">[</span><span class="mi">9</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">retval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_execute_direct</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">post_execute</span><span class="p">(</span><span class="n">retval</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">silent</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="s">&#39;payload&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_resp</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">kernel_resp</span><span class="p">[</span><span class="s">&#39;payload&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">payload</span>
+        <span class="k">if</span> <span class="s1">&#39;payload&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_resp</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kernel_resp</span><span class="p">[</span><span class="s1">&#39;payload&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">payload</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_resp</span>
 
     <span class="k">def</span> <span class="nf">post_execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">retval</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">silent</span><span class="p">):</span>
-        <span class="c"># Handle in&#39;s</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_variable</span><span class="p">(</span><span class="s">&quot;_iii&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iii</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_variable</span><span class="p">(</span><span class="s">&quot;_ii&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ii</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_variable</span><span class="p">(</span><span class="s">&quot;_i&quot;</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_variable</span><span class="p">(</span><span class="s">&quot;_i&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">execution_count</span><span class="p">),</span> <span class="n">code</span><span class="p">)</span>
+        <span class="c1"># Handle in&#39;s</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_variable</span><span class="p">(</span><span class="s2">&quot;_iii&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iii</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_variable</span><span class="p">(</span><span class="s2">&quot;_ii&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ii</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_variable</span><span class="p">(</span><span class="s2">&quot;_i&quot;</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_variable</span><span class="p">(</span><span class="s2">&quot;_i&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">execution_count</span><span class="p">),</span> <span class="n">code</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_iii</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ii</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ii</span> <span class="o">=</span> <span class="n">code</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">retval</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">):</span>
-            <span class="c"># --------------------------------------</span>
-            <span class="c"># Handle out&#39;s (only when non-null)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">set_variable</span><span class="p">(</span><span class="s">&quot;___&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">___</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">set_variable</span><span class="p">(</span><span class="s">&quot;__&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">set_variable</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">,</span> <span class="n">retval</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">set_variable</span><span class="p">(</span><span class="s">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">execution_count</span><span class="p">),</span> <span class="n">retval</span><span class="p">)</span>
+            <span class="c1"># --------------------------------------</span>
+            <span class="c1"># Handle out&#39;s (only when non-null)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_variable</span><span class="p">(</span><span class="s2">&quot;___&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">___</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_variable</span><span class="p">(</span><span class="s2">&quot;__&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_variable</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">retval</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_variable</span><span class="p">(</span><span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">execution_count</span><span class="p">),</span> <span class="n">retval</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">___</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__</span> <span class="o">=</span> <span class="n">retval</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">retval</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">content</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;execution_count&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">execution_count</span><span class="p">,</span>
-                           <span class="s">&#39;data&#39;</span><span class="p">:</span> <span class="n">_formatter</span><span class="p">(</span><span class="n">retval</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">repr</span><span class="p">),</span>
-                           <span class="s">&#39;metadata&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">()}</span>
+                <span class="n">content</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;execution_count&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">execution_count</span><span class="p">,</span>
+                           <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">_formatter</span><span class="p">(</span><span class="n">retval</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">repr</span><span class="p">),</span>
+                           <span class="s1">&#39;metadata&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">()}</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                 <span class="k">return</span>
@@ -496,7 +496,7 @@
                 <span class="k">if</span> <span class="n">Widget</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">retval</span><span class="p">,</span> <span class="n">Widget</span><span class="p">):</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">Display</span><span class="p">(</span><span class="n">retval</span><span class="p">)</span>
                     <span class="k">return</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iopub_socket</span><span class="p">,</span> <span class="s">&#39;execute_result&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iopub_socket</span><span class="p">,</span> <span class="s1">&#39;execute_result&#39;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">do_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hist_access_type</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">raw</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                    <span class="n">start</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
@@ -504,33 +504,33 @@
 <span class="sd">        Access history at startup.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">hist_file</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s">&#39;history&#39;</span><span class="p">:</span> <span class="p">[]}</span>
-        <span class="c"># else:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;history&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="c1"># else:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hist_file</span><span class="p">):</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hist_file</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fid</span><span class="p">:</span>
-                <span class="n">fid</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hist_file</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fid</span><span class="p">:</span>
-            <span class="n">history</span> <span class="o">=</span> <span class="n">fid</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">,</span> <span class="s">&#39;replace&#39;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hist_file</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fid</span><span class="p">:</span>
+                <span class="n">fid</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hist_file</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fid</span><span class="p">:</span>
+            <span class="n">history</span> <span class="o">=</span> <span class="n">fid</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="s1">&#39;replace&#39;</span><span class="p">)</span>
         <span class="n">history</span> <span class="o">=</span> <span class="n">history</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
         <span class="n">history</span> <span class="o">=</span> <span class="n">history</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">max_hist_cache</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hist_cache</span> <span class="o">=</span> <span class="n">history</span>
         <span class="n">history</span> <span class="o">=</span> <span class="p">[(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">history</span><span class="p">]</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s">&#39;history&#39;</span><span class="p">:</span> <span class="n">history</span><span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;history&#39;</span><span class="p">:</span> <span class="n">history</span><span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">do_shutdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">restart</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Shut down the app gracefully, saving history.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hist_file</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hist_file</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fid</span><span class="p">:</span>
-                <span class="n">data</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hist_cache</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">max_hist_cache</span><span class="p">:])</span>
-                <span class="n">fid</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">))</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hist_file</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fid</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hist_cache</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">max_hist_cache</span><span class="p">:])</span>
+                <span class="n">fid</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">restart</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">Print</span><span class="p">(</span><span class="s">&quot;Restarting kernel...&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Print</span><span class="p">(</span><span class="s2">&quot;Restarting kernel...&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">reload_magics</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">restart_kernel</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">Print</span><span class="p">(</span><span class="s">&quot;Done!&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s">&#39;status&#39;</span><span class="p">:</span> <span class="s">&#39;ok&#39;</span><span class="p">,</span> <span class="s">&#39;restart&#39;</span><span class="p">:</span> <span class="n">restart</span><span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Print</span><span class="p">(</span><span class="s2">&quot;Done!&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;ok&#39;</span><span class="p">,</span> <span class="s1">&#39;restart&#39;</span><span class="p">:</span> <span class="n">restart</span><span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">do_is_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -550,184 +550,184 @@
 <span class="sd">            return {&#39;status&#39; : &#39;incomplete&#39;,</span>
 <span class="sd">                    &#39;indent&#39;: &#39; &#39; * 4}</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s">&#39;status&#39;</span> <span class="p">:</span> <span class="s">&#39;unknown&#39;</span><span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;status&#39;</span> <span class="p">:</span> <span class="s1">&#39;unknown&#39;</span><span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">do_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">cursor_pos</span><span class="p">):</span>
         <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_code</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">cursor_pos</span><span class="p">)</span>
         <span class="n">content</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&#39;matches&#39;</span><span class="p">:</span> <span class="p">[],</span>
-            <span class="s">&#39;cursor_start&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">],</span>
-            <span class="s">&#39;cursor_end&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;end&#39;</span><span class="p">],</span>
-            <span class="s">&#39;metadata&#39;</span><span class="p">:</span> <span class="p">{},</span>
-            <span class="s">&#39;status&#39;</span><span class="p">:</span> <span class="s">&#39;ok&#39;</span>
+            <span class="s1">&#39;matches&#39;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">&#39;cursor_start&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;cursor_end&#39;</span><span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;metadata&#39;</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;ok&#39;</span>
         <span class="p">}</span>
 
-        <span class="n">matches</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;path_matches&#39;</span><span class="p">]</span>
+        <span class="n">matches</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;path_matches&#39;</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;magic&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;magic&#39;</span><span class="p">]:</span>
 
-            <span class="c"># if the last line contains another magic, use that</span>
-            <span class="n">line_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_code</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s">&#39;line&#39;</span><span class="p">])</span>
-            <span class="k">if</span> <span class="n">line_info</span><span class="p">[</span><span class="s">&#39;magic&#39;</span><span class="p">]:</span>
+            <span class="c1"># if the last line contains another magic, use that</span>
+            <span class="n">line_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_code</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;line&#39;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">line_info</span><span class="p">[</span><span class="s1">&#39;magic&#39;</span><span class="p">]:</span>
                 <span class="n">info</span> <span class="o">=</span> <span class="n">line_info</span>
 
-            <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;magic&#39;</span><span class="p">][</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;line&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;magic&#39;</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;line&#39;</span><span class="p">:</span>
                 <span class="n">magics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_magics</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">magics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_magics</span>
 
-            <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;magic&#39;</span><span class="p">][</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">magics</span><span class="p">:</span>
-                <span class="n">magic</span> <span class="o">=</span> <span class="n">magics</span><span class="p">[</span><span class="n">info</span><span class="p">[</span><span class="s">&#39;magic&#39;</span><span class="p">][</span><span class="s">&#39;name&#39;</span><span class="p">]]</span>
-                <span class="n">info</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;magic&#39;</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;cell&#39;</span> <span class="ow">and</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;code&#39;</span><span class="p">]:</span>
-                    <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_code</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s">&#39;code&#39;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;magic&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">magics</span><span class="p">:</span>
+                <span class="n">magic</span> <span class="o">=</span> <span class="n">magics</span><span class="p">[</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;magic&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]]</span>
+                <span class="n">info</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;magic&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;cell&#39;</span> <span class="ow">and</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">]:</span>
+                    <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_code</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">])</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_code</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s">&#39;args&#39;</span><span class="p">])</span>
+                    <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_code</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">])</span>
 
                 <span class="n">matches</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">magic</span><span class="o">.</span><span class="n">get_completions</span><span class="p">(</span><span class="n">info</span><span class="p">))</span>
 
-            <span class="k">elif</span> <span class="ow">not</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;magic&#39;</span><span class="p">][</span><span class="s">&#39;code&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;magic&#39;</span><span class="p">][</span><span class="s">&#39;args&#39;</span><span class="p">]:</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;magic&#39;</span><span class="p">][</span><span class="s1">&#39;code&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;magic&#39;</span><span class="p">][</span><span class="s1">&#39;args&#39;</span><span class="p">]:</span>
                 <span class="n">matches</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">magics</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                    <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s">&#39;magic&#39;</span><span class="p">][</span><span class="s">&#39;name&#39;</span><span class="p">]):</span>
-                        <span class="n">pre</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;magic&#39;</span><span class="p">][</span><span class="s">&#39;prefix&#39;</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;magic&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]):</span>
+                        <span class="n">pre</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;magic&#39;</span><span class="p">][</span><span class="s1">&#39;prefix&#39;</span><span class="p">]</span>
                         <span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pre</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
-                        <span class="n">info</span><span class="p">[</span><span class="s">&#39;start&#39;</span><span class="p">]</span> <span class="o">-=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pre</span><span class="p">)</span>
-                        <span class="n">info</span><span class="p">[</span><span class="s">&#39;full_obj&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pre</span> <span class="o">+</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;full_obj&#39;</span><span class="p">]</span>
-                        <span class="n">info</span><span class="p">[</span><span class="s">&#39;obj&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pre</span> <span class="o">+</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;obj&#39;</span><span class="p">]</span>
+                        <span class="n">info</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span> <span class="o">-=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pre</span><span class="p">)</span>
+                        <span class="n">info</span><span class="p">[</span><span class="s1">&#39;full_obj&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pre</span> <span class="o">+</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;full_obj&#39;</span><span class="p">]</span>
+                        <span class="n">info</span><span class="p">[</span><span class="s1">&#39;obj&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pre</span> <span class="o">+</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;obj&#39;</span><span class="p">]</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">matches</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_completions</span><span class="p">(</span><span class="n">info</span><span class="p">))</span>
 
-        <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;full_obj&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s">&#39;full_obj&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s">&#39;obj&#39;</span><span class="p">]):</span>
-            <span class="n">new_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">matches</span> <span class="k">if</span> <span class="n">m</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s">&#39;full_obj&#39;</span><span class="p">])]</span>
+        <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;full_obj&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;full_obj&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;obj&#39;</span><span class="p">]):</span>
+            <span class="n">new_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">matches</span> <span class="k">if</span> <span class="n">m</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;full_obj&#39;</span><span class="p">])]</span>
             <span class="k">if</span> <span class="n">new_list</span><span class="p">:</span>
-                <span class="n">content</span><span class="p">[</span><span class="s">&#39;cursor_end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s">&#39;cursor_end&#39;</span><span class="p">]</span> <span class="o">+</span>
-                                         <span class="nb">len</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s">&#39;full_obj&#39;</span><span class="p">])</span> <span class="o">-</span>
-                                         <span class="nb">len</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s">&#39;obj&#39;</span><span class="p">]))</span>
+                <span class="n">content</span><span class="p">[</span><span class="s1">&#39;cursor_end&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s1">&#39;cursor_end&#39;</span><span class="p">]</span> <span class="o">+</span>
+                                         <span class="nb">len</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;full_obj&#39;</span><span class="p">])</span> <span class="o">-</span>
+                                         <span class="nb">len</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;obj&#39;</span><span class="p">]))</span>
                 <span class="n">matches</span> <span class="o">=</span> <span class="n">new_list</span>
 
-        <span class="n">content</span><span class="p">[</span><span class="s">&quot;matches&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span>
+        <span class="n">content</span><span class="p">[</span><span class="s2">&quot;matches&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">content</span>
 
     <span class="k">def</span> <span class="nf">do_inspect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">cursor_pos</span><span class="p">,</span> <span class="n">detail_level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-        <span class="c"># Object introspection</span>
+        <span class="c1"># Object introspection</span>
         <span class="k">if</span> <span class="n">cursor_pos</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">code</span><span class="p">):</span>
             <span class="k">return</span>
 
-        <span class="n">content</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;status&#39;</span><span class="p">:</span> <span class="s">&#39;aborted&#39;</span><span class="p">,</span> <span class="s">&#39;data&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s">&#39;found&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">}</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;aborted&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;found&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">}</span>
         <span class="n">docstring</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_help_on</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">detail_level</span><span class="p">,</span> <span class="n">none_on_fail</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
              <span class="n">cursor_pos</span><span class="o">=</span><span class="n">cursor_pos</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">docstring</span><span class="p">:</span>
-            <span class="n">content</span><span class="p">[</span><span class="s">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;text/plain&quot;</span><span class="p">:</span> <span class="n">docstring</span><span class="p">}</span>
-            <span class="n">content</span><span class="p">[</span><span class="s">&quot;status&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;ok&quot;</span>
-            <span class="n">content</span><span class="p">[</span><span class="s">&quot;found&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">content</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;text/plain&quot;</span><span class="p">:</span> <span class="n">docstring</span><span class="p">}</span>
+            <span class="n">content</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;ok&quot;</span>
+            <span class="n">content</span><span class="p">[</span><span class="s2">&quot;found&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">docstring</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">content</span>
 
-    <span class="c">##############################</span>
-    <span class="c"># Private API and methods not likely to be overridden</span>
+    <span class="c1">##############################</span>
+    <span class="c1"># Private API and methods not likely to be overridden</span>
 
     <span class="k">def</span> <span class="nf">reload_magics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">line_magics</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cell_magics</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="c"># get base magic files and those relative to the current class</span>
-        <span class="c"># directory</span>
+        <span class="c1"># get base magic files and those relative to the current class</span>
+        <span class="c1"># directory</span>
         <span class="n">magic_files</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="c"># Make a metakernel/magics if it doesn&#39;t exist:</span>
+        <span class="c1"># Make a metakernel/magics if it doesn&#39;t exist:</span>
         <span class="n">local_magics_dir</span> <span class="o">=</span> <span class="n">get_local_magics_dir</span><span class="p">()</span>
-        <span class="c"># Search all of the places there could be magics:</span>
+        <span class="c1"># Search all of the places there could be magics:</span>
         <span class="n">paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">local_magics_dir</span><span class="p">,</span>
-                 <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">)),</span> <span class="s">&quot;magics&quot;</span><span class="p">)]</span>
+                 <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">)),</span> <span class="s2">&quot;magics&quot;</span><span class="p">)]</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">paths</span> <span class="o">+=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">))),</span> <span class="s">&quot;magics&quot;</span><span class="p">)]</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">))),</span> <span class="s2">&quot;magics&quot;</span><span class="p">)]</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="k">for</span> <span class="n">magic_dir</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">magic_dir</span><span class="p">)</span>
-            <span class="n">magic_files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">magic_dir</span><span class="p">,</span> <span class="s">&quot;*.py&quot;</span><span class="p">)))</span>
+            <span class="n">magic_files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">magic_dir</span><span class="p">,</span> <span class="s2">&quot;*.py&quot;</span><span class="p">)))</span>
 
         <span class="k">for</span> <span class="n">magic</span> <span class="ow">in</span> <span class="n">magic_files</span><span class="p">:</span>
             <span class="n">basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">magic</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">basename</span> <span class="o">==</span> <span class="s">&quot;__init__.py&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">basename</span> <span class="o">==</span> <span class="s2">&quot;__init__.py&quot;</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">module</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">basename</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
                 <span class="n">imp</span><span class="o">.</span><span class="n">reload</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
                 <span class="n">module</span><span class="o">.</span><span class="n">register_magics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;Can&#39;t load &#39;</span><span class="si">%s</span><span class="s">&#39;: error: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">magic</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Can&#39;t load &#39;</span><span class="si">%s</span><span class="s2">&#39;: error: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">magic</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">register_magics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">magic_klass</span><span class="p">):</span>
         <span class="n">magic</span> <span class="o">=</span> <span class="n">magic_klass</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="n">line_magics</span> <span class="o">=</span> <span class="n">magic</span><span class="o">.</span><span class="n">get_magics</span><span class="p">(</span><span class="s">&#39;line&#39;</span><span class="p">)</span>
-        <span class="n">cell_magics</span> <span class="o">=</span> <span class="n">magic</span><span class="o">.</span><span class="n">get_magics</span><span class="p">(</span><span class="s">&#39;cell&#39;</span><span class="p">)</span>
+        <span class="n">line_magics</span> <span class="o">=</span> <span class="n">magic</span><span class="o">.</span><span class="n">get_magics</span><span class="p">(</span><span class="s1">&#39;line&#39;</span><span class="p">)</span>
+        <span class="n">cell_magics</span> <span class="o">=</span> <span class="n">magic</span><span class="o">.</span><span class="n">get_magics</span><span class="p">(</span><span class="s1">&#39;cell&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">line_magics</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">line_magics</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">magic</span>
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">cell_magics</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cell_magics</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">magic</span>
 
     <span class="k">def</span> <span class="nf">clear_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iopub_socket</span><span class="p">,</span> <span class="s">&#39;clear_output&#39;</span><span class="p">,</span>
-                           <span class="p">{</span><span class="s">&#39;wait&#39;</span><span class="p">:</span> <span class="n">wait</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iopub_socket</span><span class="p">,</span> <span class="s1">&#39;clear_output&#39;</span><span class="p">,</span>
+                           <span class="p">{</span><span class="s1">&#39;wait&#39;</span><span class="p">:</span> <span class="n">wait</span><span class="p">})</span>
 
     <span class="k">def</span> <span class="nf">Display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">clear_output</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;clear_output&quot;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+        <span class="n">clear_output</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;clear_output&quot;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">HTML</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">clear_output</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iopub_socket</span><span class="p">,</span> <span class="s">&#39;clear_output&#39;</span><span class="p">,</span>
-                                       <span class="p">{</span><span class="s">&#39;wait&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">})</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iopub_socket</span><span class="p">,</span> <span class="s1">&#39;clear_output&#39;</span><span class="p">,</span>
+                                       <span class="p">{</span><span class="s1">&#39;wait&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">})</span>
             <span class="k">if</span> <span class="n">Widget</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">Widget</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Display Widget&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Display Widget&#39;</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_ipy_formatter</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Display Data&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Display Data&#39;</span><span class="p">)</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">_formatter</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">repr</span><span class="p">)</span>
                 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                     <span class="k">return</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iopub_socket</span><span class="p">,</span> <span class="s">&#39;display_data&#39;</span><span class="p">,</span>
-                                   <span class="p">{</span><span class="s">&#39;data&#39;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span>
-                                    <span class="s">&#39;metadata&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">()})</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iopub_socket</span><span class="p">,</span> <span class="s1">&#39;display_data&#39;</span><span class="p">,</span>
+                                   <span class="p">{</span><span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span>
+                                    <span class="s1">&#39;metadata&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">()})</span>
 
     <span class="k">def</span> <span class="nf">Print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">end</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&quot;end&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="p">(</span><span class="s">&quot;end&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">)</span> <span class="k">else</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
-        <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;end&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">Widget</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Widget</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">Display</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">message</span><span class="p">:</span>
-                    <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot; &quot;</span>
+                    <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span>
                 <span class="k">if</span> <span class="n">PY3</span><span class="p">:</span>
                     <span class="n">message</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">message</span> <span class="o">+=</span> <span class="n">codecs</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="s">&quot;utf-8&quot;</span><span class="p">)</span>
+                    <span class="n">message</span> <span class="o">+=</span> <span class="n">codecs</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
         <span class="n">message</span> <span class="o">+=</span> <span class="n">end</span>
         <span class="n">stream_content</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;stdout&#39;</span><span class="p">,</span> <span class="s">&#39;text&#39;</span><span class="p">:</span> <span class="n">message</span><span class="p">,</span> <span class="s">&#39;metadata&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">()}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Print: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">message</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iopub_socket</span><span class="p">,</span> <span class="s">&#39;stream&#39;</span><span class="p">,</span> <span class="n">stream_content</span><span class="p">)</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;stdout&#39;</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="n">message</span><span class="p">,</span> <span class="s1">&#39;metadata&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">()}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Print: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">message</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iopub_socket</span><span class="p">,</span> <span class="s1">&#39;stream&#39;</span><span class="p">,</span> <span class="n">stream_content</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">Write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
         <span class="n">stream_content</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;stdout&#39;</span><span class="p">,</span> <span class="s">&#39;text&#39;</span><span class="p">:</span> <span class="n">message</span><span class="p">,</span> <span class="s">&#39;metadata&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">()}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Write: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">message</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iopub_socket</span><span class="p">,</span> <span class="s">&#39;stream&#39;</span><span class="p">,</span> <span class="n">stream_content</span><span class="p">)</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;stdout&#39;</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="n">message</span><span class="p">,</span> <span class="s1">&#39;metadata&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">()}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Write: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">message</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iopub_socket</span><span class="p">,</span> <span class="s1">&#39;stream&#39;</span><span class="p">,</span> <span class="n">stream_content</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">Error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">message</span> <span class="o">=</span> <span class="n">format_message</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Error: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">message</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Error: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">message</span><span class="p">)</span>
         <span class="n">stream_content</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;stderr&#39;</span><span class="p">,</span> <span class="s">&#39;text&#39;</span><span class="p">:</span> <span class="n">message</span><span class="p">,</span> <span class="s">&#39;metadata&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">()}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iopub_socket</span><span class="p">,</span> <span class="s">&#39;stream&#39;</span><span class="p">,</span> <span class="n">stream_content</span><span class="p">)</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;stderr&#39;</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="n">message</span><span class="p">,</span> <span class="s1">&#39;metadata&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">()}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iopub_socket</span><span class="p">,</span> <span class="s1">&#39;stream&#39;</span><span class="p">,</span> <span class="n">stream_content</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">call_magic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -737,71 +737,71 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_magic</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_magic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
-        <span class="c">## FIXME: Bad name, use call_magic instead.</span>
-        <span class="c"># if first line matches a magic,</span>
-        <span class="c"># call magic.call_magic() and return magic object</span>
+        <span class="c1">## FIXME: Bad name, use call_magic instead.</span>
+        <span class="c1"># if first line matches a magic,</span>
+        <span class="c1"># call magic.call_magic() and return magic object</span>
         <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_code</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-        <span class="n">magic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_magics</span><span class="p">[</span><span class="s">&#39;magic&#39;</span><span class="p">]</span>
+        <span class="n">magic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_magics</span><span class="p">[</span><span class="s1">&#39;magic&#39;</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">magic</span><span class="o">.</span><span class="n">get_magic</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_magic_args</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
-        <span class="c"># if first line matches a magic,</span>
-        <span class="c"># call magic.call_magic() and return magic args</span>
+        <span class="c1"># if first line matches a magic,</span>
+        <span class="c1"># call magic.call_magic() and return magic args</span>
         <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_code</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-        <span class="n">magic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_magics</span><span class="p">[</span><span class="s">&#39;magic&#39;</span><span class="p">]</span>
+        <span class="n">magic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_magics</span><span class="p">[</span><span class="s1">&#39;magic&#39;</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">magic</span><span class="o">.</span><span class="n">get_magic</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">get_args</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_help_on</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">none_on_fail</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
             <span class="n">cursor_pos</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
-        <span class="n">help_magic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_magics</span><span class="p">[</span><span class="s">&#39;help&#39;</span><span class="p">]</span>
+        <span class="n">help_magic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_magics</span><span class="p">[</span><span class="s1">&#39;help&#39;</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">help_magic</span><span class="o">.</span><span class="n">get_help_on</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">none_on_fail</span><span class="p">,</span> <span class="n">cursor_pos</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">parse_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">cursor_start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">cursor_end</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse_code</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">cursor_start</span><span class="p">,</span> <span class="n">cursor_end</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_sticky_magics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">retval</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+        <span class="n">retval</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sticky_magics</span><span class="p">:</span>
-            <span class="n">retval</span> <span class="o">+=</span> <span class="p">(</span><span class="n">key</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span>
-                       <span class="s">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sticky_magics</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="n">retval</span> <span class="o">+=</span> <span class="p">(</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span>
+                       <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sticky_magics</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">retval</span>
 
 
 <span class="k">def</span> <span class="nf">_split_magics_code</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">prefixes</span><span class="p">):</span>
-    <span class="n">lines</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">code</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">ret_magics</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">ret_code</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">shell</span> <span class="o">=</span> <span class="n">prefixes</span><span class="p">[</span><span class="s">&#39;shell&#39;</span><span class="p">]</span>
-    <span class="n">magic</span> <span class="o">=</span> <span class="n">prefixes</span><span class="p">[</span><span class="s">&#39;magic&#39;</span><span class="p">]</span>
+    <span class="n">shell</span> <span class="o">=</span> <span class="n">prefixes</span><span class="p">[</span><span class="s1">&#39;shell&#39;</span><span class="p">]</span>
+    <span class="n">magic</span> <span class="o">=</span> <span class="n">prefixes</span><span class="p">[</span><span class="s1">&#39;magic&#39;</span><span class="p">]</span>
     <span class="k">while</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="ow">and</span> <span class="n">lines</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="n">shell</span><span class="p">,</span> <span class="n">magic</span><span class="p">)):</span>
         <span class="n">ret_magics</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
         <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">while</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
         <span class="n">ret_code</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
         <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="n">ret_magics_str</span> <span class="o">=</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ret_magics</span><span class="p">)</span>
+    <span class="n">ret_magics_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ret_magics</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">ret_magics_str</span><span class="p">:</span>
-        <span class="n">ret_magics_str</span> <span class="o">+=</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
-    <span class="n">ret_code_str</span> <span class="o">=</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ret_code</span><span class="p">)</span>
+        <span class="n">ret_magics_str</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">ret_code_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ret_code</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">ret_code_str</span><span class="p">:</span>
-        <span class="n">ret_code_str</span> <span class="o">+=</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="n">ret_code_str</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">ret_magics_str</span><span class="p">,</span> <span class="n">ret_code_str</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_formatter</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">repr_func</span><span class="p">):</span>
     <span class="n">reprs</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">reprs</span><span class="p">[</span><span class="s">&#39;text/plain&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">repr_func</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">reprs</span><span class="p">[</span><span class="s1">&#39;text/plain&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">repr_func</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-    <span class="n">lut</span> <span class="o">=</span> <span class="p">[(</span><span class="s">&quot;_repr_png_&quot;</span><span class="p">,</span> <span class="s">&quot;image/png&quot;</span><span class="p">),</span>
-           <span class="p">(</span><span class="s">&quot;_repr_jpeg_&quot;</span><span class="p">,</span> <span class="s">&quot;image/jpeg&quot;</span><span class="p">),</span>
-           <span class="p">(</span><span class="s">&quot;_repr_html_&quot;</span><span class="p">,</span> <span class="s">&quot;text/html&quot;</span><span class="p">),</span>
-           <span class="p">(</span><span class="s">&quot;_repr_markdown_&quot;</span><span class="p">,</span> <span class="s">&quot;text/markdown&quot;</span><span class="p">),</span>
-           <span class="p">(</span><span class="s">&quot;_repr_svg_&quot;</span><span class="p">,</span> <span class="s">&quot;image/svg+xml&quot;</span><span class="p">),</span>
-           <span class="p">(</span><span class="s">&quot;_repr_latex_&quot;</span><span class="p">,</span> <span class="s">&quot;text/latex&quot;</span><span class="p">),</span>
-           <span class="p">(</span><span class="s">&quot;_repr_json_&quot;</span><span class="p">,</span> <span class="s">&quot;application/json&quot;</span><span class="p">),</span>
-           <span class="p">(</span><span class="s">&quot;_repr_javascript_&quot;</span><span class="p">,</span> <span class="s">&quot;application/javascript&quot;</span><span class="p">),</span>
-           <span class="p">(</span><span class="s">&quot;_repr_pdf_&quot;</span><span class="p">,</span> <span class="s">&quot;application/pdf&quot;</span><span class="p">)]</span>
+    <span class="n">lut</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;_repr_png_&quot;</span><span class="p">,</span> <span class="s2">&quot;image/png&quot;</span><span class="p">),</span>
+           <span class="p">(</span><span class="s2">&quot;_repr_jpeg_&quot;</span><span class="p">,</span> <span class="s2">&quot;image/jpeg&quot;</span><span class="p">),</span>
+           <span class="p">(</span><span class="s2">&quot;_repr_html_&quot;</span><span class="p">,</span> <span class="s2">&quot;text/html&quot;</span><span class="p">),</span>
+           <span class="p">(</span><span class="s2">&quot;_repr_markdown_&quot;</span><span class="p">,</span> <span class="s2">&quot;text/markdown&quot;</span><span class="p">),</span>
+           <span class="p">(</span><span class="s2">&quot;_repr_svg_&quot;</span><span class="p">,</span> <span class="s2">&quot;image/svg+xml&quot;</span><span class="p">),</span>
+           <span class="p">(</span><span class="s2">&quot;_repr_latex_&quot;</span><span class="p">,</span> <span class="s2">&quot;text/latex&quot;</span><span class="p">),</span>
+           <span class="p">(</span><span class="s2">&quot;_repr_json_&quot;</span><span class="p">,</span> <span class="s2">&quot;application/json&quot;</span><span class="p">),</span>
+           <span class="p">(</span><span class="s2">&quot;_repr_javascript_&quot;</span><span class="p">,</span> <span class="s2">&quot;application/javascript&quot;</span><span class="p">),</span>
+           <span class="p">(</span><span class="s2">&quot;_repr_pdf_&quot;</span><span class="p">,</span> <span class="s2">&quot;application/pdf&quot;</span><span class="p">)]</span>
 
     <span class="k">for</span> <span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">mimetype</span><span class="p">)</span> <span class="ow">in</span> <span class="n">lut</span><span class="p">:</span>
         <span class="n">obj</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
@@ -818,10 +818,10 @@
             <span class="k">continue</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">encodestring</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">retval</span><span class="p">[</span><span class="n">mimetype</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>
@@ -833,8 +833,8 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Format args like Print does.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">end</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&quot;end&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="p">(</span><span class="s">&quot;end&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">)</span> <span class="k">else</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
-    <span class="n">message</span> <span class="o">=</span> <span class="s">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">])</span> <span class="o">+</span> <span class="n">end</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;end&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">])</span> <span class="o">+</span> <span class="n">end</span>
     <span class="k">return</span> <span class="n">message</span>
 
 <span class="k">class</span> <span class="nc">IPythonKernel</span><span class="p">(</span><span class="n">MetaKernel</span><span class="p">):</span>
@@ -842,14 +842,14 @@
 <span class="sd">    Class to make an IPython Kernel look like a MetaKernel Kernel.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">language_info</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s">&#39;mimetype&#39;</span><span class="p">:</span> <span class="s">&#39;text/x-python&#39;</span><span class="p">,</span>
-        <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;python&#39;</span><span class="p">,</span>
-        <span class="s">&#39;file_extension&#39;</span><span class="p">:</span> <span class="s">&#39;.py&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;mimetype&#39;</span><span class="p">:</span> <span class="s1">&#39;text/x-python&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;python&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;file_extension&#39;</span><span class="p">:</span> <span class="s1">&#39;.py&#39;</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="kn">from</span> <span class="nn">metakernel.magics.magic_magic</span> <span class="kn">import</span> <span class="n">MagicMagic</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">line_magics</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;magic&#39;</span><span class="p">:</span> <span class="n">MagicMagic</span><span class="p">(</span><span class="bp">self</span><span class="p">)}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">line_magics</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;magic&#39;</span><span class="p">:</span> <span class="n">MagicMagic</span><span class="p">(</span><span class="bp">self</span><span class="p">)}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cell_magics</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">identifier_regex</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_call_regex</span><span class="p">,</span>
                              <span class="bp">self</span><span class="o">.</span><span class="n">magic_prefixes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">help_suffix</span><span class="p">)</span>
@@ -870,26 +870,26 @@
 <span class="sd">    register_ipython_magics function defined.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">magics</span><span class="p">:</span>
-        <span class="c"># filename is name of magic + &quot;_magic.py&quot;</span>
-        <span class="n">magics</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="o">+</span> <span class="s">&quot;_magic.py&quot;</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">magics</span><span class="p">]</span>
+        <span class="c1"># filename is name of magic + &quot;_magic.py&quot;</span>
+        <span class="n">magics</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_magic.py&quot;</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">magics</span><span class="p">]</span>
     <span class="n">local_magics_dir</span> <span class="o">=</span> <span class="n">get_local_magics_dir</span><span class="p">()</span>
-    <span class="c"># Search all of the places there could be magics:</span>
+    <span class="c1"># Search all of the places there could be magics:</span>
     <span class="n">paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">local_magics_dir</span><span class="p">,</span>
-             <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">)),</span> <span class="s">&quot;magics&quot;</span><span class="p">)]</span>
+             <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">)),</span> <span class="s2">&quot;magics&quot;</span><span class="p">)]</span>
 
     <span class="n">magic_files</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">magic_dir</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">magic_dir</span><span class="p">)</span>
-        <span class="n">magic_files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">magic_dir</span><span class="p">,</span> <span class="s">&quot;*.py&quot;</span><span class="p">)))</span>
+        <span class="n">magic_files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">magic_dir</span><span class="p">,</span> <span class="s2">&quot;*.py&quot;</span><span class="p">)))</span>
 
     <span class="k">for</span> <span class="n">magic</span> <span class="ow">in</span> <span class="n">magic_files</span><span class="p">:</span>
         <span class="n">basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">magic</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">basename</span> <span class="o">==</span> <span class="s">&quot;__init__.py&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">basename</span> <span class="o">==</span> <span class="s2">&quot;__init__.py&quot;</span><span class="p">:</span>
             <span class="k">continue</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">magics</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">basename</span> <span class="ow">in</span> <span class="n">magics</span><span class="p">:</span>
             <span class="n">module</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">basename</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
             <span class="n">imp</span><span class="o">.</span><span class="n">reload</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s">&quot;register_ipython_magics&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s2">&quot;register_ipython_magics&quot;</span><span class="p">):</span>
                 <span class="n">module</span><span class="o">.</span><span class="n">register_ipython_magics</span><span class="p">()</span>
 </pre></div>
 
