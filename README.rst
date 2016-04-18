@@ -3,9 +3,6 @@ A Jupyter/IPython kernel template which includes core magic functions (including
 .. image:: https://badge.fury.io/py/metakernel.png/
     :target: http://badge.fury.io/py/metakernel
 
-.. image:: https://pypip.in/d/metakernel/badge.png
-        :target: https://crate.io/packages/metakernel/
-
 .. image:: https://coveralls.io/repos/Calysto/metakernel/badge.png?branch=master
   :target: https://coveralls.io/r/Calysto/metakernel
 
