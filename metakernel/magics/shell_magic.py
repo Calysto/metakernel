@@ -54,26 +54,22 @@ class ShellMagic(Magic):
         return self.repl.run_command(cmd, stream_handler=self.kernel.Print)
 
     def start_process(self):
-        if not self.repl is None:
+        if self.repl is not None:
             self.repl.child.terminate()
 
         if not self.cmd:
-            try:
-                pexpect.which('bash')
-            except Exception as e:  # pragma: no cover
-
-                if os.name == 'nt':
-                    self.cmd = 'cmd'
-                    self.repl = cmd()
-                else:
-                    raise(e)
+            if pexpect.which('bash'):
+                self.cmd = 'bash'
+                self.repl = bash()
+            elif pexpect.which('sh'):
+                self.cmd = 'sh'
+                self.repl = bash(command='sh')
+            elif os.name == 'nt':
+                self.cmd = 'cmd'
+                self.repl = cmd()
             else:
-                if pexpect.which('bash'):
-                    self.cmd = 'bash'
-                    self.repl = bash()
-                else:
-                    self.cmd = 'sh'
-                    self.repl = bash(command='sh')
+                msg = "The command was not found or was not executable: sh"
+                raise Exception(msg)
 
     def cell_shell(self):
         """
