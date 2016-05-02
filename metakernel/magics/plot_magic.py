@@ -36,7 +36,7 @@ class PlotMagic(Magic):
         Note: not all languages may support the %plot magic, and not all
         options may be supported.
         """
-        if args:
+        if args and not args[0].startswith('-'):
             kwargs['backend'] = args[0]
         self.kernel.plot_settings.update(**kwargs)
         self.kernel.handle_plot_settings()
