@@ -1,13 +1,12 @@
-
 *.pyc
-metakernel.egg-info/
-*_kernel/build/
-dist/
+**/*.egg-info/
+**/build/
+**/dist/
 MANIFEST
 docs/_build/
-build/
 examples/.ipynb_checkpoints
 examples/temp.txt
 *~
+.*.swp
 *,cover
 .cover*

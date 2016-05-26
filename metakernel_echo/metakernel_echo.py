@@ -22,6 +22,13 @@ class MetaKernelEcho(MetaKernel):
         'file_extension': '.txt',
         'help_links': MetaKernel.help_links,
     }
+    kernel_json = {
+        'argv': [
+            'python', '-m', 'metakernel_echo', '-f', '{connection_file}'],
+        'display_name': 'MetaKernel Echo',
+        'language': 'echo',
+        'name': 'metakernel_echo'
+    }
 
     def get_usage(self):
         return "This is the echo kernel."
@@ -32,9 +39,7 @@ class MetaKernelEcho(MetaKernel):
     def repr(self, data):
         return repr(data)
 
+
 if __name__ == '__main__':
-    try:
-        from ipykernel.kernelapp import IPKernelApp
-    except ImportError:
-        from IPython.kernel.zmq.kernelapp import IPKernelApp
-    IPKernelApp.launch_instance(kernel_class=MetaKernelEcho)
+    from metakernel import MetaKernelApp
+    MetaKernelApp.launch_instance(kernel_class=MetaKernelEcho)

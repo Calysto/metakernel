@@ -22,6 +22,13 @@ class MetaKernelPython(MetaKernel):
         'file_extension': '.py',
         'help_links': MetaKernel.help_links,
     }
+    kernel_json = {
+        "argv": [
+            "python", "-m", "metakernel_python", "-f", "{connection_file}"],
+        "display_name": "MetaKernel Python",
+        "language": "python",
+        "name": "metakernel_python"
+    }
 
     def get_usage(self):
         return ("This is MetaKernel Python. It implements a Python " +
@@ -60,9 +67,7 @@ class MetaKernelPython(MetaKernel):
         python_magic = self.line_magics['python']
         return python_magic.get_help_on(info, level, none_on_fail)
 
+
 if __name__ == '__main__':
-    try:
-        from ipykernel.kernelapp import IPKernelApp
-    except ImportError:
-        from IPython.kernel.zmq.kernelapp import IPKernelApp
-    IPKernelApp.launch_instance(kernel_class=MetaKernelPython)
+    from metakernel import MetaKernelApp
+    MetaKernelApp.launch_instance(kernel_class=MetaKernelPython)
