@@ -41,5 +41,4 @@ class MetaKernelEcho(MetaKernel):
 
 
 if __name__ == '__main__':
-    from metakernel import MetaKernelApp
-    MetaKernelApp.launch_instance(kernel_class=MetaKernelEcho)
+    MetaKernelEcho.run_as_main()

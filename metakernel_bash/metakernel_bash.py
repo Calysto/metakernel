@@ -60,5 +60,4 @@ class MetaKernelBash(MetaKernel):
 
 
 if __name__ == '__main__':
-    from metakernel import MetaKernelApp
-    MetaKernelApp.launch_instance(kernel_class=MetaKernelBash)
+    MetaKernelBash.run_as_main()
