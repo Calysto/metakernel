@@ -154,72 +154,85 @@
 <dt id="metakernel.MetaKernel">
 <em class="property">class </em><code class="descclassname">metakernel.</code><code class="descname">MetaKernel</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metakernel/_metakernel.html#MetaKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metakernel.MetaKernel" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="classmethod">
+<dt id="metakernel.MetaKernel.run_as_main">
+<em class="property">classmethod </em><code class="descname">run_as_main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metakernel/_metakernel.html#MetaKernel.run_as_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metakernel.MetaKernel.run_as_main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Launch or install a metakernel.</p>
+<p>Modules implementing a metakernel subclass can use the following lines:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>if __name__ == &#8216;__main__&#8217;:</dt>
+<dd>MetaKernelSubclass.run_as_main()</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="classmethod">
 <dt id="metakernel.MetaKernel.subkernel">
-<em class="property">classmethod </em><code class="descname">subkernel</code><span class="sig-paren">(</span><em>kernel</em><span class="sig-paren">)</span><a class="headerlink" href="#metakernel.MetaKernel.subkernel" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">subkernel</code><span class="sig-paren">(</span><em>kernel</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metakernel/_metakernel.html#MetaKernel.subkernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metakernel.MetaKernel.subkernel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handle issues regarding making a kernel a subkernel to this
 one. Used in %parallel and %kernel.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="metakernel.MetaKernel.makeSubkernelTo">
-<code class="descname">makeSubkernelTo</code><span class="sig-paren">(</span><em>main_kernel</em>, <em>display_function</em><span class="sig-paren">)</span><a class="headerlink" href="#metakernel.MetaKernel.makeSubkernelTo" title="Permalink to this definition">¶</a></dt>
+<code class="descname">makeSubkernelTo</code><span class="sig-paren">(</span><em>main_kernel</em>, <em>display_function</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metakernel/_metakernel.html#MetaKernel.makeSubkernelTo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metakernel.MetaKernel.makeSubkernelTo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handle issues regarding making this kernel be a subkernel to
 another. Used in making metakernels be magics for IPython.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="metakernel.MetaKernel.makeSubkernelToIPython">
-<code class="descname">makeSubkernelToIPython</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#metakernel.MetaKernel.makeSubkernelToIPython" title="Permalink to this definition">¶</a></dt>
+<code class="descname">makeSubkernelToIPython</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metakernel/_metakernel.html#MetaKernel.makeSubkernelToIPython"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metakernel.MetaKernel.makeSubkernelToIPython" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run this method in an IPython kernel to set
 this kernel&#8217;s input/output settings.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="metakernel.MetaKernel.set_variable">
-<code class="descname">set_variable</code><span class="sig-paren">(</span><em>name</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#metakernel.MetaKernel.set_variable" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_variable</code><span class="sig-paren">(</span><em>name</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metakernel/_metakernel.html#MetaKernel.set_variable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metakernel.MetaKernel.set_variable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a variable to a Python-typed value.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="metakernel.MetaKernel.get_variable">
-<code class="descname">get_variable</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#metakernel.MetaKernel.get_variable" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_variable</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metakernel/_metakernel.html#MetaKernel.get_variable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metakernel.MetaKernel.get_variable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Lookup a variable name and return a Python-typed value.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="metakernel.MetaKernel.handle_plot_settings">
-<code class="descname">handle_plot_settings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#metakernel.MetaKernel.handle_plot_settings" title="Permalink to this definition">¶</a></dt>
+<code class="descname">handle_plot_settings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metakernel/_metakernel.html#MetaKernel.handle_plot_settings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metakernel.MetaKernel.handle_plot_settings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handle the current plot settings</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="metakernel.MetaKernel.get_local_magics_dir">
-<code class="descname">get_local_magics_dir</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#metakernel.MetaKernel.get_local_magics_dir" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_local_magics_dir</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metakernel/_metakernel.html#MetaKernel.get_local_magics_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metakernel.MetaKernel.get_local_magics_dir" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the path to local magics dir (eg ~/.ipython/metakernel/magics)</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="metakernel.MetaKernel.get_completions">
-<code class="descname">get_completions</code><span class="sig-paren">(</span><em>info</em><span class="sig-paren">)</span><a class="headerlink" href="#metakernel.MetaKernel.get_completions" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_completions</code><span class="sig-paren">(</span><em>info</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metakernel/_metakernel.html#MetaKernel.get_completions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metakernel.MetaKernel.get_completions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get completions from kernel based on info dict.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="metakernel.MetaKernel.do_execute_direct">
-<code class="descname">do_execute_direct</code><span class="sig-paren">(</span><em>code</em>, <em>silent=False</em><span class="sig-paren">)</span><a class="headerlink" href="#metakernel.MetaKernel.do_execute_direct" title="Permalink to this definition">¶</a></dt>
+<code class="descname">do_execute_direct</code><span class="sig-paren">(</span><em>code</em>, <em>silent=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metakernel/_metakernel.html#MetaKernel.do_execute_direct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metakernel.MetaKernel.do_execute_direct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute code in the kernel language.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="metakernel.MetaKernel.do_execute_file">
-<code class="descname">do_execute_file</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#metakernel.MetaKernel.do_execute_file" title="Permalink to this definition">¶</a></dt>
+<code class="descname">do_execute_file</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metakernel/_metakernel.html#MetaKernel.do_execute_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metakernel.MetaKernel.do_execute_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Default code for running a file. Just opens the file, and sends
 the text to do_execute_direct.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="metakernel.MetaKernel.do_execute_meta">
-<code class="descname">do_execute_meta</code><span class="sig-paren">(</span><em>code</em><span class="sig-paren">)</span><a class="headerlink" href="#metakernel.MetaKernel.do_execute_meta" title="Permalink to this definition">¶</a></dt>
+<code class="descname">do_execute_meta</code><span class="sig-paren">(</span><em>code</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metakernel/_metakernel.html#MetaKernel.do_execute_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metakernel.MetaKernel.do_execute_meta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute meta code in the kernel. This uses the execute infrastructure
 but allows JavaScript to talk directly to the kernel bypassing normal
 processing.</p>
@@ -231,7 +244,7 @@ commands can answer with a string in the format:</p>
 
 <dl class="method">
 <dt id="metakernel.MetaKernel.initialize_debug">
-<code class="descname">initialize_debug</code><span class="sig-paren">(</span><em>code</em><span class="sig-paren">)</span><a class="headerlink" href="#metakernel.MetaKernel.initialize_debug" title="Permalink to this definition">¶</a></dt>
+<code class="descname">initialize_debug</code><span class="sig-paren">(</span><em>code</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metakernel/_metakernel.html#MetaKernel.initialize_debug"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metakernel.MetaKernel.initialize_debug" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function is used with the %%debug magic for highlighting
 lines of code, and for initializing debug functions.</p>
 <p>Return the empty string if highlighting is not supported.</p>
@@ -239,31 +252,31 @@ lines of code, and for initializing debug functions.</p>
 
 <dl class="method">
 <dt id="metakernel.MetaKernel.do_function_direct">
-<code class="descname">do_function_direct</code><span class="sig-paren">(</span><em>function_name</em>, <em>arg</em><span class="sig-paren">)</span><a class="headerlink" href="#metakernel.MetaKernel.do_function_direct" title="Permalink to this definition">¶</a></dt>
+<code class="descname">do_function_direct</code><span class="sig-paren">(</span><em>function_name</em>, <em>arg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metakernel/_metakernel.html#MetaKernel.do_function_direct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metakernel.MetaKernel.do_function_direct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Call a function in the kernel language with args (as a single item).</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="metakernel.MetaKernel.restart_kernel">
-<code class="descname">restart_kernel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#metakernel.MetaKernel.restart_kernel" title="Permalink to this definition">¶</a></dt>
+<code class="descname">restart_kernel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metakernel/_metakernel.html#MetaKernel.restart_kernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metakernel.MetaKernel.restart_kernel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Restart the kernel</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="metakernel.MetaKernel.do_history">
-<code class="descname">do_history</code><span class="sig-paren">(</span><em>hist_access_type</em>, <em>output</em>, <em>raw</em>, <em>session=None</em>, <em>start=None</em>, <em>stop=None</em>, <em>n=None</em>, <em>pattern=None</em>, <em>unique=False</em><span class="sig-paren">)</span><a class="headerlink" href="#metakernel.MetaKernel.do_history" title="Permalink to this definition">¶</a></dt>
+<code class="descname">do_history</code><span class="sig-paren">(</span><em>hist_access_type</em>, <em>output</em>, <em>raw</em>, <em>session=None</em>, <em>start=None</em>, <em>stop=None</em>, <em>n=None</em>, <em>pattern=None</em>, <em>unique=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metakernel/_metakernel.html#MetaKernel.do_history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metakernel.MetaKernel.do_history" title="Permalink to this definition">¶</a></dt>
 <dd><p>Access history at startup.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="metakernel.MetaKernel.do_shutdown">
-<code class="descname">do_shutdown</code><span class="sig-paren">(</span><em>restart</em><span class="sig-paren">)</span><a class="headerlink" href="#metakernel.MetaKernel.do_shutdown" title="Permalink to this definition">¶</a></dt>
+<code class="descname">do_shutdown</code><span class="sig-paren">(</span><em>restart</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metakernel/_metakernel.html#MetaKernel.do_shutdown"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metakernel.MetaKernel.do_shutdown" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shut down the app gracefully, saving history.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="metakernel.MetaKernel.do_is_complete">
-<code class="descname">do_is_complete</code><span class="sig-paren">(</span><em>code</em><span class="sig-paren">)</span><a class="headerlink" href="#metakernel.MetaKernel.do_is_complete" title="Permalink to this definition">¶</a></dt>
+<code class="descname">do_is_complete</code><span class="sig-paren">(</span><em>code</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metakernel/_metakernel.html#MetaKernel.do_is_complete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metakernel.MetaKernel.do_is_complete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given code as string, returns dictionary with &#8216;status&#8217; representing
 whether code is ready to evaluate. Possible values for status are:</p>
 <blockquote>
@@ -284,7 +297,7 @@ an indentation string.</p>
 
 <dl class="method">
 <dt id="metakernel.MetaKernel.call_magic">
-<code class="descname">call_magic</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="headerlink" href="#metakernel.MetaKernel.call_magic" title="Permalink to this definition">¶</a></dt>
+<code class="descname">call_magic</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metakernel/_metakernel.html#MetaKernel.call_magic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metakernel.MetaKernel.call_magic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given an line, such as &#8220;%download <a class="reference external" href="http://example.com/">http://example.com/</a>&#8221;, parse
 and execute magic.</p>
 </dd></dl>
