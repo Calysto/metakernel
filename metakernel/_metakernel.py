@@ -1,50 +1,53 @@
 from __future__ import print_function
 
+import base64
+import codecs
+import glob
+import imp
+import inspect
+import json
+import logging
+import os
+import pkgutil
+import subprocess
+from subprocess import CalledProcessError
 import sys
 import warnings
+
 warnings.filterwarnings('ignore', module='IPython.html.widgets')
 
 try:
-    try:
-        from ipykernel.kernelbase import Kernel
-        from ipykernel.comm import CommManager
-        from IPython.paths import get_ipython_dir
-    except ImportError:
-        from IPython.kernel.zmq.kernelbase import Kernel
-        from IPython.kernel.comm import CommManager
-        from IPython.utils.path import get_ipython_dir
-    from IPython.display import HTML
-    try:
-        from ipywidgets.widgets.widget import Widget
-    except ImportError:
-        try:
-            from IPython.html.widgets import Widget
-        except ImportError:
-            Widget = None
-    from IPython.core.formatters import IPythonDisplayFormatter
-except ImportError as e:
-    warnings.warn("Cannot load module {name} so metakernel will not be available to IPython/jupyter.".format(name=getattr(e, 'name', '')))
-    # This module won't be useful without IPython
-    # (other parts of metakernel may be useful)
-    # but we make it loadable anyway
-    Kernel = object
-import os
-import sys
-import glob
-import base64
+    from IPython.paths import get_ipython_dir
+    from ipykernel.kernelapp import IPKernelApp
+    from ipykernel.kernelbase import Kernel
+    from ipykernel.comm import CommManager
+    from ipywidgets.widgets.widget import Widget
+    from traitlets.config import Application
+    _module_name = 'jupyter'
+except ImportError:
+    from IPython.utils.path import get_ipython_dir
+    from IPython.kernel.zmq.kernelapp import IPKernelApp
+    from IPython.kernel.zmq.kernelbase import Kernel
+    from IPython.kernel.comm import CommManager
+    from IPython.html.widgets import Widget
+    from IPython.config import Application
+    _module_name = 'IPython'
+
+from IPython.core.formatters import IPythonDisplayFormatter
+from IPython.display import HTML
+from IPython.utils.tempdir import TemporaryDirectory
+
 from .config import get_history_file, get_local_magics_dir
 from .parser import Parser
-import imp
-import inspect
-import logging
-import codecs
 
 PY3 = (sys.version_info[0] >= 3)
+
 
 def lazy_import_handle_comm_opened(*args, **kwargs):
     if Widget is None:
         return
     Widget.handle_comm_opened(*args, **kwargs)
+
 
 def get_metakernel():
     """
@@ -52,8 +55,8 @@ def get_metakernel():
     """
     return MetaKernel.meta_kernel
 
-class MetaKernel(Kernel):
 
+class MetaKernel(Kernel):
     identifier_regex = r'[^\d\W][\w\.]*'
     func_call_regex = r'([^\d\W][\w\.]*)\([^\)\()]*\Z'
     magic_prefixes = dict(magic='%', shell='!', help='?')
@@ -78,6 +81,17 @@ class MetaKernel(Kernel):
         'help_links': help_links,
     }
     meta_kernel = None
+
+    @classmethod
+    def run_as_main(cls):
+        """Launch or install a metakernel.
+
+        Modules implementing a metakernel subclass can use the following lines:
+
+            if __name__ == '__main__':
+                MetaKernelSubclass.run_as_main()
+        """
+        _MetaKernelApp.launch_instance(kernel_class=cls)
 
     def __init__(self, *args, **kwargs):
         super(MetaKernel, self).__init__(*args, **kwargs)
@@ -643,6 +657,42 @@ class MetaKernel(Kernel):
         return retval
 
 
+class _MetaKernelApp(IPKernelApp):
+
+    @property
+    def subcommands(self):
+        # Slightly awkward way to pass the actual kernel class to the install
+        # subcommand.
+
+        class KernelInstallerApp(Application):
+            kernel_class = self.kernel_class
+
+            def initialize(self, argv=None):
+                self.argv = argv
+
+            def start(self):
+                kernel_spec = self.kernel_class.kernel_json
+                with TemporaryDirectory() as td:
+                    dirname = os.path.join(td, kernel_spec['name'])
+                    os.mkdir(dirname)
+                    with open(os.path.join(dirname, 'kernel.json'), 'w') as f:
+                        json.dump(kernel_spec, f, sort_keys=True)
+                    filenames = ['logo-64x64.png', 'logo-32x32.png']
+                    for filename in filenames:
+                        data = pkgutil.get_data(__name__.split('.')[0],
+                                                'images/' + filename)
+                        with open(os.path.join(dirname, filename), 'wb') as f:
+                            f.write(data)
+                    try:
+                        subprocess.check_call(
+                            [sys.executable, '-m', _module_name,
+                            'kernelspec', 'install'] + self.argv + [dirname])
+                    except CalledProcessError as exc:
+                        sys.exit(exc.returncode)
+
+        return {'install': (KernelInstallerApp, 'Install this kernel')}
+
+
 def _split_magics_code(code, prefixes):
     lines = code.split("\n")
     ret_magics = []
@@ -713,6 +763,7 @@ def format_message(*args, **kwargs):
     message = " ".join([str(a) for a in args]) + end
     return message
 
+
 class IPythonKernel(MetaKernel):
     """
     Class to make an IPython Kernel look like a MetaKernel Kernel.
@@ -739,6 +790,7 @@ class IPythonKernel(MetaKernel):
 
     def Print(self, *args, **kwargs):
         sys.stdout.write(format_message(*args, **kwargs))
+
 
 def register_ipython_magics(*magics):
     """

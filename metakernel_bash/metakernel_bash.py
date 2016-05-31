@@ -22,6 +22,13 @@ class MetaKernelBash(MetaKernel):
         'file_extension': '.sh',
         'help_links': MetaKernel.help_links,
     }
+    kernel_json = {
+        'argv': [
+            'python', '-m', 'metakernel_bash', '-f', '{connection_file}'],
+        'display_name': 'MetaKernel Bash',
+        'language': 'bash',
+        'name': 'metakernel_bash'
+    }
 
     def get_usage(self):
         return "This is the bash kernel."
@@ -51,9 +58,6 @@ class MetaKernelBash(MetaKernel):
     def repr(self, data):
         return data
 
+
 if __name__ == '__main__':
-    try:
-        from ipykernel.kernelapp import IPKernelApp
-    except ImportError:
-        from IPython.kernel.zmq.kernelapp import IPKernelApp
-    IPKernelApp.launch_instance(kernel_class=MetaKernelBash)
+    MetaKernelBash.run_as_main()
