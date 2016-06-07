@@ -91,7 +91,7 @@ class MetaKernel(Kernel):
             if __name__ == '__main__':
                 MetaKernelSubclass.run_as_main()
         """
-        _MetaKernelApp.launch_instance(kernel_class=cls)
+        MetaKernelApp.launch_instance(kernel_class=cls)
 
     def __init__(self, *args, **kwargs):
         super(MetaKernel, self).__init__(*args, **kwargs)
@@ -657,7 +657,7 @@ class MetaKernel(Kernel):
         return retval
 
 
-class _MetaKernelApp(IPKernelApp):
+class MetaKernelApp(IPKernelApp):
 
     @property
     def subcommands(self):
