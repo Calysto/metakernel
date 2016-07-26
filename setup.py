@@ -26,7 +26,6 @@ setup(name='metakernel',
           'License :: OSI Approved :: BSD License',
           'Programming Language :: Python :: 3',
           'Programming Language :: Python :: 2',
-          'Programming Language :: Scheme',
           'Topic :: System :: Shells',
       ]
       )
