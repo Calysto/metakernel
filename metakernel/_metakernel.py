@@ -440,7 +440,17 @@ class MetaKernel(Kernel):
             return {'status' : 'incomplete',
                     'indent': ' ' * 4}
         """
-        return {'status' : 'unknown'}
+        if code.startswith("%"):
+            ## force requirement to end with an empty line
+            if code.endswith("\n"):
+                return {'status' : 'complete'}
+            else:
+                return {'status' : 'incomplete'}
+        # otherwise, how to know is complete?
+        elif code.endswith("\n"):
+            return {'status' : 'complete'}
+        else:
+            return {'status' : 'incomplete'}
 
     def do_complete(self, code, cursor_pos):
         info = self.parse_code(code, 0, cursor_pos)
