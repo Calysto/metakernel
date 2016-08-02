@@ -330,7 +330,12 @@ class ExpectTestCase (unittest.TestCase):
         assert index == 1, "index="+str(index)+str(p)
         p.sendline (b'wxyz')
         index = p.expect ([b'54321',pexpect.TIMEOUT,b'abcd',b'wxyz',b'1234',pexpect.EOF])
-        assert index == 3, "index="+str(index) # Expect 'wxyz'
+
+        if sys.version_info[:2] >= (3, 4):
+            assert index == 4, "index="+str(index) # Expect 'wxyz'
+        else:
+            assert index == 3, "index="+str(index) # Expect 'wxyz'
+
         p.sendline (b'$*!@?')
         index = p.expect ([b'54321',pexpect.TIMEOUT,b'abcd',b'wxyz',b'1234',pexpect.EOF],
                           timeout=1)
