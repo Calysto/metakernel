@@ -80,3 +80,20 @@ class SchemeMagic(Magic):
 
 def register_magics(kernel):
     kernel.register_magics(SchemeMagic)
+
+def register_ipython_magics():
+    from metakernel import IPythonKernel
+    from IPython.core.magic import register_line_magic, register_cell_magic
+    kernel = IPythonKernel()
+    magic = SchemeMagic(kernel)
+
+    @register_line_magic
+    def scheme(line):
+        magic.line_scheme(line)
+        return magic.retval
+
+    @register_cell_magic
+    def scheme(line, cell):
+        magic.code = cell
+        magic.cell_scheme()
+        return magic.retval
