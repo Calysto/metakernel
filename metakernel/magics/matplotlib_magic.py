@@ -21,7 +21,6 @@ class MatplotlibMagic(Magic):
             %matplotlib notebook
 
             import matplotlib.pyplot as plt
-            fig = plt.figure()
             plt.plot([3, 8, 2, 5, 1])
             plt.show()
         """
