@@ -34,11 +34,6 @@ install:
     - cd ..
 
 script:
-    -  ipcluster start -n=3 &
-    -  nosetests --exe -v --with-doctest metakernel
-    -  ipcluster stop
-
-script:
   - ipcluster start -n=3 &
   - nosetests --exe -v --with-doctest --with-cov --cover-package metakernel;
   - ipcluster stop
