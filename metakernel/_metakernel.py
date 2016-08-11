@@ -38,9 +38,9 @@ try:
     RED = NeutralColors.colors["header"]
     NORMAL = NeutralColors.colors["normal"]
 except:
-    import IPython.core.excolors.TermColors
-    RED = IPython.core.excolors.TermColors.Red
-    NORMAL = IPython.core.excolors.TermColors.Normal
+    from IPython.core.excolors import TermColors
+    RED = TermColors.Red
+    NORMAL = TermColors.Normal
 
 from IPython.core.formatters import IPythonDisplayFormatter
 from IPython.display import HTML
