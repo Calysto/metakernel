@@ -36,6 +36,7 @@ except ImportError:
 from IPython.core.formatters import IPythonDisplayFormatter
 from IPython.display import HTML
 from IPython.utils.tempdir import TemporaryDirectory
+from IPython.utils.PyColorize import NeutralColors
 
 from .config import get_history_file, get_local_magics_dir
 from .parser import Parser
@@ -376,9 +377,10 @@ class MetaKernel(Kernel):
             self.__ = retval
             self.log.debug(retval)
             try:
-                content = {'execution_count': self.execution_count,
-                           'data': _formatter(retval, self.repr),
-                           'metadata': dict()}
+                content = {
+                    'execution_count': self.execution_count,
+                    'data': _formatter(retval, self.repr),
+                }
             except Exception as e:
                 self.Error(e)
                 return
@@ -458,7 +460,6 @@ class MetaKernel(Kernel):
             'matches': [],
             'cursor_start': info['start'],
             'cursor_end': info['end'],
-            'metadata': {},
             'status': 'ok'
         }
 
@@ -594,8 +595,7 @@ class MetaKernel(Kernel):
                     self.Error(e)
                     return
                 self.send_response(self.iopub_socket, 'display_data',
-                                   {'data': data,
-                                    'metadata': dict()})
+                                   {'data': data})
 
     def Print(self, *args, **kwargs):
         end = kwargs["end"] if ("end" in kwargs) else "\n"
@@ -612,13 +612,13 @@ class MetaKernel(Kernel):
                     message += codecs.encode(item, "utf-8")
         message += end
         stream_content = {
-            'name': 'stdout', 'text': message, 'metadata': dict()}
+            'name': 'stdout', 'text': message}
         self.log.debug('Print: %s' % message)
         self.send_response(self.iopub_socket, 'stream', stream_content)
 
     def Write(self, message):
         stream_content = {
-            'name': 'stdout', 'text': message, 'metadata': dict()}
+            'name': 'stdout', 'text': message}
         self.log.debug('Write: %s' % message)
         self.send_response(self.iopub_socket, 'stream', stream_content)
 
@@ -626,7 +626,9 @@ class MetaKernel(Kernel):
         message = format_message(*args, **kwargs)
         self.log.debug('Error: %s' % message)
         stream_content = {
-            'name': 'stderr', 'text': message, 'metadata': dict()}
+            'name': 'stderr',
+            'text': NeutralColors.colors["header"] + message + NeutralColors.colors["normal"]
+        }
         self.send_response(self.iopub_socket, 'stream', stream_content)
 
     def call_magic(self, line):
