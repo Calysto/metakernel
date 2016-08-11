@@ -33,10 +33,18 @@ except ImportError:
     from IPython.config import Application
     _module_name = 'IPython'
 
+try:
+    from IPython.utils.PyColorize import NeutralColors
+    RED = NeutralColors.colors["header"]
+    NORMAL = NeutralColors.colors["normal"]
+except:
+    import IPython.core.excolors.TermColors
+    RED = IPython.core.excolors.TermColors.Red
+    NORMAL = IPython.core.excolors.TermColors.Normal
+
 from IPython.core.formatters import IPythonDisplayFormatter
 from IPython.display import HTML
 from IPython.utils.tempdir import TemporaryDirectory
-from IPython.utils.PyColorize import NeutralColors
 
 from .config import get_history_file, get_local_magics_dir
 from .parser import Parser
@@ -627,7 +635,7 @@ class MetaKernel(Kernel):
         self.log.debug('Error: %s' % message)
         stream_content = {
             'name': 'stderr',
-            'text': NeutralColors.colors["header"] + message + NeutralColors.colors["normal"]
+            'text': RED + message + NORMAL
         }
         self.send_response(self.iopub_socket, 'stream', stream_content)
 
