@@ -147,7 +147,10 @@ def option(*args, **kwargs):
         else:
             help_text += _format_option(option) + "\n"
             func.options.append(option)
-        func.__doc__ += _indent(func.__doc__, help_text)
+        if func.__doc__:
+            func.__doc__ += _indent(func.__doc__, help_text)
+        else:
+            func.__doc__ = help_text
         return func
     return decorator
 
