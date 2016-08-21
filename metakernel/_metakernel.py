@@ -294,6 +294,7 @@ class MetaKernel(Kernel):
             'execution_count': self.execution_count,
             'payload': [],
             'user_expressions': {},
+            'metadata': {}
         }
 
         # TODO: remove this when IPython fixes this
@@ -388,6 +389,7 @@ class MetaKernel(Kernel):
                 content = {
                     'execution_count': self.execution_count,
                     'data': _formatter(retval, self.repr),
+                    'metadata': {}
                 }
             except Exception as e:
                 self.Error(e)

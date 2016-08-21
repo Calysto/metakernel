@@ -65,9 +65,13 @@ class ProcessMetaKernel(MetaKernel):
         self.payload = []
 
         if not code.strip():
-            self.kernel_resp = {'status': 'ok',
-                            'execution_count': self.execution_count,
-                            'payload': [], 'user_expressions': {}}
+            self.kernel_resp = {
+                'status': 'ok',
+                'execution_count': self.execution_count,
+                'payload': [],
+                'user_expressions': {},
+                'metadata': {}
+            }
             return
 
         interrupted = False
@@ -87,20 +91,30 @@ class ProcessMetaKernel(MetaKernel):
             self._start()
 
         if interrupted:
-            self.kernel_resp = {'status': 'abort',
-                            'execution_count': self.execution_count}
+            self.kernel_resp = {
+                'status': 'abort',
+                'execution_count': self.execution_count,
+                'metadata': {}
+            }
 
         exitcode, trace = self.check_exitcode()
 
         if exitcode:
-            self.kernel_resp = {'status': 'error',
-                            'execution_count': self.execution_count,
-                            'ename': '', 'evalue': str(exitcode),
-                            'traceback': trace}
+            self.kernel_resp = {
+                'status': 'error',
+                'execution_count': self.execution_count,
+                'ename': '', 'evalue': str(exitcode),
+                'traceback': trace,
+                'metadata': {}
+            }
         else:
-            self.kernel_resp = {'status': 'ok',
-                            'execution_count': self.execution_count,
-                            'payload': [], 'user_expressions': {}}
+            self.kernel_resp = {
+                'status': 'ok',
+                'execution_count': self.execution_count,
+                'payload': [],
+                'user_expressions': {},
+                'metadata': {}
+            }
 
         return TextOutput(output)
 
