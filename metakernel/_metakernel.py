@@ -294,7 +294,6 @@ class MetaKernel(Kernel):
             'execution_count': self.execution_count,
             'payload': [],
             'user_expressions': {},
-            'metadata': {}
         }
 
         # TODO: remove this when IPython fixes this

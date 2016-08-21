@@ -70,7 +70,6 @@ class ProcessMetaKernel(MetaKernel):
                 'execution_count': self.execution_count,
                 'payload': [],
                 'user_expressions': {},
-                'metadata': {}
             }
             return
 
@@ -94,7 +93,6 @@ class ProcessMetaKernel(MetaKernel):
             self.kernel_resp = {
                 'status': 'abort',
                 'execution_count': self.execution_count,
-                'metadata': {}
             }
 
         exitcode, trace = self.check_exitcode()
@@ -105,7 +103,6 @@ class ProcessMetaKernel(MetaKernel):
                 'execution_count': self.execution_count,
                 'ename': '', 'evalue': str(exitcode),
                 'traceback': trace,
-                'metadata': {}
             }
         else:
             self.kernel_resp = {
@@ -113,7 +110,6 @@ class ProcessMetaKernel(MetaKernel):
                 'execution_count': self.execution_count,
                 'payload': [],
                 'user_expressions': {},
-                'metadata': {}
             }
 
         return TextOutput(output)
