@@ -118,6 +118,8 @@ class MetaKernel(Kernel):
                 sys.stdout.write = self.Write
             except:
                 pass  # Can't change stdout
+        # This is for ipykernel.comm.manager:
+        self.log.DEBUG = False
         self.sticky_magics = {}
         self._i = None
         self._ii = None
