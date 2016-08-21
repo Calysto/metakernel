@@ -385,14 +385,15 @@ class MetaKernel(Kernel):
             self.__ = retval
             self.log.debug(retval)
             try:
-                content = {
-                    'execution_count': self.execution_count,
-                    'data': _formatter(retval, self.repr),
-                    'metadata': {}
-                }
+                data = _formatter(retval, self.repr)
             except Exception as e:
                 self.Error(e)
                 return
+            content = {
+                'execution_count': self.execution_count,
+                'data': data,
+                'metadata': {},
+            }
             if not silent:
                 if Widget and isinstance(retval, Widget):
                     self.Display(retval)
@@ -603,8 +604,15 @@ class MetaKernel(Kernel):
                 except Exception as e:
                     self.Error(e)
                     return
-                self.send_response(self.iopub_socket, 'display_data',
-                                   {'data': data})
+                content = {
+                    'data': data,
+                    'metadata': {}
+                }
+                self.send_response(
+                    self.iopub_socket,
+                    'display_data',
+                    content
+                )
 
     def Print(self, *args, **kwargs):
         end = kwargs["end"] if ("end" in kwargs) else "\n"
