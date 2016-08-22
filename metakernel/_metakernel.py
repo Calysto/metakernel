@@ -811,6 +811,7 @@ class IPythonKernel(MetaKernel):
         self.cell_magics = {}
         self.parser = Parser(self.identifier_regex, self.func_call_regex,
                              self.magic_prefixes, self.help_suffix)
+        self.shell = None
 
     def Display(self, *args, **kwargs):
         from IPython.display import display
