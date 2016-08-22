@@ -141,10 +141,6 @@ class MetaKernel(Kernel):
         self.set_variable("kernel", self)
         self.parser = Parser(self.identifier_regex, self.func_call_regex,
                              self.magic_prefixes, self.help_suffix)
-        self.comm_manager = CommManager(shell=None, parent=self,
-                                        kernel=self)
-        self.comm_manager.register_target('ipython.widget',
-                                          lazy_import_handle_comm_opened)
         comm_msg_types = ['comm_open', 'comm_msg', 'comm_close']
         for msg_type in comm_msg_types:
             self.shell_handlers[msg_type] = getattr(self.comm_manager, msg_type)
