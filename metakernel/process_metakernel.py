@@ -47,8 +47,8 @@ class ProcessMetaKernel(MetaKernel):
     def banner(self):
         return self._banner
 
-    def __init__(self, **kwargs):
-        MetaKernel.__init__(self, **kwargs)
+    def __init__(self, *args, **kwargs):
+        MetaKernel.__init__(self, *args, **kwargs)
         self.wrapper = None
         self._start()
 

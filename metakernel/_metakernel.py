@@ -147,34 +147,20 @@ class MetaKernel(Kernel):
         self._ipy_formatter = IPythonDisplayFormatter()
         self.env = {}
 
-    @classmethod
-    def subkernel(cls, kernel):
-        """
-        Handle issues regarding making a kernel a subkernel to this
-        one. Used in %parallel and %kernel.
-        """
-        pass
-
-    def makeSubkernelTo(self, main_kernel, display_function):
-        """
-        Handle issues regarding making this kernel be a subkernel to
-        another. Used in making metakernels be magics for IPython.
-        """
-        self.session = main_kernel.session
-        self.Display = display_function
-
-    def makeSubkernelToIPython(self):
+    def makeSubkernel(self, kernel):
         """
         Run this method in an IPython kernel to set
         this kernel's input/output settings.
         """
         from IPython import get_ipython
         from IPython.display import display
-        ip = get_ipython()
-        if ip: # we are running under an IPython kernel
-            self.makeSubkernelTo(ip.parent, display)
+        shell = get_ipython()
+        if shell: # we are running under an IPython kernel
+            self.session = shell.kernel.session
+            self.Display = display
         else:
-            raise Exception("Need to run under an IPython kernel")
+            self.session = kernel.session
+            self.Display = kernel.Display
 
     #####################################
     # Methods which provide kernel - specific behavior
