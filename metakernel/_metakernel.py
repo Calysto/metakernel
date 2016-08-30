@@ -389,28 +389,17 @@ class MetaKernel(Kernel):
         """
         Access history at startup.
         """
-        if not self.hist_file:
-            return {'history': []}
-        # else:
-        if not os.path.exists(self.hist_file):
-            with open(self.hist_file, 'wb') as fid:
-                fid.write('')
-        with open(self.hist_file, 'rb') as fid:
-            history = fid.read().decode('utf-8', 'replace')
-        history = history.splitlines()
-        history = history[:self.max_hist_cache]
-        self.hist_cache = history
-        history = [(None, None, h) for h in history]
-        return {'history': history}
+        with open(self.hist_file) as fid:
+            self.hist_cache = json.loads(fid.read() or "[]")
+        return {'history': [(None, None, h) for h in self.hist_cache]}
 
     def do_shutdown(self, restart):
         """
         Shut down the app gracefully, saving history.
         """
         if self.hist_file:
-            with open(self.hist_file, 'wb') as fid:
-                data = '\n'.join(self.hist_cache[-self.max_hist_cache:])
-                fid.write(data.encode('utf-8'))
+            with open(self.hist_file, "w") as fid:
+                json.dump(self.hist_cache[-self.max_hist_cache:], fid)
         if restart:
             self.Print("Restarting kernel...")
             self.reload_magics()
