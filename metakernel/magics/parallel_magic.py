@@ -131,8 +131,8 @@ try:
 except:
     kernels = {}
 from %(module_name)s import %(class_name)s
-%(class_name)s.subkernel(get_ipython().parent)
 kernels['%(kernel_name)s'] = %(class_name)s()
+## FIXME: kernels['%(kernel_name)s'].kernel = kernel
 """ % {"module_name": module_name, 
        "class_name": class_name,
        "kernel_name": kernel_name,

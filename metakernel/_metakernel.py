@@ -33,6 +33,15 @@ except ImportError:
     from IPython.config import Application
     _module_name = 'IPython'
 
+try:
+    from IPython.utils.PyColorize import NeutralColors
+    RED = NeutralColors.colors["header"]
+    NORMAL = NeutralColors.colors["normal"]
+except:
+    from IPython.core.excolors import TermColors
+    RED = TermColors.Red
+    NORMAL = TermColors.Normal
+
 from IPython.core.formatters import IPythonDisplayFormatter
 from IPython.display import HTML
 from IPython.utils.tempdir import TemporaryDirectory
@@ -109,6 +118,8 @@ class MetaKernel(Kernel):
                 sys.stdout.write = self.Write
             except:
                 pass  # Can't change stdout
+        # This is for ipykernel.comm.manager:
+        self.log.DEBUG = False
         self.sticky_magics = {}
         self._i = None
         self._ii = None
@@ -130,44 +141,26 @@ class MetaKernel(Kernel):
         self.set_variable("kernel", self)
         self.parser = Parser(self.identifier_regex, self.func_call_regex,
                              self.magic_prefixes, self.help_suffix)
-        self.comm_manager = CommManager(shell=None, parent=self,
-                                        kernel=self)
-        self.comm_manager.register_target('ipython.widget',
-                                          lazy_import_handle_comm_opened)
         comm_msg_types = ['comm_open', 'comm_msg', 'comm_close']
         for msg_type in comm_msg_types:
             self.shell_handlers[msg_type] = getattr(self.comm_manager, msg_type)
         self._ipy_formatter = IPythonDisplayFormatter()
         self.env = {}
 
-    @classmethod
-    def subkernel(cls, kernel):
-        """
-        Handle issues regarding making a kernel a subkernel to this
-        one. Used in %parallel and %kernel.
-        """
-        pass
-
-    def makeSubkernelTo(self, main_kernel, display_function):
-        """
-        Handle issues regarding making this kernel be a subkernel to
-        another. Used in making metakernels be magics for IPython.
-        """
-        self.session = main_kernel.session
-        self.Display = display_function
-
-    def makeSubkernelToIPython(self):
+    def makeSubkernel(self, kernel):
         """
         Run this method in an IPython kernel to set
         this kernel's input/output settings.
         """
         from IPython import get_ipython
         from IPython.display import display
-        ip = get_ipython()
-        if ip: # we are running under an IPython kernel
-            self.makeSubkernelTo(ip.parent, display)
+        shell = get_ipython()
+        if shell: # we are running under an IPython kernel
+            self.session = shell.kernel.session
+            self.Display = display
         else:
-            raise Exception("Need to run under an IPython kernel")
+            self.session = kernel.session
+            self.Display = kernel.Display
 
     #####################################
     # Methods which provide kernel - specific behavior
@@ -376,12 +369,15 @@ class MetaKernel(Kernel):
             self.__ = retval
             self.log.debug(retval)
             try:
-                content = {'execution_count': self.execution_count,
-                           'data': _formatter(retval, self.repr),
-                           'metadata': dict()}
+                data = _formatter(retval, self.repr)
             except Exception as e:
                 self.Error(e)
                 return
+            content = {
+                'execution_count': self.execution_count,
+                'data': data,
+                'metadata': {},
+            }
             if not silent:
                 if Widget and isinstance(retval, Widget):
                     self.Display(retval)
@@ -393,28 +389,17 @@ class MetaKernel(Kernel):
         """
         Access history at startup.
         """
-        if not self.hist_file:
-            return {'history': []}
-        # else:
-        if not os.path.exists(self.hist_file):
-            with open(self.hist_file, 'wb') as fid:
-                fid.write('')
-        with open(self.hist_file, 'rb') as fid:
-            history = fid.read().decode('utf-8', 'replace')
-        history = history.splitlines()
-        history = history[:self.max_hist_cache]
-        self.hist_cache = history
-        history = [(None, None, h) for h in history]
-        return {'history': history}
+        with open(self.hist_file) as fid:
+            self.hist_cache = json.loads(fid.read() or "[]")
+        return {'history': [(None, None, h) for h in self.hist_cache]}
 
     def do_shutdown(self, restart):
         """
         Shut down the app gracefully, saving history.
         """
         if self.hist_file:
-            with open(self.hist_file, 'wb') as fid:
-                data = '\n'.join(self.hist_cache[-self.max_hist_cache:])
-                fid.write(data.encode('utf-8'))
+            with open(self.hist_file, "w") as fid:
+                json.dump(self.hist_cache[-self.max_hist_cache:], fid)
         if restart:
             self.Print("Restarting kernel...")
             self.reload_magics()
@@ -440,7 +425,17 @@ class MetaKernel(Kernel):
             return {'status' : 'incomplete',
                     'indent': ' ' * 4}
         """
-        return {'status' : 'unknown'}
+        if code.startswith("%"):
+            ## force requirement to end with an empty line
+            if code.endswith("\n"):
+                return {'status' : 'complete'}
+            else:
+                return {'status' : 'incomplete'}
+        # otherwise, how to know is complete?
+        elif code.endswith("\n"):
+            return {'status' : 'complete'}
+        else:
+            return {'status' : 'incomplete'}
 
     def do_complete(self, code, cursor_pos):
         info = self.parse_code(code, 0, cursor_pos)
@@ -448,7 +443,6 @@ class MetaKernel(Kernel):
             'matches': [],
             'cursor_start': info['start'],
             'cursor_end': info['end'],
-            'metadata': {},
             'status': 'ok'
         }
 
@@ -583,9 +577,15 @@ class MetaKernel(Kernel):
                 except Exception as e:
                     self.Error(e)
                     return
-                self.send_response(self.iopub_socket, 'display_data',
-                                   {'data': data,
-                                    'metadata': dict()})
+                content = {
+                    'data': data,
+                    'metadata': {}
+                }
+                self.send_response(
+                    self.iopub_socket,
+                    'display_data',
+                    content
+                )
 
     def Print(self, *args, **kwargs):
         end = kwargs["end"] if ("end" in kwargs) else "\n"
@@ -602,13 +602,13 @@ class MetaKernel(Kernel):
                     message += codecs.encode(item, "utf-8")
         message += end
         stream_content = {
-            'name': 'stdout', 'text': message, 'metadata': dict()}
+            'name': 'stdout', 'text': message}
         self.log.debug('Print: %s' % message)
         self.send_response(self.iopub_socket, 'stream', stream_content)
 
     def Write(self, message):
         stream_content = {
-            'name': 'stdout', 'text': message, 'metadata': dict()}
+            'name': 'stdout', 'text': message}
         self.log.debug('Write: %s' % message)
         self.send_response(self.iopub_socket, 'stream', stream_content)
 
@@ -616,7 +616,9 @@ class MetaKernel(Kernel):
         message = format_message(*args, **kwargs)
         self.log.debug('Error: %s' % message)
         stream_content = {
-            'name': 'stderr', 'text': message, 'metadata': dict()}
+            'name': 'stderr',
+            'text': RED + message + NORMAL
+        }
         self.send_response(self.iopub_socket, 'stream', stream_content)
 
     def call_magic(self, line):
@@ -780,6 +782,7 @@ class IPythonKernel(MetaKernel):
         self.cell_magics = {}
         self.parser = Parser(self.identifier_regex, self.func_call_regex,
                              self.magic_prefixes, self.help_suffix)
+        self.shell = None
 
     def Display(self, *args, **kwargs):
         from IPython.display import display

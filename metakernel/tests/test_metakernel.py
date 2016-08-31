@@ -214,7 +214,7 @@ def test_misc():
     kernel.restart_kernel()
 
     ret = kernel.do_is_complete('hello\n')
-    assert ret == {'status': 'unknown'}
+    assert ret == {'status': 'complete'}
 
     assert kernel.do_inspect('hello', 10) is None
 

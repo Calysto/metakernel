@@ -13,16 +13,15 @@ def get_history_file(kernel):
     base = get_ipython_dir()
     dname = os.path.join(base, 'metakernel', 'history')
     if not os.path.exists(dname):
-            os.makedirs(dname)
+        os.makedirs(dname)
     if hasattr(kernel, 'implementation'):
         fname = kernel.implementation.lower()
     else:
         fname = kernel.__class__.__name__
         fname = fname.replace("Magic", '').lower()
-    path = os.path.join(dname, fname + '.txt')
-    if not os.path.exists(path):
-        with open(path, 'wb'):
-            pass
+    path = os.path.join(dname, fname + '.json')
+    with open(path, 'a'):
+        pass
     return path
 
 

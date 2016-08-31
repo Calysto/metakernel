@@ -47,8 +47,8 @@ class ProcessMetaKernel(MetaKernel):
     def banner(self):
         return self._banner
 
-    def __init__(self, **kwargs):
-        MetaKernel.__init__(self, **kwargs)
+    def __init__(self, *args, **kwargs):
+        MetaKernel.__init__(self, *args, **kwargs)
         self.wrapper = None
         self._start()
 
@@ -65,9 +65,12 @@ class ProcessMetaKernel(MetaKernel):
         self.payload = []
 
         if not code.strip():
-            self.kernel_resp = {'status': 'ok',
-                            'execution_count': self.execution_count,
-                            'payload': [], 'user_expressions': {}}
+            self.kernel_resp = {
+                'status': 'ok',
+                'execution_count': self.execution_count,
+                'payload': [],
+                'user_expressions': {},
+            }
             return
 
         interrupted = False
@@ -87,20 +90,27 @@ class ProcessMetaKernel(MetaKernel):
             self._start()
 
         if interrupted:
-            self.kernel_resp = {'status': 'abort',
-                            'execution_count': self.execution_count}
+            self.kernel_resp = {
+                'status': 'abort',
+                'execution_count': self.execution_count,
+            }
 
         exitcode, trace = self.check_exitcode()
 
         if exitcode:
-            self.kernel_resp = {'status': 'error',
-                            'execution_count': self.execution_count,
-                            'ename': '', 'evalue': str(exitcode),
-                            'traceback': trace}
+            self.kernel_resp = {
+                'status': 'error',
+                'execution_count': self.execution_count,
+                'ename': '', 'evalue': str(exitcode),
+                'traceback': trace,
+            }
         else:
-            self.kernel_resp = {'status': 'ok',
-                            'execution_count': self.execution_count,
-                            'payload': [], 'user_expressions': {}}
+            self.kernel_resp = {
+                'status': 'ok',
+                'execution_count': self.execution_count,
+                'payload': [],
+                'user_expressions': {},
+            }
 
         return TextOutput(output)
 

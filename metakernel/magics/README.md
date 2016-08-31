@@ -1,5 +1,15 @@
 # Line Magics
 
+## `%activity`
+
+%activity FILENAME - run a widget-based activity
+  (poll, classroom response, clicker-like activity)
+
+This magic will load the JSON in the filename.
+
+Example:
+    %activity /home/teacher/activity1
+
 ## `%cd`
 
 %cd PATH - change current directory of session
@@ -147,8 +157,14 @@ Example:
 
 This line magic will allow visual code editing or generation.
 
-Example:
+Examples:
     %jigsaw Processing
+    %jigsaw Python
+    %jigsaw Processing --workspace workspace1
+
+Options:
+-------
+-w --workspace use the provided name as workspace filename [default: None]
 
 ## `%kernel`
 
@@ -263,6 +279,23 @@ Options:
 
 This line magic shows all of the install magics, either from
 the system magic folder, or your own private magic folder.
+
+## `%matplotlib`
+
+%matplotlib BACKEND - set the matplotlib backend to BACKEND
+
+This line magic will set (and reload) the items associated
+with the matplotlib backend.
+
+Also, monkeypatches the IPython.display.display
+to work with metakernel-based kernels.
+
+Example:
+    %matplotlib notebook
+
+    import matplotlib.pyplot as plt
+    plt.plot([3, 8, 2, 5, 1])
+    plt.show()
 
 ## `%parallel`
 
@@ -407,16 +440,42 @@ Note that you will lose all computed values.
 
 ## `%run`
 
-%run FILENAME - run code in filename by kernel
+%run [--language LANG] FILENAME - run code in filename by
+   kernel
 
 This magic will take the code in FILENAME and run it. The
 exact details of how the code runs are deterimined by your
 language.
 
-Example:
+The --language LANG option will prefix the file contents with
+"%%LANG". You may also put information in the cell which will
+appear before the contents of the file.
+
+Examples:
     %run filename.ss
+    %run -l python filename.py
+
+    %kx calysto_scheme.kernel CalystoScheme
+    %run --language kx filename.ss
+    %run --language "kx default" filename.ss
 
 Note: not all languages may support %run.
+
+Options:
+-------
+-l --language  use the provided language name as kernel [default: None]
+
+## `%scheme`
+
+%scheme CODE - evaluate code as Scheme
+
+This line magic will evaluate the CODE (either expression or
+statement) as Scheme code.
+
+Examples:
+    %scheme (define x 42)
+    %scheme (import "math")
+    %scheme (+ x + math.pi)
 
 ## `%set`
 
@@ -445,6 +504,40 @@ Examples:
 You can also use "!" instead of "%shell".
 
 # Cell Magics
+
+## `%%activity`
+
+%%activity FILENAME - make an activity from
+  a JSON structure
+
+This magic will construct a Python file from the cell's
+content, a JSON structure.
+
+Example:
+    %%activity /home/teacher/activity1
+    {"activity": "poll",
+     "instructors": ["teacher01"],
+     "results_file": "/home/teacher/activity1.results",
+     "items": [{"id": "...",
+                "type": "multiple choice",
+                "question": "...",
+                "options": ["...", ...]
+               }, ...]
+    }
+
+In this example, users will load
+/home/teacher/activity1
+
+## `%%brain`
+
+%%brain - run a cell as brain control code
+for a calysto.simulation.
+
+Requires calysto.
+
+Examples:
+   %%brain
+   robot.forward(1)
 
 ## `%%debug`
 
@@ -631,6 +724,35 @@ Examples:
 Options:
 -------
 -e --eval_output Use the retval value from the Python cell as code in the kernel language. [default: False]
+
+## `%%scheme`
+
+%%scheme - evaluate contents of cell as Scheme
+
+This cell magic will evaluate the cell (either expression or
+statement) as Scheme code.
+
+The -e or --eval_output flag signals that the retval value expression
+will be used as code for the cell to be evaluated by the host
+language.
+
+Examples:
+    %%scheme
+    (define x 42)
+
+    %%scheme
+    (import "math")
+    (define retval (+ x math.pi))
+
+    %%scheme -e
+    (define retval "this = code")
+
+    %%scheme -e
+    "this = code"
+
+Options:
+-------
+-e --eval_output Use the retval value from the Scheme cell as code in the kernel language. [default: False]
 
 ## `%%shell`
 
