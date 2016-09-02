@@ -425,7 +425,7 @@ class MetaKernel(Kernel):
             return {'status' : 'incomplete',
                     'indent': ' ' * 4}
         """
-        if code.startswith("%"):
+        if code.startswith(self.magic_prefixes['magic']):
             ## force requirement to end with an empty line
             if code.endswith("\n"):
                 return {'status' : 'complete'}

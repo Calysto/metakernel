@@ -22,17 +22,18 @@ class IncludeMagic(Magic):
         """
         text = ""
         filenames = filenames.split()
+        prefix = self.kernel.magic_prefixes['magic']
         for filename in filenames:
             if filename.startswith("~"):
                 filename = os.path.expanduser(filename)
             filename = os.path.abspath(filename)
             text += open(filename).read() + "\n"
-        if self.code.lstrip().startswith("%"):
+        if self.code.lstrip().startswith(prefix):
             lines = self.code.lstrip().split("\n")
             new_lines = []
             need_to_insert = True
             for line in lines:
-                if need_to_insert and not line.startswith("%"):
+                if need_to_insert and not line.startswith(prefix):
                     new_lines.append(text)
                     need_to_insert = False
                 new_lines.append(line)

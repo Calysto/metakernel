@@ -53,7 +53,7 @@ class MagicMagic(Magic):
         minfo = info['magic']
         name = minfo['name']
         if minfo['type'] == 'sticky':
-            sname = '%%' + name
+            sname = (self.kernel.magic_prefixes['magic'] * 2) + name
             if sname in self.kernel.sticky_magics:
                 del self.kernel.sticky_magics[sname]
                 self.kernel.Print("%s removed from session magics.\n" % sname)

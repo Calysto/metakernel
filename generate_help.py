@@ -13,13 +13,13 @@ if kernel:
     print("Generating README.md...")
     text = "# Line Magics\n\n"
     for magic in sorted(kernel.line_magics.keys()):
-        text += "## `%" + magic + "`\n\n"
-        text += kernel.get_help_on("%" + magic) + "\n\n"
+        text += "## `" + prefix + magic + "`\n\n"
+        text += kernel.get_help_on(prefix + magic) + "\n\n"
 
     text += "# Cell Magics\n\n"
     for magic in sorted(kernel.cell_magics.keys()):
-        text += "## `%%" + magic + "`\n\n"
-        text += kernel.get_help_on("%%" + magic) + "\n\n"
+        text += "## `" prefix + prefix + magic + "`\n\n"
+        text += kernel.get_help_on(prefix + prefix + magic) + "\n\n"
 
     fp = open("metakernel/magics/README.md", "w")
     fp.write(text)
