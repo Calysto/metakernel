@@ -24,12 +24,13 @@ class LSMagicMagic(Magic):
         line_magics = self.kernel.line_magics.keys()
         cell_magics = self.kernel.cell_magics.keys()
 
+        mp = self.kernel.magic_prefixes['magic']
         out = [
             'Available line magics:',
-            '  '.join(sorted([("%" + lm) for lm in line_magics])),
+            '  '.join(sorted([(mp + lm) for lm in line_magics])),
             '',
             'Available cell magics:',
-            '  '.join(sorted([("%%" + cm) for cm in cell_magics])),
+            '  '.join(sorted([(mp + mp + cm) for cm in cell_magics])),
         ]
         self.kernel.Print('\n'.join(out))
 
