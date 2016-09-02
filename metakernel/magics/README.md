@@ -48,6 +48,11 @@ or even just:
 
 if this is the most recent Jupyter session you have started.
 
+## `%conversation`
+
+%conversation ID - insert conversation by ID
+%%conversation ID - insert conversation by ID
+
 ## `%dot`
 
 %dot CODE - render code as Graphviz image
@@ -538,6 +543,11 @@ Requires calysto.
 Examples:
    %%brain
    robot.forward(1)
+
+## `%%conversation`
+
+%conversation ID - insert conversation by ID
+%%conversation ID - insert conversation by ID
 
 ## `%%debug`
 
