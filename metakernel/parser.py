@@ -270,17 +270,24 @@ class Parser(object):
 
         matches = get_regex_matches(self.unquoted_path)
         matches += get_regex_matches(self.single_path)
-        if os.name == 'nt':
-            matches = [m for m in matches if not ' ' in m]
-        else:
-            matches = [m.replace(' ', r'\ ') for m in matches]
-
+        matches = [self.escape_path(m) for m in matches]
         matches += get_regex_matches(self.quoted_path)
 
         if os.path.isdir(info['obj']):
             matches.append(info['obj'] + os.sep)
 
         return list(set(matches))
+
+    def escape_path(self, path):
+        """Escape an unquoted path.
+
+        Kernels may modify path escaping by overwriting this method in their
+        own parser instance.
+        """
+        if os.name == "nt":
+            return '"{}"'.format(path)
+        else:
+            return path.replace(' ', r'\ ')
 
 
 def _listdir(root):
