@@ -202,6 +202,12 @@ def test_misc():
         def do_execute_file(self, filename):
             self.Print("This language does not support running files")
 
+        def do_function_direct(f, arg):
+            self.Print("%s(%s)", % (f, arg))
+
+        def repr(self, arg):
+            return "XXX"
+
     kernel = get_kernel(TestKernel)
     assert kernel.do_execute_direct('garbage') is None
     kernel.do_execute_file('hello.txt')
@@ -209,8 +215,9 @@ def test_misc():
 
     clear_log_text(kernel)
 
+    kernel.
     kernel.do_function_direct('hello', 'world')
-    assert "This language does not support" in get_log_text(kernel)
+    assert "hello(XXX)" in get_log_text(kernel)
     kernel.restart_kernel()
 
     ret = kernel.do_is_complete('hello\n')
