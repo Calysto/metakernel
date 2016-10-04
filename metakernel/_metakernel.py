@@ -256,7 +256,7 @@ class MetaKernel(Kernel):
         """
         Call a function in the kernel language with args (as a single item).
         """
-        self.Error("This language does not support \"%pmap function args\".")
+        return self.do_execute_direct("%s(%s)" % (function_name, self.repr(arg)))
 
     def restart_kernel(self):
         """Restart the kernel"""
