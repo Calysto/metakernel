@@ -203,7 +203,7 @@ def test_misc():
             self.Print("This language does not support running files")
 
         def do_function_direct(f, arg):
-            self.Print("%s(%s)", % (f, arg))
+            self.Print("%s(%s)" % (f, arg))
 
         def repr(self, arg):
             return "XXX"
