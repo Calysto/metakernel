@@ -37,3 +37,18 @@ class PipeMagic(Magic):
 def register_magics(kernel):
     kernel.register_magics(PipeMagic)
 
+def register_ipython_magics():
+    from IPython.core.magic import register_cell_magic
+    from IPython import get_ipython
+
+    @register_cell_magic
+    def pipe(line, cell):
+        """
+        """
+        ip = get_ipython()
+        functions = [function.strip() for function in line.split("|")]
+        retval = cell
+        for function in functions:
+            f = eval(function, ip.ns_table["user_global"])
+            retval = f(retval)
+        return retval
