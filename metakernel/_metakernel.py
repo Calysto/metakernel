@@ -256,7 +256,8 @@ class MetaKernel(Kernel):
         """
         Call a function in the kernel language with args (as a single item).
         """
-        return self.do_execute_direct("%s(%s)" % (function_name, self.repr(arg)))
+        f = self.do_execute_direct(function_name)
+        return f(arg)
 
     def restart_kernel(self):
         """Restart the kernel"""

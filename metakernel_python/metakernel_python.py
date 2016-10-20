@@ -52,13 +52,6 @@ class MetaKernelPython(MetaKernel):
         python_magic = self.line_magics['python']
         return python_magic.eval(code.strip())
 
-    def do_function_direct(self, function_name, arg):
-        """
-        Call a function in the kernel language with args (as a single item).
-        """
-        python_magic = self.line_magics['python']
-        return python_magic.eval("%s(%s)" % (function_name, self.repr(arg)))
-
     def get_completions(self, info):
         python_magic = self.line_magics['python']
         return python_magic.get_completions(info)
