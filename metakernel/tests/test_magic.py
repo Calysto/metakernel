@@ -79,9 +79,11 @@ def test_option():
     assert d.foo == 'hey there'
 
     ret = d.call_magic('line', 'dummy', '', 'range(1, 10)')
-    assert d.foo == range(1, 10)
+    # arg eval no longer evals Python raw code:
+    assert d.foo == "range(1, 10)"
 
     ret = d.call_magic('line', 'dummy', '', '[1, 2, 3]')
+    # arg eval does eval Python data structures:
     assert d.foo == [1, 2, 3]
 
     ret = d.call_magic('line', 'dummy', '', 'hey -l -s400,200')

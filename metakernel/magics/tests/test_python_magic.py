@@ -11,7 +11,7 @@ def test_python_magic():
     assert 'import' in comp['matches']
 
     helpstr = kernel.get_help_on('%python bin')
-    assert 'bin(number)' in helpstr
+    assert 'Return the binary representation of an integer' in helpstr, helpstr
 
 
 def test_python_magic2():
@@ -51,7 +51,7 @@ def test_python_magic4():
     assert ret['payload'][0]['data']['text/plain'] == 'No help available for "a.b"'
 
     ret = kernel.do_execute('??%%python oct', None)
-    assert ret['payload'][0]['data']['text/plain'].startswith('oct(number)')
+    assert 'Return the octal representation of an integer' in ret['payload'][0]['data']['text/plain'], ret['payload'][0]['data']['text/plain']
 
 
 def test_python_magic5():
