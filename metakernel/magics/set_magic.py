@@ -14,6 +14,7 @@ class SetMagic(Magic):
             %set x 42
             %set x [1, 2, 3]
         """
+        value = self.kernel.do_execute_direct(value)
         self.kernel.set_variable(variable, value)
 
     def post_process(self, retval):
