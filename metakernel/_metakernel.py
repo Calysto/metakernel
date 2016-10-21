@@ -13,6 +13,7 @@ import subprocess
 from subprocess import CalledProcessError
 import sys
 import warnings
+from collections import OrderedDict
 
 warnings.filterwarnings('ignore', module='IPython.html.widgets')
 
@@ -118,7 +119,7 @@ class MetaKernel(Kernel):
                 sys.stdout.write = self.Write
             except:
                 pass  # Can't change stdout
-        self.sticky_magics = {}
+        self.sticky_magics = OrderedDict()
         self._i = None
         self._ii = None
         self._iii = None
@@ -653,8 +654,7 @@ class MetaKernel(Kernel):
     def _get_sticky_magics(self):
         retval = ""
         for key in self.sticky_magics:
-            retval += (key + " " +
-                       " ".join(self.sticky_magics[key])).strip() + "\n"
+            retval += (key + " " + self.sticky_magics[key] + "\n")
         return retval
 
 

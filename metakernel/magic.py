@@ -4,6 +4,7 @@ import inspect
 import sys
 import os
 import shlex
+from ast import literal_eval as safe_eval
 
 try:
     _maxsize = sys.maxint
@@ -187,13 +188,13 @@ def _parse_args(func, args, usage=None):
     new_args = []
     for arg in args:
         try:
-            new_args.append(eval(arg))
+            new_args.append(safe_eval(arg))
         except:
             new_args.append(arg)
 
     for (key, value) in kwargs.items():
         try:
-            kwargs[key] = eval(value)
+            kwargs[key] = safe_eval(value)
         except:
             pass
 
@@ -218,7 +219,7 @@ def _split_args(args):
 
             arg = temp + ' ' + arg
             try:
-                eval(arg)
+                safe_eval(arg)
             except:
                 temp = arg
             else:
@@ -227,7 +228,7 @@ def _split_args(args):
 
         elif arg.startswith(('(', '[', '{')) or '(' in arg:
             try:
-                eval(arg)
+                safe_eval(arg)
             except:
                 temp = arg
             else:
