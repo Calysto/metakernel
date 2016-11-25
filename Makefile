@@ -44,13 +44,15 @@ cover: clean
 	coverage annotate
 
 release: gh-pages
-	pip install wheel
+	pip install wheel twine
+	rm -rf dist
 	python setup.py register
-	python setup.py bdist_wheel upload
-	python setup.py sdist --formats=gztar,zip upload
+	python setup.py bdist_wheel --universal
+	python setup.py sdist
 	git tag v$(VERSION)
 	git push origin --all
 	git push origin --tags
+	twine upload dist/*
 
 gh-pages: clean
 	pip install sphinx-bootstrap-theme numpydoc sphinx ghp-import
