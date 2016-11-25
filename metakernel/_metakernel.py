@@ -16,13 +16,13 @@ import warnings
 from collections import OrderedDict
 
 warnings.filterwarnings('ignore', module='IPython.html.widgets')
+Widget = None
 
 try:
     from IPython.paths import get_ipython_dir
     from ipykernel.kernelapp import IPKernelApp
     from ipykernel.kernelbase import Kernel
     from ipykernel.comm import CommManager
-    from ipywidgets.widgets.widget import Widget
     from traitlets.config import Application
     _module_name = 'jupyter'
 except ImportError:
@@ -33,6 +33,12 @@ except ImportError:
     from IPython.html.widgets import Widget
     from IPython.config import Application
     _module_name = 'IPython'
+
+if Widget is None:
+    try:
+        from ipywidgets.widgets.widget import Widget
+    except ImportError:
+        pass
 
 try:
     from IPython.utils.PyColorize import NeutralColors
