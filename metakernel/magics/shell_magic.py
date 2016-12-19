@@ -96,7 +96,7 @@ class ShellMagic(Magic):
         if self.cmd == 'cmd':
             return []
         command = 'compgen -cdfa "%s"' % info['code']
-        completion_text = self.eval(command)
+        completion_text = self.repl.run_command(command, timeout=None)
         return completion_text.split()
 
     def get_help_on(self, info, level=0):
