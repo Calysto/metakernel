@@ -51,7 +51,8 @@ class ShellMagic(Magic):
             self.kernel.Print(resp)
 
     def eval(self, cmd):
-        return self.repl.run_command(cmd)
+        return self.repl.run_command(cmd, timeout=None,
+                                     stream_handler=self.kernel.Print)
 
     def start_process(self):
         if self.repl is not None:
@@ -70,7 +71,6 @@ class ShellMagic(Magic):
             else:
                 msg = "The command was not found or was not executable: sh"
                 raise Exception(msg)
-            self.repl.line_output_callback = self.kernel.Print
 
     def cell_shell(self):
         """

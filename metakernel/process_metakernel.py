@@ -3,6 +3,7 @@ from . import MetaKernel
 from pexpect import EOF
 from .replwrap import REPLWrapper, bash
 from subprocess import check_output
+import os
 import re
 
 __version__ = '0.0'
@@ -75,7 +76,7 @@ class ProcessMetaKernel(MetaKernel):
         interrupted = False
         output = ''
         try:
-            output = self.wrapper.run_command(code.rstrip(), timeout=-1,
+            output = self.wrapper.run_command(code.rstrip(), timeout=None,
                                      stream_handler=stream_handler)
             if stream_handler is not None:
                 output = ''
@@ -190,6 +191,7 @@ class DynamicKernel(ProcessMetaKernel):
                   file_extension="sh")
     """
 
+
 class BashKernel(ProcessMetaKernel):
     # Identifiers:
     implementation = 'bash_kernel'
@@ -211,13 +213,7 @@ class BashKernel(ProcessMetaKernel):
         return self._banner
 
     def makeWrapper(self):
-        """Start a bash shell and return a :class:`REPLWrapper` object.
-
-        Note that this is equivalent :function:`metakernel.pyexpect.bash`,
-        but is used here as an example of how to be cross-platform.
-        """
         return bash()
-
 
 if __name__ == '__main__':
     from IPython.kernel.zmq.kernelapp import IPKernelApp
