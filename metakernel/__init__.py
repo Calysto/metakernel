@@ -1,7 +1,7 @@
 from ._metakernel import (
     MetaKernel, IPythonKernel, register_ipython_magics, get_metakernel)
-from . import pexpect
-from .replwrap import REPLWrapper, u
+import pexpect
+from .replwrap import REPLWrapper
 from .process_metakernel import ProcessMetaKernel
 from .magic import Magic, option
 from .parser import Parser

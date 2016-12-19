@@ -1,9 +1,8 @@
 from __future__ import absolute_import
 from . import MetaKernel
-from .pexpect import EOF
-from .replwrap import REPLWrapper, u
+from pexpect import EOF
+from .replwrap import REPLWrapper, bash
 from subprocess import check_output
-import os
 import re
 
 __version__ = '0.0'
@@ -174,7 +173,7 @@ class DynamicKernel(ProcessMetaKernel):
 
     def makeWrapper(self):
         return REPLWrapper(self.executable,
-                           u(self.orig_prompt),
+                           self.orig_prompt,
                            self.prompt_change,
                            prompt_cmd=self.prompt_cmd,
                            extra_init_cmd=self.extra_init_cmd)
@@ -182,7 +181,7 @@ class DynamicKernel(ProcessMetaKernel):
     """
     DynamicKernel(executable="bash",
                   orig_prompt=re.compile('[$#]'),
-                  prompt_change=u("PS1='{0}' PS2='{1}' PROMPT_COMMAND=''"),
+                  prompt_change=u"PS1='{0}' PS2='{1}' PROMPT_COMMAND=''",
                   prompt_cmd=None,
                   extra_init_cmd="export PAGER=cat",
                   implementation="bash_kernel",
@@ -217,21 +216,8 @@ class BashKernel(ProcessMetaKernel):
         Note that this is equivalent :function:`metakernel.pyexpect.bash`,
         but is used here as an example of how to be cross-platform.
         """
-        if os.name == 'nt':
-            prompt_regex = u('__repl_ready__')
-            prompt_emit_cmd = u('echo __repl_ready__')
-            prompt_change_cmd = None
+        return bash()
 
-        else:
-            prompt_change_cmd = u("PS1='{0}' PS2='{1}' PROMPT_COMMAND=''")
-            prompt_emit_cmd = None
-            prompt_regex = re.compile('[$#]')
-
-        extra_init_cmd = "export PAGER=cat"
-
-        return REPLWrapper('bash', prompt_regex, prompt_change_cmd,
-                           prompt_emit_cmd=prompt_emit_cmd,
-                           extra_init_cmd=extra_init_cmd)
 
 if __name__ == '__main__':
     from IPython.kernel.zmq.kernelapp import IPKernelApp
