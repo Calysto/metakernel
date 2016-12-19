@@ -42,6 +42,8 @@ class REPLWrapper(replwrap.REPLWrapper):
     of Windows, whether the child does echo.
     """
     def __init__(self, cmd_or_spawn, orig_prompt, prompt_change,
+                 continuation_prompt=replwrap.PEXPECT_PROMPT,
+                 new_prompt=replwrap.PEXPECT_CONTINUATION_PROMPT,
                  extra_init_cmd=None,
                  prompt_emit_cmd=None,
                  echo=False):
@@ -55,7 +57,8 @@ class REPLWrapper(replwrap.REPLWrapper):
         sig = signal.signal(signal.SIGINT, signal.SIG_DFL)
         try:
             replwrap.REPLWrapper.__init__(self, cmd_or_spawn, orig_prompt,
-                                          prompt_change,
+                                          prompt_change, continuation_prompt,
+                                          new_prompt,
                                           extra_init_cmd=extra_init_cmd)
         finally:
             signal.signal(signal.SIGINT, sig)
@@ -92,7 +95,7 @@ class REPLWrapper(replwrap.REPLWrapper):
             # "None" means we are executing code from a Jupyter cell by way of 
             # the run_command so do incremental output.
             while True:
-                pos = self.child.expect_exact([self.prompt, self.continuation_prompt, '\r\n'],
+                pos = self.child.expect_exact([self.prompt, self.continuation_prompt, u'\r\n'],
                                               timeout=None)
                 if pos == 2:
                     # End of line received
