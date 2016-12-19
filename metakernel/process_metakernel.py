@@ -75,8 +75,9 @@ class ProcessMetaKernel(MetaKernel):
 
         interrupted = False
         output = ''
+        timeout = self.config.get('timeout', -1)
         try:
-            output = self.wrapper.run_command(code.rstrip(), timeout=-1,
+            output = self.wrapper.run_command(code.rstrip(), timeout=timeout,
                                      stream_handler=stream_handler)
             if stream_handler is not None:
                 output = ''
