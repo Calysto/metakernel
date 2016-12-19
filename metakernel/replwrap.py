@@ -59,6 +59,7 @@ class REPLWrapper(replwrap.REPLWrapper):
             if IS_WINDOWS:
                 cmd_or_spawn = popen_spawn.PopenSpawn(cmd_or_spawn,
                                                       encoding='utf-8')
+                cmd_or_spawn.echo = False
             replwrap.REPLWrapper.__init__(self, cmd_or_spawn, orig_prompt,
                                           prompt_change, continuation_prompt,
                                           new_prompt,
