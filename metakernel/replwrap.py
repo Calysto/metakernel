@@ -4,7 +4,7 @@ import re
 import signal
 import sys
 import pexpect
-from pexpect import replwrap
+from pexpect import replwrap, popen_spawn
 
 
 IS_WINDOWS = sys.platform == 'win32'
@@ -56,6 +56,9 @@ class REPLWrapper(replwrap.REPLWrapper):
         # interruptible.
         sig = signal.signal(signal.SIGINT, signal.SIG_DFL)
         try:
+            if IS_WINDOWS:
+                cmd_or_spawn = popen_spawn.PopenSpawn(cmd_or_spawn,
+                                                      encoding='utf-8')
             replwrap.REPLWrapper.__init__(self, cmd_or_spawn, orig_prompt,
                                           prompt_change, continuation_prompt,
                                           new_prompt,
