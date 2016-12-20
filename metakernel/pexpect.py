@@ -1,7 +1,8 @@
 # Convenience imports from pexpect
 from __future__ import absolute_import
-from pexpect import is_executable_file, EOF, TIMEOUT
 import os
+import signal
+from pexpect import is_executable_file, EOF, TIMEOUT
 
 try:
     from pexpect import spawn as pty_spawn
@@ -30,10 +31,19 @@ def spawn(command, args=[], timeout=30, maxread=2000,
                            encoding=encoding, codec_errors=codec_errors)
         child.echo = echo
     else:
-        child = pty_spawn(command, args=args, timeout=timeout,
-                          maxread=maxread, searchwindowsize=searchwindowsize,
-                          logfile=logfile, cwd=cwd, env=env,
-                          encoding=encoding, codec_errors=codec_errors)
+        try:
+            # Signal handlers are inherited by forked processes, and we can't easily
+            # reset it from the subprocess. Since kernelapp ignores SIGINT except in
+            # message handlers, we need to temporarily reset the SIGINT handler here
+            # so that the child and its children are interruptible.
+            sig = signal.signal(signal.SIGINT, signal.SIG_DFL)
+            child = pty_spawn(command, args=args, timeout=timeout,
+                              maxread=maxread,
+                              searchwindowsize=searchwindowsize,
+                              logfile=logfile, cwd=cwd, env=env,
+                              encoding=encoding, codec_errors=codec_errors)
+        finally:
+            signal.signal(signal.SIGINT, sig)
     return child
 
 
