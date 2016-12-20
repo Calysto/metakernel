@@ -4,7 +4,8 @@ import re
 import signal
 import sys
 import pexpect
-from pexpect import replwrap, popen_spawn
+from pexpect import replwrap
+from .pexpect import spawn
 
 
 IS_WINDOWS = sys.platform == 'win32'
@@ -57,8 +58,7 @@ class REPLWrapper(replwrap.REPLWrapper):
         sig = signal.signal(signal.SIGINT, signal.SIG_DFL)
         try:
             if IS_WINDOWS:
-                cmd_or_spawn = popen_spawn.PopenSpawn(cmd_or_spawn,
-                                                      encoding='utf-8')
+                cmd_or_spawn = spawn(cmd_or_spawn, encoding='utf-8')
                 cmd_or_spawn.echo = False
             replwrap.REPLWrapper.__init__(self, cmd_or_spawn, orig_prompt,
                                           prompt_change, continuation_prompt,
@@ -132,8 +132,8 @@ def bash(command="bash"):
     # source code there for comments and context for
     # understanding the code here.
     bashrc = os.path.join(os.path.dirname(pexpect.__file__), 'bashrc.sh')
-    child = pexpect.spawn("bash", ['--rcfile', bashrc], echo=False,
-                          encoding='utf-8')
+    child = spawn("bash", ['--rcfile', bashrc], echo=False,
+                  encoding='utf-8')
     ps1 = replwrap.PEXPECT_PROMPT[:5] + u'\[\]' + replwrap.PEXPECT_PROMPT[5:]
     ps2 = replwrap.PEXPECT_CONTINUATION_PROMPT[:5] + u'\[\]' + replwrap.PEXPECT_CONTINUATION_PROMPT[5:]
     prompt_change = u"PS1='{0}' PS2='{1}' PROMPT_COMMAND=''".format(ps1, ps2)

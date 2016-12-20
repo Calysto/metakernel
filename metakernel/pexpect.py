@@ -7,7 +7,12 @@ try:
     from pexpect import spawn
     import pty
 except ImportError:
+    from pexpect.popen_spawn import PopenSpawn as spawn
     pty = None
+
+
+# For backwards compatibility
+spawnu = spawn
 
 
 def which(filename):
