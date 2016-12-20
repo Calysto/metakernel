@@ -14,9 +14,12 @@ except ImportError:
 # Add a spawn adapter for Windows
 if pty is None:
     class spawn(PopenSpawn):
-        def __init__(self, cmd, timeout=30, maxread=2000, searchwindowsize=None, logfile=None, cwd=None, env=None, encoding=None, codec_errors='strict', echo=False):
-            PopenSpawn.__init__(self, cmd, timeout, maxread, searchwindowsize,
-                logfile, cwd, env, encoding, codec_errors)
+        def __init__(self, cmd, args=[], timeout=30, maxread=2000, searchwindowsize=None, logfile=None, cwd=None, env=None, encoding=None, codec_errors='strict', echo=False):
+            if args:
+                cmd += ' ' + ' '.join(args)
+            PopenSpawn.__init__(self, cmd, timeout=timeout, maxread=maxread, 
+                                searchwindowsize=searchwindowsize, logfile=logfile,
+                                cwd=cwd, env=env, encoding=encoding, codec_errors=codec_errors)
             self.echo = echo
 
 
