@@ -59,7 +59,7 @@ class ExpectTestCase (unittest.TestCase):
         p = pexpect.spawn('ls -l /bin')
         the_new_way = ''
         while 1:
-            i = p.expect (['\n', pexpect.EOF])
+            i = p.expect ([u'\n', pexpect.EOF])
             the_new_way = the_new_way + p.before
             if i == 1:
                 break
@@ -76,7 +76,7 @@ class ExpectTestCase (unittest.TestCase):
         p = pexpect.spawn('ls -l /bin')
         the_new_way = ''
         while 1:
-            i = p.expect_exact (['\n', pexpect.EOF])
+            i = p.expect_exact ([u'\n', pexpect.EOF])
             the_new_way = the_new_way + p.before
             if i == 1:
                 break
