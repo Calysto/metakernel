@@ -125,7 +125,7 @@ class REPLWrapper(object):
         try:
             return self.child.expect_exact(expects, timeout=timeout)
         except KeyboardInterrupt:
-            self.child.sendintr()
+            self.child.kill(signal.SIGINT)
             if self.prompt_emit_cmd:
                 time.sleep(1.)
             try:
