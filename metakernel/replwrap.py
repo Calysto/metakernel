@@ -90,7 +90,7 @@ class REPLWrapper(object):
             self.child.readline()
 
     def set_prompt(self, prompt_regex, prompt_change_cmd):
-        self.child.expect(u(prompt_regex))
+        self.child.expect(prompt_regex)
         self.sendline(u(prompt_change_cmd))
 
     def _expect_prompt(self, expect_line=False, timeout=-1, send_prompt_emit=True):
