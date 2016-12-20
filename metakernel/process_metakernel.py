@@ -53,7 +53,7 @@ class ProcessMetaKernel(MetaKernel):
         self._start()
 
     def _start(self):
-        if not self.wrapper is None:
+        if self.wrapper is not None:
             self.wrapper.child.terminate()
         self.wrapper = self.makeWrapper()
 
@@ -77,7 +77,8 @@ class ProcessMetaKernel(MetaKernel):
         output = ''
         try:
             output = self.wrapper.run_command(code.rstrip(), timeout=None,
-                                     stream_handler=stream_handler)
+                                     stream_handler=stream_handler,
+                                     stdin_handler=self.raw_input)
             if stream_handler is not None:
                 output = ''
         except KeyboardInterrupt as e:
@@ -159,12 +160,14 @@ class DynamicKernel(ProcessMetaKernel):
                  orig_prompt=None,
                  prompt_change=None,
                  prompt_cmd=None,
-                 extra_init_cmd=None):
+                 extra_init_cmd=None,
+                 stdin_prompt_regex=None):
         self.executable = executable
         self.orig_prompt = orig_prompt
         self.prompt_change = prompt_change
         self.prompt_cmd = prompt_cmd
         self.extra_init_cmd = extra_init_cmd
+        self.stdin_prompt_regex = stdin_prompt_regex
         self.implementation = implementation
         self.language = language
         self.language_info['mimetype'] = mimetype
@@ -177,6 +180,7 @@ class DynamicKernel(ProcessMetaKernel):
                            self.orig_prompt,
                            self.prompt_change,
                            prompt_cmd=self.prompt_cmd,
+                           stdin_prompt_regex=self.stdin_prompt_regex,
                            extra_init_cmd=self.extra_init_cmd)
 
     """
