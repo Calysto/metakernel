@@ -54,7 +54,8 @@ class REPLWrapper(object):
                  echo=False):
         if isinstance(cmd_or_spawn, str):
             self.child = pexpect.spawnu(cmd_or_spawn, echo=echo,
-                                        codec_errors="ignore", encoding="utf-8")
+                                        codec_errors="ignore",
+                                        encoding="utf-8")
         else:
             self.child = cmd_or_spawn
 
@@ -74,7 +75,7 @@ class REPLWrapper(object):
                             prompt_change_cmd.format(new_prompt_regex,
                                                      continuation_prompt_regex))
             self.prompt_regex = new_prompt_regex
-        self.continuation_prompt_regex = continuation_prompt_regex
+        self.continuation_prompt_regex = u(continuation_prompt_regex)
 
         self._expect_prompt()
 
@@ -84,13 +85,13 @@ class REPLWrapper(object):
         atexit.register(lambda: self.child.kill(signal.SIGTERM))
 
     def sendline(self, line):
-        self.child.sendline(line)
+        self.child.sendline(u(line))
         if self.echo:
             self.child.readline()
 
     def set_prompt(self, prompt_regex, prompt_change_cmd):
-        self.child.expect(prompt_regex)
-        self.sendline(prompt_change_cmd)
+        self.child.expect(u(prompt_regex))
+        self.sendline(u(prompt_change_cmd))
 
     def _expect_prompt(self, expect_line=False, timeout=-1, send_prompt_emit=True):
         if self.prompt_emit_cmd and send_prompt_emit:

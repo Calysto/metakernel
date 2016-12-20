@@ -1,26 +1,34 @@
 # Convenience imports from pexpect
 from __future__ import absolute_import
-from pexpect import which as which_base, is_executable_file, EOF, TIMEOUT
+from pexpect import is_executable_file, EOF, TIMEOUT
 import os
 
 try:
-    from pexpect import spawn
+    from pexpect import spawn as pty_spawn
     import pty
 except ImportError:
     from pexpect.popen_spawn import PopenSpawn
     pty = None
 
 
-# Add a spawn adapter for Windows
-if pty is None:
-    class spawn(PopenSpawn):
-        def __init__(self, cmd, args=[], timeout=30, maxread=2000, searchwindowsize=None, logfile=None, cwd=None, env=None, encoding=None, codec_errors='strict', echo=False):
-            if args:
-                cmd += ' ' + ' '.join(args)
-            PopenSpawn.__init__(self, cmd, timeout=timeout, maxread=maxread, 
-                                searchwindowsize=searchwindowsize, logfile=logfile,
-                                cwd=cwd, env=env, encoding=encoding, codec_errors=codec_errors)
-            self.echo = echo
+def spawn(command, args=[], timeout=30, maxread=2000,
+          searchwindowsize=None, logfile=None, cwd=None, env=None,
+          ignore_sighup=True, echo=True, encoding='utf-8', **kwargs):
+    codec_errors = kwargs.get('codec_errors', kwargs.get('errors', 'strict'))
+    if pty is None:
+        if args:
+            command += ' ' + ' '.join(args)
+        child = PopenSpawn(command, timeout=timeout, maxread=maxread,
+                           searchwindowsize=searchwindowsize,
+                           logfile=logfile, cwd=cwd, env=env,
+                           encoding=encoding, codec_errors=codec_errors)
+        child.echo = echo
+    else:
+        child = pty_spawn(command, args=args, timeout=timeout,
+                          maxread=maxread, searchwindowsize=searchwindowsize,
+                          logfile=logfile, cwd=cwd, env=env,
+                          encoding=encoding, codec_errors=codec_errors)
+    return child
 
 
 # For backwards compatibility

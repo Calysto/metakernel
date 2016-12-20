@@ -1,5 +1,6 @@
 import platform
 import unittest
+import re
 import os
 
 from metakernel import pexpect, replwrap
@@ -45,6 +46,15 @@ class REPLWrapTestCase(unittest.TestCase):
         res = bash.run_command("echo '1 2\n3 4'")
         self.assertEqual(res.strip().splitlines(), ['1 2', '3 4'])
 
+    def test_existing_spawn(self):
+        child = pexpect.spawnu("bash", timeout=5, echo=False)
+        repl = replwrap.REPLWrapper(child, re.compile('[$#]'),
+                                    "PS1='{0}' PS2='{1}' "
+                                    "PROMPT_COMMAND=''")
+
+        res = repl.run_command("echo $HOME")
+        assert res.startswith('/'), res
+
     def test_python(self):
         if platform.python_implementation() == 'PyPy':
             raise unittest.SkipTest("This test fails on PyPy because of REPL differences")
@@ -54,6 +64,18 @@ class REPLWrapTestCase(unittest.TestCase):
         assert res.strip() == '11'
 
         res = p.run_command('for a in range(3): print(a)\n')
+        assert res.strip().splitlines() == ['0', '1', '2']
+
+    def test_no_change_prompt(self):
+        if platform.python_implementation() == 'PyPy':
+            raise unittest.SkipTest("This test fails on PyPy because of REPL differences")
+
+        child = pexpect.spawnu('python', echo=False, timeout=5)
+        # prompt_change=None should mean no prompt change
+        py = replwrap.REPLWrapper(child, replwrap.u(">>> "), prompt_change_cmd=None, continuation_prompt_regex=replwrap.u(re.escape("... ")))
+        assert py.prompt_regex == ">>> "
+
+        res = py.run_command("for a in range(3): print(a)\n")
         assert res.strip().splitlines() == ['0', '1', '2']
 
 
