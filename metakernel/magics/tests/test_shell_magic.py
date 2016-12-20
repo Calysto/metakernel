@@ -5,15 +5,15 @@ from metakernel.tests.utils import get_kernel, get_log_text
 def test_shell_magic():
     kernel = get_kernel()
 
-    text = '%shell di'
+    text = '%shell ech'
     comp = kernel.do_complete(text, len(text))
 
-    assert 'dir' in comp['matches']
+    assert 'echo' in comp['matches']
 
-    helpstr = kernel.get_help_on('!dir')
-    assert not 'Sorry, no help' in helpstr
+    helpstr = kernel.get_help_on('!cat')
+    assert not 'Sorry, no help' in helpstr, helpstr
 
-    helpstr = kernel.get_help_on('%%shell dir', level=1)
+    helpstr = kernel.get_help_on('%%shell cat', level=1)
     assert not 'Sorry, no help' in helpstr
 
     helpstr = kernel.get_help_on('!lkjalskdfj')

@@ -5,7 +5,6 @@ from __future__ import print_function
 from metakernel import Magic, pexpect
 from metakernel.replwrap import cmd, bash
 import os
-import sys
 
 
 class ShellMagic(Magic):
@@ -37,7 +36,7 @@ class ShellMagic(Magic):
         self.eval('cd %s' % os.getcwd())
 
         command = " ".join(args)
-        resp = self.eval(command)
+        self.eval(command, True)
 
         if self.cmd == 'cmd':
             cwd = self.eval('cd')
@@ -47,11 +46,10 @@ class ShellMagic(Magic):
         if os.path.exists(cwd):
             os.chdir(cwd)
 
-        if resp:
-            self.kernel.Print(resp)
-
-    def eval(self, cmd):
-        return self.repl.run_command(cmd, stream_handler=self.kernel.Print)
+    def eval(self, cmd, incremental=False):
+        stream_handler = self.kernel.Print if incremental else None
+        return self.repl.run_command(cmd, timeout=None,
+                                     stream_handler=stream_handler)
 
     def start_process(self):
         if self.repl is not None:

@@ -18,7 +18,7 @@ setup(name='metakernel',
       author='Steven Silvester',
       author_email='steven.silvester@ieee.org',
       url='https://github.com/Calysto/metakernel',
-      install_requires=['IPython>=3.0'],
+      install_requires=['IPython>=3.0', 'pexpect>=4.2'],
       packages=find_packages(include=['metakernel', 'metakernel.*']),
       package_data={'metakernel': ['images/*.png']},
       classifiers=[
