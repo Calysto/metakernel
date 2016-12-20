@@ -50,6 +50,10 @@ class PlotMagic(Magic):
             width, height = kwargs['size']
             kwargs['width'] = int(width)
             kwargs['height'] = int(height)
+        # Remove empty options so ".setdefault" will work.
+        for key in ['resolution', 'format', 'size', 'width', 'height']:
+            if kwargs[key] is None:
+                del kwargs[key]
         self.kernel.plot_settings = kwargs
         self.kernel.handle_plot_settings()
 
