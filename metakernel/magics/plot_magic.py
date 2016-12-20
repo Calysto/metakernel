@@ -11,7 +11,7 @@ class PlotMagic(Magic):
         help='Pixel size of plots, "width,height"'
     )
     @option(
-        '-f', '--format', action='store', default='png',
+        '-f', '--format', action='store',
         help='Plot format (png, svg or jpg).'
     )
     @option(
@@ -19,8 +19,16 @@ class PlotMagic(Magic):
         help='Backend selection'
     )
     @option(
-        '-r', '--resolution', action='store', default=96,
+        '-r', '--resolution', type='int', action='store',
         help='Resolution in pixels per inch'
+    )
+    @option(
+        '-w', '--width', type='int', action='store',
+        help='Plot width in pixels'
+    )
+    @option(
+        '-h', '--height', type='int', action='store',
+        help='Plot height in pixels'
     )
     def line_plot(self, *args, **kwargs):
         """
@@ -31,14 +39,18 @@ class PlotMagic(Magic):
 
         Examples:
             %plot qt --format=png
-            %plot inline -s 640,480
+            %plot inline -w 640
 
         Note: not all languages may support the %plot magic, and not all
         options may be supported.
         """
         if args and not args[0].startswith('-'):
             kwargs['backend'] = args[0]
-        self.kernel.plot_settings.update(**kwargs)
+        if kwargs['size']:
+            width, height = kwargs['size']
+            kwargs['width'] = int(width)
+            kwargs['height'] = int(height)
+        self.kernel.plot_settings = kwargs
         self.kernel.handle_plot_settings()
 
 
