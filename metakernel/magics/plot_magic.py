@@ -19,15 +19,15 @@ class PlotMagic(Magic):
         help='Backend selection'
     )
     @option(
-        '-r', '--resolution', type='int', action='store',
+        '-r', '--resolution', action='store',
         help='Resolution in pixels per inch'
     )
     @option(
-        '-w', '--width', type='int', action='store',
+        '-w', '--width', action='store',
         help='Plot width in pixels'
     )
     @option(
-        '-h', '--height', type='int', action='store',
+        '-h', '--height', action='store',
         help='Plot height in pixels'
     )
     def line_plot(self, *args, **kwargs):
