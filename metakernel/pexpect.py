@@ -7,8 +7,17 @@ try:
     from pexpect import spawn
     import pty
 except ImportError:
-    from pexpect.popen_spawn import PopenSpawn as spawn
+    from pexpect.popen_spawn import PopenSpawn
     pty = None
+
+
+# Add a spawn adapter for Windows
+if pty is None:
+    class spawn(PopenSpawn):
+        def __init__(self, cmd, timeout=30, maxread=2000, searchwindowsize=None, logfile=None, cwd=None, env=None, encoding=None, codec_errors='strict', echo=False):
+            PopenSpawn.__init__(self, cmd, timeout, maxread, searchwindowsize,
+                logfile, cwd, env, encoding, codec_errors)
+            self.echo = echo
 
 
 # For backwards compatibility

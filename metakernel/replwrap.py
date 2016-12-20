@@ -49,7 +49,6 @@ class REPLWrapper(replwrap.REPLWrapper):
                  prompt_emit_cmd=None,
                  echo=False):
         self.prompt_emit_cmd = prompt_emit_cmd
-        self.echo = echo
         # Signal handlers are inherited by forked processes, and we can't
         # easily  reset it from the subprocess. Since kernelapp ignores SIGINT
         # except in message handlers, we need to temporarily reset the SIGINT
@@ -57,10 +56,8 @@ class REPLWrapper(replwrap.REPLWrapper):
         # interruptible.
         sig = signal.signal(signal.SIGINT, signal.SIG_DFL)
         try:
-            if IS_WINDOWS:
-                cmd_or_spawn = spawn(cmd_or_spawn, encoding='utf-8')
-                cmd_or_spawn.echo = False
-            replwrap.REPLWrapper.__init__(self, cmd_or_spawn, orig_prompt,
+            child = spawn(cmd_or_spawn, encoding='utf-8', echo=False)
+            replwrap.REPLWrapper.__init__(self, child, orig_prompt,
                                           prompt_change, continuation_prompt,
                                           new_prompt,
                                           extra_init_cmd=extra_init_cmd)
