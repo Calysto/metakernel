@@ -14,6 +14,12 @@ except ImportError:
 def spawn(command, args=[], timeout=30, maxread=2000,
           searchwindowsize=None, logfile=None, cwd=None, env=None,
           ignore_sighup=True, echo=True, encoding='utf-8', **kwargs):
+    '''This is the main entry point for Pexpect. Use this functio to start
+    and control child applications.
+
+    See https://github.com/pexpect/pexpect/blob/master/pexpect/pty_spawn.py
+    for more information.
+    '''
     codec_errors = kwargs.get('codec_errors', kwargs.get('errors', 'strict'))
     if pty is None:
         if args:

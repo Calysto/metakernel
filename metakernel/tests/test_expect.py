@@ -86,7 +86,7 @@ class ExpectTestCase (unittest.TestCase):
                 ).replace('\r', '\n').replace('\n\n', '\n').rstrip()
         assert the_old_way == the_new_way, hex_diff(the_old_way, the_new_way)
         p = pexpect.spawn('echo hello.?world')
-        i = p.expect_exact('.?')
+        i = p.expect_exact(u'.?')
         self.assertEqual(p.before, 'hello')
         self.assertEqual(p.after, '.?')
 
