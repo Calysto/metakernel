@@ -3,24 +3,11 @@ from . import MetaKernel
 from pexpect import EOF
 from .replwrap import REPLWrapper, bash
 from subprocess import check_output
-import os
 import re
 
 __version__ = '0.0'
 
 version_pat = re.compile(r'version (\d+(\.\d+)+)')
-
-
-class TextOutput(object):
-    """Wrapper for text output whose repr is the text itself.
-
-    This avoids `repr(output)` adding quotation marks around already-rendered text.
-    """
-    def __init__(self, output):
-        self.output = output
-
-    def __repr__(self):
-        return self.output
 
 
 class ProcessMetaKernel(MetaKernel):
@@ -109,8 +96,6 @@ class ProcessMetaKernel(MetaKernel):
                 'payload': [],
                 'user_expressions': {},
             }
-
-        return TextOutput(output)
 
     def check_exitcode(self):
         """
