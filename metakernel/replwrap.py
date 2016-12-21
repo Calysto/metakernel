@@ -14,7 +14,9 @@ if PY3:
         return s
 else:
     def u(s):
-        return s.decode('utf-8')
+        if isinstance(s, str):
+            return s.decode('utf-8')
+        return s
 
 PEXPECT_PROMPT = u('PEXPECT_PROMPT>')
 PEXPECT_STDIN_PROMPT = u('PEXPECT_PROMPT+')
