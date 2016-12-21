@@ -123,7 +123,7 @@ class REPLWrapper(object):
 
     def _expect_inner(self, expects, timeout):
         try:
-            return self.child.expect_exact(expects, timeout=timeout)
+            return self.child.expect(expects, timeout=timeout)
         except KeyboardInterrupt:
             self.child.kill(signal.SIGINT)
             if self.prompt_emit_cmd:
