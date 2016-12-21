@@ -113,7 +113,7 @@ class REPLWrapper(object):
                 line = stdin_handler(self.child.after)
                 self.sendline(line)
             elif pos == 3:  # End of line received
-                stream_handler(self.child.before + '\n')
+                stream_handler(self.child.before)
             else:
                 if len(self.child.before) != 0 and stream_handler:
                     # prompt received, but partial line precedes it
