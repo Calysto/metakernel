@@ -10,6 +10,18 @@ __version__ = '0.0'
 version_pat = re.compile(r'version (\d+(\.\d+)+)')
 
 
+class TextOutput(object):
+    """Wrapper for text output whose repr is the text itself.
+
+    This avoids `repr(output)` adding quotation marks around already-rendered text.
+    """
+    def __init__(self, output):
+        self.output = output
+
+    def __repr__(self):
+        return self.output
+
+
 class ProcessMetaKernel(MetaKernel):
     implementation = 'process_kernel'
     implementation_version = __version__
@@ -96,6 +108,9 @@ class ProcessMetaKernel(MetaKernel):
                 'payload': [],
                 'user_expressions': {},
             }
+
+        if silent and output:
+            return TextOutput(output)
 
     def check_exitcode(self):
         """
