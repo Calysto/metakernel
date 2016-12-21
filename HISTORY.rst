@@ -3,6 +3,11 @@
 Release History
 ------------------------
 
+0.16.0 (2016-12-21)
++++++++++++++++++++
+- Updated process metakernels to be more robust and added stdin handling.
+- Clean up plot magic and added height and width options.
+
 0.12.0 (2016-01-17)
 +++++++++++++++++++
 - Fixes for process metakernel
