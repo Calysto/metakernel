@@ -66,18 +66,6 @@ class REPLWrapTestCase(unittest.TestCase):
         res = p.run_command('for a in range(3): print(a)\n')
         assert res.strip().splitlines() == ['0', '1', '2']
 
-    def test_no_change_prompt(self):
-        if platform.python_implementation() == 'PyPy':
-            raise unittest.SkipTest("This test fails on PyPy because of REPL differences")
-
-        child = pexpect.spawnu('python', echo=False, timeout=5)
-        # prompt_change=None should mean no prompt change
-        py = replwrap.REPLWrapper(child, replwrap.u(">>> "), prompt_change_cmd=None, continuation_prompt_regex=replwrap.u(re.escape("... ")))
-        assert py.prompt_regex == ">>> "
-
-        res = py.run_command("for a in range(3): print(a)\n")
-        assert res.strip().splitlines() == ['0', '1', '2']
-
 
 if __name__ == '__main__':
     unittest.main()
