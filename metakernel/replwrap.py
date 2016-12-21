@@ -207,18 +207,30 @@ def python(command="python"):
 
 def bash(command="bash", prompt_regex=re.compile('[$#]')):
     """Start a bash shell and return a :class:`REPLWrapper` object."""
+
+    # If the user runs 'env', the value of PS1 will be in the output. To avoid
+    # replwrap seeing that as the next prompt, we'll embed the marker characters
+    # for invisible characters in the prompt; these show up when inspecting the
+    # environment variable, but not when bash displays the prompt.
+    ps1 = PEXPECT_PROMPT[:5] + u'\[\]' + PEXPECT_PROMPT[5:]
+    ps2 = PEXPECT_CONTINUATION_PROMPT[:5] + u'\[\]' + PEXPECT_CONTINUATION_PROMPT[5:]
+    prompt_change_cmd = u"PS1='{0}' PS2='{1}' PROMPT_COMMAND=''".format(ps1, ps2)
+
     if os.name == 'nt':
         prompt_regex = u('__repl_ready__')
         prompt_emit_cmd = u('echo __repl_ready__')
         prompt_change_cmd = None
-
     else:
-        prompt_change_cmd = u("PS1='{0}' PS2='{1}' PROMPT_COMMAND=''")
         prompt_emit_cmd = None
 
     extra_init_cmd = "export PAGER=cat"
 
-    return REPLWrapper(command, prompt_regex, prompt_change_cmd,
+    # Make sure the bash shell has a valid ending character.
+    bashrc = os.path.join(os.path.dirname(pexpect.__file__), 'bashrc.sh')
+    child = pexpect.spawn(command, ['--rcfile', bashrc], echo=False,
+                          encoding='utf-8')
+
+    return REPLWrapper(child, prompt_regex, prompt_change_cmd,
                        prompt_emit_cmd=prompt_emit_cmd,
                        extra_init_cmd=extra_init_cmd)
 
