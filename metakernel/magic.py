@@ -165,7 +165,7 @@ def _parse_args(func, args, usage=None):
 
     kwargs = dict()
     if getattr(func, 'has_options', False):
-        parser = MagicOptionParser(usage=usage)
+        parser = MagicOptionParser(usage=usage, conflict_handler="resolve")
         parser.add_options(func.options)
 
         left = []
