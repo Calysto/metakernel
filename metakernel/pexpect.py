@@ -36,14 +36,19 @@ def spawn(command, args=[], timeout=30, maxread=2000,
             # reset it from the subprocess. Since kernelapp ignores SIGINT except in
             # message handlers, we need to temporarily reset the SIGINT handler here
             # so that the child and its children are interruptible.
-            sig = signal.signal(signal.SIGINT, signal.SIG_DFL)
+            try:
+                sig = signal.signal(signal.SIGINT, signal.SIG_DFL)
+            except ValueError:
+                # Only Main Thread can handle signals
+                sig = None
             child = pty_spawn(command, args=args, timeout=timeout,
                               maxread=maxread,
                               searchwindowsize=searchwindowsize,
                               logfile=logfile, cwd=cwd, env=env,
                               encoding=encoding, codec_errors=codec_errors)
         finally:
-            signal.signal(signal.SIGINT, sig)
+            if sig:
+                signal.signal(signal.SIGINT, sig)
     return child
 
 
