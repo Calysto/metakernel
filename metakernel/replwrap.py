@@ -1,3 +1,4 @@
+import errno
 import sys
 import time
 import re
@@ -89,7 +90,7 @@ class REPLWrapper(object):
         if extra_init_cmd is not None:
             self.run_command(extra_init_cmd)
 
-        atexit.register(lambda: self.child.kill(signal.SIGTERM))
+        atexit.register(self._kill_child)
 
     def sendline(self, line):
         self.child.sendline(u(line))
@@ -172,6 +173,12 @@ class REPLWrapper(object):
             raise ValueError("Continuation prompt found - input was incomplete:\n" + command)
         return u''.join(res + [self.child.before])
 
+    def _kill_child(self):
+        try:
+            self.child.kill(signal.SIGTERM)
+        except Exception as e:
+            if e.errno != errno.EACCES:
+                raise
 
 def python(command="python"):
     """Start a Python shell and return a :class:`REPLWrapper` object."""
