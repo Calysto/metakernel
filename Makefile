@@ -53,6 +53,8 @@ release: gh-pages
 	git push origin --all
 	git push origin --tags
 	twine upload dist/*
+	printf '\nUpgrade metakernel-feedstock with release and sha256 sum:'
+	shasum -a 256 dist/*.tar.gz
 
 gh-pages: clean
 	pip install sphinx-bootstrap-theme numpydoc sphinx ghp-import
