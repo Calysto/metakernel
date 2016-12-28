@@ -4,6 +4,7 @@ from pexpect import EOF
 from .replwrap import REPLWrapper, bash
 from subprocess import check_output
 import re
+import signal
 
 __version__ = '0.0'
 
@@ -53,13 +54,15 @@ class ProcessMetaKernel(MetaKernel):
 
     def _start(self):
         if self.wrapper is not None:
-            self.wrapper.child.terminate()
+            self.wrapper.terminate()
         self.wrapper = self.makeWrapper()
 
     def do_execute_direct(self, code, silent=False):
         """Execute the code in the subprocess.
         """
         self.payload = []
+        wrapper = self.wrapper
+        child = wrapper.child
 
         if not code.strip():
             self.kernel_resp = {
@@ -74,16 +77,14 @@ class ProcessMetaKernel(MetaKernel):
         output = ''
         stream_handler = self.Print if not silent else None
         try:
-            output = self.wrapper.run_command(code.rstrip(), timeout=None,
-                                     stream_handler=stream_handler,
-                                     stdin_handler=self.raw_input)
+            output = wrapper.run_command(code.rstrip(), timeout=None,
+                                         stream_handler=stream_handler,
+                                         stdin_handler=self.raw_input)
         except KeyboardInterrupt as e:
             interrupted = True
-            output = self.wrapper.child.before
-            if 'REPL not responding to interrupt' in str(e):
-                output += '\n%s' % e
+            output = wrapper.interrupt()
         except EOF:
-            output = self.wrapper.child.before + 'Restarting'
+            output = child.before + 'Restarting'
             self._start()
 
         if interrupted:
@@ -109,8 +110,11 @@ class ProcessMetaKernel(MetaKernel):
                 'user_expressions': {},
             }
 
-        if silent and output:
-            return TextOutput(output)
+        if output:
+            if stream_handler:
+                stream_handler(output)
+            else:
+                return TextOutput(output)
 
     def check_exitcode(self):
         """
