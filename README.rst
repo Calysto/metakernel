@@ -19,11 +19,31 @@ Additional magics can be installed within the new kernel package under a `magics
 Features
 -------------
 - Basic set of line and cell magics for all kernels.
+    - Python magic for accessing python interpreter.
+    - Run kernels in parallel.
+    - Shell magics.
+    - Classroom management magics.
 - Tab completion for magics and file paths.
 - Help for magics using ? or Shift+Tab.
 - Plot magic for setting default plot behavior.
-- Python magic for accessing python interpreter.
 
+Kernels based on Metakernel
+---------------------------
+
+- matlab_kernel, https://github.com/Calysto/matlab_kernel
+- octave_kernel, https://github.com/Calysto/octave_kernel
+- calysto_scheme, https://github.com/Calysto/calysto_scheme
+- calysto_processing, https://github.com/Calysto/calysto_processing
+- java9_kernel, https://github.com/Bachmann1234/java9_kernel
+- xonsh_kernel, https://github.com/Calysto/xonsh_kernel
+- calysto_hy, https://github.com/Calysto/calysto_hy
+- gnuplot_kernel, https://github.com/has2k1/gnuplot_kernel
+- spylon_kernel, https://github.com/mariusvniekerk/spylon-kernel
+- wolfram_kernel, https://github.com/mmatera/iwolfram
+- sas_kernel, https://github.com/palmer0914/sas_kernel
+- pysysh_kernel, https://github.com/Jaesin/psysh_kernel
+
+... and many others.
 
 Installation
 ----------------
