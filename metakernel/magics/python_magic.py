@@ -19,7 +19,8 @@ def exec_code(code, env, kernel):
         exec(code, env) 
     except Exception as exc:
         import traceback
-        return ExceptionWrapper(exc.__class__.__name__, exc.args, traceback.format_tb(exc.__traceback__))
+        ex_type, ex, tb = sys.exc_info()
+        return ExceptionWrapper(ex_type.__name__, repr(exc.args), traceback.format_tb(tb))
     if "retval" in env:
         return env["retval"]
 
