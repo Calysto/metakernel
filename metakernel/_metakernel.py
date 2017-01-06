@@ -59,6 +59,19 @@ from .parser import Parser
 PY3 = (sys.version_info[0] >= 3)
 
 
+class ExceptionWrapper(object):
+    """
+    Utility wrapper that we can use to get the kernel to respond properly for errors.
+
+    When the return value of your execute is an instance of this, an error will be thrown similar to Ipykernel
+    """
+
+    def __init__(self, ename, evalue, traceback):
+        self.evalue = evalue
+        self.ename = ename
+        self.traceback = traceback
+
+
 def lazy_import_handle_comm_opened(*args, **kwargs):
     if Widget is None:
         return
@@ -374,21 +387,32 @@ class MetaKernel(Kernel):
             self.___ = self.__
             self.__ = retval
             self.log.debug(retval)
-            try:
-                data = _formatter(retval, self.repr)
-            except Exception as e:
-                self.Error(e)
-                return
-            content = {
-                'execution_count': self.execution_count,
-                'data': data,
-                'metadata': {},
-            }
-            if not silent:
-                if Widget and isinstance(retval, Widget):
-                    self.Display(retval)
+            if isinstance(retval, ExceptionWrapper):
+                self.kernel_resp['status'] = 'error'
+                content = {
+                    'traceback':  retval.traceback,
+                    'evalue': retval.evalue,
+                    'ename': retval.ename,
+                }
+                self.kernel_resp.update(content)
+                if not silent:
+                    self.send_response(self.iopub_socket, 'error', content)
+            else:
+                try:
+                    data = _formatter(retval, self.repr)
+                except Exception as e:
+                    self.Error(e)
                     return
-                self.send_response(self.iopub_socket, 'execute_result', content)
+                content = {
+                    'execution_count': self.execution_count,
+                    'data': data,
+                    'metadata': {},
+                }
+                if not silent:
+                    if Widget and isinstance(retval, Widget):
+                        self.Display(retval)
+                        return
+                    self.send_response(self.iopub_socket, 'execute_result', content)
 
     def do_history(self, hist_access_type, output, raw, session=None,
                    start=None, stop=None, n=None, pattern=None, unique=False):
