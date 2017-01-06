@@ -1,3 +1,4 @@
+import textwrap
 
 from metakernel.tests.utils import get_kernel, get_log_text, clear_log_text
 
@@ -19,10 +20,11 @@ def test_python_magic2():
     kernel.do_execute('%python retval = 1', None)
     assert '1' in get_log_text(kernel)
 
-    kernel.do_execute('''%%python
-        def test(a):
-            return a + 1
-        retval = test(2)''', None)
+    kernel.do_execute(textwrap.dedent('''\
+    %%python
+    def test(a):
+        return a + 1
+    retval = test(2)'''), None)
     assert '3' in get_log_text(kernel)
 
 
