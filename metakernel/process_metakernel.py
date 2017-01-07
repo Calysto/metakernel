@@ -9,6 +9,10 @@ __version__ = '0.0'
 
 version_pat = re.compile(r'version (\d+(\.\d+)+)')
 
+if PY3:
+    string_types = (str,)
+else:
+    string_types = basestring
 
 class TextOutput(object):
     """Wrapper for text output whose repr is the text itself.
@@ -50,6 +54,18 @@ class ProcessMetaKernel(MetaKernel):
         MetaKernel.__init__(self, *args, **kwargs)
         self.wrapper = None
         self._start()
+    
+    def repr(self, item):
+        """Return text representation
+        
+        Don't wrap str in repr to avoid adding quotes to reprs from subprocesses.
+        """
+        if isinstance(item, string_types):
+            # return the string itself because repr would wrap it in quotes
+            return item
+        else:
+            # use regular repr on non-string objects
+            return repr(item)
 
     def _start(self):
         if self.wrapper is not None:
