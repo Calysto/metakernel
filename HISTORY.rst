@@ -3,6 +3,10 @@
 Release History
 ------------------------
 
+0.17.0 (2017-01-06)
++++++++++++++++++++
+- Better handling of exceptions (#121).
+
 0.16.0 (2016-12-21)
 +++++++++++++++++++
 - Updated process metakernels to be more robust and added stdin handling.
