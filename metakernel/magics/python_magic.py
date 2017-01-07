@@ -1,7 +1,7 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from metakernel import Magic, option
+from metakernel import Magic, option, ExceptionWrapper
 import traceback
 import sys
 try:
@@ -18,8 +18,9 @@ def exec_code(code, env, kernel):
     try:
         exec(code, env) 
     except Exception as exc:
-        kernel.Error(traceback.format_exc())
-        return None
+        import traceback
+        ex_type, ex, tb = sys.exc_info()
+        return ExceptionWrapper(ex_type.__name__, repr(exc.args), traceback.format_tb(tb))
     if "retval" in env:
         return env["retval"]
 
