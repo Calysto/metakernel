@@ -70,18 +70,25 @@ class REPLWrapper(object):
             self.child.setecho(False)
             self.child.waitnoecho()
 
+        # Convert all arguments to unicode.
+        prompt_regex = u(prompt_regex)
+        prompt_change_cmd = u(prompt_change_cmd)
+        continuation_prompt_regex = u(continuation_prompt_regex)
+        stdin_prompt_regex = u(stdin_prompt_regex)
+        prompt_emit_cmd = u(prompt_emit_cmd)
+
         self.echo = echo
         self.prompt_emit_cmd = prompt_emit_cmd
 
         if prompt_change_cmd is None:
-            self.prompt_regex = prompt_regex
+            self.prompt_regex = u(prompt_regex)
         else:
             self.set_prompt(prompt_regex,
                             prompt_change_cmd.format(new_prompt_regex,
                                                      continuation_prompt_regex))
             self.prompt_regex = new_prompt_regex
-        self.continuation_prompt_regex = u(continuation_prompt_regex)
-        self.stdin_prompt_regex = u(stdin_prompt_regex)
+        self.continuation_prompt_regex = continuation_prompt_regex
+        self.stdin_prompt_regex = stdin_prompt_regex
 
         self._stream_handler = None
         self._stdin_handler = None
@@ -99,7 +106,7 @@ class REPLWrapper(object):
 
     def set_prompt(self, prompt_regex, prompt_change_cmd):
         self.child.expect(prompt_regex)
-        self.sendline(u(prompt_change_cmd))
+        self.sendline(prompt_change_cmd)
 
     def _expect_prompt(self, timeout=None):
         stream_handler = self._stream_handler
