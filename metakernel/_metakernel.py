@@ -67,9 +67,12 @@ class ExceptionWrapper(object):
     """
 
     def __init__(self, ename, evalue, traceback):
-        self.evalue = evalue
         self.ename = ename
+        self.evalue = evalue
         self.traceback = traceback
+
+    def __repr__(self):
+        return '{}: {}\n{}'.format(self.ename, self.evalue, self.traceback)
 
 
 def lazy_import_handle_comm_opened(*args, **kwargs):
