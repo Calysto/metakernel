@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Features &mdash; Metakernel 0.16.3 documentation</title>
+    <title>Features &#8212; Metakernel 0.17.3 documentation</title>
     
     <link rel="stylesheet" href="_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.16.3',
+        VERSION:     '0.17.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -28,7 +28,7 @@
     <script type="text/javascript" src="_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="_static/bootstrap-3.3.6/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
-    <link rel="top" title="Metakernel 0.16.3 documentation" href="#" />
+    <link rel="top" title="Metakernel 0.17.3 documentation" href="#" />
     <link rel="next" title="Installation" href="source/installation.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
@@ -58,7 +58,7 @@
         </button>
         <a class="navbar-brand" href="#">
           Metakernel</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.16.3</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.17.3</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -91,6 +91,7 @@
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
 <li><a class="reference internal" href="#">Features</a></li>
+<li><a class="reference internal" href="#kernels-based-on-metakernel">Kernels based on Metakernel</a></li>
 <li><a class="reference internal" href="#id1">API Reference</a></li>
 <li><a class="reference internal" href="#id2">Installation</a></li>
 <li><a class="reference internal" href="#id3">Information</a></li>
@@ -138,6 +139,7 @@
       <div class="col-md-3">
         <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
 <li><a class="reference internal" href="#">Features</a></li>
+<li><a class="reference internal" href="#kernels-based-on-metakernel">Kernels based on Metakernel</a></li>
 <li><a class="reference internal" href="#id1">API Reference</a></li>
 <li><a class="reference internal" href="#id2">Installation</a></li>
 <li><a class="reference internal" href="#id3">Information</a></li>
@@ -150,18 +152,48 @@
   <p>A Jupyter/IPython kernel template which includes core magic functions (including help, command and file path completion, parallel and distributed processing, downloads, and much more).</p>
 <a class="reference external image-reference" href="http://badge.fury.io/py/metakernel"><img alt="https://badge.fury.io/py/metakernel.png/" src="https://badge.fury.io/py/metakernel.png/" /></a>
 <a class="reference external image-reference" href="https://coveralls.io/r/Calysto/metakernel"><img alt="https://coveralls.io/repos/Calysto/metakernel/badge.png?branch=master" src="https://coveralls.io/repos/Calysto/metakernel/badge.png?branch=master" /></a>
-<a class="reference external image-reference" href="https://travis-ci.org/Calysto/metakernel"><img src="https://travis-ci.org/Calysto/metakernel.svg" /></a>
+<a class="reference external image-reference" href="https://travis-ci.org/Calysto/metakernel"><img alt="https://travis-ci.org/Calysto/metakernel.svg" src="https://travis-ci.org/Calysto/metakernel.svg" /></a>
 <p>See IPython&#8217;s docs on <a class="reference external" href="http://ipython.org/ipython-doc/dev/development/wrapperkernels.html">wrapper kernels</a>.</p>
 <p>Additional magics can be installed within the new kernel package under a <cite>magics</cite> subpackage.</p>
 <div class="section" id="features">
 <h1>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li>Basic set of line and cell magics for all kernels.</li>
-<li>Tab completion for magics and file paths.</li>
-<li>Help for magics using ? or Shift+Tab.</li>
-<li>Plot magic for setting default plot behavior.</li>
+<ul>
+<li><dl class="first docutils">
+<dt>Basic set of line and cell magics for all kernels.</dt>
+<dd><ul class="first last simple">
 <li>Python magic for accessing python interpreter.</li>
+<li>Run kernels in parallel.</li>
+<li>Shell magics.</li>
+<li>Classroom management magics.</li>
 </ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">Tab completion for magics and file paths.</p>
+</li>
+<li><p class="first">Help for magics using ? or Shift+Tab.</p>
+</li>
+<li><p class="first">Plot magic for setting default plot behavior.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="kernels-based-on-metakernel">
+<h1>Kernels based on Metakernel<a class="headerlink" href="#kernels-based-on-metakernel" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>matlab_kernel, <a class="reference external" href="https://github.com/Calysto/matlab_kernel">https://github.com/Calysto/matlab_kernel</a></li>
+<li>octave_kernel, <a class="reference external" href="https://github.com/Calysto/octave_kernel">https://github.com/Calysto/octave_kernel</a></li>
+<li>calysto_scheme, <a class="reference external" href="https://github.com/Calysto/calysto_scheme">https://github.com/Calysto/calysto_scheme</a></li>
+<li>calysto_processing, <a class="reference external" href="https://github.com/Calysto/calysto_processing">https://github.com/Calysto/calysto_processing</a></li>
+<li>java9_kernel, <a class="reference external" href="https://github.com/Bachmann1234/java9_kernel">https://github.com/Bachmann1234/java9_kernel</a></li>
+<li>xonsh_kernel, <a class="reference external" href="https://github.com/Calysto/xonsh_kernel">https://github.com/Calysto/xonsh_kernel</a></li>
+<li>calysto_hy, <a class="reference external" href="https://github.com/Calysto/calysto_hy">https://github.com/Calysto/calysto_hy</a></li>
+<li>gnuplot_kernel, <a class="reference external" href="https://github.com/has2k1/gnuplot_kernel">https://github.com/has2k1/gnuplot_kernel</a></li>
+<li>spylon_kernel, <a class="reference external" href="https://github.com/mariusvniekerk/spylon-kernel">https://github.com/mariusvniekerk/spylon-kernel</a></li>
+<li>wolfram_kernel, <a class="reference external" href="https://github.com/mmatera/iwolfram">https://github.com/mmatera/iwolfram</a></li>
+<li>sas_kernel, <a class="reference external" href="https://github.com/palmer0914/sas_kernel">https://github.com/palmer0914/sas_kernel</a></li>
+<li>pysysh_kernel, <a class="reference external" href="https://github.com/Jaesin/psysh_kernel">https://github.com/Jaesin/psysh_kernel</a></li>
+</ul>
+<p>... and many others.</p>
 <div class="toctree-wrapper compound">
 </div>
 </div>
@@ -190,8 +222,8 @@
       
     </p>
     <p>
-        &copy; Copyright 2014 - 2016, Metakernel contributors.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.<br/>
+        &copy; Copyright 2014 - 2017, Metakernel contributors.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.<br/>
     </p>
   </div>
 </footer>
