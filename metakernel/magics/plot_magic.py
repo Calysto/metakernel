@@ -46,13 +46,13 @@ class PlotMagic(Magic):
         """
         if args and not args[0].startswith('-'):
             kwargs['backend'] = args[0]
-        if 'size' in kwargs:
+        if 'size' in kwargs and kwargs['size'] is not None:
             width, height = kwargs['size']
             kwargs['width'] = int(width)
             kwargs['height'] = int(height)
         # Remove empty options so ".setdefault" will work.
         for key in ['resolution', 'format', 'size', 'width', 'height']:
-            if kwargs.get(key, '') is None:
+            if key in kwargs and kwargs[key] is None:
                 del kwargs[key]
         self.kernel.plot_settings = kwargs
         self.kernel.handle_plot_settings()
