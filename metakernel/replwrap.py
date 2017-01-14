@@ -157,11 +157,11 @@ class REPLWrapper(object):
         res = []
         self._stream_handler = stream_handler
         self._stdin_handler = stdin_handler
-        self.child.sendline(cmdlines[0])
+        self.sendline(cmdlines[0])
         for line in cmdlines[1:]:
             self._expect_prompt(timeout=timeout)
             res.append(self.child.before)
-            self.child.sendline(line)
+            self.sendline(line)
 
         # Command was fully submitted, now wait for the next prompt
         if self._expect_prompt(timeout=timeout) == 1:
