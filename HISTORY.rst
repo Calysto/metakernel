@@ -3,6 +3,10 @@
 Release History
 ------------------------
 
+0.18.0 (2017-01-14)
++++++++++++++++++++
+- Clean up of kernel interrupt and shutdown behavior for process metakernels.
+
 0.17.0 (2017-01-06)
 +++++++++++++++++++
 - Better handling of exceptions (#121).
