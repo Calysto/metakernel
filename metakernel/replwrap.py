@@ -1,6 +1,5 @@
 import errno
 import sys
-import time
 import re
 import signal
 import os
@@ -42,6 +41,9 @@ class REPLWrapper(object):
         as positional parameters, so you can use ``{}`` style formatting to
         insert them into the command.
     :param str new_prompt_regex: The more unique prompt to expect after the change.
+    :param str stdin_prompt_regex: The regex for a stdin prompt from the 
+        child process.  The prompt itself will be sent to the `stdin_handler`,
+        so any sentinel value inserted will have to be removed by the caller.
     :param str extra_init_cmd: Commands to do extra initialisation, such as
       disabling pagers.
     :param str prompt_emit_cmd: Optional kernel command that emits the prompt
@@ -97,7 +99,7 @@ class REPLWrapper(object):
         if extra_init_cmd is not None:
             self.run_command(extra_init_cmd)
 
-        atexit.register(self._kill_child)
+        atexit.register(self.terminate)
 
     def sendline(self, line):
         self.child.sendline(u(line))
@@ -109,6 +111,8 @@ class REPLWrapper(object):
         self.sendline(prompt_change_cmd)
 
     def _expect_prompt(self, timeout=None):
+        """Expect a prompt from the child.
+        """
         stream_handler = self._stream_handler
         stdin_handler = self._stdin_handler
         expects = [self.prompt_regex, self.continuation_prompt_regex,
@@ -118,10 +122,10 @@ class REPLWrapper(object):
         if self.prompt_emit_cmd:
             self.sendline(self.prompt_emit_cmd)
         while True:
-            pos = self._expect_inner(expects, timeout)
+            pos = self.child.expect(expects, timeout=timeout)
             if pos == 2 and stdin_handler:
-                line = stdin_handler(self.child.after)
-                self.sendline(line)
+                resp = stdin_handler(self.child.before + self.child.after)
+                self.sendline(resp)
             elif pos == 3:  # End of line received
                 stream_handler(self.child.before)
             else:
@@ -130,19 +134,6 @@ class REPLWrapper(object):
                     stream_handler(self.child.before)
                 break
         return pos
-
-    def _expect_inner(self, expects, timeout):
-        try:
-            return self.child.expect(expects, timeout=timeout)
-        except KeyboardInterrupt:
-            self.child.kill(signal.SIGINT)
-            if self.prompt_emit_cmd:
-                time.sleep(1.)
-            try:
-                self._expect_prompt(timeout=1)
-            except pexpect.TIMEOUT:
-                raise KeyboardInterrupt('REPL not responding to interrupt')
-            raise KeyboardInterrupt
 
     def run_command(self, command, timeout=None, stream_handler=None,
                     stdin_handler=None):
@@ -175,17 +166,38 @@ class REPLWrapper(object):
         # Command was fully submitted, now wait for the next prompt
         if self._expect_prompt(timeout=timeout) == 1:
             # We got the continuation prompt - command was incomplete
-            self.child.kill(signal.SIGINT)
-            self._expect_prompt(timeout=1)
+            self.interrupt()
             raise ValueError("Continuation prompt found - input was incomplete:\n" + command)
         return u''.join(res + [self.child.before])
 
-    def _kill_child(self):
+    def interrupt(self):
+        """Interrupt the process and wait for a prompt.
+
+        Returns
+        -------
+        The value up to the prompt.
+        """
+        if pexpect.pty:
+            self.child.sendintr()
+        else:
+            self.child.kill(signal.SIGINT)
+        while 1:
+            try:
+                self._expect_prompt(timeout=-1)
+                break
+            except KeyboardInterrupt:
+                pass
+        return self.child.before
+
+    def terminate(self):
+        if pexpect.pty:
+            return self.child.terminate()
         try:
             self.child.kill(signal.SIGTERM)
         except Exception as e:
             if e.errno != errno.EACCES:
                 raise
+
 
 def python(command="python"):
     """Start a Python shell and return a :class:`REPLWrapper` object."""
