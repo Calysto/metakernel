@@ -1,6 +1,5 @@
 import errno
 import sys
-import time
 import re
 import signal
 import os
@@ -42,6 +41,9 @@ class REPLWrapper(object):
         as positional parameters, so you can use ``{}`` style formatting to
         insert them into the command.
     :param str new_prompt_regex: The more unique prompt to expect after the change.
+    :param str stdin_prompt_regex: The regex for a stdin prompt from the 
+        child process.  The prompt itself will be sent to the `stdin_handler`,
+        so any sentinel value inserted will have to be removed by the caller.
     :param str extra_init_cmd: Commands to do extra initialisation, such as
       disabling pagers.
     :param str prompt_emit_cmd: Optional kernel command that emits the prompt
@@ -115,8 +117,8 @@ class REPLWrapper(object):
         while True:
             pos = self.child.expect(expects, timeout=timeout)
             if pos == 2 and stdin_handler:
-                line = stdin_handler(self.child.after)
-                self.sendline(line)
+                resp = stdin_handler(self.child.before + self.child.after)
+                self.sendline(resp)
             elif pos == 3:  # End of line received
                 stream_handler(self.child.before)
             else:
@@ -172,7 +174,12 @@ class REPLWrapper(object):
             self.child.sendintr()
         else:
             self.child.kill(signal.SIGINT)
-        self._expect_prompt(timeout=-1)
+        while 1:
+            try:
+                self._expect_prompt(timeout=-1)
+                break
+            except KeyboardInterrupt:
+                pass
         return self.child.before
 
     def terminate(self):
