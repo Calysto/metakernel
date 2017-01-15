@@ -118,7 +118,7 @@ class REPLWrapper(object):
         expects = [self.prompt_regex, self.continuation_prompt_regex,
                    self.stdin_prompt_regex]
         if stream_handler:
-            expects += [u(self.child.linesep)]
+            expects += [u(self.child.crlf)]
         if self.prompt_emit_cmd:
             self.sendline(self.prompt_emit_cmd)
         while True:
