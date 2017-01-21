@@ -50,12 +50,6 @@ class ProcessMetaKernel(MetaKernel):
 
     def __init__(self, *args, **kwargs):
         MetaKernel.__init__(self, *args, **kwargs)
-        self.wrapper = None
-        self._start()
-
-    def _start(self):
-        if self.wrapper is not None:
-            self.wrapper.terminate()
         self.wrapper = self.makeWrapper()
 
     def do_execute_direct(self, code, silent=False):
@@ -85,8 +79,9 @@ class ProcessMetaKernel(MetaKernel):
             interrupted = True
             output = wrapper.interrupt()
         except EOF:
-            output = child.before + 'Restarting'
-            self._start()
+            self.Print(child.before)
+            self.do_shutdown(True)
+            return
 
         if interrupted:
             self.kernel_resp = {
@@ -151,9 +146,19 @@ class ProcessMetaKernel(MetaKernel):
         """
         raise NotImplementedError
 
+    def do_shutdown(self, restart):
+        """
+        Shut down the app gracefully, saving history.
+        """
+        try:
+            self.wrapper.terminate()
+        except Exception as e:
+            self.Error(str(e))
+        super(ProcessMetaKernel, self).do_shutdown(restart)
+
     def restart_kernel(self):
         """Restart the kernel"""
-        self._start()
+        self.wrapper = self.makeWrapper()
 
 
 class DynamicKernel(ProcessMetaKernel):
