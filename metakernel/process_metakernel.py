@@ -4,7 +4,6 @@ from pexpect import EOF
 from .replwrap import REPLWrapper, bash
 from subprocess import check_output
 import re
-import signal
 
 __version__ = '0.0'
 
@@ -14,8 +13,10 @@ version_pat = re.compile(r'version (\d+(\.\d+)+)')
 class TextOutput(object):
     """Wrapper for text output whose repr is the text itself.
 
-    This avoids `repr(output)` adding quotation marks around already-rendered text.
+    This avoids `repr(output)` adding quotation marks around already-rendered
+    text.
     """
+
     def __init__(self, output):
         self.output = output
 
@@ -149,6 +150,10 @@ class ProcessMetaKernel(MetaKernel):
 
         """
         raise NotImplementedError
+
+    def restart_kernel(self):
+        """Restart the kernel"""
+        self._start()
 
 
 class DynamicKernel(ProcessMetaKernel):
