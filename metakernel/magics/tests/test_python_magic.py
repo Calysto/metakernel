@@ -9,7 +9,7 @@ def test_python_magic():
     text = '%python imp'
     comp = kernel.do_complete(text, len(text))
 
-    assert 'import' in comp['matches']
+    assert 'import' in comp['matches'], comp
 
     helpstr = kernel.get_help_on('%python bin')
     assert 'Return the binary representation of an integer' in helpstr, helpstr
