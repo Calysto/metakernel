@@ -8,7 +8,9 @@ try:
     import jedi
     from jedi import Interpreter
     from jedi.parser.user_context import UserContext
-except ImportError:
+except ImportError as e:
+    print('error importing jedi')
+    print(e)
     jedi = None
 
 PY3 = sys.version_info[0] == 3
