@@ -2,17 +2,26 @@
 # Distributed under the terms of the Modified BSD License.
 
 from metakernel import Magic, option, ExceptionWrapper
-import traceback
+import re
 import sys
 try:
     import jedi
     from jedi import Interpreter
-    from jedi.api.helpers import completion_parts
     from jedi.parser.user_context import UserContext
 except ImportError:
     jedi = None
 
 PY3 = sys.version_info[0] == 3
+
+
+def completion_parts(path_until_cursor):
+    """
+    Returns the parts for the completion
+    :return: tuple - (path, dot, like)
+    """
+    match = re.match(r'^(.*?)(\.|)(\w?[\w\d]*)$', path_until_cursor, flags=re.S)
+    return match.groups()
+
 
 def exec_code(code, env, kernel):
     try:
