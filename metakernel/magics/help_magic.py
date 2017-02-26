@@ -69,7 +69,6 @@ class HelpMagic(Magic):
         ?%python
         """
         text = self._prep_text(text)
-        self.kernel.log.error(text)
         if not text:
             return self.kernel.get_usage()
 
@@ -102,7 +101,7 @@ class HelpMagic(Magic):
                     return ("No such %s magic named '%s', so can't really help with that" % 
                             (minfo["type"], minfo["name"]))
             if magic:
-                return magic.get_help_on(info['code'], level)
+                return magic.get_help_on(info, level)
 
             elif not info['magic']['name']:
                 return self.kernel.get_usage()
