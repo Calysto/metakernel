@@ -5,29 +5,13 @@
 language: python
 python:
     - 2.7
-    - 3.3
     - 3.4
+    - 3.5
 
 
 install:
-    # install IPython according to their travis file:
-    # workaround for https://github.com/travis-ci/travis-cookbooks/issues/155
-    - sudo rm -rf /dev/shm && sudo ln -s /run/shm /dev/shm
-    # Pierre Carrier's PPA for PhantomJS and CasperJS
-    - travis_retry sudo add-apt-repository -y ppa:pcarrier/ppa
-    - time sudo apt-get update
-    - travis_retry sudo apt-get install pandoc casperjs libzmq3-dev 
-    - travis_retry pip install -f https://nipy.bic.berkeley.edu/wheelhouse/travis jinja2 sphinx pygments tornado requests mock pyzmq jsonschema jsonpointer mistune
-
-    - |
-      if [[ $TRAVIS_PYTHON_VERSION == 3.3 ]]; then
-       travis_retry git clone --depth=50 --branch=3.x --recursive https://github.com/ipython/ipython
-       cd ipython; python setup.py install; cd ..
-      else
-        travis_retry pip install jupyter ipyparallel 
-      fi;
-
     - travis_retry pip install coveralls jedi
+    - travis_retry pip install ipyparallel
     - travis_retry python setup.py install
     - cd metakernel_python
     - python setup.py install
