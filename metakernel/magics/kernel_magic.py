@@ -33,11 +33,9 @@ class KernelMagic(Magic):
         class_ = getattr(module, class_name)
         kernel = class_()
         self.kernel.makeSubkernel(self.kernel)
+        kernel.makeSubkernel(self.kernel)
         self.kernels[kernel_name] = kernel
         self.kernels[kernel_name].kernel = self.kernel
-        kernel.Display = self.kernel.Display
-        kernel.send_response = self.kernel.send_response
-        kernel.session = self.kernel.session
         self.retval = self.kernels[kernel_name]
 
     @option(
