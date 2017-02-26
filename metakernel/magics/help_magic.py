@@ -122,11 +122,13 @@ class HelpMagic(Magic):
         text = text.replace('{0}{0}help'.format(magic), '')
         text = text.replace('{0}help'.format(magic), '')
 
-        while text.startswith(prefix):
-            text = text[1:]
+        if prefix:
+            while text.startswith(prefix):
+                text = text[1:]
 
-        while text.endswith(suffix):
-            text = text[:-1]
+        if suffix:
+            while text.endswith(suffix):
+                text = text[:-1]
 
         return text
 
