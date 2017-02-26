@@ -4,7 +4,7 @@
 try:
     from ipywidgets import widgets
 except ImportError:
-    from IPython.html import widgets
+    widgets = None
 from metakernel import Magic, option
 import os
 import getpass
@@ -37,6 +37,8 @@ class Activity(object):
 
     def load_json(self, json_text):
         # Allow use of widgets:
+        if widgets is None:
+            return
         json = eval(json_text.strip(), {key: getattr(widgets, key) for key in dir(widgets)})
         if json.get("results_filename", None):
             self.results_filename = json["results_filename"]

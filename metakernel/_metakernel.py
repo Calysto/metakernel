@@ -16,29 +16,17 @@ import warnings
 from collections import OrderedDict
 
 warnings.filterwarnings('ignore', module='IPython.html.widgets')
-Widget = None
+
+from IPython.paths import get_ipython_dir
+from ipykernel.kernelapp import IPKernelApp
+from ipykernel.kernelbase import Kernel
+from ipykernel.comm import CommManager
+from traitlets.config import Application
 
 try:
-    from IPython.paths import get_ipython_dir
-    from ipykernel.kernelapp import IPKernelApp
-    from ipykernel.kernelbase import Kernel
-    from ipykernel.comm import CommManager
-    from traitlets.config import Application
-    _module_name = 'jupyter'
+    from ipywidgets.widgets.widget import Widget
 except ImportError:
-    from IPython.utils.path import get_ipython_dir
-    from IPython.kernel.zmq.kernelapp import IPKernelApp
-    from IPython.kernel.zmq.kernelbase import Kernel
-    from IPython.kernel.comm import CommManager
-    from IPython.html.widgets import Widget
-    from IPython.config import Application
-    _module_name = 'IPython'
-
-if Widget is None:
-    try:
-        from ipywidgets.widgets.widget import Widget
-    except ImportError:
-        pass
+    Widget = None
 
 try:
     from IPython.utils.PyColorize import NeutralColors
@@ -725,7 +713,7 @@ class MetaKernelApp(IPKernelApp):
                             f.write(data)
                     try:
                         subprocess.check_call(
-                            [sys.executable, '-m', _module_name,
+                            [sys.executable, '-m', 'jupyter',
                             'kernelspec', 'install'] + self.argv + [dirname])
                     except CalledProcessError as exc:
                         sys.exit(exc.returncode)
