@@ -69,6 +69,7 @@ class HelpMagic(Magic):
         ?%python
         """
         text = self._prep_text(text)
+        self.kernel.log.error(text)
         if not text:
             return self.kernel.get_usage()
 
@@ -100,9 +101,8 @@ class HelpMagic(Magic):
                 else:
                     return ("No such %s magic named '%s', so can't really help with that" % 
                             (minfo["type"], minfo["name"]))
-
             if magic:
-                return magic.get_help_on(info)
+                return magic.get_help_on(info['code'], level)
 
             elif not info['magic']['name']:
                 return self.kernel.get_usage()
@@ -120,19 +120,14 @@ class HelpMagic(Magic):
         prefix = self.kernel.magic_prefixes['help']
         suffix = self.kernel.help_suffix
 
-        text = text.replace('{0}{0}help'.format(magic), '')
-        text = text.replace('{0}help'.format(magic), '')
-
-        if text.startswith('{0}{0}'.format(prefix)):
-            text = text[2:]
-        elif text.startswith('{0}'.format(prefix)):
+        while text.startswith(magic):
             text = text[1:]
 
-        if suffix:
-            if text.endswith('{0}{0}'.format(suffix)):
-                text = text[:-2]
-            elif text.endswith('{0}'.format(suffix)):
-                text = text[:-1]
+        while text.startswith(prefix):
+            text = text[1:]
+
+        while text.endswith(suffix):
+            text = text[:-1]
 
         return text
 
