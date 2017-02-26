@@ -119,8 +119,8 @@ class HelpMagic(Magic):
         prefix = self.kernel.magic_prefixes['help']
         suffix = self.kernel.help_suffix
 
-        while text.startswith(magic):
-            text = text[1:]
+        text = text.replace('{0}{0}help'.format(magic), '')
+        text = text.replace('{0}help'.format(magic), '')
 
         while text.startswith(prefix):
             text = text[1:]
