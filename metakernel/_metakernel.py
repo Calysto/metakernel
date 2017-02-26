@@ -51,6 +51,7 @@ except:
 
 from IPython.core.formatters import IPythonDisplayFormatter
 from IPython.display import HTML
+from IPython.core.display import publish_display_data
 from IPython.utils.tempdir import TemporaryDirectory
 
 from .config import get_history_file, get_local_magics_dir
@@ -179,8 +180,10 @@ class MetaKernel(Kernel):
         if shell: # we are running under an IPython kernel
             self.session = shell.kernel.session
             self.Display = display
+            self.send_response = self._send_shell_response
         else:
             self.session = kernel.session
+            self.send_response = kernel.send_response
             self.Display = kernel.Display
 
     #####################################
@@ -689,6 +692,9 @@ class MetaKernel(Kernel):
         for key in self.sticky_magics:
             retval += (key + " " + self.sticky_magics[key] + "\n")
         return retval
+
+    def _send_shell_response(self, socket, stream_type, content):
+        publish_display_data({ 'text/plain': content['text'] })
 
 
 class MetaKernelApp(IPKernelApp):
