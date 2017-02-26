@@ -101,7 +101,10 @@ class HelpMagic(Magic):
                     return ("No such %s magic named '%s', so can't really help with that" % 
                             (minfo["type"], minfo["name"]))
             if magic:
-                return magic.get_help_on(info, level)
+                the_help = magic.get_help_on(info, level)
+                self.kernel.log.error('got')
+                self.kernel.log.error(the_help)
+                return the_help
 
             elif not info['magic']['name']:
                 return self.kernel.get_usage()
