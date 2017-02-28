@@ -2,13 +2,14 @@
 # Distributed under the terms of the Modified BSD License.
 
 from metakernel import Magic, option, ExceptionWrapper
+import pydoc
 import traceback
 import sys
 try:
     import jedi
     from jedi import Interpreter
-    from jedi.api.helpers import completion_parts
-    from jedi.parser.user_context import UserContext
+    from jedi.api.helpers import get_on_completion_name
+    from jedi import common
 except ImportError:
     jedi = None
 
@@ -133,22 +134,25 @@ class PythonMagic(Magic):
             return []
 
         text = info['code']
+        position = (info['line_num'], info['column'])
         interpreter = Interpreter(text, [self.env])
 
-        position = (info['line_num'], info['column'])
-        path = UserContext(text, position).get_path_until_cursor()
-        path, dot, like = completion_parts(path)
-        before = text[:len(text) - len(like)]
-
+        lines = common.splitlines(text)
+        name = get_on_completion_name(
+            interpreter._get_module_node(),
+            lines,
+            position
+        )
+        before = text[:len(text) - len(name)]
         completions = interpreter.completions()
-
         completions = [before + c.name_with_symbols for c in completions]
+
+        self.kernel.log.error(completions)
 
         return [c[info['start']:] for c in completions]
 
     def get_help_on(self, info, level=0, none_on_fail=False):
         """Implement basic help for functions"""
-
         if not info['code']:
             return None if none_on_fail else ''
 
@@ -169,11 +173,12 @@ class PythonMagic(Magic):
 
             if not obj:
                 return default
-
+        
+        strhelp = pydoc.render_doc(obj, "Help on %s")
         if level == 0:
-            return getattr(obj, '__doc__', str(help(obj)))
+            return getattr(obj, '__doc__', strhelp)
         else:
-            return str(help(obj))
+            return strhelp
 
 
 def register_magics(kernel):

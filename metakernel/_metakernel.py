@@ -16,29 +16,17 @@ import warnings
 from collections import OrderedDict
 
 warnings.filterwarnings('ignore', module='IPython.html.widgets')
-Widget = None
+
+from IPython.paths import get_ipython_dir
+from ipykernel.kernelapp import IPKernelApp
+from ipykernel.kernelbase import Kernel
+from ipykernel.comm import CommManager
+from traitlets.config import Application
 
 try:
-    from IPython.paths import get_ipython_dir
-    from ipykernel.kernelapp import IPKernelApp
-    from ipykernel.kernelbase import Kernel
-    from ipykernel.comm import CommManager
-    from traitlets.config import Application
-    _module_name = 'jupyter'
+    from ipywidgets.widgets.widget import Widget
 except ImportError:
-    from IPython.utils.path import get_ipython_dir
-    from IPython.kernel.zmq.kernelapp import IPKernelApp
-    from IPython.kernel.zmq.kernelbase import Kernel
-    from IPython.kernel.comm import CommManager
-    from IPython.html.widgets import Widget
-    from IPython.config import Application
-    _module_name = 'IPython'
-
-if Widget is None:
-    try:
-        from ipywidgets.widgets.widget import Widget
-    except ImportError:
-        pass
+    Widget = None
 
 try:
     from IPython.utils.PyColorize import NeutralColors
@@ -51,6 +39,7 @@ except:
 
 from IPython.core.formatters import IPythonDisplayFormatter
 from IPython.display import HTML
+from IPython.core.display import publish_display_data
 from IPython.utils.tempdir import TemporaryDirectory
 
 from .config import get_history_file, get_local_magics_dir
@@ -179,8 +168,10 @@ class MetaKernel(Kernel):
         if shell: # we are running under an IPython kernel
             self.session = shell.kernel.session
             self.Display = display
+            self.send_response = self._send_shell_response
         else:
             self.session = kernel.session
+            self.send_response = kernel.send_response
             self.Display = kernel.Display
 
     #####################################
@@ -690,6 +681,9 @@ class MetaKernel(Kernel):
             retval += (key + " " + self.sticky_magics[key] + "\n")
         return retval
 
+    def _send_shell_response(self, socket, stream_type, content):
+        publish_display_data({ 'text/plain': content['text'] })
+
 
 class MetaKernelApp(IPKernelApp):
 
@@ -719,7 +713,7 @@ class MetaKernelApp(IPKernelApp):
                             f.write(data)
                     try:
                         subprocess.check_call(
-                            [sys.executable, '-m', _module_name,
+                            [sys.executable, '-m', 'jupyter',
                             'kernelspec', 'install'] + self.argv + [dirname])
                     except CalledProcessError as exc:
                         sys.exit(exc.returncode)

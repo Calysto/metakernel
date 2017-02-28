@@ -31,8 +31,10 @@ class KernelMagic(Magic):
         self.kernel_name = kernel_name
         module = importlib.import_module(module_name)
         class_ = getattr(module, class_name)
+        kernel = class_()
         self.kernel.makeSubkernel(self.kernel)
-        self.kernels[kernel_name] = class_()
+        kernel.makeSubkernel(self.kernel)
+        self.kernels[kernel_name] = kernel
         self.kernels[kernel_name].kernel = self.kernel
         self.retval = self.kernels[kernel_name]
 
