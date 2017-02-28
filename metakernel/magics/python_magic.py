@@ -7,8 +7,8 @@ import sys
 try:
     import jedi
     from jedi import Interpreter
-    from jedi.api.helpers import completion_parts
-    from jedi.parser.user_context import UserContext
+    from jedi.api.helpers import get_on_completion_name
+    from jedi import common
 except ImportError:
     jedi = None
 
@@ -133,16 +133,20 @@ class PythonMagic(Magic):
             return []
 
         text = info['code']
+        position = (info['line_num'], info['column'])
         interpreter = Interpreter(text, [self.env])
 
-        position = (info['line_num'], info['column'])
-        path = UserContext(text, position).get_path_until_cursor()
-        path, dot, like = completion_parts(path)
-        before = text[:len(text) - len(like)]
-
+        lines = common.splitlines(text)
+        name = get_on_completion_name(
+            interpreter._get_module_node(),
+            lines,
+            position
+        )
+        before = text[:len(text) - len(name)]
         completions = interpreter.completions()
-
         completions = [before + c.name_with_symbols for c in completions]
+
+        self.kernel.log.error(completions)
 
         return [c[info['start']:] for c in completions]
 
