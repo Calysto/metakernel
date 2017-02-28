@@ -2,6 +2,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 from metakernel import Magic, option, ExceptionWrapper
+import pydoc
 import traceback
 import sys
 try:
@@ -152,7 +153,6 @@ class PythonMagic(Magic):
 
     def get_help_on(self, info, level=0, none_on_fail=False):
         """Implement basic help for functions"""
-
         if not info['code']:
             return None if none_on_fail else ''
 
@@ -173,11 +173,12 @@ class PythonMagic(Magic):
 
             if not obj:
                 return default
-
+        
+        strhelp = pydoc.render_doc(obj, "Help on %s")
         if level == 0:
-            return getattr(obj, '__doc__', str(help(obj)))
+            return getattr(obj, '__doc__', strhelp)
         else:
-            return str(help(obj))
+            return strhelp
 
 
 def register_magics(kernel):
