@@ -1,6 +1,3 @@
-# After changing this file, check it on:
-#   http://lint.travis-ci.org/
-
 
 language: python
 python:
@@ -10,8 +7,7 @@ python:
 
 
 install:
-    - travis_retry pip install coveralls jedi
-    - travis_retry pip install ipyparallel
+    - travis_retry pip install coveralls jedi ipyparallel
     - travis_retry python setup.py install
     - cd metakernel_python
     - python setup.py install
