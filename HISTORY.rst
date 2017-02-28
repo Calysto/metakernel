@@ -3,6 +3,11 @@
 Release History
 ------------------------
 
+0.19.0 (2017-02-28)
++++++++++++++++++++
+- Now requires ipykernel instead of IPython 3+.
+- Bug fixes and support for jedi 0.10 for python completions.
+
 0.18.0 (2017-01-14)
 +++++++++++++++++++
 - Clean up of kernel interrupt and shutdown behavior for process metakernels.
