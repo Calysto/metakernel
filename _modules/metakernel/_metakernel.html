@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>metakernel._metakernel &#8212; Metakernel 0.18.4 documentation</title>
+    <title>metakernel._metakernel &#8212; Metakernel 0.19.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -15,10 +15,11 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.18.4',
+        VERSION:     '0.19.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
@@ -28,8 +29,8 @@
     <script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
     <script type="text/javascript" src="../../_static/bootstrap-3.3.6/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
-    <link rel="top" title="Metakernel 0.18.4 documentation" href="../../index.html" />
-    <link rel="up" title="Module code" href="../index.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -52,7 +53,7 @@
         </button>
         <a class="navbar-brand" href="../../index.html">
           Metakernel</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.18.4</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.19.0</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -140,29 +141,17 @@
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
 
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="s1">&#39;IPython.html.widgets&#39;</span><span class="p">)</span>
-<span class="n">Widget</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="kn">from</span> <span class="nn">IPython.paths</span> <span class="k">import</span> <span class="n">get_ipython_dir</span>
+<span class="kn">from</span> <span class="nn">ipykernel.kernelapp</span> <span class="k">import</span> <span class="n">IPKernelApp</span>
+<span class="kn">from</span> <span class="nn">ipykernel.kernelbase</span> <span class="k">import</span> <span class="n">Kernel</span>
+<span class="kn">from</span> <span class="nn">ipykernel.comm</span> <span class="k">import</span> <span class="n">CommManager</span>
+<span class="kn">from</span> <span class="nn">traitlets.config</span> <span class="k">import</span> <span class="n">Application</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">IPython.paths</span> <span class="k">import</span> <span class="n">get_ipython_dir</span>
-    <span class="kn">from</span> <span class="nn">ipykernel.kernelapp</span> <span class="k">import</span> <span class="n">IPKernelApp</span>
-    <span class="kn">from</span> <span class="nn">ipykernel.kernelbase</span> <span class="k">import</span> <span class="n">Kernel</span>
-    <span class="kn">from</span> <span class="nn">ipykernel.comm</span> <span class="k">import</span> <span class="n">CommManager</span>
-    <span class="kn">from</span> <span class="nn">traitlets.config</span> <span class="k">import</span> <span class="n">Application</span>
-    <span class="n">_module_name</span> <span class="o">=</span> <span class="s1">&#39;jupyter&#39;</span>
+    <span class="kn">from</span> <span class="nn">ipywidgets.widgets.widget</span> <span class="k">import</span> <span class="n">Widget</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">IPython.utils.path</span> <span class="k">import</span> <span class="n">get_ipython_dir</span>
-    <span class="kn">from</span> <span class="nn">IPython.kernel.zmq.kernelapp</span> <span class="k">import</span> <span class="n">IPKernelApp</span>
-    <span class="kn">from</span> <span class="nn">IPython.kernel.zmq.kernelbase</span> <span class="k">import</span> <span class="n">Kernel</span>
-    <span class="kn">from</span> <span class="nn">IPython.kernel.comm</span> <span class="k">import</span> <span class="n">CommManager</span>
-    <span class="kn">from</span> <span class="nn">IPython.html.widgets</span> <span class="k">import</span> <span class="n">Widget</span>
-    <span class="kn">from</span> <span class="nn">IPython.config</span> <span class="k">import</span> <span class="n">Application</span>
-    <span class="n">_module_name</span> <span class="o">=</span> <span class="s1">&#39;IPython&#39;</span>
-
-<span class="k">if</span> <span class="n">Widget</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">ipywidgets.widgets.widget</span> <span class="k">import</span> <span class="n">Widget</span>
-    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-        <span class="k">pass</span>
+    <span class="n">Widget</span> <span class="o">=</span> <span class="kc">None</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">IPython.utils.PyColorize</span> <span class="k">import</span> <span class="n">NeutralColors</span>
@@ -175,6 +164,7 @@
 
 <span class="kn">from</span> <span class="nn">IPython.core.formatters</span> <span class="k">import</span> <span class="n">IPythonDisplayFormatter</span>
 <span class="kn">from</span> <span class="nn">IPython.display</span> <span class="k">import</span> <span class="n">HTML</span>
+<span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="k">import</span> <span class="n">publish_display_data</span>
 <span class="kn">from</span> <span class="nn">IPython.utils.tempdir</span> <span class="k">import</span> <span class="n">TemporaryDirectory</span>
 
 <span class="kn">from</span> <span class="nn">.config</span> <span class="k">import</span> <span class="n">get_history_file</span><span class="p">,</span> <span class="n">get_local_magics_dir</span>
@@ -213,8 +203,8 @@
 
 
 <div class="viewcode-block" id="MetaKernel"><a class="viewcode-back" href="../../source/api.html#metakernel.MetaKernel">[docs]</a><span class="k">class</span> <span class="nc">MetaKernel</span><span class="p">(</span><span class="n">Kernel</span><span class="p">):</span>
-    <span class="n">identifier_regex</span> <span class="o">=</span> <span class="s1">r&#39;[^\d\W][\w\.]*&#39;</span>
-    <span class="n">func_call_regex</span> <span class="o">=</span> <span class="s1">r&#39;([^\d\W][\w\.]*)\([^\)\()]*\Z&#39;</span>
+    <span class="n">identifier_regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;[^\d\W][\w\.]*&#39;</span>
+    <span class="n">func_call_regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;([^\d\W][\w\.]*)\([^\)\()]*\Z&#39;</span>
     <span class="n">magic_prefixes</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">magic</span><span class="o">=</span><span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="s1">&#39;!&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;?&#39;</span><span class="p">)</span>
     <span class="n">help_suffix</span> <span class="o">=</span> <span class="s1">&#39;?&#39;</span>
     <span class="n">help_links</span> <span class="o">=</span> <span class="p">[</span>
@@ -239,7 +229,7 @@
     <span class="n">meta_kernel</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="MetaKernel.run_as_main"><a class="viewcode-back" href="../../source/api.html#metakernel.MetaKernel.run_as_main">[docs]</a>    <span class="k">def</span> <span class="nf">run_as_main</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+<div class="viewcode-block" id="MetaKernel.run_as_main"><a class="viewcode-back" href="../../source/api.html#metakernel.MetaKernel.run_as_main">[docs]</a>    <span class="k">def</span> <span class="nf">run_as_main</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Launch or install a metakernel.</span>
 
 <span class="sd">        Modules implementing a metakernel subclass can use the following lines:</span>
@@ -247,10 +237,10 @@
 <span class="sd">            if __name__ == &#39;__main__&#39;:</span>
 <span class="sd">                MetaKernelSubclass.run_as_main()</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">MetaKernelApp</span><span class="o">.</span><span class="n">launch_instance</span><span class="p">(</span><span class="n">kernel_class</span><span class="o">=</span><span class="n">cls</span><span class="p">)</span></div>
+        <span class="n">MetaKernelApp</span><span class="o">.</span><span class="n">launch_instance</span><span class="p">(</span><span class="n">kernel_class</span><span class="o">=</span><span class="bp">cls</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">MetaKernel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MetaKernel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">MetaKernel</span><span class="o">.</span><span class="n">meta_kernel</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">MetaKernel</span><span class="o">.</span><span class="n">meta_kernel</span> <span class="o">=</span> <span class="bp">self</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -303,8 +293,10 @@
         <span class="k">if</span> <span class="n">shell</span><span class="p">:</span> <span class="c1"># we are running under an IPython kernel</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">shell</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">session</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Display</span> <span class="o">=</span> <span class="n">display</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_send_shell_response</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">kernel</span><span class="o">.</span><span class="n">session</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_response</span> <span class="o">=</span> <span class="n">kernel</span><span class="o">.</span><span class="n">send_response</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Display</span> <span class="o">=</span> <span class="n">kernel</span><span class="o">.</span><span class="n">Display</span></div>
 
     <span class="c1">#####################################</span>
@@ -683,10 +675,10 @@
         <span class="n">local_magics_dir</span> <span class="o">=</span> <span class="n">get_local_magics_dir</span><span class="p">()</span>
         <span class="c1"># Search all of the places there could be magics:</span>
         <span class="n">paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">local_magics_dir</span><span class="p">,</span>
-                 <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">)),</span> <span class="s2">&quot;magics&quot;</span><span class="p">)]</span>
+                 <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)),</span> <span class="s2">&quot;magics&quot;</span><span class="p">)]</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">paths</span> <span class="o">+=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">))),</span> <span class="s2">&quot;magics&quot;</span><span class="p">)]</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">))),</span> <span class="s2">&quot;magics&quot;</span><span class="p">)]</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="k">for</span> <span class="n">magic_dir</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
@@ -812,7 +804,10 @@
         <span class="n">retval</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sticky_magics</span><span class="p">:</span>
             <span class="n">retval</span> <span class="o">+=</span> <span class="p">(</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">sticky_magics</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">retval</span></div>
+        <span class="k">return</span> <span class="n">retval</span>
+
+    <span class="k">def</span> <span class="nf">_send_shell_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">socket</span><span class="p">,</span> <span class="n">stream_type</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="n">publish_display_data</span><span class="p">({</span> <span class="s1">&#39;text/plain&#39;</span><span class="p">:</span> <span class="n">content</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span> <span class="p">})</span></div>
 
 
 <span class="k">class</span> <span class="nc">MetaKernelApp</span><span class="p">(</span><span class="n">IPKernelApp</span><span class="p">):</span>
@@ -837,13 +832,13 @@
                         <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">kernel_spec</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                     <span class="n">filenames</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;logo-64x64.png&#39;</span><span class="p">,</span> <span class="s1">&#39;logo-32x32.png&#39;</span><span class="p">]</span>
                     <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
-                        <span class="n">data</span> <span class="o">=</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="n">data</span> <span class="o">=</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
                                                 <span class="s1">&#39;images/&#39;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
                         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">filename</span><span class="p">),</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
                     <span class="k">try</span><span class="p">:</span>
                         <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">(</span>
-                            <span class="p">[</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="n">_module_name</span><span class="p">,</span>
+                            <span class="p">[</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="s1">&#39;jupyter&#39;</span><span class="p">,</span>
                             <span class="s1">&#39;kernelspec&#39;</span><span class="p">,</span> <span class="s1">&#39;install&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">argv</span> <span class="o">+</span> <span class="p">[</span><span class="n">dirname</span><span class="p">])</span>
                     <span class="k">except</span> <span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
                         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">exc</span><span class="o">.</span><span class="n">returncode</span><span class="p">)</span>
@@ -962,7 +957,7 @@
     <span class="n">local_magics_dir</span> <span class="o">=</span> <span class="n">get_local_magics_dir</span><span class="p">()</span>
     <span class="c1"># Search all of the places there could be magics:</span>
     <span class="n">paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">local_magics_dir</span><span class="p">,</span>
-             <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">)),</span> <span class="s2">&quot;magics&quot;</span><span class="p">)]</span>
+             <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)),</span> <span class="s2">&quot;magics&quot;</span><span class="p">)]</span>
 
     <span class="n">magic_files</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">magic_dir</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
@@ -992,7 +987,7 @@
     </p>
     <p>
         &copy; Copyright 2014 - 2017, Metakernel contributors.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.2.<br/>
     </p>
   </div>
 </footer>
