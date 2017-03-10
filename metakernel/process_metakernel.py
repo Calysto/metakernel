@@ -50,6 +50,7 @@ class ProcessMetaKernel(MetaKernel):
 
     def __init__(self, *args, **kwargs):
         MetaKernel.__init__(self, *args, **kwargs)
+        self.wrapper = None
         self.wrapper = self.makeWrapper()
 
     def do_execute_direct(self, code, silent=False):
