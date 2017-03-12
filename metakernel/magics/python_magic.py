@@ -1,6 +1,7 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+from distutils.version import LooseVersion
 from metakernel import Magic, option, ExceptionWrapper
 import pydoc
 import traceback
@@ -8,8 +9,12 @@ import sys
 try:
     import jedi
     from jedi import Interpreter
-    from jedi.api.helpers import get_on_completion_name
-    from jedi import common
+    if jedi.__version__ >= LooseVersion('0.10.0'):
+        from jedi.api.helpers import get_on_completion_name
+        from jedi import common
+    else:
+        from jedi.api.helpers import completion_parts
+        from jedi.parser.user_context import UserContext
 except ImportError:
     jedi = None
 
@@ -137,13 +142,19 @@ class PythonMagic(Magic):
         position = (info['line_num'], info['column'])
         interpreter = Interpreter(text, [self.env])
 
-        lines = common.splitlines(text)
-        name = get_on_completion_name(
-            interpreter._get_module_node(),
-            lines,
-            position
-        )
-        before = text[:len(text) - len(name)]
+        if jedi.__version__ >= LooseVersion('0.10.0'):
+            lines = common.splitlines(text)
+            name = get_on_completion_name(
+                interpreter._get_module_node(),
+                lines,
+                position
+            )
+            before = text[:len(text) - len(name)]
+        else:
+            path = UserContext(text, position).get_path_until_cursor()
+            path, dot, like = completion_parts(path)
+            before = text[:len(text) - len(like)]
+
         completions = interpreter.completions()
         completions = [before + c.name_with_symbols for c in completions]
 
