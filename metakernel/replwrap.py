@@ -219,7 +219,6 @@ def bash(command="bash", prompt_regex=re.compile('[$#]')):
     prompt_change_cmd = u"PS1='{0}' PS2='{1}' PROMPT_COMMAND=''".format(ps1, ps2)
 
     if os.name == 'nt':
-        
         prompt_regex = u('__repl_ready__')
         prompt_emit_cmd = u('echo __repl_ready__')
         prompt_change_cmd = None
