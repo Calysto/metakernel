@@ -4,6 +4,7 @@ import re
 import signal
 import os
 import atexit
+import subprocess
 
 from . import pexpect
 
@@ -217,13 +218,15 @@ def bash(command="bash", prompt_regex=re.compile('[$#]')):
     ps1 = PEXPECT_PROMPT[:5] + u'\[\]' + PEXPECT_PROMPT[5:]
     ps2 = PEXPECT_CONTINUATION_PROMPT[:5] + u'\[\]' + PEXPECT_CONTINUATION_PROMPT[5:]
     prompt_change_cmd = u"PS1='{0}' PS2='{1}' PROMPT_COMMAND=''".format(ps1, ps2)
+    prompt_emit_cmd = None
 
     if os.name == 'nt':
-        prompt_regex = u('__repl_ready__')
-        prompt_emit_cmd = u('echo __repl_ready__')
-        prompt_change_cmd = None
-    else:
-        prompt_emit_cmd = None
+        # Check for Ubuntu on Windows
+        version = subprocess.check_output(['bash', '-c', '/proc/version'])
+        if 'microsoft' not in version.lower():
+            prompt_regex = u('__repl_ready__')
+            prompt_emit_cmd = u('echo __repl_ready__')
+            prompt_change_cmd = None
 
     extra_init_cmd = "export PAGER=cat"
 
