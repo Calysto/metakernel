@@ -2,7 +2,10 @@
 from metakernel.tests.utils import (get_kernel, get_log_text, 
                                     clear_log_text, EvalKernel)
 import os
+from nose.plugins.attrib import attr
 
+
+@attr('network')
 def test_download_magic():
     kernel = get_kernel(EvalKernel)
     kernel.do_execute("%download --filename TEST.txt https://raw.githubusercontent.com/calysto/metakernel/master/LICENSE.txt")
