@@ -2,7 +2,7 @@ from setuptools import setup
 
 
 setup(name='metakernel_echo',
-      version='0.11.3',
+      version='0.19.1',
       description='A simple echo kernel for Jupyter/IPython',
       long_description='A simple echo kernel for Jupyter/IPython, based on MetaKernel',
       url='https://github.com/calysto/metakernel/tree/master/metakernel_echo',

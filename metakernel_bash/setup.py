@@ -2,7 +2,7 @@ from setuptools import setup
 
 
 setup(name='metakernel_bash',
-      version='0.11.3',
+      version='0.19.1',
       description='A Bash kernel for Jupyter/IPython',
       long_description='A Bash kernel for Jupyter/IPython, based on MetaKernel',
       url='https://github.com/calysto/metakernel/tree/master/metakernel_bash',
