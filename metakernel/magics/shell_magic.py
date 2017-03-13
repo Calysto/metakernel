@@ -56,15 +56,15 @@ class ShellMagic(Magic):
             self.repl.child.terminate()
 
         if not self.cmd:
-            if pexpect.which('bash'):
+            if os.name == 'nt':
+                self.cmd = 'cmd'
+                self.repl = cmd()
+            elif pexpect.which('bash'):
                 self.cmd = 'bash'
                 self.repl = bash()
             elif pexpect.which('sh'):
                 self.cmd = 'sh'
                 self.repl = bash(command='sh')
-            elif os.name == 'nt':
-                self.cmd = 'cmd'
-                self.repl = cmd()
             else:
                 msg = "The command was not found or was not executable: sh"
                 raise Exception(msg)
