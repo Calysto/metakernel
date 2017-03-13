@@ -4,9 +4,13 @@ from metakernel.tests.utils import (get_kernel, get_log_text,
 import re
 import os
 from metakernel.config import get_local_magics_dir
+from nose.plugins.attrib import attr
+
 
 filename = get_local_magics_dir() + os.sep + "cd_magic.py"
 
+
+@attr('network')
 def test_install_magic_magic():
     kernel = get_kernel(EvalKernel)
     kernel.do_execute("%install_magic https://raw.githubusercontent.com/calysto/metakernel/master/metakernel/magics/cd_magic.py")
