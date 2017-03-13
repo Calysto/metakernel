@@ -14,5 +14,9 @@ def test_install_magic_magic():
     assert re.match(".*Downloaded '.*ipython/metakernel/magics/cd_magic.py'", text, re.DOTALL | re.M), "Not downloaded"
     assert os.path.isfile(filename), ("File not found: %s" % filename)
 
+
 def teardown():
-    os.remove(filename)
+    try:
+        os.remove(filename)
+    except OSError:
+        pass
