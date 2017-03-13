@@ -2,8 +2,8 @@
 .PHONY: all clean test test_warn cover release gh-pages
 
 export TEST_ARGS=--exe -v --with-doctest
-export NAME=metakernel
-export VERSION=`python -c "import $(NAME); print($(NAME).__version__)"`
+export NAME=`python setup.py --name 2>/dev/null`
+export VERSION=`python setup.py --version 2>/dev/null`
 export GHP_MSG="Generated gh-pages for `git log master -1 --pretty=short --abbrev-commit`"
 
 all: install
@@ -49,6 +49,7 @@ release: gh-pages
 	python setup.py register
 	python setup.py bdist_wheel --universal
 	python setup.py sdist
+	git commit -a -m "Release $(VERSION)"
 	git tag v$(VERSION)
 	git push origin --all
 	git push origin --tags
