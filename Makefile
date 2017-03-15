@@ -49,7 +49,7 @@ release: gh-pages
 	python setup.py register
 	python setup.py bdist_wheel --universal
 	python setup.py sdist
-	git commit -a -m "Release $(VERSION)"
+	git commit -a -m "Release $(VERSION)"; true
 	git tag v$(VERSION)
 	git push origin --all
 	git push origin --tags
