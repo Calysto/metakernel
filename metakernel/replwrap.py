@@ -191,6 +191,7 @@ class REPLWrapper(object):
 
     def terminate(self):
         if pexpect.pty:
+            self.child.close()
             return self.child.terminate()
         try:
             self.child.kill(signal.SIGTERM)
