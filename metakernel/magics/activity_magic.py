@@ -95,7 +95,7 @@ class Activity(object):
         for i in range(1, 5 + 1):
             button = widgets.Button(description = str(i))
             button.on_click(self.handle_submit)
-            button.margin = 20
+            button.layout.margin = "20px"
             self.buttons.append(button)
         self.respond_row_widgets = widgets.HBox([widgets.HTML("""<br/><br clear="all"/><b>Respond</b>: """)] + self.buttons)
         self.next_button = widgets.Button(description="Next")
@@ -106,12 +106,12 @@ class Activity(object):
         self.prev_button.on_click(self.handle_prev)
         self.results_html = widgets.HTML("")
         self.top_margin = widgets.HTML("")
-        self.top_margin.height = "100px"
+        #self.top_margin.layout.height = "100px"
         right_stack = widgets.VBox([self.top_margin, self.results_html])
         self.stack = widgets.VBox([self.id_widget, self.question_widget] + self.choice_row_list +
                                   [self.respond_row_widgets, 
                                    widgets.HBox([self.prev_button, self.results_button, self.next_button])])
-        self.stack.width = "75%"
+        self.stack.layout.width = "75%"
         self.top_level = widgets.HBox([self.stack, right_stack])
 
     def set_question(self, question):
