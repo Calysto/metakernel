@@ -70,17 +70,17 @@ class Activity(object):
     def use_question(self, index):
         self.set_question(self.questions[index].question)
         self.set_id(self.questions[index].id)
-        self.results_html.visible = False
-        self.results_button.visible = (getpass.getuser() in self.instructors)
+        self.results_html.layout.visibility = "hidden"
+        self.results_button.layout.visibility = "visible" if (getpass.getuser() in self.instructors) else "hidden"
         self.prev_button.disabled = index == 0
         self.next_button.disabled = index == len(self.questions) - 1
         for i in range(5):
-            self.choice_row_list[i].visible = False
-            self.buttons[i].visible = False
+            self.choice_row_list[i].layout.visibility = "hidden"
+            self.buttons[i].layout.visibility = "hidden"
         for i in range(len(self.questions[index].options)):
             self.choice_widgets[i].value = self.questions[index].options[i]
-            self.choice_row_list[i].visible = True
-            self.buttons[i].visible = True
+            self.choice_row_list[i].layout.visibility = "visible"
+            self.buttons[i].layout.visibility = "visible"
         
     def create_widget(self):
         self.id_widget = widgets.HTML("")
@@ -153,7 +153,7 @@ class Activity(object):
             from calysto.graphics import BarChart
             barchart = BarChart(size=(300, 400), data=barvalues, labels=sorted(choices.keys()))
             self.results_html.value = str(barchart)
-            self.results_html.visible = True
+            self.results_html.layout.visibility = "visible"
         except:
             print(sorted(choices.keys()))
             print(barvalues)
