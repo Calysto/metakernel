@@ -111,7 +111,6 @@ class Activity(object):
         self.stack = widgets.VBox([self.id_widget, self.question_widget] + self.choice_row_list +
                                   [self.respond_row_widgets, 
                                    widgets.HBox([self.prev_button, self.results_button, self.next_button])])
-        self.stack.layout.width = "75%"
         self.top_level = widgets.HBox([self.stack, right_stack])
 
     def set_question(self, question):
@@ -149,6 +148,7 @@ class Activity(object):
                 choices[datum] = 0
             choices[datum] += 1
         barvalues = [int(value) for key,value in sorted(choices.items())]
+        self.stack.layout.width = "55%"
         try:
             from calysto.graphics import BarChart
             barchart = BarChart(size=(300, 400), data=barvalues, labels=sorted(choices.keys()))
