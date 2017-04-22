@@ -2,7 +2,7 @@
 from __future__ import absolute_import
 import os
 import signal
-from pexpect import is_executable_file, EOF, TIMEOUT
+from pexpect import is_executable_file, EOF, TIMEOUT, __file__ as PEXPECT_DIR
 
 try:
     from pexpect import spawn as pty_spawn

@@ -229,7 +229,7 @@ def bash(command="bash", prompt_regex=re.compile('[$#]')):
     extra_init_cmd = "export PAGER=cat"
 
     # Make sure the bash shell has a valid ending character.
-    bashrc = os.path.join(os.path.dirname(pexpect.__file__), 'bashrc.sh')
+    bashrc = os.path.join(os.path.dirname(pexpect.PEXPECT_DIR), 'bashrc.sh')
     child = pexpect.spawn(command, ['--rcfile', bashrc], echo=False,
                           encoding='utf-8')
 
