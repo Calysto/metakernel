@@ -3,16 +3,18 @@ language: python
 env:
   global:
     - JEDI="jedi"
+    - IPYPARALLEL="ipyparallel"
 matrix:
   include:
     - python: 2.7
-      env: JEDI="jedi==0.9"
+      env:
+        JEDI="jedi==0.9" IPYPARALLEL="ipyparallel=5.2"
     - python: 3.4
     - python: 3.5
 
 
 install:
-    - travis_retry pip install coveralls ipyparallel $JEDI
+    - travis_retry pip install coveralls $IPYPARALLEL $JEDI
     - travis_retry python setup.py install
     - cd metakernel_python
     - python setup.py install
