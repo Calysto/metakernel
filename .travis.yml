@@ -8,7 +8,7 @@ matrix:
   include:
     - python: 2.7
       env:
-        JEDI="jedi==0.9" IPYPARALLEL="ipyparallel=5.2"
+        JEDI="jedi==0.9" IPYPARALLEL="ipyparallel==5.2"
     - python: 3.4
     - python: 3.5
 
