@@ -3,6 +3,7 @@ import sys
 
 from setuptools import find_packages, setup
 
+PY2 = (sys.version_info[0] == 2)
 
 with io.open('metakernel/__init__.py', encoding='utf-8') as fid:
     for line in fid:
@@ -10,6 +11,12 @@ with io.open('metakernel/__init__.py', encoding='utf-8') as fid:
             version = line.strip().split()[-1][1:-1]
             break
 
+if PY2:
+    ipykernel_requires = "ipykernel (< 6.0)"
+    ipykernel_install_requires = "ipykernel<6.0"
+else:
+    ipykernel_requires = "ipykernel"
+    ipykernel_install_requires = "ipykernel"
 
 setup(name='metakernel',
       version=version,
@@ -18,8 +25,8 @@ setup(name='metakernel',
       author='Steven Silvester',
       author_email='steven.silvester@ieee.org',
       url='https://github.com/Calysto/metakernel',
-      requires=['ipykernel', 'pexpect (>= 4.2)'],
-      install_requires=['ipykernel', 'pexpect>=4.2'],
+      requires=[ipykernel_requires, 'pexpect (>= 4.2)'],
+      install_requires=[ipykernel_install_requires, 'pexpect>=4.2'],
       packages=find_packages(include=['metakernel', 'metakernel.*']),
       package_data={'metakernel': ['images/*.png']},
       classifiers=[
