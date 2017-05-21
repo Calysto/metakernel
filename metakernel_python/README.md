@@ -2,8 +2,24 @@
 
 ## Install
 
+First, you need to install the metakernel_python library and dependencies:
+
 ```shell
 pip install metakernel_python --update
+```
+
+Then, you need to install the metakernel kernel spec:
+
+```shell
+python metakernel_python install
+```
+
+## Running
+
+You can then run the metakernel_python kernel as a console, notebook, etc.:
+
+```shell
+jupyter console --kernel=metakernel_python
 ```
 
 ## Dependencies
