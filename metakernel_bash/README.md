@@ -2,7 +2,25 @@
 
 ## Install
 
+First, you need to install the metakernel_bash library and dependencies:
+
+```shell
 pip install metakernel_bash --update
+```
+
+Then, you need to install the metakernel bash kernel spec:
+
+```shell
+python metakernel_bash install
+```
+
+## Running
+
+You can then run the metakernel_bash kernel as a console, notebook, etc.:
+
+```shell
+jupyter console --kernel=metakernel_bash
+```
 
 ## Dependencies
 
