@@ -56,7 +56,14 @@ You can install Metakernel through `pip`:
 Use MetaKernel Magics in IPython
 --------------------------------
 
-Although MetaKernel is a system for building new kernels, you can use a subset of the magics in the IPython kernel. Put the following in your (or a system-wide) ipython_config.py file:
+Although MetaKernel is a system for building new kernels, you can use a subset of the magics in the IPython kernel. 
+
+.. code-block:: python
+
+ from metakernel import register_ipython_magics
+ register_ipython_magics()
+
+Put the following in your (or a system-wide) ipython_config.py file:
 
 .. code-block:: python
 
