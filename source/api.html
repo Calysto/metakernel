@@ -1,21 +1,18 @@
 <!DOCTYPE html>
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>API Reference &#8212; Metakernel 0.20.1 documentation</title>
+    <title>API Reference &#8212; Metakernel 0.20.2 documentation</title>
     
-    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/bootswatch-3.3.6/cosmo/bootstrap.min.css" type="text/css" />
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.20.1',
+        VERSION:     '0.20.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -39,7 +36,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 
   </head>
-  <body role="document">
+  <body>
   
   
 
@@ -55,7 +52,7 @@
         </button>
         <a class="navbar-brand" href="../index.html">
           Metakernel</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.20.1</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.20.2</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -162,7 +159,7 @@
 <p>Modules implementing a metakernel subclass can use the following lines:</p>
 <blockquote>
 <div><dl class="docutils">
-<dt>if __name__ == &#8216;__main__&#8217;:</dt>
+<dt>if __name__ == ‘__main__’:</dt>
 <dd>MetaKernelSubclass.run_as_main()</dd>
 </dl>
 </div></blockquote>
@@ -172,7 +169,7 @@
 <dt id="metakernel.MetaKernel.makeSubkernel">
 <code class="descname">makeSubkernel</code><span class="sig-paren">(</span><em>kernel</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metakernel/_metakernel.html#MetaKernel.makeSubkernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metakernel.MetaKernel.makeSubkernel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run this method in an IPython kernel to set
-this kernel&#8217;s input/output settings.</p>
+this kernel’s input/output settings.</p>
 </dd></dl>
 
 <dl class="method">
@@ -226,7 +223,7 @@ but allows JavaScript to talk directly to the kernel bypassing normal
 processing.</p>
 <p>When responding to the %%debug magic, the step and reset meta
 commands can answer with a string in the format:</p>
-<p>&#8220;highlight: [start_line, start_col, end_line, end_col]&#8221;</p>
+<p>“highlight: [start_line, start_col, end_line, end_col]”</p>
 <p>for highlighting expressions in the frontend.</p>
 </dd></dl>
 
@@ -265,20 +262,20 @@ lines of code, and for initializing debug functions.</p>
 <dl class="method">
 <dt id="metakernel.MetaKernel.do_is_complete">
 <code class="descname">do_is_complete</code><span class="sig-paren">(</span><em>code</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metakernel/_metakernel.html#MetaKernel.do_is_complete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metakernel.MetaKernel.do_is_complete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given code as string, returns dictionary with &#8216;status&#8217; representing
+<dd><p>Given code as string, returns dictionary with ‘status’ representing
 whether code is ready to evaluate. Possible values for status are:</p>
 <blockquote>
-<div>&#8216;complete&#8217;   - ready to evaluate
-&#8216;incomplete&#8217; - not yet ready
-&#8216;invalid&#8217;    - invalid code
-&#8216;unknown&#8217;    - unknown; the default unless overridden</div></blockquote>
-<p>Optionally, if &#8216;status&#8217; is &#8216;incomplete&#8217;, you may indicate
+<div>‘complete’   - ready to evaluate
+‘incomplete’ - not yet ready
+‘invalid’    - invalid code
+‘unknown’    - unknown; the default unless overridden</div></blockquote>
+<p>Optionally, if ‘status’ is ‘incomplete’, you may indicate
 an indentation string.</p>
 <p>Example:</p>
 <blockquote>
 <div><dl class="docutils">
-<dt>return {&#8216;status&#8217; <span class="classifier-delimiter">:</span> <span class="classifier">&#8216;incomplete&#8217;,</span></dt>
-<dd>&#8216;indent&#8217;: &#8216; &#8216; * 4}</dd>
+<dt>return {‘status’ <span class="classifier-delimiter">:</span> <span class="classifier">‘incomplete’,</span></dt>
+<dd>‘indent’: ‘ ‘ * 4}</dd>
 </dl>
 </div></blockquote>
 </dd></dl>
@@ -286,7 +283,7 @@ an indentation string.</p>
 <dl class="method">
 <dt id="metakernel.MetaKernel.call_magic">
 <code class="descname">call_magic</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metakernel/_metakernel.html#MetaKernel.call_magic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metakernel.MetaKernel.call_magic" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given an line, such as &#8220;%download <a class="reference external" href="http://example.com/">http://example.com/</a>&#8221;, parse
+<dd><p>Given an line, such as “%download <a class="reference external" href="http://example.com/">http://example.com/</a>”, parse
 and execute magic.</p>
 </dd></dl>
 
@@ -325,7 +322,7 @@ and execute magic.</p>
     </p>
     <p>
         &copy; Copyright 2014 - 2017, Metakernel contributors.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.2.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.1.<br/>
     </p>
   </div>
 </footer>
