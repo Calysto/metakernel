@@ -21,12 +21,21 @@ except ImportError:
 PY3 = sys.version_info[0] == 3
 
 def exec_code(code, env, kernel):
+    import traceback
     try:
-        exec(code, env) 
+        ccode = compile(code, "python cell", "exec")
     except Exception as exc:
-        import traceback
         ex_type, ex, tb = sys.exc_info()
-        return ExceptionWrapper(ex_type.__name__, repr(exc.args), traceback.format_tb(tb))
+        tb_format = ["%s: %s" % (ex.__class__.__name__, str(ex))]
+        return ExceptionWrapper(ex_type.__name__, repr(exc.args), tb_format)
+    try:
+        exec(ccode, env)
+    except Exception as exc:
+        ex_type, ex, tb = sys.exc_info()
+        line1 = ["Traceback (most recent call last):"]
+        line2 = ["%s: %s" % (ex.__class__.__name__, str(ex))]
+        tb_format = line1 + [line.rstrip() for line in traceback.format_tb(tb)[1:]] + line2
+        return ExceptionWrapper(ex_type.__name__, repr(exc.args), tb_format)
     if "retval" in env:
         return env["retval"]
 
@@ -44,7 +53,7 @@ class PythonMagic(Magic):
         This line magic will evaluate the CODE (either expression or
         statement) as Python code.
 
-        Note that the version of Python is that of the notebook server. 
+        Note that the version of Python is that of the notebook server.
 
         Examples:
             %python x = 42
@@ -93,16 +102,16 @@ class PythonMagic(Magic):
         variable "retval".
 
         The -e or --eval_output flag signals that the retval value expression
-        will be used as code for the cell to be evaluated by the host 
+        will be used as code for the cell to be evaluated by the host
         language.
 
-        Note that the version of Python is that of the notebook server. 
+        Note that the version of Python is that of the notebook server.
 
         Examples:
-            %%python 
+            %%python
             x = 42
 
-            %%python 
+            %%python
             import math
             retval = x + math.pi
 
@@ -116,7 +125,7 @@ class PythonMagic(Magic):
         if self.code.strip():
             if eval_output:
                 self.eval(self.code)
-                self.code = str(self.env["retval"]) if ("retval" in self.env and 
+                self.code = str(self.env["retval"]) if ("retval" in self.env and
                                                         self.env["retval"] != None) else ""
                 self.retval = None
                 self.env["retval"] = None
@@ -184,7 +193,7 @@ class PythonMagic(Magic):
 
             if not obj:
                 return default
-        
+
         strhelp = pydoc.render_doc(obj, "Help on %s")
         if level == 0:
             return getattr(obj, '__doc__', strhelp)
@@ -194,4 +203,3 @@ class PythonMagic(Magic):
 
 def register_magics(kernel):
     kernel.register_magics(PythonMagic)
-
