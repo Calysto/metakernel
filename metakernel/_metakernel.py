@@ -101,6 +101,8 @@ class MetaKernel(Kernel):
         # 'file_extension': '.py',
         'help_links': help_links,
     }
+    allowed_line_magics = magic.get_magics('line')
+    allowed_cell_magics = magic.get_magics('cell')
     meta_kernel = None
 
     @classmethod
@@ -573,11 +575,9 @@ class MetaKernel(Kernel):
 
     def register_magics(self, magic_klass):
         magic = magic_klass(self)
-        line_magics = magic.get_magics('line')
-        cell_magics = magic.get_magics('cell')
-        for name in line_magics:
+        for name in self.allowed_line_magics:
             self.line_magics[name] = magic
-        for name in cell_magics:
+        for name in self.allowed_cell_magics:
             self.cell_magics[name] = magic
 
     def clear_output(self, wait=False):
