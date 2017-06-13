@@ -20,16 +20,19 @@ except ImportError:
 
 PY3 = sys.version_info[0] == 3
 
-def exec_code(code, env, kernel):
+def exec_code(code, env, mode):
     import traceback
     try:
-        ccode = compile(code, "python cell", "exec")
+        ccode = compile(code, "python cell", mode)
     except Exception as exc:
         ex_type, ex, tb = sys.exc_info()
         tb_format = ["%s: %s" % (ex.__class__.__name__, str(ex))]
         return ExceptionWrapper(ex_type.__name__, repr(exc.args), tb_format)
     try:
-        exec(ccode, env)
+        if mode == "exec":
+            exec(ccode, env)
+        elif mode == "eval":
+            eval(ccode, env)
     except Exception as exc:
         ex_type, ex, tb = sys.exc_info()
         line1 = ["Traceback (most recent call last):"]
@@ -81,10 +84,10 @@ class PythonMagic(Magic):
                 self.env["__builtins__"]["raw_input"] = self.kernel.raw_input = self.kernel.raw_input
                 self.env["raw_input"] = self.kernel.raw_input = self.kernel.raw_input
         try:
-            return eval(code.strip(), self.env)
+            ccode = compile(code.strip(), "python cell", "eval") # is it an expression?
         except:
-            pass
-        return exec_code(code.strip(), self.env, self.kernel)
+            return exec_code(code.strip(), self.env, "exec") # no, it is statement
+        return exec_code(code.strip(), self.env, "eval")     # yes, it is expression
 
     @option(
         "-e", "--eval_output", action="store_true", default=False,
