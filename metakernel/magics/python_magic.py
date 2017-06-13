@@ -32,7 +32,7 @@ def exec_code(code, env, mode):
         if mode == "exec":
             exec(ccode, env)
         elif mode == "eval":
-            eval(ccode, env)
+            return eval(ccode, env)
     except Exception as exc:
         ex_type, ex, tb = sys.exc_info()
         line1 = ["Traceback (most recent call last):"]
