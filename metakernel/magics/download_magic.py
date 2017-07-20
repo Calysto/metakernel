@@ -42,18 +42,20 @@ class DownloadMagic(Magic):
 
         """
         if filename is None:
-            parts = urlparse.urlsplit(url)
-            #('http', 'example.com', '/somefile.zip', '', '')
-            path = parts[2]
-            filename = os.path.basename(path)
-            if filename != '':
-                basename, extname = os.path.splitext(filename)
-                if extname == '':
-                    filename += ".html"
-                filename = filename.replace("~", "")
-                filename = filename.replace("%20", "_")
+            if url.count(" ") == 1:
+                url, filename = url.split(" ")
+            elif url.count(" ") == 0:
+                parts = urlparse.urlsplit(url)
+                #('http', 'example.com', '/somefile.zip', '', '')
+                path = parts[2]
+                filename = os.path.basename(path)
             else:
-                filename = "output.html"
+                raise Exception("invalid arguments to %%download: '%s'" % url)
+        basename, extname = os.path.splitext(filename)
+        if extname == '':
+            filename += ".html"
+        filename = filename.replace("~", "")
+        filename = filename.replace("%20", "_")
         try:
             download(url, filename)
             self.kernel.Print("Downloaded '%s'." % filename)
