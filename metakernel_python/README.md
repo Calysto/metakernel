@@ -5,7 +5,7 @@
 First, you need to install the metakernel_python library and dependencies:
 
 ```shell
-pip install metakernel_python --update
+pip install metakernel_python --upgrade
 ```
 
 Then, you need to install the metakernel kernel spec:
