@@ -5,7 +5,7 @@
 First, you need to install the metakernel_echo library and dependencies:
 
 ```shell
-pip install metakernel_echo --update
+pip install metakernel_echo --upgrade
 ```
 
 Then, you need to install the metakernel echo kernel spec:
