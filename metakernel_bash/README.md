@@ -5,7 +5,7 @@
 First, you need to install the metakernel_bash library and dependencies:
 
 ```shell
-pip install metakernel_bash --update
+pip install metakernel_bash --upgrade
 ```
 
 Then, you need to install the metakernel bash kernel spec:
