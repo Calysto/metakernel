@@ -146,9 +146,6 @@ class MetaKernel(Kernel):
 
         self.plot_settings = dict(backend='inline')
         self.hist_file = get_history_file(self)
-        self.reload_magics()
-        # provide a way to get the current instance
-        self.set_variable("kernel", self)
         self.parser = Parser(self.identifier_regex, self.func_call_regex,
                              self.magic_prefixes, self.help_suffix)
         comm_msg_types = ['comm_open', 'comm_msg', 'comm_close']
@@ -156,6 +153,9 @@ class MetaKernel(Kernel):
             self.shell_handlers[msg_type] = getattr(self.comm_manager, msg_type)
         self._ipy_formatter = IPythonDisplayFormatter()
         self.env = {}
+        self.reload_magics()
+        # provide a way to get the current instance
+        self.set_variable("kernel", self)
 
     def makeSubkernel(self, kernel):
         """
@@ -426,8 +426,8 @@ class MetaKernel(Kernel):
                 json.dump(self.hist_cache[-self.max_hist_cache:], fid)
         if restart:
             self.Print("Restarting kernel...")
-            self.reload_magics()
             self.restart_kernel()
+            self.reload_magics()
             self.Print("Done!")
         return {'status': 'ok', 'restart': restart}
 
