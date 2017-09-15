@@ -706,9 +706,14 @@ class MetaKernelApp(IPKernelApp):
                     with open(os.path.join(dirname, 'kernel.json'), 'w') as f:
                         json.dump(kernel_spec, f, sort_keys=True)
                     filenames = ['logo-64x64.png', 'logo-32x32.png']
+                    name = self.kernel_class.__module__
                     for filename in filenames:
-                        data = pkgutil.get_data(__name__.split('.')[0],
-                                                'images/' + filename)
+                        try:
+                            data = pkgutil.get_data(name.split('.')[0],
+                                                    'images/' + filename)
+                        except OSError:
+                            data = pkgutil.get_data('metakernel',
+                                'images/' + filename)
                         with open(os.path.join(dirname, filename), 'wb') as f:
                             f.write(data)
                     try:
