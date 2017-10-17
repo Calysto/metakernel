@@ -711,7 +711,7 @@ class MetaKernelApp(IPKernelApp):
                         try:
                             data = pkgutil.get_data(name.split('.')[0],
                                                     'images/' + filename)
-                        except OSError:
+                        except (OSError, IOError):
                             data = pkgutil.get_data('metakernel',
                                 'images/' + filename)
                         with open(os.path.join(dirname, filename), 'wb') as f:
