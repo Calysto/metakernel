@@ -33,6 +33,7 @@ class REPLWrapper(object):
     :param cmd_or_spawn: This can either be an instance of
     :class:`pexpect.spawn` in which a REPL has already been started,
     or a str command to start a new REPL process.
+    :param str args: The arguments to pass to the command
     :param str prompt_regex:  Regular expression representing process prompt, eg ">>>" in Python.
     :param str continuation_prompt_regex: Regular expression repesenting process continuation prompt, e.g. "..." in Python.
     :param str prompt_change_cmd: Optional kernel command that sets continuation-of-line-prompts, eg PS1 and PS2, such as "..." in Python.
@@ -53,14 +54,15 @@ class REPLWrapper(object):
     """
 
     def __init__(self, cmd_or_spawn, prompt_regex, prompt_change_cmd,
+                 args=[],
                  new_prompt_regex=PEXPECT_PROMPT,
                  continuation_prompt_regex=PEXPECT_CONTINUATION_PROMPT,
                  stdin_prompt_regex=PEXPECT_STDIN_PROMPT,
                  extra_init_cmd=None,
                  prompt_emit_cmd=None,
                  echo=False):
-        if isinstance(cmd_or_spawn, (str, list)):
-            self.child = pexpect.spawnu(cmd_or_spawn, echo=echo,
+        if isinstance(cmd_or_spawn, (str, list, tuple)):
+            self.child = pexpect.spawnu(cmd_or_spawn, args=args, echo=echo,
                                         codec_errors="ignore",
                                         encoding="utf-8")
         else:
