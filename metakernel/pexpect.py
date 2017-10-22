@@ -1,6 +1,7 @@
 # Convenience imports from pexpect
 from __future__ import absolute_import
 import os
+import shlex
 import signal
 from pexpect import is_executable_file, EOF, TIMEOUT, __file__ as PEXPECT_DIR
 
@@ -23,8 +24,9 @@ def spawn(command, args=[], timeout=30, maxread=2000,
     '''
     codec_errors = kwargs.get('codec_errors', kwargs.get('errors', 'strict'))
     if pty is None:
-        if args:
-            command += ' ' + ' '.join(args)
+        if not isinstance(command, (list, tuple)):
+            command = shlex.split(command, posix=False)
+        command += args
         child = PopenSpawn(command, timeout=timeout, maxread=maxread,
                            searchwindowsize=searchwindowsize,
                            logfile=logfile, cwd=cwd, env=env,
