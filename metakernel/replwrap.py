@@ -59,7 +59,7 @@ class REPLWrapper(object):
                  extra_init_cmd=None,
                  prompt_emit_cmd=None,
                  echo=False):
-        if isinstance(cmd_or_spawn, str):
+        if isinstance(cmd_or_spawn, (str, list)):
             self.child = pexpect.spawnu(cmd_or_spawn, echo=echo,
                                         codec_errors="ignore",
                                         encoding="utf-8")
