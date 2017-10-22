@@ -53,14 +53,15 @@ class REPLWrapper(object):
     """
 
     def __init__(self, cmd_or_spawn, prompt_regex, prompt_change_cmd,
+                 args=[],
                  new_prompt_regex=PEXPECT_PROMPT,
                  continuation_prompt_regex=PEXPECT_CONTINUATION_PROMPT,
                  stdin_prompt_regex=PEXPECT_STDIN_PROMPT,
                  extra_init_cmd=None,
                  prompt_emit_cmd=None,
                  echo=False):
-        if isinstance(cmd_or_spawn, (str, list)):
-            self.child = pexpect.spawnu(cmd_or_spawn, echo=echo,
+        if isinstance(cmd_or_spawn, str):
+            self.child = pexpect.spawnu(cmd_or_spawn, args=args, echo=echo,
                                         codec_errors="ignore",
                                         encoding="utf-8")
         else:
