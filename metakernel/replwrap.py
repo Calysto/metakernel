@@ -95,6 +95,7 @@ class REPLWrapper(object):
 
         self._stream_handler = None
         self._stdin_handler = None
+
         self._expect_prompt()
 
         if extra_init_cmd is not None:
@@ -120,6 +121,8 @@ class REPLWrapper(object):
                    self.stdin_prompt_regex]
         if stream_handler:
             expects += [u(self.child.crlf)]
+        if self.prompt_emit_cmd:
+            self.sendline(self.prompt_emit_cmd)
         while True:
             pos = self.child.expect(expects, timeout=timeout)
             if pos == 2 and stdin_handler:
@@ -163,9 +166,6 @@ class REPLWrapper(object):
                 self._expect_prompt(timeout=timeout)
                 res.append(self.child.before)
             self.sendline(line)
-
-        if self.prompt_emit_cmd:
-            self.sendline(prompt_emit_cmd)
 
         # Command was fully submitted, now wait for the next prompt
         if self._expect_prompt(timeout=timeout) == 1:
