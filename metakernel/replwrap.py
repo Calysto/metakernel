@@ -85,6 +85,7 @@ class REPLWrapper(object):
 
         if prompt_change_cmd is None:
             self.prompt_regex = u(prompt_regex)
+            self.prompt_change_cmd = None
         else:
             self.set_prompt(prompt_regex,
                             prompt_change_cmd.format(new_prompt_regex,
@@ -111,6 +112,7 @@ class REPLWrapper(object):
     def set_prompt(self, prompt_regex, prompt_change_cmd):
         self.child.expect(prompt_regex)
         self.sendline(prompt_change_cmd)
+        self.prompt_change_cmd = prompt_change_cmd
 
     def _expect_prompt(self, timeout=None):
         """Expect a prompt from the child.
