@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 from metakernel import MetaKernel
+import sys
 
 
 class MetaKernelEcho(MetaKernel):
@@ -24,7 +25,7 @@ class MetaKernelEcho(MetaKernel):
     }
     kernel_json = {
         'argv': [
-            'python', '-m', 'metakernel_echo', '-f', '{connection_file}'],
+            sys.executable, '-m', 'metakernel_echo', '-f', '{connection_file}'],
         'display_name': 'MetaKernel Echo',
         'language': 'echo',
         'name': 'metakernel_echo'
