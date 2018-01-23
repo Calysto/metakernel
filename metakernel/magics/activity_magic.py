@@ -232,7 +232,7 @@ class ActivityMagic(Magic):
        "options": ["True", "False"]
       },
       {"id": "4",
-       "question":  """You have a test coming up. What’s the best way to review the material?""",
+       "question":  """You have a test coming up. What's the best way to review the material?""",
        "type": "multiple choice",
        "options": ["Circle key points in the textbook.",
                    "Review relevant points of the lecture in audio format.",
