@@ -66,7 +66,7 @@ class Activity(object):
             self.use_question(self.index)
         else:
             raise Exception("not a valid 'activity': use ['poll']")
-        
+
     def use_question(self, index):
         self.set_question(self.questions[index].question)
         self.set_id(self.questions[index].id)
@@ -81,7 +81,7 @@ class Activity(object):
             self.choice_widgets[i].value = self.questions[index].options[i]
             self.choice_row_list[i].layout.visibility = "visible"
             self.buttons[i].layout.visibility = "visible"
-        
+
     def create_widget(self):
         self.id_widget = widgets.HTML("")
         self.question_widget = widgets.HTML("")
@@ -89,7 +89,7 @@ class Activity(object):
         self.choice_row_list = []
         for count in range(1, 5 + 1):
             self.choice_widgets.append(widgets.HTML(""))
-            self.choice_row_list.append(widgets.HBox([widgets.HTML("<b>%s</b>)&nbsp;&nbsp;" % count), 
+            self.choice_row_list.append(widgets.HBox([widgets.HTML("<b>%s</b>)&nbsp;&nbsp;" % count),
                                                       self.choice_widgets[-1]]))
         self.buttons = []
         for i in range(1, 5 + 1):
@@ -109,13 +109,15 @@ class Activity(object):
         #self.top_margin.layout.height = "100px"
         right_stack = widgets.VBox([self.top_margin, self.results_html])
         self.stack = widgets.VBox([self.id_widget, self.question_widget] + self.choice_row_list +
-                                  [self.respond_row_widgets, 
+                                  [self.respond_row_widgets,
                                    widgets.HBox([self.prev_button, self.results_button, self.next_button])])
-        self.top_level = widgets.HBox([self.stack, right_stack])
+        self.output = widgets.Output()
+        self.top_level = widgets.VBox([widgets.HBox([self.stack, right_stack]),
+                                       self.output])
 
     def set_question(self, question):
         self.question_widget.value = "<h1>%s</h1>" % question
-        
+
     def set_id(self, id):
         self.id_widget.value = "<p><b>Question ID</b>: %s</p>" % id
         self.id = id
@@ -155,33 +157,32 @@ class Activity(object):
             self.results_html.value = str(barchart)
             self.results_html.layout.visibility = "visible"
         except:
-            print(sorted(choices.keys()))
-            print(barvalues)
+            with self.output:
+                print(sorted(choices.keys()))
+                print(barvalues)
 
     def handle_submit(self, sender):
-        from metakernel.display import clear_output
         import fcntl
         with open(self.results_filename, "a+") as g:
             fcntl.flock(g, fcntl.LOCK_EX)
             g.write("%s::%s::%s::%s\n" % (self.id, getpass.getuser(), datetime.datetime.today(), sender.description))
             fcntl.flock(g, fcntl.LOCK_UN)
-        clear_output()
-        print("Received: " + sender.description)
+        self.output.clear_output()
+        with self.output:
+            print("Received: " + sender.description)
 
     def handle_next(self, sender):
-        from metakernel.display import clear_output
         if self.index < len(self.questions) - 1:
             self.index += 1
             self.use_question(self.index)
-            clear_output()
-    
+            self.output.clear_output()
+
     def handle_prev(self, sender):
-        from metakernel.display import clear_output
         if self.index > 0:
             self.index -= 1
             self.use_question(self.index)
-            clear_output()
-    
+            self.output.clear_output()
+
     def render(self):
         from metakernel.display import display
         display(self.top_level)
@@ -194,19 +195,75 @@ class Question(object):
 
 class ActivityMagic(Magic):
 
-    def line_activity(self, filename):
+    def line_activity(self, filename, mode=None):
         """
-        %activity FILENAME - run a widget-based activity 
+        %activity FILENAME - run a widget-based activity
           (poll, classroom response, clicker-like activity)
 
         This magic will load the JSON in the filename.
 
-        Example:
+        Examples:
             %activity /home/teacher/activity1
+            %activity /home/teacher/activity1 new
+            %activity /home/teacher/activity1 edit
         """
-        activity = Activity()
-        activity.load(filename)
-        activity.render()
+        from IPython import get_ipython
+        if mode == "new":
+            text = '''
+{"activity": "poll",
+ "instructors": ["YOUR ID HERE"],
+ "items": [
+      {"id": "1",
+       "question":  """When it comes to learning, metacognition (e.g., thinking about thinking) can be just as important as intelligence.""",
+       "type": "multiple choice",
+       "options": ["True", "False"]
+      },
+      {"id": "2",
+       "question":  """What is the best way to learn from some text?""",
+       "type": "multiple choice",
+       "options": ["Read and reread the text.",
+                   "Explain key ideas of the text to yourself while reading.",
+                   "Underline key concepts.",
+                   "Use a highlighter"]
+      },
+      {"id": "3",
+       "question":  """Intelligence is fixed at birth.""",
+       "type": "multiple choice",
+       "options": ["True", "False"]
+      },
+      {"id": "4",
+       "question":  """You have a test coming up. What’s the best way to review the material?""",
+       "type": "multiple choice",
+       "options": ["Circle key points in the textbook.",
+                   "Review relevant points of the lecture in audio format.",
+                   "Take an informal quiz based on the material."]
+      },
+      {"id": "5",
+       "question":  """To which of the following should you not tailor your learning?""",
+       "type": "multiple choice",
+       "options": ["Learning styles (visual, audio, etc.)", "Previous knowledge", "Interests", "Ability"]
+      },
+      {"id": "6",
+       "question":  """Learning should be spaced out over time.""",
+       "type": "multiple choice",
+       "options": ["True", "False"]
+      },
+      {"id": "7",
+       "question":  """Right-brained people learn differently from left-brained people.""",
+       "type": "multiple choice",
+       "options": ["True", "False"]
+      }
+   ]
+}'''
+            get_ipython().set_next_input(("%%%%activity %s\n\n" % filename) + text)
+            return
+        elif mode == "edit":
+            text = "".join(open(filename, "r").readlines())
+            get_ipython().set_next_input(("%%%%activity %s\n\n" % filename) + text)
+        else:
+            activity = Activity()
+            activity.load(filename)
+            activity.render()
 
     def cell_activity(self, filename):
         """
@@ -236,9 +293,9 @@ class ActivityMagic(Magic):
         filename = os.path.abspath(filename)
         with open(filename, "w") as fp:
             fp.write(self.code)
-        # Make sure results file is writable:
         activity = Activity()
         activity.load(filename)
+        # Make sure results file is writable:
         os.chmod(activity.results_filename, 0o777)
         # Ok, let's test it (MetaKernel):
         self.line_activity(filename)
