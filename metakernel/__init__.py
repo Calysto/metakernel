@@ -8,6 +8,6 @@ from .parser import Parser
 
 __all__ = ['Magic', 'MetaKernel', 'option']
 
-__version__ = '0.20.13'
+__version__ = '0.20.14'
 
 del magic, _metakernel, parser, process_metakernel
