@@ -1,4 +1,4 @@
-A Jupyter/IPython kernel template which includes core magic functions (including help, command and file path completion, parallel and distributed processing, downloads, and much more).
+A Jupyter kernel base class in Python which includes core magic functions (including help, command and file path completion, parallel and distributed processing, downloads, and much more).
 
 .. image:: https://badge.fury.io/py/metakernel.png/
     :target: http://badge.fury.io/py/metakernel
@@ -9,9 +9,15 @@ A Jupyter/IPython kernel template which includes core magic functions (including
 .. image:: https://travis-ci.org/Calysto/metakernel.svg
   :target: https://travis-ci.org/Calysto/metakernel
 
+.. image:: https://anaconda.org/conda-forge/metakernel/badges/version.svg
+    :target: https://anaconda.org/conda-forge/metakernel
 
-See IPython's docs on `wrapper kernels
-<http://ipython.org/ipython-doc/dev/development/wrapperkernels.html>`_.
+.. image:: https://anaconda.org/conda-forge/metakernel/badges/downloads.svg
+    :target: https://anaconda.org/conda-forge/metakernel
+
+
+See Jupyter's docs on `wrapper kernels
+<http://jupyter-client.readthedocs.io/en/stable/wrapperkernels.html>`_.
 
 Additional magics can be installed within the new kernel package under a `magics` subpackage.
 
@@ -49,23 +55,37 @@ Installation
 ----------------
 You can install Metakernel through `pip`:
 
+.. code:: shell
+ pip install metakernel --upgrade
 
-`pip install metakernel --upgrade`
+Installing `metakernel` from the `conda-forge` channel can be achieved by adding `conda-forge` to your channels with:
 
+.. code:: shell
+ conda config --add channels conda-forge
+
+Once the `conda-forge` channel has been enabled, `metakernel` can be installed with:
+
+.. code:: shell
+ conda install metakernel
+
+It is possible to list all of the versions of `metakernel` available on your platform with:
+
+.. code:: shell
+ conda search metakernel --channel conda-forge
 
 Use MetaKernel Magics in IPython
 --------------------------------
 
 Although MetaKernel is a system for building new kernels, you can use a subset of the magics in the IPython kernel. 
 
-.. code-block:: python
+.. code:: python
 
  from metakernel import register_ipython_magics
  register_ipython_magics()
 
 Put the following in your (or a system-wide) ipython_config.py file:
 
-.. code-block:: python
+.. code:: python
 
  # /etc/ipython/ipython_config.py
  c = get_config()
