@@ -55,22 +55,26 @@ Installation
 ----------------
 You can install Metakernel through `pip`:
 
-.. code:: shell
+.. code::
+
  pip install metakernel --upgrade
 
 Installing `metakernel` from the `conda-forge` channel can be achieved by adding `conda-forge` to your channels with:
 
-.. code:: shell
+.. code::
+
  conda config --add channels conda-forge
 
 Once the `conda-forge` channel has been enabled, `metakernel` can be installed with:
 
-.. code:: shell
+.. code::
+
  conda install metakernel
 
 It is possible to list all of the versions of `metakernel` available on your platform with:
 
-.. code:: shell
+.. code::
+
  conda search metakernel --channel conda-forge
 
 Use MetaKernel Magics in IPython
