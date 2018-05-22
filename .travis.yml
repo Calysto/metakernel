@@ -7,12 +7,9 @@ env:
     - IPYTHON="ipython"
 matrix:
   include:
-    - python: 2.7
-      env:
-        JEDI="jedi==0.9" IPYPARALLEL="ipyparallel==5.2" IPYTHON="ipython<6.0"
     - python: 3.4
     - python: 3.5
-
+    - python: 3.6
 
 install:
     - travis_retry pip install coveralls $IPYTHON $IPYPARALLEL $JEDI
