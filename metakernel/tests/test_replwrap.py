@@ -2,6 +2,7 @@ import platform
 import unittest
 import re
 import os
+import sys
 
 from metakernel import pexpect, replwrap
 
@@ -59,7 +60,7 @@ class REPLWrapTestCase(unittest.TestCase):
         if platform.python_implementation() == 'PyPy':
             raise unittest.SkipTest("This test fails on PyPy because of REPL differences")
 
-        p = replwrap.python()
+        p = replwrap.python(sys.executable)
         res = p.run_command('4+7')
         assert res.strip() == '11'
 
