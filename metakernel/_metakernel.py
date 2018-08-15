@@ -315,11 +315,18 @@ class MetaKernel(Kernel):
             else:
                 level = 1
             text = self.get_help_on(code, level)
-            self.log.debug(text)
             if text:
-                self.payload = [{"data": {"text/plain": text},
-                                 "start_line_number": 0,
-                                 "source": "page"}]
+                content = {
+                    "start_line_number": 0,
+                    "source": "page",
+                }
+                if isinstance(text, dict):
+                    content["data"] = text ## {mime-type: ..., mime-type:...}
+                    self.log.debug(str(text))
+                else:
+                    content["data"] = {"text/plain": text}
+                    self.log.debug(text)
+                self.payload = [content]
 
         elif info['magic'] or self.sticky_magics:
             retval = None
@@ -529,10 +536,14 @@ class MetaKernel(Kernel):
              cursor_pos=cursor_pos)
 
         if docstring:
-            content["data"] = {"text/plain": docstring}
             content["status"] = "ok"
             content["found"] = True
-            self.log.debug(docstring)
+            if isinstance(docstring, dict): ## {"text/plain": ..., mime-type: ...}
+                content["data"] = docstring
+                self.log.debug(str(docstring))
+            else:
+                content["data"] = {"text/plain": docstring}
+                self.log.debug(docstring)
 
         return content
 
