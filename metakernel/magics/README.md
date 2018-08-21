@@ -7,8 +7,10 @@
 
 This magic will load the JSON in the filename.
 
-Example:
+Examples:
     %activity /home/teacher/activity1
+    %activity /home/teacher/activity1 new
+    %activity /home/teacher/activity1 edit
 
 ## `%cd`
 
@@ -332,16 +334,18 @@ language.
 
 Examples:
     %plot qt --format=png
-    %plot inline -s 640,480
+    %plot inline -w 640
 
 Note: not all languages may support the %plot magic, and not all
 options may be supported.
 
 Options:
 -------
--r --resolution Resolution in pixels per inch [default: 96]
+-h --height    Plot height in pixels
+-w --width     Plot width in pixels
+-r --resolution Resolution in pixels per inch
 -b --backend   Backend selection [default: inline]
--f --format    Plot format (png, svg or jpg). [default: png]
+-f --format    Plot format (png, svg or jpg).
 -s --size      Pixel size of plots, "width,height"
 
 ## `%pmap`
@@ -666,6 +670,24 @@ Example:
 
     %macro test
     Ok!
+
+## `%%pipe`
+
+%%pipe FUNCTION1 | FUNCTION2 ...
+
+The pipe cell will "pipe" the contents of a cell
+through a series of function calls. All of the
+functions must be defined in the language, and
+the kernel must support the `do_function_direct`
+method.
+
+Example:
+    %%pipe f1 | f2 | f3
+    CELL CONTENTS
+
+    is the same as issuing:
+
+    f3(f2(f1("CELL CONTENTS")))
 
 ## `%%processing`
 
