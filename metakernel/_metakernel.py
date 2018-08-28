@@ -158,7 +158,7 @@ class MetaKernel(Kernel):
         # provide a way to get the current instance
         self.set_variable("kernel", self)
         # Run command line filenames, if given:
-        if self.parent.extra_args:
+        if self.parent is not None and self.parent.extra_args:
             level = self.log.level
             self.log.setLevel("INFO")
             self.redirect_to_log = True
