@@ -104,7 +104,7 @@ class MetaKernel(Kernel):
     meta_kernel = None
 
     @classmethod
-    def run_as_main(cls):
+    def run_as_main(cls, *args, **kwargs):
         """Launch or install a metakernel.
 
         Modules implementing a metakernel subclass can use the following lines:
@@ -112,7 +112,7 @@ class MetaKernel(Kernel):
             if __name__ == '__main__':
                 MetaKernelSubclass.run_as_main()
         """
-        MetaKernelApp.launch_instance(kernel_class=cls)
+        MetaKernelApp.launch_instance(kernel_class=cls, *args, **kwargs)
 
     def __init__(self, *args, **kwargs):
         super(MetaKernel, self).__init__(*args, **kwargs)
@@ -130,6 +130,7 @@ class MetaKernel(Kernel):
                 sys.stdout.write = self.Write
             except:
                 pass  # Can't change stdout
+        self.redirect_to_log = False
         self.sticky_magics = OrderedDict()
         self._i = None
         self._ii = None
@@ -156,6 +157,21 @@ class MetaKernel(Kernel):
         self.reload_magics()
         # provide a way to get the current instance
         self.set_variable("kernel", self)
+        # Run command line filenames, if given:
+        if self.parent.extra_args:
+            level = self.log.level
+            self.log.setLevel("INFO")
+            self.redirect_to_log = True
+            self.Write("Executing files...")
+            for filename in self.parent.extra_args:
+                self.Write("    %s..." % filename)
+                try:
+                    self.do_execute_file(filename)
+                except Exception as exc:
+                    self.log.info("    %s" % (exc,))
+            self.Write("Executing files: done!")
+            self.log.setLevel(level)
+            self.redirect_to_log = False
 
     def makeSubkernel(self, kernel):
         """
@@ -639,13 +655,19 @@ class MetaKernel(Kernel):
         stream_content = {
             'name': 'stdout', 'text': message}
         self.log.debug('Print: %s' % message)
-        self.send_response(self.iopub_socket, 'stream', stream_content)
+        if self.redirect_to_log:
+            self.log.info(message)
+        else:
+            self.send_response(self.iopub_socket, 'stream', stream_content)
 
     def Write(self, message):
         stream_content = {
             'name': 'stdout', 'text': message}
         self.log.debug('Write: %s' % message)
-        self.send_response(self.iopub_socket, 'stream', stream_content)
+        if self.redirect_to_log:
+            self.log.info(message)
+        else:
+            self.send_response(self.iopub_socket, 'stream', stream_content)
 
     def Error(self, *args, **kwargs):
         message = format_message(*args, **kwargs)
@@ -654,7 +676,10 @@ class MetaKernel(Kernel):
             'name': 'stderr',
             'text': RED + message + NORMAL
         }
-        self.send_response(self.iopub_socket, 'stream', stream_content)
+        if self.redirect_to_log:
+            self.log.info(message)
+        else:
+            self.send_response(self.iopub_socket, 'stream', stream_content)
 
     def call_magic(self, line):
         """
