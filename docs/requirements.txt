@@ -1,3 +1,4 @@
+metakernel
 IPython
 pypandoc
 sphinx_rtd_theme
