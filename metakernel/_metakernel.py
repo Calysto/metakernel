@@ -85,7 +85,7 @@ class MetaKernel(Kernel):
     help_links = [
         {
             'text': "MetaKernel Magics",
-            'url': "https://github.com/calysto/metakernel/blob/master/metakernel/magics/README.md",
+            'url': "https://metakernel.readthedocs.io/en/latest/source/README.html",
         },
     ]
     language_info = {
