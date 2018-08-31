@@ -3,4 +3,9 @@
 Information
 ******************
 
-This page is under construction.
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+   :numbered:
+
+   README
