@@ -40,7 +40,7 @@ class ParallelMagic(Magic):
 
             %parallel bash_kernel BashKernel 
             %parallel bash_kernel BashKernel -k bash
-            %parallel bash_kernel BashKernel --i [0,2:5,9,...]
+            %parallel bash_kernel BashKernel -i [0,2:5,9,...]
 
         cluster_size and cluster_rank variables are set upon 
         initialization of the remote node (if the kernel 
