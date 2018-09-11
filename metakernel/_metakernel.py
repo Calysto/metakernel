@@ -681,6 +681,12 @@ class MetaKernel(Kernel):
         else:
             self.send_response(self.iopub_socket, 'stream', stream_content)
 
+    def send_response(self, *args, **kwargs):
+        ### if we are running via %parallel, we might not have a
+        ### session
+        if self.session:
+            super().send_response(*args, **kwargs)
+
     def call_magic(self, line):
         """
         Given an line, such as "%download http://example.com/", parse
