@@ -155,7 +155,11 @@ kernels['%(kernel_name)s'] = %(class_name)s()
         help=('evaluate code in the current kernel, too. The current ' +
               'kernel should be of the same language as the cluster.')
     )
-    def line_px(self, expression, kernel_name=None, evaluate=False):
+    @option(
+        '-s', '--set_variable', action='store', default=None,
+        help='set the variable with the parallel results rather than returning them'
+    )
+    def line_px(self, expression, kernel_name=None, evaluate=False, set_variable=None):
         """
         %px EXPRESSION - send EXPRESSION to the cluster.
 
@@ -172,6 +176,7 @@ kernels['%(kernel_name)s'] = %(class_name)s()
 
         Use %parallel to initialize the cluster.
         """
+        results = None
         expression = str(expression)
         if kernel_name is None:
             kernel_name = self.kernel_name
@@ -179,7 +184,7 @@ kernels['%(kernel_name)s'] = %(class_name)s()
             count = 1
             while count <= 5:
                 try:
-                    self.retval = self.view["kernels['%s'].do_execute_direct(\"%s\")" % (
+                    results = self.view["kernels['%s'].do_execute_direct(\"%s\")" % (
                         kernel_name, self._clean_code(expression))]
                     break
                 except:
@@ -191,10 +196,15 @@ kernels['%(kernel_name)s'] = %(class_name)s()
             self.retry = False
         else:
             try:
-                self.retval = self.view["kernels['%s'].do_execute_direct(\"%s\")" % (
+                results = self.view["kernels['%s'].do_execute_direct(\"%s\")" % (
                     kernel_name, self._clean_code(expression))]
             except Exception as e:
-                self.retval = str(e)
+                results = str(e)
+        if set_variable is None:
+            self.retval = results
+        else:
+            self.kernel.set_variable(set_variable, results)
+            self.retval = None
         if evaluate:
             self.code = expression
 
@@ -211,7 +221,11 @@ kernels['%(kernel_name)s'] = %(class_name)s()
         help=('evaluate code in the current kernel, too. The current ' +
               'kernel should be of the same language as the cluster.')
     )
-    def cell_px(self, kernel_name=None, evaluate=False):
+    @option(
+        '-s', '--set_variable', action='store', default=None,
+        help='set the variable with the parallel results rather than returning them'
+    )
+    def cell_px(self, kernel_name=None, evaluate=False, set_variable=None):
         """
         %%px - send cell to the cluster.
 
@@ -224,11 +238,20 @@ kernels['%(kernel_name)s'] = %(class_name)s()
         """
         if kernel_name is None:
             kernel_name = self.kernel_name
-        self.retval = self.view["kernels['%s'].do_execute_direct(\"%s\")" % (
+        results = self.view["kernels['%s'].do_execute_direct(\"%s\")" % (
             kernel_name, self._clean_code(self.code))]
+        if set_variable is None:
+            self.retval = results
+        else:
+            self.kernel.set_variable(set_variable, results)
+            self.retval = None
         self.evaluate = evaluate
 
-    def line_pmap(self, function_name, args, kernel_name=None):
+    @option(
+        '-s', '--set_variable', action='store', default=None,
+        help='set the variable with the parallel results rather than returning them'
+    )
+    def line_pmap(self, function_name, args, kernel_name=None, set_variable=None):
         """
         %pmap FUNCTION [ARGS1,ARGS2,...] - ("parallel map") call a FUNCTION on args
 
@@ -276,7 +299,12 @@ kernels['%(kernel_name)s'] = %(class_name)s()
             from IPython.parallel.util import interactive
         f = interactive(lambda arg, kname=kernel_name, fname=function_name: \
                         kernels[kname].do_function_direct(fname, arg))
-        self.retval = self.view_load_balanced.map_async(f, eval(args))
+        results = self.view_load_balanced.map_async(f, eval(args))
+        if set_variable is None:
+            self.retval = results
+        else:
+            self.kernel.set_variable(set_variable, results)
+            self.retval = None
 
     def post_process(self, retval):
         try:

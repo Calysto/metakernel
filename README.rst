@@ -80,7 +80,7 @@ It is possible to list all of the versions of `metakernel` available on your pla
 Use MetaKernel Magics in IPython
 --------------------------------
 
-Although MetaKernel is a system for building new kernels, you can use a subset of the magics in the IPython kernel. 
+Although MetaKernel is a system for building new kernels, you can use a subset of the magics in the IPython kernel.
 
 .. code:: python
 
@@ -99,6 +99,77 @@ Put the following in your (or a system-wide) ipython_config.py file:
  ]
  c.InteractiveShellApp.exec_lines = startup
 
+Use MetaKernel Languages in Parallel
+
+To use a MetaKernel language in parallel, do the following:
+
+1. Make sure that the Python module `ipyparallel` is installed. In the shell, type:
+
+```shell
+pip install ipyparallel
+```
+
+2. To enable the extension in the notebook, in the shell, type:
+
+```shell
+ipcluster nbextension enable
+```
+
+3. To start up a cluster, with 10 nodes, on a local IP address, in the shell, type:
+
+```shell
+ipcluster start --n=10 --ip=192.168.1.108
+```
+
+4. Initialize the code to use the 10 nodes, inside the notebook from a host kernel `MODULE` and `CLASSNAME` (can be any metakernel kernel):
+
+```
+%parallel MODULE CLASSNAME
+```
+
+For example:
+
+```
+%parallel calysto_scheme CalystoScheme
+```
+
+5. Run code in parallel, inside the notebook, type:
+
+Execute a single line, in parallel:
+
+```
+%px (+ 1 1)
+```
+
+Or execute the entire cell, in parallel:
+
+```
+%%px
+(* cluster_rank cluster_rank)
+```
+
+Results come back in a Python list (Scheme vector), in cluster_rank order. (This will be a JSON representation in the future).
+
+Therefore, the above would produce the result:
+
+```scheme
+#10(0 1 4 9 16 25 36 49 64 81)
+```
+You can get the results back in any of the parallel magics (`%px`, `%%px`, or `%pmap`) in the host kernel by accessing the variable `_` (single underscore), or by using the `--set_variable VARIABLE` flag, like so:
+
+```shell
+%%px --set_variable results
+
+(* cluster_rank cluster_rank)
+```
+
+Then, in the next cell, you can access `results`.
+
+Notice that you can use the variable `cluster_rank` to partition parts of a problem so that each node is working on something different.
+
+In the examples above, use `-e` to evaluate the code in the host kernel as well. Note that `cluster_rank` is not defined on the host machine, and that this assumes the host kernel is the same as the parallel machines.
+
+
 Documentation
 -----------------------
 
@@ -116,5 +187,3 @@ For version information, see the Revision History_.
 .. _online: http://Calysto.github.io/metakernel/
 
 .. _History: https://github.com/Calysto/metakernel/blob/master/HISTORY.rst
-
-
