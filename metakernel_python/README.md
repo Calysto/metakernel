@@ -11,7 +11,7 @@ pip install metakernel_python --upgrade
 Then, you need to install the metakernel kernel spec:
 
 ```shell
-python metakernel_python install
+python -m metakernel_python install
 ```
 
 ## Running
