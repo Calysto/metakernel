@@ -11,7 +11,7 @@ pip install metakernel_bash --upgrade
 Then, you need to install the metakernel bash kernel spec:
 
 ```shell
-python metakernel_bash install
+python -m metakernel_bash install
 ```
 
 ## Running
