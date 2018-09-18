@@ -11,7 +11,7 @@ pip install metakernel_echo --upgrade
 Then, you need to install the metakernel echo kernel spec:
 
 ```shell
-python metakernel_echo install
+python -m metakernel_echo install
 ```
 
 ## Running
