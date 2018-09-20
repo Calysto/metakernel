@@ -685,7 +685,7 @@ class MetaKernel(Kernel):
         ### if we are running via %parallel, we might not have a
         ### session
         if self.session:
-            super().send_response(*args, **kwargs)
+            super(MetaKernel, self).send_response(*args, **kwargs)
 
     def call_magic(self, line):
         """
