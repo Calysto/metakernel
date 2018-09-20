@@ -12,6 +12,7 @@ except:
     # python3
     _maxsize = sys.maxsize
 
+
 class MagicOptionParser(optparse.OptionParser):
     def error(self, msg):
         raise Exception('Magic Parse error: "%s"' % msg)
@@ -24,7 +25,18 @@ class MagicOptionParser(optparse.OptionParser):
     ## FIXME: override help to also stop processing
     ## currently --help gives syntax error
 
+
 class Magic(object):
+    """
+    Base class to define magics for MetaKernel based kernels.
+
+    Users can redefine the default magics provided by Metakernel
+    by creating a module with the exact same name as the
+    Metakernel magic.
+
+    For example, you can override %matplotlib in your kernel by
+    writing a new magic inside magics/matplotlib_magic.py
+    """
 
     def __init__(self, kernel):
         self.kernel = kernel
