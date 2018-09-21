@@ -131,6 +131,7 @@ class MetaKernel(Kernel):
             except:
                 pass  # Can't change stdout
         self.redirect_to_log = False
+        self.shell = None
         self.sticky_magics = OrderedDict()
         self._i = None
         self._ii = None
