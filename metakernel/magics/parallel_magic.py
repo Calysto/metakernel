@@ -144,6 +144,9 @@ kernels['%(kernel_name)s'] = %(class_name)s()
         self.client[:].scatter('cluster_rank', self.client.ids, flatten=True)
         self.view["kernels['%s'].set_variable(\"cluster_rank\", cluster_rank)" % (
             kernel_name)]
+        ## So that these are available in the host kernel:
+        self.kernel.set_variable("cluster_size", len(self.client))
+        self.kernel.set_variable("cluster_rank", -1)
         self.retval = None
 
     @option(
