@@ -423,8 +423,8 @@ class MetaKernel(Kernel):
                     return
                 content = {
                     'execution_count': self.execution_count,
-                    'data': data,
-                    'metadata': {},
+                    'data': data[0],
+                    'metadata': data[1],
                 }
                 if not silent:
                     if Widget and isinstance(retval, Widget):
@@ -630,8 +630,8 @@ class MetaKernel(Kernel):
                     self.Error(e)
                     return
                 content = {
-                    'data': data,
-                    'metadata': {}
+                    'data': data[0],
+                    'metadata': data[1]
                 }
                 self.send_response(
                     self.iopub_socket,
@@ -810,14 +810,19 @@ def _formatter(data, repr_func):
         if obj:
             reprs[mimetype] = obj
 
-    retval = {}
+    format_dict = {}
+    metadata_dict = {}
     for (mimetype, value) in reprs.items():
+        metadata = None
         try:
             value = value()
         except Exception:
             pass
         if not value:
             continue
+        if isinstance(value, tuple):
+            metadata = value[1]
+            value = value[0]
         if isinstance(value, bytes):
             try:
                 value = value.decode('utf-8')
@@ -825,10 +830,12 @@ def _formatter(data, repr_func):
                 value = base64.encodestring(value)
                 value = value.decode('utf-8')
         try:
-            retval[mimetype] = str(value)
+            format_dict[mimetype] = str(value)
         except:
-            retval[mimetype] = value
-    return retval
+            format_dict[mimetype] = value
+        if metadata is not None:
+            metadata_dict[mimetype] = metadata
+    return (format_dict, metadata_dict)
 
 
 def format_message(*args, **kwargs):
