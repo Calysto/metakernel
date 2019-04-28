@@ -149,18 +149,21 @@ class REPLWrapper(object):
                         break
                 continue
 
+            # Handle cr state
+            line = self.child.before
+            if got_cr:
+                line = '\r' + line
+            got_cr = False
+            
             if pos == 2 and stdin_handler:
-                resp = stdin_handler(self.child.before + self.child.after)
+                resp = stdin_handler(line + self.child.after)
                 self.sendline(resp)
             elif pos == 3:  # End of line
-                stream_handler(self.child.before)
-                got_cr = False
+                stream_handler(line)
             else:
-                if len(self.child.before) != 0 and stream_handler:
+                if len(line) != 0 and stream_handler:
                     # prompt received, but partial line precedes it
-                    if got_cr:
-                        self.child.before = '\r' + self.child.before
-                    stream_handler(self.child.before)
+                    stream_handler(line)
                 break
         return pos
 
