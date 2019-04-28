@@ -140,7 +140,7 @@ class REPLWrapper(object):
             except pexpect.TIMEOUT:
                 while 1:
                     try:
-                        self.child.expect(['\r'], timeout=0)
+                        self.child.expect([u('\r')], timeout=0)
                         stream_handler('\r', end='')
                         if got_cr:
                             stream_handler(self.child.before, end='')
