@@ -154,6 +154,7 @@ class REPLWrapper(object):
                 self.sendline(resp)
             elif pos == 3:  # End of line
                 stream_handler(self.child.before)
+                got_cr = False
             else:
                 if len(self.child.before) != 0 and stream_handler:
                     # prompt received, but partial line precedes it
