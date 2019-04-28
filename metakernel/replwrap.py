@@ -3,6 +3,7 @@ import sys
 import re
 import signal
 import os
+import time
 import atexit
 
 from . import pexpect
@@ -125,16 +126,39 @@ class REPLWrapper(object):
             expects += [u(self.child.crlf)]
         if self.prompt_emit_cmd:
             self.sendline(self.prompt_emit_cmd)
+        t0 = time.time()
+        if timeout == -1:
+            timeout = 30
+        got_cr = False
         while True:
-            pos = self.child.expect(expects, timeout=timeout)
+            if timeout is not None and time.time() - t0 > timeout:
+                raise pexpect.TIMEOUT('Timed out')
+
+            line_timeout = 0.2
+            try:
+                pos = self.child.expect(expects, timeout=line_timeout)
+            except pexpect.TIMEOUT:
+                while 1:
+                    try:
+                        self.child.expect(['\r'], timeout=0)
+                        stream_handler('\r', end='')
+                        if got_cr:
+                            stream_handler(self.child.before, end='')
+                        got_cr = True
+                    except pexpect.TIMEOUT:
+                        break
+                continue
+
             if pos == 2 and stdin_handler:
                 resp = stdin_handler(self.child.before + self.child.after)
                 self.sendline(resp)
-            elif pos == 3:  # End of line received
+            elif pos == 3:  # End of line
                 stream_handler(self.child.before)
             else:
                 if len(self.child.before) != 0 and stream_handler:
                     # prompt received, but partial line precedes it
+                    if got_cr:
+                        self.child.before = '\r' + self.child.before
                     stream_handler(self.child.before)
                 break
         return pos
