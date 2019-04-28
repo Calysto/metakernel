@@ -3,6 +3,7 @@ import sys
 import re
 import signal
 import os
+import time
 import atexit
 
 from . import pexpect
@@ -125,17 +126,44 @@ class REPLWrapper(object):
             expects += [u(self.child.crlf)]
         if self.prompt_emit_cmd:
             self.sendline(self.prompt_emit_cmd)
+        t0 = time.time()
+        if timeout == -1:
+            timeout = 30
+        got_cr = False
         while True:
-            pos = self.child.expect(expects, timeout=timeout)
+            if timeout is not None and time.time() - t0 > timeout:
+                raise pexpect.TIMEOUT('Timed out')
+
+            line_timeout = 0.2
+            try:
+                pos = self.child.expect(expects, timeout=line_timeout)
+            except pexpect.TIMEOUT:
+                while 1:
+                    try:
+                        self.child.expect([u('\r')], timeout=0)
+                        stream_handler('\r', end='')
+                        if got_cr:
+                            stream_handler(self.child.before, end='')
+                        got_cr = True
+                    except pexpect.TIMEOUT:
+                        break
+                continue
+
+            # Handle cr state
+            line = self.child.before
+            if got_cr:
+                line = '\r' + line
+            got_cr = False
+            
             if pos == 2 and stdin_handler:
-                resp = stdin_handler(self.child.before + self.child.after)
+                resp = stdin_handler(line + self.child.after)
                 self.sendline(resp)
-            elif pos == 3:  # End of line received
-                stream_handler(self.child.before)
+            elif pos == 3:  # End of line
+                stream_handler(line)
             else:
-                if len(self.child.before) != 0 and stream_handler:
+                if len(line) != 0 and stream_handler:
                     # prompt received, but partial line precedes it
-                    stream_handler(self.child.before)
+                    stream_handler(line)
                 break
         return pos
 

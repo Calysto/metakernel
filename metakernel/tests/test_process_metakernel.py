@@ -22,3 +22,7 @@ def test_process_metakernel():
     
     html = HTML("some html")
     kernel.Display(html)
+
+    kernel.do_execute(r'for i in {1..3};do echo -ne "$i\r"; sleep 1; done', None)
+    text = get_log_text(kernel)
+    assert r'1\r2\r3\r' in text
