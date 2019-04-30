@@ -43,7 +43,7 @@ class REPLWrapper(object):
         as positional parameters, so you can use ``{}`` style formatting to
         insert them into the command.
     :param str new_prompt_regex: The more unique prompt to expect after the change.
-    :param str stdin_prompt_regex: The regex for a stdin prompt from the 
+    :param str stdin_prompt_regex: The regex for a stdin prompt from the
         child process.  The prompt itself will be sent to the `stdin_handler`,
         so any sentinel value inserted will have to be removed by the caller.
     :param str extra_init_cmd: Commands to do extra initialisation, such as
@@ -154,7 +154,7 @@ class REPLWrapper(object):
             if got_cr:
                 line = '\r' + line
             got_cr = False
-            
+
             if pos == 2 and stdin_handler:
                 resp = stdin_handler(line + self.child.after)
                 self.sendline(resp)
@@ -202,6 +202,8 @@ class REPLWrapper(object):
             # We got the continuation prompt - command was incomplete
             self.interrupt()
             raise ValueError("Continuation prompt found - input was incomplete:\n" + command)
+        if self._stream_handler:
+            return u''
         return u''.join(res + [self.child.before])
 
     def interrupt(self):
