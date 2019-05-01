@@ -50,6 +50,8 @@ class REPLWrapper(object):
       disabling pagers.
     :param str prompt_emit_cmd: Optional kernel command that emits the prompt
       when one is not emitted by default (typically happens on Windows only)
+    :param bool force_prompt_on_continuation: Whether to force a prompt when
+    we need to interrupt a continuation prompt.
     :param bool echo: Whether the child should echo, or in the case
     of Windows, whether the child does echo.
     """
@@ -60,6 +62,7 @@ class REPLWrapper(object):
                  stdin_prompt_regex=PEXPECT_STDIN_PROMPT,
                  extra_init_cmd=None,
                  prompt_emit_cmd=None,
+                 force_prompt_on_continuation=False,
                  echo=False):
         if isinstance(cmd_or_spawn, basestring):
             self.child = pexpect.spawnu(cmd_or_spawn, echo=echo,
@@ -83,6 +86,7 @@ class REPLWrapper(object):
 
         self.echo = echo
         self.prompt_emit_cmd = prompt_emit_cmd
+        self._force_prompt_on_continuation = force_prompt_on_continuation
 
         if prompt_change_cmd is None:
             self.prompt_regex = u(prompt_regex)
@@ -118,18 +122,35 @@ class REPLWrapper(object):
     def _expect_prompt(self, timeout=None):
         """Expect a prompt from the child.
         """
-        stream_handler = self._stream_handler
-        stdin_handler = self._stdin_handler
         expects = [self.prompt_regex, self.continuation_prompt_regex,
                    self.stdin_prompt_regex]
-        if stream_handler:
-            expects += [u(self.child.crlf)]
         if self.prompt_emit_cmd:
             self.sendline(self.prompt_emit_cmd)
+
+        if self._stream_handler:
+            return self._expect_prompt_stream(expects, timeout)
+
+        while True:
+            pos = self.child.expect(expects, timeout=timeout)
+            if pos < 2:
+                return pos
+            elif not self._stdin_handler:
+                raise ValueError('Stdin Requested but not stdin handler available')
+
+            resp = self._stdin_handler(line + self.child.after)
+            self.sendline(resp)
+
+    def _expect_prompt_stream(self, expects, timeout=None):
+        """Expect a prompt with streaming output.
+        """
+        expects += [u(self.child.crlf)]
+        stream_handler = self._stream_handler
+        stdin_handler = self._stdin_handler
         t0 = time.time()
         if timeout == -1:
             timeout = 30
         got_cr = False
+
         while True:
             if timeout is not None and time.time() - t0 > timeout:
                 raise pexpect.TIMEOUT('Timed out')
@@ -155,13 +176,15 @@ class REPLWrapper(object):
                 line = '\r' + line
             got_cr = False
 
-            if pos == 2 and stdin_handler:
+            if pos == 2:
+                if not stdin_handler:
+                    raise ValueError('Stdin Requested but not stdin handler available')
                 resp = stdin_handler(line + self.child.after)
                 self.sendline(resp)
             elif pos == 3:  # End of line
                 stream_handler(line)
             else:
-                if len(line) != 0 and stream_handler:
+                if len(line) != 0:
                     # prompt received, but partial line precedes it
                     stream_handler(line)
                 break
@@ -177,6 +200,10 @@ class REPLWrapper(object):
         :param int timeout: How long to wait for the next prompt. -1 means the
           default from the :class:`pexpect.spawn` object (default 30 seconds).
           None means to wait indefinitely.
+        :param func stream_handler - A function that accepts a string to print and
+        and optional line ending.
+        :param stdin_handler - A function that prompts the user for input and
+        returns a response.
         """
         # Split up multiline commands and feed them in bit-by-bit
         cmdlines = command.splitlines()
@@ -200,13 +227,14 @@ class REPLWrapper(object):
         # Command was fully submitted, now wait for the next prompt
         if self._expect_prompt(timeout=timeout) == 1:
             # We got the continuation prompt - command was incomplete
-            self.interrupt()
+            self.interrupt(continuation=True)
             raise ValueError("Continuation prompt found - input was incomplete:\n" + command)
+
         if self._stream_handler:
             return u''
         return u''.join(res + [self.child.before])
 
-    def interrupt(self):
+    def interrupt(self, continuation=False):
         """Interrupt the process and wait for a prompt.
 
         Returns
@@ -217,12 +245,15 @@ class REPLWrapper(object):
             self.child.sendintr()
         else:
             self.child.kill(signal.SIGINT)
+        if continuation and self._force_prompt_on_continuation:
+            self.sendline(self.prompt_change_cmd or '')
         while 1:
             try:
                 self._expect_prompt(timeout=-1)
                 break
             except KeyboardInterrupt:
                 pass
+
         return self.child.before
 
     def terminate(self):
