@@ -192,6 +192,10 @@ class REPLWrapper(object):
         :param int timeout: How long to wait for the next prompt. -1 means the
           default from the :class:`pexpect.spawn` object (default 30 seconds).
           None means to wait indefinitely.
+        :param func stream_handler - A function that accepts a string to print and
+        and optional line ending.
+        :param stdin_handler - A function that prompts the user for input and
+        returns a response.
         """
         # Split up multiline commands and feed them in bit-by-bit
         cmdlines = command.splitlines()
@@ -217,6 +221,7 @@ class REPLWrapper(object):
             # We got the continuation prompt - command was incomplete
             self.interrupt()
             raise ValueError("Continuation prompt found - input was incomplete:\n" + command)
+
         if self._stream_handler:
             return u''
         return u''.join(res + [self.child.before])
