@@ -118,18 +118,33 @@ class REPLWrapper(object):
     def _expect_prompt(self, timeout=None):
         """Expect a prompt from the child.
         """
-        stream_handler = self._stream_handler
-        stdin_handler = self._stdin_handler
-        expects = [self.prompt_regex, self.continuation_prompt_regex,
-                   self.stdin_prompt_regex]
-        if stream_handler:
-            expects += [u(self.child.crlf)]
+        expects = [self.prompt_regex, self.continuation_prompt_regex]
+        if self._stdin_handler:
+            expects += [self.stdin_prompt_regex]
         if self.prompt_emit_cmd:
             self.sendline(self.prompt_emit_cmd)
+
+        if self._stream_handler:
+            return self._expect_prompt_stream(expects, timeout)
+
+        while True:
+            pos = self.child.expect(expects, timeout=timeout)
+            if pos < 2:
+                return pos
+
+            resp = self._stdin_handler(line + self.child.after)
+            self.sendline(resp)
+
+    def _expect_prompt_stream(self, expects, timeout=None):
+        """Expect a prompt with streaming output.
+        """
+        expects += [u(self.child.crlf)]
+        stream_handler = self._stream_handler
         t0 = time.time()
         if timeout == -1:
             timeout = 30
         got_cr = False
+
         while True:
             if timeout is not None and time.time() - t0 > timeout:
                 raise pexpect.TIMEOUT('Timed out')
@@ -156,12 +171,12 @@ class REPLWrapper(object):
             got_cr = False
 
             if pos == 2 and stdin_handler:
-                resp = stdin_handler(line + self.child.after)
+                resp = self._stdin_handler(line + self.child.after)
                 self.sendline(resp)
             elif pos == 3:  # End of line
                 stream_handler(line)
             else:
-                if len(line) != 0 and stream_handler:
+                if len(line) != 0:
                     # prompt received, but partial line precedes it
                     stream_handler(line)
                 break
