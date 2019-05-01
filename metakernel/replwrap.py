@@ -50,6 +50,8 @@ class REPLWrapper(object):
       disabling pagers.
     :param str prompt_emit_cmd: Optional kernel command that emits the prompt
       when one is not emitted by default (typically happens on Windows only)
+    :param bool sendline_on_interrupt: Whether to send a newline character
+    on an interrupt to force a prompt.
     :param bool echo: Whether the child should echo, or in the case
     of Windows, whether the child does echo.
     """
@@ -60,6 +62,7 @@ class REPLWrapper(object):
                  stdin_prompt_regex=PEXPECT_STDIN_PROMPT,
                  extra_init_cmd=None,
                  prompt_emit_cmd=None,
+                 sendline_on_interrupt=False,
                  echo=False):
         if isinstance(cmd_or_spawn, basestring):
             self.child = pexpect.spawnu(cmd_or_spawn, echo=echo,
@@ -83,6 +86,7 @@ class REPLWrapper(object):
 
         self.echo = echo
         self.prompt_emit_cmd = prompt_emit_cmd
+        self._sendline_on_interrupt = sendline_on_interrupt
 
         if prompt_change_cmd is None:
             self.prompt_regex = u(prompt_regex)
@@ -237,6 +241,11 @@ class REPLWrapper(object):
             self.child.sendintr()
         else:
             self.child.kill(signal.SIGINT)
+        if self._sendline_on_interrupt:
+            if self.prompt_emit_cmd:
+                self.sendline(self.prompt_emit_cmd)
+            else:
+                self.sendline('')
         while 1:
             try:
                 self._expect_prompt(timeout=-1)

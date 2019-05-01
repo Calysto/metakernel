@@ -4,6 +4,7 @@ from pexpect import EOF
 from .replwrap import REPLWrapper, bash
 from subprocess import check_output
 import re
+import sys
 
 __version__ = '0.0'
 
@@ -71,6 +72,7 @@ class ProcessMetaKernel(MetaKernel):
 
         interrupted = False
         output = ''
+        error = None
         stream_handler = self.Print if not silent else None
         try:
             output = wrapper.run_command(code.rstrip(), timeout=None,
@@ -82,7 +84,11 @@ class ProcessMetaKernel(MetaKernel):
         except EOF:
             self.Print(child.before)
             self.do_shutdown(True)
-            return
+            error = RuntimeError('End of File')
+            tb = 'End of File'
+        except Exception as e:
+            ex_type, error, tb = sys.exc_info()
+            self.Error(str(e))
 
         if interrupted:
             self.kernel_resp = {
@@ -99,6 +105,15 @@ class ProcessMetaKernel(MetaKernel):
                 'ename': '', 'evalue': str(exitcode),
                 'traceback': trace,
             }
+
+        elif error:
+            self.kernel_resp = {
+                'status': 'error',
+                'execution_count': self.execution_count,
+                'ename': '', 'evalue': str(error),
+                'traceback': str(tb),
+            }
+
         else:
             self.kernel_resp = {
                 'status': 'ok',
