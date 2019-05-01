@@ -122,9 +122,8 @@ class REPLWrapper(object):
     def _expect_prompt(self, timeout=None):
         """Expect a prompt from the child.
         """
-        expects = [self.prompt_regex, self.continuation_prompt_regex]
-        if self._stdin_handler:
-            expects += [self.stdin_prompt_regex]
+        expects = [self.prompt_regex, self.continuation_prompt_regex,
+                   self.stdin_prompt_regex]
         if self.prompt_emit_cmd:
             self.sendline(self.prompt_emit_cmd)
 
@@ -135,6 +134,8 @@ class REPLWrapper(object):
             pos = self.child.expect(expects, timeout=timeout)
             if pos < 2:
                 return pos
+            elif not self._stdin_handler:
+                raise ValueError('Stdin Requested but not stdin handler available')
 
             resp = self._stdin_handler(line + self.child.after)
             self.sendline(resp)
@@ -144,6 +145,7 @@ class REPLWrapper(object):
         """
         expects += [u(self.child.crlf)]
         stream_handler = self._stream_handler
+        stdin_handler = self._stdin_handler
         t0 = time.time()
         if timeout == -1:
             timeout = 30
@@ -174,8 +176,10 @@ class REPLWrapper(object):
                 line = '\r' + line
             got_cr = False
 
-            if pos == 2 and stdin_handler:
-                resp = self._stdin_handler(line + self.child.after)
+            if pos == 2:
+                if not stdin_handler:
+                    raise ValueError('Stdin Requested but not stdin handler available')
+                resp = stdin_handler(line + self.child.after)
                 self.sendline(resp)
             elif pos == 3:  # End of line
                 stream_handler(line)
