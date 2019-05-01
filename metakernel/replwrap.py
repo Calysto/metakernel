@@ -50,8 +50,8 @@ class REPLWrapper(object):
       disabling pagers.
     :param str prompt_emit_cmd: Optional kernel command that emits the prompt
       when one is not emitted by default (typically happens on Windows only)
-    :param bool sendline_on_interrupt: Whether to send a newline character
-    on an interrupt to force a prompt.
+    :param bool force_prompt_on_continuation: Whether to force a prompt when
+    we need to interrupt a continuation prompt.
     :param bool echo: Whether the child should echo, or in the case
     of Windows, whether the child does echo.
     """
@@ -62,7 +62,7 @@ class REPLWrapper(object):
                  stdin_prompt_regex=PEXPECT_STDIN_PROMPT,
                  extra_init_cmd=None,
                  prompt_emit_cmd=None,
-                 sendline_on_interrupt=False,
+                 force_prompt_on_continuation=False,
                  echo=False):
         if isinstance(cmd_or_spawn, basestring):
             self.child = pexpect.spawnu(cmd_or_spawn, echo=echo,
@@ -86,7 +86,7 @@ class REPLWrapper(object):
 
         self.echo = echo
         self.prompt_emit_cmd = prompt_emit_cmd
-        self._sendline_on_interrupt = sendline_on_interrupt
+        self._force_prompt_on_continuation = force_prompt_on_continuation
 
         if prompt_change_cmd is None:
             self.prompt_regex = u(prompt_regex)
@@ -227,14 +227,14 @@ class REPLWrapper(object):
         # Command was fully submitted, now wait for the next prompt
         if self._expect_prompt(timeout=timeout) == 1:
             # We got the continuation prompt - command was incomplete
-            self.interrupt()
+            self.interrupt(continuation=True)
             raise ValueError("Continuation prompt found - input was incomplete:\n" + command)
 
         if self._stream_handler:
             return u''
         return u''.join(res + [self.child.before])
 
-    def interrupt(self):
+    def interrupt(self, continuation=False):
         """Interrupt the process and wait for a prompt.
 
         Returns
@@ -245,17 +245,15 @@ class REPLWrapper(object):
             self.child.sendintr()
         else:
             self.child.kill(signal.SIGINT)
-        if self._sendline_on_interrupt:
-            if self.prompt_emit_cmd:
-                self.sendline(self.prompt_emit_cmd)
-            else:
-                self.sendline('')
+        if continuation and self._force_prompt_on_continuation:
+            self.sendline(self.prompt_change_cmd or '')
         while 1:
             try:
                 self._expect_prompt(timeout=-1)
                 break
             except KeyboardInterrupt:
                 pass
+
         return self.child.before
 
     def terminate(self):
