@@ -305,8 +305,6 @@ def bash(command="bash", prompt_regex=re.compile('[$#]')):
                        extra_init_cmd=extra_init_cmd)
 
 
-def cmd(command='cmd', prompt_regex=re.compile(r'[A-Z]:\\.*>')):
-    """"Start a cmd shell and return a :class:`REPLWrapper` object."""
-    if not os.name == 'nt':
-        raise OSError('cmd only available on Windows')
-    return REPLWrapper(command, prompt_regex, None, echo=True)
+def powershell(command='powershell', prompt_regex='>'):
+    """"Start a powershell and return a :class:`REPLWrapper` object."""
+    return REPLWrapper(command, prompt_regex, 'Function prompt {{ "{0}" }}', echo=True)

@@ -3,7 +3,7 @@
 
 from __future__ import print_function
 from metakernel import Magic, pexpect
-from metakernel.replwrap import cmd, bash
+from metakernel.replwrap import powershell, bash
 import os
 
 
@@ -57,8 +57,8 @@ class ShellMagic(Magic):
 
         if not self.cmd:
             if os.name == 'nt':
-                self.cmd = 'cmd'
-                self.repl = cmd()
+                self.cmd = 'powershell'
+                self.repl = powershell()
             elif pexpect.which('bash'):
                 self.cmd = 'bash'
                 self.repl = bash()
