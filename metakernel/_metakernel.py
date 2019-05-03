@@ -759,7 +759,7 @@ class MetaKernelApp(IPKernelApp):
                 self.argv = argv
 
             def start(self):
-                kernel_spec = self.kernel_class.kernel_json
+                kernel_spec = self.kernel_class().kernel_json
                 with TemporaryDirectory() as td:
                     dirname = os.path.join(td, kernel_spec['name'])
                     os.mkdir(dirname)
