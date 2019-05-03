@@ -17,11 +17,13 @@ from collections import OrderedDict
 
 warnings.filterwarnings('ignore', module='IPython.html.widgets')
 
+from jupyter_core.paths import jupyter_config_path, jupyter_config_dir
 from IPython.paths import get_ipython_dir
 from ipykernel.kernelapp import IPKernelApp
 from ipykernel.kernelbase import Kernel
 from ipykernel.comm import CommManager
 from traitlets.config import Application
+from traitlets import Dict, Unicode
 
 try:
     from ipywidgets.widgets.widget import Widget
@@ -101,6 +103,8 @@ class MetaKernel(Kernel):
         # 'file_extension': '.py',
         'help_links': help_links,
     }
+    plot_settings = Dict(dict(backend='inline')).tag(config=True)
+
     meta_kernel = None
 
     @classmethod
@@ -146,7 +150,6 @@ class MetaKernel(Kernel):
         self.comm_manager.register_target('ipython.widget',
             lazy_import_handle_comm_opened)
 
-        self.plot_settings = dict(backend='inline')
         self.hist_file = get_history_file(self)
         self.parser = Parser(self.identifier_regex, self.func_call_regex,
                              self.magic_prefixes, self.help_suffix)
@@ -729,6 +732,20 @@ class MetaKernel(Kernel):
 
 
 class MetaKernelApp(IPKernelApp):
+    name='metakernel'
+
+    config_dir = Unicode()
+
+    def _config_dir_default(self):
+        return jupyter_config_dir()
+
+    @property
+    def config_file_paths(self):
+        path = jupyter_config_path()
+        if self.config_dir not in path:
+            path.insert(0, self.config_dir)
+        path.insert(0, os.getcwd())
+        return path
 
     @property
     def subcommands(self):
