@@ -170,6 +170,18 @@ Notice that you can use the variable `cluster_rank` to partition parts of a prob
 In the examples above, use `-e` to evaluate the code in the host kernel as well. Note that `cluster_rank` is not defined on the host machine, and that this assumes the host kernel is the same as the parallel machines.
 
 
+Configuration
+-------------
+``Metakernel`` subclasses can be configured by the user by adding a ``metakernel_config.py`` file to their
+``jupyter`` config path.  The base ``MetaKernel`` class offers ``plot_settings`` as a configurable trait.
+As an example:
+
+.. code:: bash
+    cat ~/.jupyter/metakernel_config.py
+    # use Qt as the default backend for plots
+    c.OctaveKernel.plot_settings = dict(backend='qt')
+
+
 Documentation
 -----------------------
 

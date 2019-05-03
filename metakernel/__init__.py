@@ -1,5 +1,6 @@
 from ._metakernel import (
-    ExceptionWrapper, MetaKernel, IPythonKernel, register_ipython_magics, get_metakernel)
+    ExceptionWrapper, MetaKernel, IPythonKernel, register_ipython_magics, get_metakernel,
+    MetaKernelApp)
 from . import pexpect
 from .replwrap import REPLWrapper, u
 from .process_metakernel import ProcessMetaKernel
