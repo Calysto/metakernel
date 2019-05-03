@@ -172,8 +172,8 @@ In the examples above, use `-e` to evaluate the code in the host kernel as well.
 
 Configuration
 -------------
-`Metakernel` subclasses can be configured by the user by adding a `metakernel_config.py` file to their
-`jupyter` config path.  The base `MetaKernel` class offers `plot_settings` as a configurable trait.
+``Metakernel`` subclasses can be configured by the user by adding a ``metakernel_config.py`` file to their
+``jupyter`` config path.  The base ``MetaKernel`` class offers ``plot_settings`` as a configurable trait.
 As an example:
 
 .. code:: bash
