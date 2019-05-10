@@ -117,7 +117,7 @@ class MetaKernel(Kernel):
             if __name__ == '__main__':
                 MetaKernelSubclass.run_as_main()
         """
-        kwargs['app_name'] = self.app_name
+        kwargs['app_name'] = cls.app_name
         MetaKernelApp.launch_instance(kernel_class=cls, *args, **kwargs)
 
     def __init__(self, *args, **kwargs):
@@ -748,9 +748,10 @@ class MetaKernelApp(IPKernelApp):
         path.insert(0, os.getcwd())
         return path
 
-    def launch_instance(self, *args, **kwargs):
-        self.name = kwargs.pop('app_name', 'metakernel')
-        super(MetaKernelApp, self).launch_instance(*args, **kwargs)
+    @classmethod
+    def launch_instance(cls, *args, **kwargs):
+        cls.name = kwargs.pop('app_name', 'metakernel')
+        super(MetaKernelApp, cls).launch_instance(*args, **kwargs)
 
     @property
     def subcommands(self):
