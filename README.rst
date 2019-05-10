@@ -181,13 +181,17 @@ In the examples above, use ``-e`` to evaluate the code in the host kernel as wel
 
 Configuration
 -------------
-``Metakernel`` subclasses can be configured by the user by adding a ``metakernel_config.py`` file to their
-``jupyter`` config path.  The base ``MetaKernel`` class offers ``plot_settings`` as a configurable trait.
+``Metakernel`` implementations can subclasses can be configured by the user.  The
+configuration file name is determined by the ``app_name`` property of the subclass.
+For example, in the ``Octave`` kernel, it is ``octave_kernel``.  The user of the kernel can add an ``octave_kernel_config.py`` file to their
+``jupyter`` config path.  The base ``MetaKernel`` class offers ``plot_settings`` as a configurable trait.  Subclasses can defined other traits that they wish to make
+configurable.
+
 As an example:
 
 .. code:: bash
 
-    cat ~/.jupyter/metakernel_config.py
+    cat ~/.jupyter/octave_kernel_config.py
     # use Qt as the default backend for plots
     c.OctaveKernel.plot_settings = dict(backend='qt')
 

@@ -80,6 +80,7 @@ def get_metakernel():
 
 
 class MetaKernel(Kernel):
+    app_name = 'metakernel'
     identifier_regex = r'[^\d\W][\w\.]*'
     func_call_regex = r'([^\d\W][\w\.]*)\([^\)\()]*\Z'
     magic_prefixes = dict(magic='%', shell='!', help='?')
@@ -116,6 +117,7 @@ class MetaKernel(Kernel):
             if __name__ == '__main__':
                 MetaKernelSubclass.run_as_main()
         """
+        kwargs['app_name'] = self.app_name
         MetaKernelApp.launch_instance(kernel_class=cls, *args, **kwargs)
 
     def __init__(self, *args, **kwargs):
@@ -732,7 +734,6 @@ class MetaKernel(Kernel):
 
 
 class MetaKernelApp(IPKernelApp):
-    name='metakernel'
 
     config_dir = Unicode()
 
@@ -746,6 +747,10 @@ class MetaKernelApp(IPKernelApp):
             path.insert(0, self.config_dir)
         path.insert(0, os.getcwd())
         return path
+
+    def launch_instance(self, *args, **kwargs):
+        self.name = kwargs.pop('app_name', 'metakernel')
+        super(MetaKernelApp, self).launch_instance(*args, **kwargs)
 
     @property
     def subcommands(self):
