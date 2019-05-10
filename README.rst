@@ -53,29 +53,30 @@ Kernels based on Metakernel
 
 Installation
 ----------------
-You can install Metakernel through `pip`:
+You can install Metakernel through ``pip``:
 
-.. code::
+.. code::bash
 
  pip install metakernel --upgrade
 
 Installing `metakernel` from the `conda-forge` channel can be achieved by adding `conda-forge` to your channels with:
 
-.. code::
+.. code::bash
 
  conda config --add channels conda-forge
 
 Once the `conda-forge` channel has been enabled, `metakernel` can be installed with:
 
-.. code::
+.. code::bash
 
  conda install metakernel
 
 It is possible to list all of the versions of `metakernel` available on your platform with:
 
-.. code::
+.. code::bash
 
  conda search metakernel --channel conda-forge
+
 
 Use MetaKernel Magics in IPython
 --------------------------------
@@ -87,7 +88,7 @@ Although MetaKernel is a system for building new kernels, you can use a subset o
  from metakernel import register_ipython_magics
  register_ipython_magics()
 
-Put the following in your (or a system-wide) ipython_config.py file:
+Put the following in your (or a system-wide) ``ipython_config.py`` file:
 
 .. code:: python
 
@@ -105,69 +106,77 @@ To use a MetaKernel language in parallel, do the following:
 
 1. Make sure that the Python module `ipyparallel` is installed. In the shell, type:
 
-```shell
-pip install ipyparallel
-```
+.. code:: bash
+
+  pip install ipyparallel
+
 
 2. To enable the extension in the notebook, in the shell, type:
 
-```shell
-ipcluster nbextension enable
-```
+.. code:: bash
+
+  ipcluster nbextension enable
+
 
 3. To start up a cluster, with 10 nodes, on a local IP address, in the shell, type:
 
-```shell
-ipcluster start --n=10 --ip=192.168.1.108
-```
+.. code:: bash
 
-4. Initialize the code to use the 10 nodes, inside the notebook from a host kernel `MODULE` and `CLASSNAME` (can be any metakernel kernel):
+  ipcluster start --n=10 --ip=192.168.1.108
 
-```
-%parallel MODULE CLASSNAME
-```
+
+4. Initialize the code to use the 10 nodes, inside the notebook from a host kernel ``MODULE`` and ``CLASSNAME`` (can be any metakernel kernel):
+
+.. code:: bash
+
+  %parallel MODULE CLASSNAME
+
 
 For example:
 
-```
-%parallel calysto_scheme CalystoScheme
-```
+.. code:: bash
+
+  %parallel calysto_scheme CalystoScheme
+
 
 5. Run code in parallel, inside the notebook, type:
 
 Execute a single line, in parallel:
 
-```
-%px (+ 1 1)
-```
+.. code:: bash
+
+  %px (+ 1 1)
+
 
 Or execute the entire cell, in parallel:
 
-```
-%%px
-(* cluster_rank cluster_rank)
-```
+.. code:: bash
 
-Results come back in a Python list (Scheme vector), in cluster_rank order. (This will be a JSON representation in the future).
+  %%px
+  (* cluster_rank cluster_rank)
+
+
+Results come back in a Python list (Scheme vector), in ``cluster_rank`` order. (This will be a JSON representation in the future).
 
 Therefore, the above would produce the result:
 
-```scheme
-#10(0 1 4 9 16 25 36 49 64 81)
-```
-You can get the results back in any of the parallel magics (`%px`, `%%px`, or `%pmap`) in the host kernel by accessing the variable `_` (single underscore), or by using the `--set_variable VARIABLE` flag, like so:
+.. code:: bash
 
-```shell
-%%px --set_variable results
+  #10(0 1 4 9 16 25 36 49 64 81)
 
-(* cluster_rank cluster_rank)
-```
+You can get the results back in any of the parallel magics (``%px``, ``%%px``, or ``%pmap``) in the host kernel by accessing the variable ``_`` (single underscore), or by using the ``--set_variable VARIABLE`` flag, like so:
 
-Then, in the next cell, you can access `results`.
+.. code:: bash
 
-Notice that you can use the variable `cluster_rank` to partition parts of a problem so that each node is working on something different.
+  %%px --set_variable results
+  (* cluster_rank cluster_rank)
 
-In the examples above, use `-e` to evaluate the code in the host kernel as well. Note that `cluster_rank` is not defined on the host machine, and that this assumes the host kernel is the same as the parallel machines.
+
+Then, in the next cell, you can access ``results``.
+
+Notice that you can use the variable ``cluster_rank`` to partition parts of a problem so that each node is working on something different.
+
+In the examples above, use ``-e`` to evaluate the code in the host kernel as well. Note that ``cluster_rank`` is not defined on the host machine, and that this assumes the host kernel is the same as the parallel machines.
 
 
 Configuration
@@ -177,6 +186,7 @@ Configuration
 As an example:
 
 .. code:: bash
+
     cat ~/.jupyter/metakernel_config.py
     # use Qt as the default backend for plots
     c.OctaveKernel.plot_settings = dict(backend='qt')
