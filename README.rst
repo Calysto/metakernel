@@ -48,6 +48,7 @@ Kernels based on Metakernel
 - wolfram_kernel, https://github.com/mmatera/iwolfram
 - sas_kernel, https://github.com/palmer0914/sas_kernel
 - pysysh_kernel, https://github.com/Jaesin/psysh_kernel
+- calysto_bash, https://github.com/Calysto/calysto_bash
 
 ... and many others.
 
