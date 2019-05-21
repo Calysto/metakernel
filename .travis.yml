@@ -1,10 +1,5 @@
 
 language: python
-env:
-  global:
-    - JEDI="jedi"
-    - IPYPARALLEL="ipyparallel"
-    - IPYTHON="ipython"
 matrix:
   include:
     - python: 2.7
@@ -13,16 +8,12 @@ matrix:
     - python: 3.6
 
 install:
-    - travis_retry pip install coveralls $IPYTHON $IPYPARALLEL $JEDI
-    - travis_retry python setup.py install
-    - cd metakernel_python
-    - python setup.py install
-    - cd ..
+    - make install
 
 script:
-  - ipcluster start -n=3 &
-  - nosetests --exe -v --with-doctest --with-cov --cover-package metakernel;
-  - ipcluster stop
+  - make cover
+  - make docs
+  - make help
 
 after_success:
     - coveralls

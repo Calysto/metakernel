@@ -27,6 +27,9 @@ setup(name='metakernel',
       url='https://github.com/Calysto/metakernel',
       requires=[ipykernel_requires, 'pexpect (>= 4.2)'],
       install_requires=[ipykernel_install_requires, 'pexpect>=4.2'],
+      extras_require={
+          'test': ['nose', 'pytest', 'ipyparallel', 'coverage']
+      },
       packages=find_packages(include=['metakernel', 'metakernel.*']),
       package_data={'metakernel': ['images/*.png']},
       classifiers=[
