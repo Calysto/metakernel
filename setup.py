@@ -25,10 +25,10 @@ setup(name='metakernel',
       author='Steven Silvester',
       author_email='steven.silvester@ieee.org',
       url='https://github.com/Calysto/metakernel',
-      requires=[ipykernel_requires, 'pexpect (>= 4.2)'],
-      install_requires=[ipykernel_install_requires, 'pexpect>=4.2'],
+      requires=[ipykernel_requires, 'pexpect (>= 4.2)', 'ipyparallel'],
+      install_requires=[ipykernel_install_requires, 'pexpect>=4.2', 'ipyparallel'],
       extras_require={
-          'test': ['nose', 'pytest', 'ipyparallel', 'coverage']
+          'test': ['nose', 'coverage']
       },
       packages=find_packages(include=['metakernel', 'metakernel.*']),
       package_data={'metakernel': ['images/*.png']},

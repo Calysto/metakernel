@@ -101,6 +101,7 @@ class REPLWrapper(object):
 
         self._stream_handler = None
         self._stdin_handler = None
+        self._line_handler = None
 
         self._expect_prompt()
 
@@ -130,35 +131,46 @@ class REPLWrapper(object):
         if self._stream_handler:
             return self._expect_prompt_stream(expects, timeout)
 
+        if self._line_handler:
+            expects += [u(self.child.crlf)]
+
         while True:
             pos = self.child.expect(expects, timeout=timeout)
-            if pos < 2:
+            # got a full prompt or continuation prompt.
+            if pos in [0, 1]:
                 return pos
-            elif not self._stdin_handler:
-                raise ValueError('Stdin Requested but not stdin handler available')
+            # got a stdin prompt
+            if pos == 2:
+                if not self._stdin_handler:
+                    raise ValueError('Stdin Requested but not stdin handler available')
 
-            resp = self._stdin_handler(line + self.child.after)
-            self.sendline(resp)
+                resp = self._stdin_handler(line + self.child.after)
+                self.sendline(resp)
+            # got a newline
+            else:
+                self._line_handler(self.child.before.rstrip())
 
     def _expect_prompt_stream(self, expects, timeout=None):
         """Expect a prompt with streaming output.
         """
-        expects += [u(self.child.crlf)]
         stream_handler = self._stream_handler
         stdin_handler = self._stdin_handler
+
         t0 = time.time()
         if timeout == -1:
             timeout = 30
+
         got_cr = False
 
         while True:
             if timeout is not None and time.time() - t0 > timeout:
                 raise pexpect.TIMEOUT('Timed out')
 
-            line_timeout = 0.2
+            stream_timeout = 0.2
             try:
-                pos = self.child.expect(expects, timeout=line_timeout)
+                pos = self.child.expect(expects, timeout=stream_timeout)
             except pexpect.TIMEOUT:
+                import pdb; pdb.set_trace()
                 while 1:
                     try:
                         self.child.expect([u('\r')], timeout=0)
@@ -191,7 +203,7 @@ class REPLWrapper(object):
         return pos
 
     def run_command(self, command, timeout=None, stream_handler=None,
-                    stdin_handler=None):
+                    line_handler=None, stdin_handler=None):
         """Send a command to the REPL, wait for and return output.
         :param str command: The command to send. Trailing newlines are not needed.
           This should be a complete block of input that will trigger execution;
@@ -200,8 +212,8 @@ class REPLWrapper(object):
         :param int timeout: How long to wait for the next prompt. -1 means the
           default from the :class:`pexpect.spawn` object (default 30 seconds).
           None means to wait indefinitely.
-        :param func stream_handler - A function that accepts a string to print and
-        and optional line ending.
+        :param func stream_handler - A function that accepts a string to print as a streaming output
+        :param func line_handler - A function that accepts a string to print as a line output
         :param stdin_handler - A function that prompts the user for input and
         returns a response.
         """
@@ -214,6 +226,7 @@ class REPLWrapper(object):
             raise ValueError("No command was given")
 
         res = []
+        self._line_handler = line_handler
         self._stream_handler = stream_handler
         self._stdin_handler = stdin_handler
 
@@ -230,7 +243,7 @@ class REPLWrapper(object):
             self.interrupt(continuation=True)
             raise ValueError("Continuation prompt found - input was incomplete:\n" + command)
 
-        if self._stream_handler:
+        if self._stream_handler or self._line_handler:
             return u''
         return u''.join(res + [self.child.before])
 

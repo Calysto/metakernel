@@ -80,6 +80,8 @@ def get_metakernel():
 
 
 class MetaKernel(Kernel):
+    """The base MetaKernel class."""
+
     app_name = 'metakernel'
     identifier_regex = r'[^\d\W][\w\.]*'
     func_call_regex = r'([^\d\W][\w\.]*)\([^\)\()]*\Z'
@@ -212,12 +214,15 @@ class MetaKernel(Kernel):
         pass
 
     def repr(self, item):
+        """The repr of the kernel."""
         return repr(item)
 
     def get_usage(self):
+        """Get the usage statement for the kernel."""
         return "This is a usage statement."
 
     def get_kernel_help_on(self, info, level=0, none_on_fail=False):
+        """Get help on an object.  Called by the help magic."""
         if none_on_fail:
             return None
         else:
@@ -304,6 +309,10 @@ class MetaKernel(Kernel):
 
     def do_execute(self, code, silent=False, store_history=True, user_expressions=None,
                    allow_stdin=False):
+        """Handle code execution.
+
+        https://jupyter-client.readthedocs.io/en/stable/messaging.html#execute
+        """
         # Set the ability for the kernel to get standard-in:
         self._allow_stdin = allow_stdin
         # Create a default response:
@@ -393,6 +402,10 @@ class MetaKernel(Kernel):
         return self.kernel_resp
 
     def post_execute(self, retval, code, silent):
+        """Post-execution actions
+
+        Handle special kernel variables and display response if not silent.
+        """
         # Handle in's
         self.set_variable("_iii", self._iii)
         self.set_variable("_ii", self._ii)
@@ -441,6 +454,8 @@ class MetaKernel(Kernel):
                    start=None, stop=None, n=None, pattern=None, unique=False):
         """
         Access history at startup.
+
+        https://jupyter-client.readthedocs.io/en/stable/messaging.html#history
         """
         with open(self.hist_file) as fid:
             self.hist_cache = json.loads(fid.read() or "[]")
@@ -449,6 +464,8 @@ class MetaKernel(Kernel):
     def do_shutdown(self, restart):
         """
         Shut down the app gracefully, saving history.
+
+        https://jupyter-client.readthedocs.io/en/stable/messaging.html#kernel-shutdown
         """
         if self.hist_file:
             with open(self.hist_file, "w") as fid:
@@ -477,6 +494,8 @@ class MetaKernel(Kernel):
 
             return {'status' : 'incomplete',
                     'indent': ' ' * 4}
+
+        https://jupyter-client.readthedocs.io/en/stable/messaging.html#code-completeness
         """
         if code.startswith(self.magic_prefixes['magic']):
             ## force requirement to end with an empty line
@@ -491,6 +510,10 @@ class MetaKernel(Kernel):
             return {'status' : 'incomplete'}
 
     def do_complete(self, code, cursor_pos):
+        """Handle code completion for the kernel.
+
+        https://jupyter-client.readthedocs.io/en/stable/messaging.html#completion
+        """
         info = self.parse_code(code, 0, cursor_pos)
         content = {
             'matches': [],
@@ -549,7 +572,10 @@ class MetaKernel(Kernel):
         return content
 
     def do_inspect(self, code, cursor_pos, detail_level=0):
-        # Object introspection
+        """Object introspection.
+
+        https://jupyter-client.readthedocs.io/en/stable/messaging.html#introspection
+        """
         if cursor_pos > len(code):
             return
 
@@ -569,10 +595,92 @@ class MetaKernel(Kernel):
 
         return content
 
+
+    def clear_output(self, wait=False):
+        """Clear the output of the kernel."""
+        self.send_response(self.iopub_socket, 'clear_output',
+                           {'wait': wait})
+
+    def Display(self, *objects, clear_output=False):
+        """Display one or more objects using rich display.
+
+        See https://ipython.readthedocs.io/en/stable/config/integrating.html?highlight=display#rich-display
+        """
+        if clear_output:
+            self.clear_output(wait=True)
+
+        for item in objects:
+            if Widget and isinstance(item, Widget):
+                self.log.debug('Display Widget')
+                self._ipy_formatter(item)
+            else:
+                self.log.debug('Display Data')
+                try:
+                    data = _formatter(item, self.repr)
+                except Exception as e:
+                    self.Error(e)
+                    return
+                content = {
+                    'data': data[0],
+                    'metadata': data[1]
+                }
+                self.send_response(
+                    self.iopub_socket,
+                    'display_data',
+                    content
+                )
+
+    def Print(self, *objects, sep=' ', end='\n'):
+        """Print `objects` to the iopub stream, separated by `sep` and followed by `end`.
+
+        Items can be strings or `Widget` instances.
+        """
+        for item in objects:
+            if Widget and isinstance(item, Widget):
+                self.Display(item)
+
+        objects = [i for i in objects if not isinstance(i, Widget)]
+        message = format_message(*objects, sep=sep, end=end)
+
+        stream_content = {
+            'name': 'stdout', 'text': message}
+        self.log.debug('Print: %s' % message.rstrip())
+        if self.redirect_to_log:
+            self.log.info(message.rstrip())
+        else:
+            self.send_response(self.iopub_socket, 'stream', stream_content)
+
+    def Write(self, message):
+        """Write message directly to the iopub stdout with no added end character."""
+        stream_content = {
+            'name': 'stdout', 'text': message}
+        self.log.debug('Write: %s' % message)
+        if self.redirect_to_log:
+            self.log.info(message)
+        else:
+            self.send_response(self.iopub_socket, 'stream', stream_content)
+
+    def Error(self, *objects, sep=' ', end='\n'):
+        """Print `objects` to stdout, separated by `sep` and followed by `end`.
+
+        Objects are cast to strings.
+        """
+        message = format_message(*objects, sep=sep, end=end)
+        self.log.debug('Error: %s' % message.rstrip())
+        stream_content = {
+            'name': 'stderr',
+            'text': RED + message + NORMAL
+        }
+        if self.redirect_to_log:
+            self.log.info(message.rstrip())
+        else:
+            self.send_response(self.iopub_socket, 'stream', stream_content)
+
     ##############################
     # Private API and methods not likely to be overridden
 
     def reload_magics(self):
+        """Reload all of the line and cell magics."""
         self.line_magics = {}
         self.cell_magics = {}
 
@@ -605,6 +713,7 @@ class MetaKernel(Kernel):
                 self.log.error("Can't load '%s': error: %s" % (magic, e))
 
     def register_magics(self, magic_klass):
+        """Register magics for a given magic_klass."""
         magic = magic_klass(self)
         line_magics = magic.get_magics('line')
         cell_magics = magic.get_magics('cell')
@@ -612,80 +721,6 @@ class MetaKernel(Kernel):
             self.line_magics[name] = magic
         for name in cell_magics:
             self.cell_magics[name] = magic
-
-    def clear_output(self, wait=False):
-        self.send_response(self.iopub_socket, 'clear_output',
-                           {'wait': wait})
-
-    def Display(self, *args, **kwargs):
-        clear_output = kwargs.get("clear_output", False)
-        for message in args:
-            if isinstance(message, HTML):
-                if clear_output:
-                    self.send_response(self.iopub_socket, 'clear_output',
-                                       {'wait': True})
-            if Widget and isinstance(message, Widget):
-                self.log.debug('Display Widget')
-                self._ipy_formatter(message)
-            else:
-                self.log.debug('Display Data')
-                try:
-                    data = _formatter(message, self.repr)
-                except Exception as e:
-                    self.Error(e)
-                    return
-                content = {
-                    'data': data[0],
-                    'metadata': data[1]
-                }
-                self.send_response(
-                    self.iopub_socket,
-                    'display_data',
-                    content
-                )
-
-    def Print(self, *args, **kwargs):
-        end = kwargs["end"] if ("end" in kwargs) else "\n"
-        message = ""
-        for item in args:
-            if Widget and isinstance(item, Widget):
-                self.Display(item)
-            else:
-                if message:
-                    message += " "
-                if PY3:
-                    message += str(item)
-                else:
-                    message += codecs.encode(item, "utf-8")
-        message += end
-        stream_content = {
-            'name': 'stdout', 'text': message}
-        self.log.debug('Print: %s' % message)
-        if self.redirect_to_log:
-            self.log.info(message)
-        else:
-            self.send_response(self.iopub_socket, 'stream', stream_content)
-
-    def Write(self, message):
-        stream_content = {
-            'name': 'stdout', 'text': message}
-        self.log.debug('Write: %s' % message)
-        if self.redirect_to_log:
-            self.log.info(message)
-        else:
-            self.send_response(self.iopub_socket, 'stream', stream_content)
-
-    def Error(self, *args, **kwargs):
-        message = format_message(*args, **kwargs)
-        self.log.debug('Error: %s' % message)
-        stream_content = {
-            'name': 'stderr',
-            'text': RED + message + NORMAL
-        }
-        if self.redirect_to_log:
-            self.log.info(message)
-        else:
-            self.send_response(self.iopub_socket, 'stream', stream_content)
 
     def send_response(self, *args, **kwargs):
         ### if we are running via %parallel, we might not have a
@@ -717,10 +752,12 @@ class MetaKernel(Kernel):
 
     def get_help_on(self, expr, level=0, none_on_fail=False,
             cursor_pos=-1):
+        """Get help for an expression using the help magic."""
         help_magic = self.line_magics['help']
         return help_magic.get_help_on(expr, level, none_on_fail, cursor_pos)
 
     def parse_code(self, code, cursor_start=0, cursor_end=-1):
+        """Parse code using our parser."""
         return self.parser.parse_code(code, cursor_start, cursor_end)
 
     def _get_sticky_magics(self):
@@ -734,6 +771,7 @@ class MetaKernel(Kernel):
 
 
 class MetaKernelApp(IPKernelApp):
+    """The MetaKernel launcher application."""
 
     config_dir = Unicode()
 
@@ -861,13 +899,15 @@ def _formatter(data, repr_func):
     return (format_dict, metadata_dict)
 
 
-def format_message(*args, **kwargs):
+def format_message(*objects, sep=' ', end='\n'):
     """
-    Format args like Print does.
+    Format a message like print() does.
     """
-    end = kwargs["end"] if ("end" in kwargs) else "\n"
-    message = " ".join([str(a) for a in args]) + end
-    return message
+    if PY3:
+        objects = [str(i) for i in objects]
+    else:
+        objects = [codecs.encode(i, 'utf-8') for i in objects]
+    return sep.join(objects) + end
 
 
 class IPythonKernel(MetaKernel):
@@ -888,15 +928,20 @@ class IPythonKernel(MetaKernel):
                              self.magic_prefixes, self.help_suffix)
         self.shell = None
 
-    def Display(self, *args, **kwargs):
+    def Display(self, *objects, **kwargs):
+        """Display an object in the kernel, using `IPython.display`."""
         from IPython.display import display
-        return display(*args, **kwargs)
+        return display(*objects, **kwargs)
 
-    def Error(self, *args, **kwargs):
-        sys.stderr.write(format_message(*args, **kwargs))
+    def Error(self, *objects, sep=' ', end='\n'):
+        """Print `objects` to stderr, separated by `sep` and followed by `end`.
+        """
+        sys.stderr.write(format_message(*objects, sep=' ', end='\n'))
 
-    def Print(self, *args, **kwargs):
-        sys.stdout.write(format_message(*args, **kwargs))
+    def Print(self, *objects, sep=' ', end='\n'):
+        """Print `objects` to stdout, separated by `sep` and followed by `end`.
+        """
+        sys.stdout.write(format_message(*objects, sep=sep, end=end))
 
 
 def register_ipython_magics(*magics):

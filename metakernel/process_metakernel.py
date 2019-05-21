@@ -73,7 +73,7 @@ class ProcessMetaKernel(MetaKernel):
         interrupted = False
         output = ''
         error = None
-        stream_handler = self.Print if not silent else None
+        stream_handler = self.Write if not silent else None
         try:
             output = wrapper.run_command(code.rstrip(), timeout=None,
                                          stream_handler=stream_handler,

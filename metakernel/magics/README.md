@@ -312,7 +312,7 @@ Example:
 
     %parallel bash_kernel BashKernel
     %parallel bash_kernel BashKernel -k bash
-    %parallel bash_kernel BashKernel --i [0,2:5,9,...]
+    %parallel bash_kernel BashKernel -i [0,2:5,9,...]
 
 cluster_size and cluster_rank variables are set upon
 initialization of the remote node (if the kernel
@@ -386,6 +386,10 @@ in the cluster.
 
 Note: not all languages may support running a function via this magic.
 
+Options:
+-------
+-s --set_variable set the variable with the parallel results rather than returning them [default: None]
+
 ## `%px`
 
 %px EXPRESSION - send EXPRESSION to the cluster.
@@ -405,6 +409,7 @@ Use %parallel to initialize the cluster.
 
 Options:
 -------
+-s --set_variable set the variable with the parallel results rather than returning them [default: None]
 -e --evaluate  evaluate code in the current kernel, too. The current kernel should be of the same language as the cluster. [default: False]
 -k --kernel_name kernel name given to use for execution [default: None]
 
@@ -718,6 +723,7 @@ Use %parallel to initialize the cluster.
 
 Options:
 -------
+-s --set_variable set the variable with the parallel results rather than returning them [default: None]
 -e --evaluate  evaluate code in the current kernel, too. The current kernel should be of the same language as the cluster. [default: False]
 -k --kernel_name kernel name given to use for execution [default: None]
 
