@@ -1,17 +1,9 @@
 from __future__ import print_function
 import sys
 
-if "kernel" not in globals():
-    print("""This file is designed to run like:
-    jupyter console --kernel metakernel_python
-    In [1]: %run generate_help.py
-""")
-    kernel = None
-else:
-    kernel = globals()["kernel"]
+from metakernel_python import MetaKernelPython
 
-if not kernel:
-    sys.exit(1)
+kernel = MetaKernelPython()
 
 path = "metakernel/magics/README.md"
 

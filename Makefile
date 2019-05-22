@@ -57,4 +57,4 @@ docs: clean
 	make -C docs html
 
 help:
-	jupyter console --kernel metakernel_python < generate_help.py
+	python generate_help.py
