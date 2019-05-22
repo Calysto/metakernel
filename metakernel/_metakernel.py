@@ -632,7 +632,7 @@ class MetaKernel(Kernel):
                     content
                 )
 
-    def Print(self, *objects, sep=' ', end='\n'):
+    def Print(self, *objects, **kwargs):
         """Print `objects` to the iopub stream, separated by `sep` and followed by `end`.
 
         Items can be strings or `Widget` instances.
@@ -642,7 +642,7 @@ class MetaKernel(Kernel):
                 self.Display(item)
 
         objects = [i for i in objects if not isinstance(i, Widget)]
-        message = format_message(*objects, sep=sep, end=end)
+        message = format_message(*objects, **kwargs)
 
         stream_content = {
             'name': 'stdout', 'text': message}
@@ -662,12 +662,12 @@ class MetaKernel(Kernel):
         else:
             self.send_response(self.iopub_socket, 'stream', stream_content)
 
-    def Error(self, *objects, sep=' ', end='\n'):
+    def Error(self, *objects, **kwargs):
         """Print `objects` to stdout, separated by `sep` and followed by `end`.
 
         Objects are cast to strings.
         """
-        message = format_message(*objects, sep=sep, end=end)
+        message = format_message(*objects, **kwargs)
         self.log.debug('Error: %s' % message.rstrip())
         stream_content = {
             'name': 'stderr',
@@ -901,7 +901,7 @@ def _formatter(data, repr_func):
     return (format_dict, metadata_dict)
 
 
-def format_message(*objects, sep=' ', end='\n'):
+def format_message(*objects, **kwargs):
     """
     Format a message like print() does.
     """
@@ -909,6 +909,8 @@ def format_message(*objects, sep=' ', end='\n'):
         objects = [str(i) for i in objects]
     else:
         objects = [codecs.encode(i, 'utf-8') for i in objects]
+    sep = kwargs.get('sep', ' ')
+    end = kwargs.get('end', '\n')
     return sep.join(objects) + end
 
 
@@ -935,15 +937,15 @@ class IPythonKernel(MetaKernel):
         from IPython.display import display
         return display(*objects, **kwargs)
 
-    def Error(self, *objects, sep=' ', end='\n'):
+    def Error(self, *objects, **kwargs):
         """Print `objects` to stderr, separated by `sep` and followed by `end`.
         """
-        sys.stderr.write(format_message(*objects, sep=' ', end='\n'))
+        sys.stderr.write(format_message(*objects, **kwargs))
 
-    def Print(self, *objects, sep=' ', end='\n'):
+    def Print(self, *objects, **kwargs):
         """Print `objects` to stdout, separated by `sep` and followed by `end`.
         """
-        sys.stdout.write(format_message(*objects, sep=sep, end=end))
+        sys.stdout.write(format_message(*objects, **kwargs))
 
 
 def register_ipython_magics(*magics):

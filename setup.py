@@ -28,7 +28,7 @@ setup(name='metakernel',
       requires=[ipykernel_requires, 'pexpect (>= 4.2)', 'ipyparallel'],
       install_requires=[ipykernel_install_requires, 'pexpect>=4.2', 'ipyparallel'],
       extras_require={
-          'test': ['nose', 'coverage']
+          'test': ['nose', 'coverage', 'jupyter_console']
       },
       packages=find_packages(include=['metakernel', 'metakernel.*']),
       package_data={'metakernel': ['images/*.png']},
