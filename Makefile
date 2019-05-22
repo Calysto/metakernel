@@ -35,7 +35,7 @@ test_warn: clean
 	make clean
 
 cover: clean
-	python.setup.py build
+	python setup.py build
 	ipcluster start -n=3 &
 	cd build; nosetests $(TEST_ARGS) --with-cov --cov $(NAME)
 	ipcluster stop

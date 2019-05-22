@@ -601,12 +601,14 @@ class MetaKernel(Kernel):
         self.send_response(self.iopub_socket, 'clear_output',
                            {'wait': wait})
 
-    def Display(self, *objects, clear_output=False):
+    def Display(self, *objects, **kwargs):
         """Display one or more objects using rich display.
+
+        Supports a `clear_output` keyword argument that clears the output before displaying.
 
         See https://ipython.readthedocs.io/en/stable/config/integrating.html?highlight=display#rich-display
         """
-        if clear_output:
+        if kwargs.get('clear_output'):
             self.clear_output(wait=True)
 
         for item in objects:
