@@ -1,4 +1,5 @@
 import errno
+import math
 import sys
 import re
 import signal
@@ -159,47 +160,55 @@ class REPLWrapper(object):
         t0 = time.time()
         if timeout == -1:
             timeout = 30
+        elif timeout is None:
+            timeout = math.inf
+        stream_timeout = 0.1
 
-        got_cr = False
+        unhandled_cr = False
 
+        # Wait for a prompt, handling carriage returns.
         while True:
-            if timeout is not None and time.time() - t0 > timeout:
+            if time.time() - t0 > timeout:
                 raise pexpect.TIMEOUT('Timed out')
 
-            stream_timeout = 0.2
             try:
+                # Wait for a prompt.
                 pos = self.child.expect(expects, timeout=stream_timeout)
             except pexpect.TIMEOUT:
-                import pdb; pdb.set_trace()
+                # Process any carriage returns in the stream.
                 while 1:
                     try:
                         self.child.expect([u('\r')], timeout=0)
-                        stream_handler('\r', end='')
-                        if got_cr:
-                            stream_handler(self.child.before, end='')
-                        got_cr = True
+                        if unhandled_cr:
+                            stream_handler('\r')
+                        stream_handler(self.child.before)
+                        unhandled_cr = True
                     except pexpect.TIMEOUT:
                         break
                 continue
 
-            # Handle cr state
+            # prompt or stdin request received, handle line.
             line = self.child.before
-            if got_cr:
-                line = '\r' + line
-            got_cr = False
 
+            # Handle cr state.
+            if unhandled_cr:
+                line = '\r' + line
+            unhandled_cr = False
+
+            # Handle stdin request.
             if pos == 2:
                 if not stdin_handler:
-                    raise ValueError('Stdin Requested but not stdin handler available')
+                    raise ValueError('Stdin Requested but no stdin handler available')
                 resp = stdin_handler(line + self.child.after)
                 self.sendline(resp)
-            elif pos == 3:  # End of line
+                continue
+
+            # prompt received, but partial line precedes it
+            if len(line) != 0:
                 stream_handler(line)
-            else:
-                if len(line) != 0:
-                    # prompt received, but partial line precedes it
-                    stream_handler(line)
-                break
+
+            # exit on prompt received.
+            break
         return pos
 
     def run_command(self, command, timeout=None, stream_handler=None,

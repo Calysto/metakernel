@@ -5,7 +5,7 @@ import os
 import sys
 
 from metakernel import pexpect, replwrap
-
+from metakernel.tests.utils import get_log, get_log_text
 
 class REPLWrapTestCase(unittest.TestCase):
 
@@ -29,6 +29,22 @@ class REPLWrapTestCase(unittest.TestCase):
         # PAGER should be set to cat, otherwise man hangs
         res = bash.run_command('man sleep', timeout=2)
         assert 'SLEEP' in res, res
+
+        # should handle CR by default
+        cmd = r'for i in {1..3};do echo -ne "\r$i"; sleep 1; done'
+        res = bash.run_command(cmd)
+        assert '\r1\r2\r3' in res
+
+        # should handle CRs in a stream
+        res = bash.run_command(cmd, stream_handler=sys.stdout.write)
+        assert res == ''
+
+        # should handle lines with a line handler
+        logger = get_log()
+        res = bash.run_command('echo "1\n2\n3"', line_handler=logger.info)
+        assert res == ''
+        text = get_log_text(logger)
+        assert '1\n2\n3' in text
 
     def test_multiline(self):
         bash = replwrap.bash()

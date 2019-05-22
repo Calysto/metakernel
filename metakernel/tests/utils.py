@@ -53,7 +53,7 @@ class EvalKernel(MetaKernel):
         return "highlight: [%s, %s, %s, %s]" % (0, 0, 1, 0)
 
 
-def get_kernel(kernel_class=MetaKernel):
+def get_log():
     log = logging.getLogger('test')
     log.setLevel(logging.DEBUG)
 
@@ -64,19 +64,33 @@ def get_kernel(kernel_class=MetaKernel):
     hdlr.setLevel(logging.DEBUG)
     log.addHandler(hdlr)
 
+    return log
+
+
+def get_kernel(kernel_class=MetaKernel):
     context = zmq.Context.instance()
     iopub_socket = context.socket(zmq.PUB)
 
     kernel = kernel_class(session=ss.Session(), iopub_socket=iopub_socket,
-                          log=log)
+                          log=get_log())
     return kernel
 
 
-def clear_log_text(kernel):
-    kernel.log.handlers[0].stream.truncate(0)
-    kernel.log.handlers[0].stream.seek(0)
+def clear_log_text(obj):
+    """Clear the log text from a kernel or a log object."""
+    if isinstance(obj, MetaKernel):
+        log = obj.log
+    else:
+        log = obj
+    log.handlers[0].stream.truncate(0)
+    log.handlers[0].stream.seek(0)
 
 
-def get_log_text(kernel):
-    return kernel.log.handlers[0].stream.getvalue()
+def get_log_text(obj):
+    """Get the log text from a kernel or a log object."""
+    if isinstance(obj, MetaKernel):
+        log = obj.log
+    else:
+        log = obj
+    return log.handlers[0].stream.getvalue()
 
