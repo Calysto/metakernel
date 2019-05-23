@@ -53,6 +53,16 @@ class EvalKernel(MetaKernel):
         return "highlight: [%s, %s, %s, %s]" % (0, 0, 1, 0)
 
 
+def has_network():
+    import requests
+    try:
+        _ = requests.head('http://google.com', timeout=3)
+        return True
+    except requests.ConnectionError:
+        print("No internet connection available.")
+    return False
+
+
 def get_log():
     log = logging.getLogger('test')
     log.setLevel(logging.DEBUG)

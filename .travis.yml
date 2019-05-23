@@ -9,6 +9,7 @@ matrix:
 
 install:
     - make install
+    - pip install coveralls
 
 script:
   - make cover

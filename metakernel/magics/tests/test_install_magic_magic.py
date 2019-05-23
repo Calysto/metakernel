@@ -1,16 +1,16 @@
 
-from metakernel.tests.utils import (get_kernel, get_log_text, 
-                                    clear_log_text, EvalKernel)
+from metakernel.tests.utils import (get_kernel, get_log_text,
+                                    clear_log_text, EvalKernel, has_network)
 import re
 import os
 from metakernel.config import get_local_magics_dir
-from nose.plugins.attrib import attr
+import pytest
 
 
 filename = get_local_magics_dir() + os.sep + "cd_magic.py"
 
 
-@attr('network')
+@pytest.mark.skipif(not has_network())
 def test_install_magic_magic():
     kernel = get_kernel(EvalKernel)
     kernel.do_execute("%install_magic https://raw.githubusercontent.com/calysto/metakernel/master/metakernel/magics/cd_magic.py")

@@ -1,7 +1,6 @@
 # Note: This is meant for Metakernel developer use only
 .PHONY: all clean test test_warn cover release help
 
-export TEST_ARGS=--exe -v --with-doctest
 export NAME=`python setup.py --name 2>/dev/null`
 export VERSION=`python setup.py --version 2>/dev/null`
 
@@ -22,7 +21,7 @@ clean:
 test: clean
 	python setup.py build
 	ipcluster start -n=3 &
-	cd build; nosetests $(TEST_ARGS)
+	cd build; pytest
 	ipcluster stop
 	make clean
 
@@ -30,14 +29,14 @@ test_warn: clean
 	python setup.py build
 	ipcluster start -n=3 &
 	export PYTHONWARNINGS="all"
-	cd build; nosetests $(TEST_ARGS)
+	cd build; pytest
 	ipcluster stop
 	make clean
 
 cover: clean
 	python setup.py build
 	ipcluster start -n=3 &
-	cd build; nosetests $(TEST_ARGS) --with-cov --cov $(NAME)
+	cd build; nosetests pytest --cov=$(NAME)
 	ipcluster stop
 	coverage annotate
 
