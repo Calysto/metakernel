@@ -12,9 +12,9 @@ install:
     - pip install coveralls
 
 script:
-  - make cover
   - make docs
   - make help
+  - make cover
 
 after_success:
-    - coveralls
+    - codecov

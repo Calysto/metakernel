@@ -36,7 +36,7 @@ test_warn: clean
 cover: clean
 	python setup.py build
 	ipcluster start -n=3 &
-	cd build; nosetests pytest --cov=$(NAME)
+	cd build; pytest --cov=$(NAME)
 	ipcluster stop
 	coverage annotate
 
