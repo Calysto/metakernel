@@ -5,7 +5,7 @@ import os
 import pytest
 
 
-@pytest.mark.skipif(not has_network())
+@pytest.mark.skipif(not has_network(), reason='no network')
 def test_download_magic():
     kernel = get_kernel(EvalKernel)
     kernel.do_execute("%download --filename TEST.txt https://raw.githubusercontent.com/calysto/metakernel/master/LICENSE.txt")

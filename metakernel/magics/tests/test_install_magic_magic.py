@@ -10,7 +10,7 @@ import pytest
 filename = get_local_magics_dir() + os.sep + "cd_magic.py"
 
 
-@pytest.mark.skipif(not has_network())
+@pytest.mark.skipif(not has_network(), reason='no network')
 def test_install_magic_magic():
     kernel = get_kernel(EvalKernel)
     kernel.do_execute("%install_magic https://raw.githubusercontent.com/calysto/metakernel/master/metakernel/magics/cd_magic.py")
