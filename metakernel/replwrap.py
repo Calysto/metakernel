@@ -1,5 +1,4 @@
 import errno
-import math
 import sys
 import re
 import signal
@@ -161,7 +160,7 @@ class REPLWrapper(object):
         if timeout == -1:
             timeout = 30
         elif timeout is None:
-            timeout = math.inf
+            timeout = 1e6
         stream_timeout = 0.1
 
         unhandled_cr = False

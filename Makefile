@@ -19,24 +19,21 @@ clean:
 	/usr/bin/find . -name "*.pyc" -o -name "*.py,cover"| xargs rm -f
 
 test: clean
-	python setup.py build
 	ipcluster start -n=3 &
-	cd build; pytest
+	pytest
 	ipcluster stop
 	make clean
 
 test_warn: clean
-	python setup.py build
 	ipcluster start -n=3 &
 	export PYTHONWARNINGS="all"
-	cd build; pytest
+	pytest
 	ipcluster stop
 	make clean
 
 cover: clean
-	python setup.py build
 	ipcluster start -n=3 &
-	cd build; pytest --cov=$(NAME)
+	pytest --cov=$(NAME)
 	ipcluster stop
 	coverage annotate
 
