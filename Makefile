@@ -8,7 +8,7 @@ export VERSION=`python setup.py --version 2>/dev/null`
 all: install
 
 install: clean
-	pip install -e .[test]
+	pip install  --upgrade --upgrade-strategy eager -e .[test]
 	pip install ./metakernel_python
 	python -m metakernel_python install --user
 	pip install ./metakernel_echo
