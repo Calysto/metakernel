@@ -1,11 +1,11 @@
 
-from metakernel.tests.utils import (get_kernel, get_log_text, 
-                                    clear_log_text, EvalKernel)
+from metakernel.tests.utils import (get_kernel, get_log_text,
+                                    clear_log_text, EvalKernel, has_network)
 import os
-from nose.plugins.attrib import attr
+import pytest
 
 
-@attr('network')
+@pytest.mark.skipif(not has_network(), reason='no network')
 def test_download_magic():
     kernel = get_kernel(EvalKernel)
     kernel.do_execute("%download --filename TEST.txt https://raw.githubusercontent.com/calysto/metakernel/master/LICENSE.txt")

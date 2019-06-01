@@ -11,8 +11,8 @@ def test_parallel_magic():
     kernel.do_execute("%px cluster_rank", False)
     results = get_log_text(kernel)
     assert "[0, 1, 2]" in results, results
-    
-# Starting the cluster from here doesn't work with nosetests
+
+# Starting the cluster from here doesn't work with pytest
 # so we start `ipcluster` before we test.
 
 #def setup_func():

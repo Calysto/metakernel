@@ -1,10 +1,10 @@
 import os
 import re
 import subprocess
-from nose.tools import assert_raises
+import pytest
 
 from metakernel import MetaKernel
-from metakernel.tests.utils import (get_kernel, get_log_text, EvalKernel, 
+from metakernel.tests.utils import (get_kernel, get_log_text, EvalKernel,
                                     clear_log_text)
 
 def test_magics():
@@ -138,15 +138,15 @@ def test_other_kernels():
     assert "Sorry, no help is available on 'dir?'." == message, message
 
     content = kernel.do_inspect('dir', len('dir'))
-    assert (content['status'] == 'aborted' and 
+    assert (content['status'] == 'aborted' and
             content['found'] == False), "do_inspect should abort, and be not found"
 
     content = kernel.do_inspect('len(dir', len('len(dir'))
-    assert (content['status'] == 'aborted' and 
+    assert (content['status'] == 'aborted' and
             content['found'] == False), "do_inspect should abort, and be not found"
 
     content = kernel.do_inspect('(dir', len('(dir'))
-    assert (content['status'] == 'aborted' and 
+    assert (content['status'] == 'aborted' and
             content['found'] == False), "do_inspect should abort, and be not found"
 
     # Now change it so that there is help available:
@@ -194,7 +194,8 @@ def test_do_execute_meta():
 def test_do_execute_meta2():
     kernel = get_kernel()
     for code in ['reset, stop', 'step', 'inspect ', 'garbage']:
-        assert_raises(Exception, kernel.do_execute, "~~META~~: %s" % code)
+        with pytest.raises(Exception):
+            kernel.do_execute("~~META~~: %s" % code)
 
 
 def test_misc():

@@ -4,6 +4,8 @@
 from metakernel import Magic, option
 import logging
 import time
+from ipyparallel import Client
+
 
 class Slice(object):
     """Utility class for making slice ranges."""
@@ -30,7 +32,7 @@ class ParallelMagic(Magic):
     @option(
         '-i', '--ids', action='store', default=None,
         help='the machine ids to use from the cluster'
-        
+
     )
     def line_parallel(self, module_name, class_name, kernel_name="default", ids=None):
         """
@@ -38,20 +40,16 @@ class ParallelMagic(Magic):
 
         Example:
 
-            %parallel bash_kernel BashKernel 
+            %parallel bash_kernel BashKernel
             %parallel bash_kernel BashKernel -k bash
             %parallel bash_kernel BashKernel -i [0,2:5,9,...]
 
-        cluster_size and cluster_rank variables are set upon 
-        initialization of the remote node (if the kernel 
+        cluster_size and cluster_rank variables are set upon
+        initialization of the remote node (if the kernel
         supports %set).
 
         Use %px or %%px to send code to the cluster.
         """
-        try:
-            from ipyparallel import Client
-        except ImportError:
-            from IPython.parallel import Client
         count = 1
         while count <= 5:
             try:
@@ -133,10 +131,10 @@ except:
 from %(module_name)s import %(class_name)s
 kernels['%(kernel_name)s'] = %(class_name)s()
 ## FIXME: kernels['%(kernel_name)s'].kernel = kernel
-""" % {"module_name": module_name, 
+""" % {"module_name": module_name,
        "class_name": class_name,
        "kernel_name": kernel_name,
-       "env": str(self.kernel.env)}, 
+       "env": str(self.kernel.env)},
                           block=True)
 
         self.view["kernels['%s'].set_variable(\"cluster_size\", %s)" % (
@@ -173,8 +171,8 @@ kernels['%(kernel_name)s'] = %(class_name)s()
             %px x
             %px cluster_rank
 
-        cluster_size and cluster_rank variables are set upon 
-        initialization of the remote node (if the kernel 
+        cluster_size and cluster_rank variables are set upon
+        initialization of the remote node (if the kernel
         supports %set).
 
         Use %parallel to initialize the cluster.
@@ -234,7 +232,7 @@ kernels['%(kernel_name)s'] = %(class_name)s()
 
         Example:
 
-            %%px 
+            %%px
             (define x 42)
 
         Use %parallel to initialize the cluster.

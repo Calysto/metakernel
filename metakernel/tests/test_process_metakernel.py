@@ -19,7 +19,7 @@ def test_process_metakernel():
     kernel.do_execute('lalkjds')
     text = get_log_text(kernel)
     assert ': command not found' in text, text
-    
+
     html = HTML("some html")
     kernel.Display(html)
 

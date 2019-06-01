@@ -25,5 +25,5 @@ or, if you are local, you can connect with just:
 or even just:
     $> ipython <app> --existing
 if this is the most recent Jupyter session you have started.
-""" in text, text
+""".strip() in text, text
 
