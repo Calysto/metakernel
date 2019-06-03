@@ -52,11 +52,13 @@ class ProcessMetaKernel(MetaKernel):
     def __init__(self, *args, **kwargs):
         MetaKernel.__init__(self, *args, **kwargs)
         self.wrapper = None
-        self.wrapper = self.makeWrapper()
 
     def do_execute_direct(self, code, silent=False):
         """Execute the code in the subprocess.
         """
+        if not self.wrapper:
+            self.wrapper = self.makeWrapper()
+
         self.payload = []
         wrapper = self.wrapper
         child = wrapper.child
