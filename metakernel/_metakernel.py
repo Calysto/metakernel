@@ -641,7 +641,7 @@ class MetaKernel(Kernel):
             if Widget and isinstance(item, Widget):
                 self.Display(item)
 
-        objects = [i for i in objects if not isinstance(i, Widget)]
+        objects = [i for i in objects if not (Widget and isinstance(i, Widget))]
         message = format_message(*objects, **kwargs)
 
         stream_content = {
