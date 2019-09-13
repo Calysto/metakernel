@@ -162,11 +162,11 @@ class Activity(object):
                 print(barvalues)
 
     def handle_submit(self, sender):
-        import fcntl
-        with open(self.results_filename, "a+") as g:
-            fcntl.flock(g, fcntl.LOCK_EX)
+        import portalocker,os
+        with portalocker.Lock(self.results_filename, "a+") as g:
             g.write("%s::%s::%s::%s\n" % (self.id, getpass.getuser(), datetime.datetime.today(), sender.description))
-            fcntl.flock(g, fcntl.LOCK_UN)
+            g.flush()
+            os.fsync(g.fileno())
         self.output.clear_output()
         with self.output:
             print("Received: " + sender.description)
