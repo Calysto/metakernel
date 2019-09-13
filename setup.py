@@ -27,7 +27,7 @@ setup(name='metakernel',
       author_email='steven.silvester@ieee.org',
       url='https://github.com/Calysto/metakernel',
       requires=[ipykernel_requires, 'pexpect (>= 4.2)', 'ipyparallel'],
-      install_requires=[ipykernel_install_requires, 'pexpect>=4.2', 'ipyparallel'],
+      install_requires=[ipykernel_install_requires, 'pexpect>=4.2', 'ipyparallel','portalocker'],
       extras_require={
           'test': ['pytest', 'pytest-cov', 'requests']
       },
