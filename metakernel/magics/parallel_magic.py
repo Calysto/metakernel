@@ -4,7 +4,6 @@
 from metakernel import Magic, option
 import logging
 import time
-from ipyparallel import Client
 
 
 class Slice(object):
@@ -50,6 +49,7 @@ class ParallelMagic(Magic):
 
         Use %px or %%px to send code to the cluster.
         """
+        from ipyparallel import Client
         count = 1
         while count <= 5:
             try:
