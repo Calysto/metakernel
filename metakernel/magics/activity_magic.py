@@ -162,7 +162,7 @@ class Activity(object):
                 print(barvalues)
 
     def handle_submit(self, sender):
-        import portalocker,os
+        import portalocker
         with portalocker.Lock(self.results_filename, "a+") as g:
             g.write("%s::%s::%s::%s\n" % (self.id, getpass.getuser(), datetime.datetime.today(), sender.description))
             g.flush()
