@@ -144,7 +144,7 @@ class REPLWrapper(object):
                 if not self._stdin_handler:
                     raise ValueError('Stdin Requested but not stdin handler available')
 
-                resp = self._stdin_handler(line + self.child.after)
+                resp = self._stdin_handler(self.child.after)
                 self.sendline(resp)
             # got a newline
             else:
