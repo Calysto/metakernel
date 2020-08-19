@@ -614,7 +614,23 @@ class MetaKernel(Kernel):
         for item in objects:
             if Widget and isinstance(item, Widget):
                 self.log.debug('Display Widget')
-                self._ipy_formatter(item)
+                data = {
+                    'text/plain': repr(item),
+                    'application/vnd.jupyter.widget-view+json': {
+                    'version_major': 2,
+                    'version_minor': 0,
+                    'model_id': item._model_id
+                    }
+                    }
+                content = {
+                    'data': data,
+                    'metadata': None
+                    }
+                self.send_response(
+                    self.iopub_socket,
+                    'display_data',
+                    content
+                )
             else:
                 self.log.debug('Display Data')
                 try:
