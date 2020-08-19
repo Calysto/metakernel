@@ -373,7 +373,7 @@ class MetaKernel(Kernel):
                 magic = self.get_magic(code)
                 if magic is not None:
                     stack.append(magic)
-                    code = magic.get_code()
+                    code = str(magic.get_code())
                     # signal to exit, maybe error or no block
                     if not magic.evaluate:
                         break
