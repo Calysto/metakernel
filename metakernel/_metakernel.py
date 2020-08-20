@@ -624,7 +624,7 @@ class MetaKernel(Kernel):
                     }
                 content = {
                     'data': data,
-                    'metadata': None
+                    'metadata': {}
                     }
                 self.send_response(
                     self.iopub_socket,
