@@ -373,7 +373,7 @@ class MetaKernel(Kernel):
                 magic = self.get_magic(code)
                 if magic is not None:
                     stack.append(magic)
-                    code = magic.get_code()
+                    code = str(magic.get_code())
                     # signal to exit, maybe error or no block
                     if not magic.evaluate:
                         break
@@ -684,6 +684,40 @@ class MetaKernel(Kernel):
         Objects are cast to strings.
         """
         message = format_message(*objects, **kwargs)
+        self.log.debug('Error: %s' % message.rstrip())
+        stream_content = {
+            'name': 'stderr',
+            'text': RED + message + NORMAL
+        }
+        if self.redirect_to_log:
+            self.log.info(message.rstrip())
+        else:
+            self.send_response(self.iopub_socket, 'stream', stream_content)
+    
+    def Error_display(self, *objects, **kwargs):
+        """Print `objects` to stdout is they area strings, separated by `sep` and followed by `end`.
+        All other objects are rendered using the Display method
+        Objects are cast to strings.
+        """
+        msg = []
+        msg_dict = {}
+        for item in objects:
+            if not isinstance(item, str):
+                self.log.debug('Item type:{}'.format(type(item)) )
+                self.Display(item)
+            else:
+                # msg is the error for str
+                msg.append(item)
+        
+        for k,v in kwargs:
+            if not isinstance(v, str):
+                self.Display(k,v)
+            else:
+                msg_dict[k] = v
+
+        message = format_message(' '.join(msg), **kwargs)
+        if len(msg_dict.keys()) > 0:
+            message = format_message(' '.join(msg), msg_dict)
         self.log.debug('Error: %s' % message.rstrip())
         stream_content = {
             'name': 'stderr',
