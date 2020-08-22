@@ -5,6 +5,7 @@ from distutils.version import LooseVersion
 from metakernel import Magic, option, ExceptionWrapper
 import pydoc
 import sys
+import ast
 try:
     import jedi
     from jedi import Interpreter
@@ -22,27 +23,24 @@ except ImportError:
 
 PY3 = sys.version_info[0] == 3
 
-def exec_code(code, env, mode):
+def exec_then_eval(code, env):
     import traceback
     try:
-        ccode = compile(code, "python cell", mode)
-    except Exception as exc:
-        ex_type, ex, tb = sys.exc_info()
-        tb_format = ["%s: %s" % (ex.__class__.__name__, str(ex))]
-        return ExceptionWrapper(ex_type.__name__, repr(exc.args), tb_format)
-    try:
-        if mode == "exec":
-            exec(ccode, env)
-        elif mode == "eval":
-            return eval(ccode, env)
+        block = ast.parse(code, mode="exec")
+        last = block.body.pop()
+        if type(last) != ast.Expr:
+            block.body.append(last)
+            return exec(compile(block, "python cell", mode="exec"), env)
+        else:
+            exec(compile(block, "python cell", mode="exec"), env)
+            return eval(compile(ast.Expression(last.value),
+                                  "python cell", mode="eval"), env)
     except Exception as exc:
         ex_type, ex, tb = sys.exc_info()
         line1 = ["Traceback (most recent call last):"]
         line2 = ["%s: %s" % (ex.__class__.__name__, str(ex))]
         tb_format = line1 + [line.rstrip() for line in traceback.format_tb(tb)[1:]] + line2
         return ExceptionWrapper(ex_type.__name__, repr(exc.args), tb_format)
-    if "retval" in env:
-        return env["retval"]
 
 class PythonMagic(Magic):
 
@@ -85,11 +83,7 @@ class PythonMagic(Magic):
                 self.env["input"] = input
                 self.env["__builtins__"]["raw_input"] = self.kernel.raw_input = self.kernel.raw_input
                 self.env["raw_input"] = self.kernel.raw_input = self.kernel.raw_input
-        try:
-            ccode = compile(code.strip(), "python cell", "eval") # is it an expression?
-        except:
-            return exec_code(code.strip(), self.env, "exec") # no, it is statement
-        return exec_code(code.strip(), self.env, "eval")     # yes, it is expression
+        return exec_then_eval(code.strip(), self.env)
 
     @option(
         "-e", "--eval_output", action="store_true", default=False,
