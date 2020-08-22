@@ -30,11 +30,16 @@ def exec_then_eval(code, env):
         last = block.body.pop()
         if type(last) != ast.Expr:
             block.body.append(last)
-            return exec(compile(block, "python cell", mode="exec"), env)
+            retval = exec(compile(block, "python cell", mode="exec"), env)
         else:
             exec(compile(block, "python cell", mode="exec"), env)
-            return eval(compile(ast.Expression(last.value),
+            retval = eval(compile(ast.Expression(last.value),
                                   "python cell", mode="eval"), env)
+        if "retval" in env and env["retval"] is not None:
+            return env['retval']
+        else:
+            return retval
+
     except Exception as exc:
         ex_type, ex, tb = sys.exc_info()
         line1 = ["Traceback (most recent call last):"]
@@ -66,6 +71,7 @@ class PythonMagic(Magic):
         """
         code = " ".join(args)
         self.retval = self.eval(code)
+        self.env["retval"] = None
 
     def eval(self, code):
         if "__builtins__" not in self.env:
