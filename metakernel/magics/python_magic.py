@@ -30,7 +30,7 @@ def exec_then_eval(code, env):
         last = block.body.pop()
         if type(last) != ast.Expr:
             block.body.append(last)
-            retval = exec(compile(block, "python cell", mode="exec"), env)
+            exec(compile(block, "python cell", mode="exec"), env)
         else:
             exec(compile(block, "python cell", mode="exec"), env)
             retval = eval(compile(ast.Expression(last.value),
