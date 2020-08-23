@@ -27,6 +27,12 @@ def test_python_magic2():
     retval = test(2)'''), None)
     assert '3' in get_log_text(kernel)
 
+    kernel.do_execute(textwrap.dedent('''\
+    %%python
+    def test(a):
+        return a + 1
+    test(2)'''), None)
+    assert '3' in get_log_text(kernel)
 
 def test_python_magic3():
     kernel = get_kernel()
@@ -38,6 +44,21 @@ def test_python_magic3():
     kernel.do_execute('%%python\n1 + 2', None)
     magic = kernel.get_magic('%%python')
     assert magic.retval == 3
+
+    kernel = get_kernel()
+    kernel.do_execute('%%python\n1 + 2\n2 + 3', None)
+    magic = kernel.get_magic('%%python')
+    assert magic.retval == 5
+
+    kernel = get_kernel()
+    kernel.do_execute('%%python\nretval = 1 + 2\n2 + 3', None)
+    magic = kernel.get_magic('%%python')
+    assert magic.retval == 3
+
+    kernel = get_kernel()
+    kernel.do_execute('%%python\nimport math', None)
+    magic = kernel.get_magic('%%python')
+    assert magic.retval == None
 
 
 def test_python_magic4():
