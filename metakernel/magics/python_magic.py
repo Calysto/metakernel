@@ -30,7 +30,9 @@ def exec_then_eval(code, env):
         last = block.body.pop()
         if type(last) != ast.Expr:
             block.body.append(last)
+            # retval has to be on separate statement for python 2
             exec(compile(block, "python cell", mode="exec"), env)
+            retval = None
         else:
             exec(compile(block, "python cell", mode="exec"), env)
             retval = eval(compile(ast.Expression(last.value),
