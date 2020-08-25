@@ -2,7 +2,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 from metakernel import Magic, option
-from IPython.display import HTML, Javascript
+from IPython.display import IFrame, Javascript
 import string
 import random
 import os
@@ -186,7 +186,7 @@ class JigsawMagic(Magic):
         script = script.replace("MYWORKSPACENAME", workspace_filename);
         iframe = """<iframe src="%s" width="100%%" height="350" style="resize: both; overflow: auto;"></iframe>""" % html_filename
         self.kernel.Display(Javascript(script))
-        self.kernel.Display(HTML(iframe))
+        self.kernel.Display(IFrame(iframe))
 
 def register_magics(kernel):
     kernel.register_magics(JigsawMagic)
