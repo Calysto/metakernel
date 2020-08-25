@@ -25,6 +25,8 @@ from ipykernel.comm import CommManager
 from traitlets.config import Application
 from traitlets import Dict, Unicode
 
+PY3 = sys.version_info[0] == 3
+
 try:
     from ipywidgets.widgets.widget import Widget
 except ImportError:
@@ -149,8 +151,11 @@ class MetaKernel(Kernel):
         self.___ = None
         self.max_hist_cache = 1000
         self.hist_cache = []
-        self.comm_manager = CommManager(parent=self,
-                                        kernel=self)
+        kwargs = {'parent': self,
+                  'kernel': self}
+        if not PY3:
+            kwargs['shell'] = None
+        self.comm_manager = CommManager(**kwargs)
         self.comm_manager.register_target('ipython.widget',
             lazy_import_handle_comm_opened)
 
