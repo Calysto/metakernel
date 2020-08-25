@@ -1,6 +1,10 @@
 
 from metakernel.tests.utils import get_kernel, get_log_text
-
+# force locale to C to get consistent error messages
+import os
+os.environ["LC_ALL"] = "C"
+os.environ["LANG"] = "C"
+os.environ["LANGUAGE"] = "C"
 
 def test_shell_magic():
     kernel = get_kernel()
