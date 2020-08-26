@@ -76,6 +76,12 @@ class PythonMagic(Magic):
         self.env["retval"] = None
 
     def eval(self, code):
+        import IPython.display
+        import metakernel.display
+        # monkey patch IPython.display.display
+        # to redirect notebook display calls to kernel display
+        IPython.display.display = metakernel.display.display
+
         if "__builtins__" not in self.env:
             ## __builtins__ get generated after an eval:
             eval("1", self.env)
