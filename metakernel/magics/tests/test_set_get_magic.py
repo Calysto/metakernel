@@ -3,7 +3,6 @@ import os
 import sys
 from metakernel.tests.utils import (get_kernel, get_log_text,
                                     clear_log_text, EvalKernel)
-PY3 = (sys.version_info[0] >= 3)
 
 def test_set_get_int_magic():
     kernel = get_kernel(EvalKernel)
@@ -24,7 +23,4 @@ def test_set_get_range_magic():
     kernel.do_execute("%set variable range(2)")
     kernel.do_execute("%get variable")
     text = get_log_text(kernel)
-    if PY3:
-        assert "range(0, 2)" in text, text
-    else:
-        assert "[0, 1]" in text, text
+    assert "range(0, 2)" in text, text
