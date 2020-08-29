@@ -49,9 +49,6 @@ from IPython.utils.tempdir import TemporaryDirectory
 from .config import get_history_file, get_local_magics_dir
 from .parser import Parser
 
-PY3 = (sys.version_info[0] >= 3)
-
-
 class ExceptionWrapper(object):
     """
     Utility wrapper that we can use to get the kernel to respond properly for errors.
@@ -960,10 +957,7 @@ def format_message(*objects, **kwargs):
     """
     Format a message like print() does.
     """
-    if PY3:
-        objects = [str(i) for i in objects]
-    else:
-        objects = [codecs.encode(i, 'utf-8') for i in objects]
+    objects = [str(i) for i in objects]
     sep = kwargs.get('sep', ' ')
     end = kwargs.get('end', '\n')
     return sep.join(objects) + end

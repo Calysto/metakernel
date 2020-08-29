@@ -21,8 +21,6 @@ try:
 except ImportError:
     jedi = None
 
-PY3 = sys.version_info[0] == 3
-
 def exec_then_eval(code, env):
     import traceback
     try:
@@ -30,9 +28,7 @@ def exec_then_eval(code, env):
         last = block.body.pop()
         if type(last) != ast.Expr:
             block.body.append(last)
-            # retval has to be on separate statement for python 2
-            exec(compile(block, "python cell", mode="exec"), env)
-            retval = None
+            retval = exec(compile(block, "python cell", mode="exec"), env)
         else:
             exec(compile(block, "python cell", mode="exec"), env)
             retval = eval(compile(ast.Expression(last.value),
@@ -87,16 +83,8 @@ class PythonMagic(Magic):
             eval("1", self.env)
             ## make 'kernel' and 'input' available:
             self.env["__builtins__"]["kernel"] = self.kernel
-            if PY3:
-                self.env["__builtins__"]["input"] = self.kernel.raw_input
-                self.env["input"] = self.kernel.raw_input
-            else:
-                def input(*args, **kwargs):
-                    return eval(self.kernel.raw_input(*args, **kwargs))
-                self.env["__builtins__"]["input"] = input
-                self.env["input"] = input
-                self.env["__builtins__"]["raw_input"] = self.kernel.raw_input = self.kernel.raw_input
-                self.env["raw_input"] = self.kernel.raw_input = self.kernel.raw_input
+            self.env["__builtins__"]["input"] = self.kernel.raw_input
+            self.env["input"] = self.kernel.raw_input
         return exec_then_eval(code.strip(), self.env)
 
     @option(

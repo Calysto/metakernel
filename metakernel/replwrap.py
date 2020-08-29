@@ -8,17 +8,10 @@ import atexit
 
 from . import pexpect
 
-PY3 = (sys.version_info[0] >= 3)
 
-if PY3:
-    def u(s):
-        return s
-    basestring = str
-else:
-    def u(s):
-        if isinstance(s, str):
-            return s.decode('utf-8')
-        return s
+def u(s):
+    return s
+basestring = str
 
 PEXPECT_PROMPT = u('PEXPECT_PROMPT>')
 PEXPECT_STDIN_PROMPT = u('PEXPECT_PROMPT+')
