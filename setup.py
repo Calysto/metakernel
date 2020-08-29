@@ -35,11 +35,11 @@ setup(name='metakernel',
       },
       packages=find_packages(include=['metakernel', 'metakernel.*']),
       package_data={'metakernel': ['images/*.png']},
+      python_requires='>=3.5',
       classifiers=[
           'Framework :: IPython',
           'License :: OSI Approved :: BSD License',
           'Programming Language :: Python :: 3',
-          'Programming Language :: Python :: 2',
           'Topic :: System :: Shells',
       ]
       )
