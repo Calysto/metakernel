@@ -3,7 +3,7 @@ from __future__ import print_function
 import base64
 import codecs
 import glob
-import imp
+import importlib
 import inspect
 import json
 import logging
@@ -24,6 +24,8 @@ from ipykernel.kernelbase import Kernel
 from ipykernel.comm import CommManager
 from traitlets.config import Application
 from traitlets import Dict, Unicode
+
+PY3 = sys.version_info[0] == 3
 
 try:
     from ipywidgets.widgets.widget import Widget
@@ -149,8 +151,11 @@ class MetaKernel(Kernel):
         self.___ = None
         self.max_hist_cache = 1000
         self.hist_cache = []
-        self.comm_manager = CommManager(shell=None, parent=self,
-                                        kernel=self)
+        kwargs = {'parent': self,
+                  'kernel': self}
+        if not PY3:
+            kwargs['shell'] = None
+        self.comm_manager = CommManager(**kwargs)
         self.comm_manager.register_target('ipython.widget',
             lazy_import_handle_comm_opened)
 
@@ -759,7 +764,7 @@ class MetaKernel(Kernel):
                 continue
             try:
                 module = __import__(os.path.splitext(basename)[0])
-                imp.reload(module)
+                importlib.reload(module)
                 module.register_magics(self)
             except Exception as e:
                 self.log.error("Can't load '%s': error: %s" % (magic, e))
@@ -1022,6 +1027,6 @@ def register_ipython_magics(*magics):
             continue
         if len(magics) == 0 or basename in magics:
             module = __import__(os.path.splitext(basename)[0])
-            imp.reload(module)
+            importlib.reload(module)
             if hasattr(module, "register_ipython_magics"):
                 module.register_ipython_magics()
