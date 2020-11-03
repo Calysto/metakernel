@@ -2,6 +2,7 @@ import os
 import re
 import subprocess
 import pytest
+import tempfile
 
 from metakernel import MetaKernel
 from metakernel.tests.utils import (get_kernel, get_log_text, EvalKernel,
@@ -18,12 +19,10 @@ def test_magics():
     for magic in ['file', 'html', 'javascript', 'latex', 'shell', 'time']:
         assert magic in kernel.cell_magics
 
-    with open('TEST.txt', 'wb'):
-        pass
-    kernel.get_magic('%shell ls')
-    log_text = get_log_text(kernel)
-    assert 'TEST.txt' in log_text
-    os.remove('TEST.txt')
+    with tempfile.NamedTemporaryFile() as ntf:
+        kernel.get_magic('%%shell ls %s' % ntf.name)
+        log_text = get_log_text(kernel)
+        assert ntf.name in log_text
 
 
 def test_help():
