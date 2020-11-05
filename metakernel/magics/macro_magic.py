@@ -113,7 +113,7 @@ class MacroMagic(Magic):
                  os.path.join(local_macros_dir, "macros.json")]
         for macro_file in files:
             try:
-                data = ast.literal_eval(open(macro_file).read()) 
+                with open(macro_file) as mf: data = ast.literal_eval(mf.read())
             except:
                 continue
             self.learned.update(data)
@@ -121,7 +121,7 @@ class MacroMagic(Magic):
     def _save_macros(self):
         local_macros_dir = self.kernel.get_local_magics_dir()
         filename = os.path.join(local_macros_dir, "macros.json")
-        open(filename, "w").write(str(self.learned))
+        with open(filename, "w") as macros: macros.write(str(self.learned))
 
     def cell_macro(self, name):
         """

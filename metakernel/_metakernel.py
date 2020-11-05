@@ -258,8 +258,8 @@ class MetaKernel(Kernel):
         Default code for running a file. Just opens the file, and sends
         the text to do_execute_direct.
         """
-        code = "".join(open(filename).readlines())
-        return self.do_execute_direct(code)
+        with open(filename) as f:
+            return self.do_execute_direct("".join(f.readlines()))
 
     def do_execute_meta(self, code):
         """

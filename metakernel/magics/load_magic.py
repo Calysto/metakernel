@@ -19,9 +19,9 @@ class LoadMagic(Magic):
         if filename.startswith("~"):
             filename = os.path.expanduser(filename)
         filename = os.path.abspath(filename)
-        text = open(filename).read()
-        self.kernel.payload.append({"source": "set_next_input",
-                                    "text": text})
+        with open(filename) as f:
+            self.kernel.payload.append({"source": "set_next_input",
+                                        "text": f.read()})
 
 def register_magics(kernel):
     kernel.register_magics(LoadMagic)

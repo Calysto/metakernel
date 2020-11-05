@@ -117,7 +117,7 @@ class Magic(object):
             else:
                 filename = inspect.getfile(func)
                 if filename and os.path.exists(filename):
-                    return open(filename).read()
+                    with open(filename) as f: return f.read()
                 else:
                     return "No help available for magic '%s' for %ss." % (name, mtype)
         else:
