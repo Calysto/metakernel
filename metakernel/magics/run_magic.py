@@ -39,8 +39,8 @@ class RunMagic(Magic):
         if language is None:
             self.kernel.do_execute_file(filename)
         else:
-            code = "".join(open(filename).readlines())
-            self.code = "%%" + language + "\n" + self.code + code
+            self.code = "%%" + language + "\n" + self.code
+            with open(filename) as f: self.code += "".join(f.readlines())
 
 def register_magics(kernel):
     kernel.register_magics(RunMagic)

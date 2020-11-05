@@ -27,7 +27,7 @@ class IncludeMagic(Magic):
             if filename.startswith("~"):
                 filename = os.path.expanduser(filename)
             filename = os.path.abspath(filename)
-            text += open(filename).read() + "\n"
+            with open(filename) as f: text += f.read() + "\n"
         if self.code.lstrip().startswith(prefix):
             lines = self.code.lstrip().split("\n")
             new_lines = []

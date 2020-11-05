@@ -173,7 +173,7 @@ class PythonMagic(Magic):
             path, dot, like = completion_parts(path)
             before = text[:len(text) - len(like)]
 
-        completions = interpreter.completions()
+        completions = interpreter.complete()
         completions = [before + c.name_with_symbols for c in completions]
 
         self.kernel.log.error(completions)

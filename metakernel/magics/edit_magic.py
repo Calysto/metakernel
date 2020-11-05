@@ -24,7 +24,7 @@ class EditMagic(Magic):
         if filename.startswith("~"):
             filename = os.path.expanduser(filename)
         filename = os.path.abspath(filename)
-        text = open(filename).read()
+        with open(filename) as f: text = f.read()
         self.kernel.payload.append({"source": "set_next_input",
                                     "text": "%%file " + orig_filename + "\n" + text})
 
