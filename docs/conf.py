@@ -11,7 +11,11 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os, datetime
+import sys, os, datetime, time
+
+today = datetime.datetime.utcfromtimestamp(
+    int(os.environ.get('SOURCE_DATE_EPOCH', time.time()))
+)
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -46,7 +50,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Metakernel'
-copyright = u'2014 - {today.year}, Metakernel contributors'.format(today=datetime.date.today())
+copyright = u'2014 - {today.year}, Metakernel contributors'.format(today=today)
 
 import metakernel
 
