@@ -307,7 +307,7 @@ def bash(command="bash", prompt_regex=re.compile('[$#]')):
     else:
         prompt_emit_cmd = None
 
-    extra_init_cmd = "export PAGER=cat"
+    extra_init_cmd = "export TERM=dumb PAGER=cat"
 
     # Make sure the bash shell has a valid ending character.
     bashrc = os.path.join(os.path.dirname(pexpect.PEXPECT_DIR), 'bashrc.sh')
