@@ -67,7 +67,7 @@ class REPLWrapTestCase(unittest.TestCase):
         child = pexpect.spawnu("bash", timeout=5, echo=False)
         repl = replwrap.REPLWrapper(child, re.compile('[$#]'),
                                     "PS1='{0}' PS2='{1}' "
-                                    "PROMPT_COMMAND=''")
+                                    "PROMPT_COMMAND='' TERM='dumb'")
 
         res = repl.run_command("echo $HOME")
         assert res.startswith('/'), res
