@@ -218,7 +218,7 @@ Options:
 This line magic will display the TEXT on the line as LaTeX.
 
 Example:
-    %latex x_1 = \dfrac{a}{b}
+    %latex $x_1 = \dfrac{a}{b}$
 
 ## `%load`
 
@@ -657,9 +657,9 @@ This cell magic will display the TEXT in the cell as LaTeX.
 
 Example:
     %%latex
-    x_1 = \dfrac{a}{b}
+    $x_1 = \dfrac{a}{b}$
 
-    x_2 = a^{n - 1}
+    $x_2 = a^{n - 1}$
 
 ## `%%macro`
 
