@@ -13,7 +13,7 @@ class LatexMagic(Magic):
         This line magic will display the TEXT on the line as LaTeX.
 
         Example:
-            %latex x_1 = \dfrac{a}{b}
+            %latex $x_1 = \dfrac{a}{b}$
 
         """
         latex = Latex(text)
@@ -27,9 +27,9 @@ class LatexMagic(Magic):
 
         Example:
             %%latex 
-            x_1 = \dfrac{a}{b}
+            $x_1 = \dfrac{a}{b}$
 
-            x_2 = a^{n - 1}
+            $x_2 = a^{n - 1}$
         """
         latex = Latex(self.code)
         self.kernel.Display(latex)
