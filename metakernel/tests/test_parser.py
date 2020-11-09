@@ -71,7 +71,7 @@ def get_parser():
 def test_complete1():
     p = get_parser()
     info = p.parse_code('/tmp/')
-    assert "Test\ Dir/" in info['path_matches'], info['path_matches']
+    assert "Test\\ Dir/" in info['path_matches'], info['path_matches']
 
 
 def test_complete2():
@@ -101,7 +101,7 @@ def test_complete5():
 def test_complete6():
     p = get_parser()
     info = p.parse_code('/tmp/Test')
-    assert "Test\ Dir/" in info['path_matches'], info['path_matches']
+    assert "Test\\ Dir/" in info['path_matches'], info['path_matches']
 
 
 def test_complete7():
@@ -113,7 +113,7 @@ def test_complete7():
 def test_complete8():
     p = get_parser()
     info = p.parse_code('/tmp/Test Dir/', 0, 9)
-    assert 'Test\ Dir/' in info['path_matches'], info
+    assert 'Test\\ Dir/' in info['path_matches'], info
 
 
 def test_complete9():
