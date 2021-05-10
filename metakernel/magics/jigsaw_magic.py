@@ -24,7 +24,11 @@ class JigsawMagic(Magic):
         '-w', '--workspace', action='store', default=None,
         help='use the provided name as workspace filename'
     )
-    def line_jigsaw(self, language, workspace=None):
+    @option(
+        '-h', '--height', action='store', default=350,
+        help='set height of iframe '
+    )
+    def line_jigsaw(self, language, workspace=None, height=350):
         """
         %jigsaw LANGUAGE - show visual code editor/generator
 
@@ -33,7 +37,7 @@ class JigsawMagic(Magic):
         Examples:
             %jigsaw Processing
             %jigsaw Python
-            %jigsaw Processing --workspace workspace1
+            %jigsaw Processing --workspace workspace1 --height 600
         """
         # Copy iframe html to here (must come from same domain):
         # Make up a random workspace name:
@@ -184,9 +188,8 @@ class JigsawMagic(Magic):
     }
 """
         script = script.replace("MYWORKSPACENAME", workspace_filename);
-        iframe = """<iframe src="%s" width="100%%" height="350" style="resize: both; overflow: auto;"></iframe>""" % html_filename
         self.kernel.Display(Javascript(script))
-        self.kernel.Display(IFrame(iframe))
+        self.kernel.Display(IFrame(html_filename, width='100%', height=height))
 
 def register_magics(kernel):
     kernel.register_magics(JigsawMagic)
