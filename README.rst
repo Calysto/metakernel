@@ -46,7 +46,7 @@ Kernels based on Metakernel
 - gnuplot_kernel, https://github.com/has2k1/gnuplot_kernel
 - spylon_kernel, https://github.com/mariusvniekerk/spylon-kernel
 - wolfram_kernel, https://github.com/mmatera/iwolfram
-- sas_kernel, https://github.com/palmer0914/sas_kernel
+- sas_kernel, https://github.com/sassoftware/sas_kernel
 - pysysh_kernel, https://github.com/Jaesin/psysh_kernel
 - calysto_bash, https://github.com/Calysto/calysto_bash
 
