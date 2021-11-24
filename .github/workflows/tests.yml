@@ -6,10 +6,6 @@ on:
   schedule:
     - cron: "0 0 * * *"
 
-defaults:
-  run:
-    shell: bash -l {0}
-
 jobs:
   test:
     name: Test
@@ -29,32 +25,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v1
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Get pip cache dir
-        id: pip-cache
-        run: |
-          echo "::set-output name=dir::$(pip cache dir)"
-
-      - name: Cache pip
-        uses: actions/cache@v2
-        with:
-          path: |
-            ${{ steps.pip-cache.outputs.dir }}
-            .mypy_cache
-          key: ${{ runner.os }}-python-${{ matrix.python-version }}-pip-${{ hashFiles('setup.cfg') }}-git-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-python-${{ matrix.python-version }}-pip-${{ hashFiles('setup.cfg') }}
-            ${{ runner.os }}-python-${{ matrix.python-version }}-pip-
-            ${{ runner.os }}-python
-            ${{ runner.os }}-
+      - name: Setup Base
+        uses: jupyterlab/maintainer-tools/.github/actions/setup-base@v1
 
       - name: Install dependencies
         run: |
-          pip install -U coveralls setuptools pip
+          pip install coveralls
           make install
 
       - name: Run the tests
