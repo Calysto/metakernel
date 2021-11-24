@@ -2,14 +2,20 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.28.1
+
+- Fix trove classifier [#236](https://github.com/Calysto/metakernel/pull/236) ([@blink1073](https://github.com/blink1073))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.28.0
+
+*Note*  This was not uploaded to PyPI because it had an incorrect trove classifer
 
 - Add support for jupyter releaser [#234](https://github.com/Calysto/metakernel/pull/234) ([@blink1073](https://github.com/blink1073))
 - Modernize build and test [#233](https://github.com/Calysto/metakernel/pull/233) ([@blink1073](https://github.com/blink1073))
 - Fix Iframe display issue [#231](https://github.com/Calysto/metakernel/pull/231) ([@cathalmccabe](https://github.com/cathalmccabe))
 - Add a blockly magic instead of a jigsaw magic [#229](https://github.com/Calysto/metakernel/pull/229) ([@ChrisJaunes](https://github.com/ChrisJaunes))
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.27.5
 
