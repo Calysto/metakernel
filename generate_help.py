@@ -29,5 +29,5 @@ print("done!")
 
 if text != prev:
     print('Readme changed, please commit the changes')
-    print('If this is on Travis, run `make help` locally to regenerate')
+    print('If this is on CI, run `make help` locally to regenerate')
     sys.exit(1)

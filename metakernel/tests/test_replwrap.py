@@ -76,6 +76,9 @@ class REPLWrapTestCase(unittest.TestCase):
         if platform.python_implementation() == 'PyPy':
             raise unittest.SkipTest("This test fails on PyPy because of REPL differences")
 
+        if platform.system() == 'Darwin':
+            raise unittest.SkipTest("This test fails on macOS because of REPL differences")
+
         p = replwrap.python(sys.executable)
         res = p.run_command('4+7')
         assert res.strip() == '11'

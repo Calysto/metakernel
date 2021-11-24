@@ -167,10 +167,11 @@ This line magic will allow visual code editing or generation.
 Examples:
     %jigsaw Processing
     %jigsaw Python
-    %jigsaw Processing --workspace workspace1
+    %jigsaw Processing --workspace workspace1 --height 600
 
 Options:
 -------
+-h --height    set height of iframe  [default: 350]
 -w --workspace use the provided name as workspace filename [default: None]
 
 ## `%kernel`
