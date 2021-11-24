@@ -2,13 +2,20 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.28.0
+
+- Add support for jupyter releaser [#234](https://github.com/Calysto/metakernel/pull/234) ([@blink1073](https://github.com/blink1073))
+- Modernize build and test [#233](https://github.com/Calysto/metakernel/pull/233) ([@blink1073](https://github.com/blink1073))
+- Fix Iframe display issue [#231](https://github.com/Calysto/metakernel/pull/231) ([@cathalmccabe](https://github.com/cathalmccabe))
+- Add a blockly magic instead of a jigsaw magic [#229](https://github.com/Calysto/metakernel/pull/229) ([@ChrisJaunes](https://github.com/ChrisJaunes))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.27.5
 
 - Escape backslashes in strings [#226](https://github.com/Calysto/metakernel/pull/226) ([@ellert](https://github.com/ellert))
 - Add missing dollar signs to %latex examples and tests [#225](https://github.com/Calysto/metakernel/pull/225) ([@ellert](https://github.com/ellert))
 - Support older jedi versions [#224](https://github.com/Calysto/metakernel/pull/224) ([@ellert](https://github.com/ellert))
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.27.4
 
