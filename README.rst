@@ -204,7 +204,7 @@ Example notebooks can be viewed here_.
 
 Documentation is available online_. Magics have interactive help_ (and online).
 
-For version information, see the Revision History_.
+For version information, see the Changelog_.
 
 
 .. _here: http://nbviewer.ipython.org/github/Calysto/metakernel/tree/master/examples/
@@ -213,4 +213,4 @@ For version information, see the Revision History_.
 
 .. _online: http://Calysto.github.io/metakernel/
 
-.. _History: https://github.com/Calysto/metakernel/blob/master/HISTORY.rst
+.. _Changelog: https://github.com/Calysto/metakernel/blob/master/CHANGELOG.md
