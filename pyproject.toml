@@ -5,6 +5,9 @@ build-backend = "setuptools.build_meta"
 [tool.jupyter-releaser]
 skip = ["check-links"]
 
+[tool.jupyter-releaser.options]
+ignore-links = ["http://some/file/from/*", "http://path/to/some/*"]
+
 [tool.tbump.version]
 current = "0.27.5"
 regex = '''
