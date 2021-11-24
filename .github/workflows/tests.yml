@@ -54,7 +54,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install coveralls wheel
+          pip install -U coveralls setuptools pip
           make install
 
       - name: Run the tests
