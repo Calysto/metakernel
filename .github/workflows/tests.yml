@@ -1,0 +1,64 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "0 0 * * *"
+
+defaults:
+  run:
+    shell: bash -l {0}
+
+jobs:
+  test:
+    name: Test
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: [3.6, 3.7, 3.8, 3.9]
+
+    env:
+      OS: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Get pip cache dir
+        id: pip-cache
+        run: |
+          echo "::set-output name=dir::$(pip cache dir)"
+
+      - name: Cache pip
+        uses: actions/cache@v2
+        with:
+          path: |
+            ${{ steps.pip-cache.outputs.dir }}
+            .mypy_cache
+          key: ${{ runner.os }}-python-${{ matrix.python-version }}-pip-${{ hashFiles('setup.cfg') }}-git-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-python-${{ matrix.python-version }}-pip-${{ hashFiles('setup.cfg') }}
+            ${{ runner.os }}-python-${{ matrix.python-version }}-pip-
+            ${{ runner.os }}-python
+            ${{ runner.os }}-
+
+      - name: Install dependencies
+        run: |
+          make install
+          pip install coveralls
+
+      - name: Run the tests
+        run: |
+          make docs
+          make help
+          make cover

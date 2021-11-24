@@ -1,7 +1,12 @@
 include *.txt
 include *.rst
+include *.py
+include pyproject.toml
 include metakernel/images/*.png
 include Makefile
+recursive-include metakernel *.py
+recursive-include metakernel_echo Makefile
+recursive-include metakernel_python Makefile
 recursive-include docs *.rst
 recursive-include docs *.png
 recursive-include docs *.py
@@ -11,6 +16,10 @@ recursive-include metakernel_python *.*
 prune metakernel_python/build
 recursive-include metakernel_bash *.*
 prune metakernel_bash/build
+recursive-include metakernel *.md
+recursive-include metakernel *.py
+include metakernel_echo Makefile
+include metakernel_python Makefile
 prune .git
 prune docs/build
 prune dist
@@ -21,3 +30,5 @@ prune metakernel_echo/build
 prune metakernel_bash/dist
 prune metakernel_python/dist
 prune metakernel_echo/dist
+prune examples
+exclude .coveragerc
