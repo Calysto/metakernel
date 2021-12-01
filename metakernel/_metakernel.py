@@ -521,7 +521,8 @@ class MetaKernel(Kernel):
             'matches': [],
             'cursor_start': info['start'],
             'cursor_end': info['end'],
-            'status': 'ok'
+            'status': 'ok',
+            'metadata': {}
         }
 
         matches = info['path_matches']
@@ -695,7 +696,7 @@ class MetaKernel(Kernel):
             self.log.info(message.rstrip())
         else:
             self.send_response(self.iopub_socket, 'stream', stream_content)
-    
+
     def Error_display(self, *objects, **kwargs):
         """Print `objects` to stdout is they area strings, separated by `sep` and followed by `end`.
         All other objects are rendered using the Display method
@@ -710,7 +711,7 @@ class MetaKernel(Kernel):
             else:
                 # msg is the error for str
                 msg.append(item)
-        
+
         for k,v in kwargs:
             if not isinstance(v, str):
                 self.Display(k,v)
