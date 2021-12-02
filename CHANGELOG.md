@@ -2,11 +2,25 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.28.2
+
+([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.28.1...511893d0e8a6f814ca62c75fceee01794752cfb7))
+
+### Maintenance and upkeep improvements
+
+- Test with jupyter_kernel_test [#238](https://github.com/Calysto/metakernel/pull/238) ([@blink1073](https://github.com/blink1073))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2021-11-24&to=2021-12-02&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2021-11-24..2021-12-02&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.28.1
 
 - Fix trove classifier [#236](https://github.com/Calysto/metakernel/pull/236) ([@blink1073](https://github.com/blink1073))
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.28.0
 
