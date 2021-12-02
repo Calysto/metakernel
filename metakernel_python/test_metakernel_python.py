@@ -1,8 +1,6 @@
 """
-Example use of jupyter_kernel_test, with tests for the default python3 kernel
-(IPyKernel). This includes all the currently available tests.
+Test the metakernel_python kernel using jupyter_kernel_test with supported capabilities
 """
-
 import unittest
 import jupyter_kernel_test as jkt
 
@@ -81,26 +79,12 @@ class MetaKernelPythonTests(jkt.KernelTests):
          'mime': "text/latex"}
     ]
 
-    # test the support for searching/recalling history (used by console only)
-    # the history tests re-use the code blocks in `code_execute_result` above,
-    # so will not run if no test code is available
-    # `code_history_pattern` is a glob-style pattern which should match at least
-    # one code sample in `code_execute_result`
-    # `supported_history_operations` is a list of the `hist_access_type` options
-    # which should be tested; possible values are "tail", "range" and "search"
-    code_history_pattern = "1?2*"
-    supported_history_operations = ("tail", "search")
-
     # test the support for object inspection
     # the sample should be a name about which the kernel can give some help
     # information (a built-in function is probably a good choice)
     # only the default inspection level (equivalent to ipython "obj?")
     # is currently tested
     code_inspect_sample = "zip"
-
-    # a code sample which should cause a `clear_output` message to be sent to
-    # the client
-    code_clear_output = "from IPython.display import clear_output; clear_output()"
 
 if __name__ == '__main__':
     unittest.main()

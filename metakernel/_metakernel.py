@@ -461,7 +461,7 @@ class MetaKernel(Kernel):
         """
         with open(self.hist_file) as fid:
             self.hist_cache = json.loads(fid.read() or "[]")
-        return {'history': [(None, None, h) for h in self.hist_cache]}
+        return {'status': 'ok', 'history': [(None, None, h) for h in self.hist_cache]}
 
     def do_shutdown(self, restart):
         """
@@ -582,7 +582,7 @@ class MetaKernel(Kernel):
         if cursor_pos > len(code):
             return
 
-        content = {'status': 'aborted', 'data': {}, 'found': False}
+        content = {'status': 'aborted', 'data': {}, 'found': False, 'metadata': {}}
         docstring = self.get_help_on(code, detail_level, none_on_fail=True,
              cursor_pos=cursor_pos)
 
