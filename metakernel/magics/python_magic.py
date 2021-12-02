@@ -213,6 +213,5 @@ class PythonMagic(Magic):
         else:
             return strhelp
 
-
 def register_magics(kernel):
     kernel.register_magics(PythonMagic)

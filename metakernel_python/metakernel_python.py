@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+from IPython.core.inputtransformer2 import TransformerManager
 from metakernel import MetaKernel
 import sys
 
@@ -29,6 +30,10 @@ class MetaKernelPython(MetaKernel):
         "language": "python",
         "name": "metakernel_python"
     }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.transformer_manager = TransformerManager()
 
     def get_usage(self):
         return ("This is MetaKernel Python. It implements a Python " +
@@ -60,6 +65,12 @@ class MetaKernelPython(MetaKernel):
         python_magic = self.line_magics['python']
         return python_magic.get_help_on(info, level, none_on_fail)
 
+    def do_is_complete(self, code):
+        status, indent_spaces = self.transformer_manager.check_complete(code)
+        r = {'status': status}
+        if status == 'incomplete':
+            r['indent'] = ' ' * indent_spaces
+        return r
 
 if __name__ == '__main__':
     MetaKernelPython.run_as_main()

@@ -461,7 +461,7 @@ class MetaKernel(Kernel):
         """
         with open(self.hist_file) as fid:
             self.hist_cache = json.loads(fid.read() or "[]")
-        return {'history': [(None, None, h) for h in self.hist_cache]}
+        return {'status': 'ok', 'history': [(None, None, h) for h in self.hist_cache]}
 
     def do_shutdown(self, restart):
         """
@@ -521,7 +521,8 @@ class MetaKernel(Kernel):
             'matches': [],
             'cursor_start': info['start'],
             'cursor_end': info['end'],
-            'status': 'ok'
+            'status': 'ok',
+            'metadata': {}
         }
 
         matches = info['path_matches']
@@ -573,7 +574,7 @@ class MetaKernel(Kernel):
 
         return content
 
-    def do_inspect(self, code, cursor_pos, detail_level=0):
+    def do_inspect(self, code, cursor_pos, detail_level=0, omit_sections=()):
         """Object introspection.
 
         https://jupyter-client.readthedocs.io/en/stable/messaging.html#introspection
@@ -581,7 +582,7 @@ class MetaKernel(Kernel):
         if cursor_pos > len(code):
             return
 
-        content = {'status': 'aborted', 'data': {}, 'found': False}
+        content = {'status': 'aborted', 'data': {}, 'found': False, 'metadata': {}}
         docstring = self.get_help_on(code, detail_level, none_on_fail=True,
              cursor_pos=cursor_pos)
 
@@ -695,7 +696,7 @@ class MetaKernel(Kernel):
             self.log.info(message.rstrip())
         else:
             self.send_response(self.iopub_socket, 'stream', stream_content)
-    
+
     def Error_display(self, *objects, **kwargs):
         """Print `objects` to stdout is they area strings, separated by `sep` and followed by `end`.
         All other objects are rendered using the Display method
@@ -710,7 +711,7 @@ class MetaKernel(Kernel):
             else:
                 # msg is the error for str
                 msg.append(item)
-        
+
         for k,v in kwargs:
             if not isinstance(v, str):
                 self.Display(k,v)

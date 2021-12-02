@@ -22,6 +22,7 @@ test: clean
 	ipcluster start -n=3 &
 	pytest
 	ipcluster stop
+	python metakernel_python/test_metakernel_python.py
 	make clean
 
 test_warn: clean
@@ -29,12 +30,14 @@ test_warn: clean
 	export PYTHONWARNINGS="all"
 	pytest
 	ipcluster stop
+	python metakernel_python/test_metakernel_python.py
 	make clean
 
 cover: clean
 	ipcluster start -n=3 &
 	pytest --cov=$(NAME)
 	ipcluster stop
+	python metakernel_python/test_metakernel_python.py
 	coverage annotate
 
 release:
