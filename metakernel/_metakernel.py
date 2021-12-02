@@ -574,7 +574,7 @@ class MetaKernel(Kernel):
 
         return content
 
-    def do_inspect(self, code, cursor_pos, detail_level=0):
+    def do_inspect(self, code, cursor_pos, detail_level=0, omit_sections=()):
         """Object introspection.
 
         https://jupyter-client.readthedocs.io/en/stable/messaging.html#introspection
