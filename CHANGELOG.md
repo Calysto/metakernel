@@ -2,11 +2,15 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.28.2
+
+- Test with jupyter_kernel_test [#238](https://github.com/Calysto/metakernel/pull/238) ([@blink1073](https://github.com/blink1073))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.28.1
 
 - Fix trove classifier [#236](https://github.com/Calysto/metakernel/pull/236) ([@blink1073](https://github.com/blink1073))
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.28.0
 
