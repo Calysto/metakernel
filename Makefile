@@ -20,7 +20,7 @@ clean:
 
 test: clean
 	ipcluster start -n=3 &
-	pytest || pytest --lf
+	python -m pytest || python -m pytest --lf
 	ipcluster stop
 	python metakernel_python/test_metakernel_python.py
 	make clean
@@ -28,14 +28,14 @@ test: clean
 test_warn: clean
 	ipcluster start -n=3 &
 	export PYTHONWARNINGS="all"
-	pytest || pytest --lf
+	python -m pytest || python -m pytest --lf
 	ipcluster stop
 	python metakernel_python/test_metakernel_python.py
 	make clean
 
 cover: clean
 	ipcluster start -n=3 &
-	pytest --cov=$(NAME) || pytest --lf --cov=$(NAME)
+	python -m pytest --cov=$(NAME) || python -m pytest --lf --cov=$(NAME)
 	ipcluster stop
 	python metakernel_python/test_metakernel_python.py
 	coverage annotate
