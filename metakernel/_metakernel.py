@@ -43,7 +43,7 @@ except:
 
 from IPython.core.formatters import IPythonDisplayFormatter
 from IPython.display import HTML
-from IPython.core.display import publish_display_data
+from IPython.display import publish_display_data
 from IPython.utils.tempdir import TemporaryDirectory
 
 from .config import get_history_file, get_local_magics_dir

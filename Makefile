@@ -56,4 +56,4 @@ docs: clean
 	make -C docs html
 
 help:
-	python generate_help.py
+	python docs/generate_help.py

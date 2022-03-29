@@ -1,25 +1,15 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from distutils.version import LooseVersion
 from metakernel import Magic, option, ExceptionWrapper
 import pydoc
 import sys
 import ast
-try:
-    import jedi
-    from jedi import Interpreter
-    if jedi.__version__ >= LooseVersion('0.11.0'):
-        from jedi.api.helpers import get_on_completion_name
-        from parso import split_lines
-    elif jedi.__version__ >= LooseVersion('0.10.0'):
-        from jedi.api.helpers import get_on_completion_name
-        from jedi.common import splitlines as split_lines
-    else:
-        from jedi.api.helpers import completion_parts
-        from jedi.parser.user_context import UserContext
-except ImportError:
-    jedi = None
+import jedi
+from jedi import Interpreter
+from jedi.api.helpers import get_on_completion_name
+from parso import split_lines
+
 
 def exec_then_eval(code, env):
     import traceback
