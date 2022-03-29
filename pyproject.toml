@@ -38,6 +38,6 @@ filterwarnings= [
   "error",
   "ignore:the imp module is deprecated:DeprecationWarning:ipykernel",
   "ignore:distutils Version classes:DeprecationWarning:ipyparallel",
-  "ignore:unclosed event loop:ResourceWarning"
+  "ignore:unclosed event loop:ResourceWarning",
   "ignore:There is no current event loop:DeprecationWarning:ipyparallel"
 ]
