@@ -13,7 +13,7 @@
 
 import sys, os, datetime, time
 
-today = datetime.datetime.utcfromtimestamp(
+today_date = datetime.datetime.utcfromtimestamp(
     int(os.environ.get('SOURCE_DATE_EPOCH', time.time()))
 )
 
@@ -28,19 +28,17 @@ today = datetime.datetime.utcfromtimestamp(
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode', 'sphinx.ext.todo',
+extensions = ['myst_parser','sphinx.ext.autodoc', 'sphinx.ext.viewcode', 'sphinx.ext.todo',
               'sphinx.ext.intersphinx', 'sphinx.ext.inheritance_diagram',
               'numpydoc']
+
+myst_enable_extensions = ["html_image"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
-source_parsers = {
-   '.md': 'recommonmark.parser.CommonMarkParser',
-}
-
 # The suffix of source filenames.
-source_suffix = ['.rst', '.md']
+source_suffix = ['.rst', '.ipynb']
 
 # The encoding of source files.
 source_encoding = 'utf-8'
@@ -49,8 +47,8 @@ source_encoding = 'utf-8'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Metakernel'
-copyright = u'2014 - {today.year}, Metakernel contributors'.format(today=today)
+project = 'Metakernel'
+copyright = f'2014 - {today_date.year}, Metakernel contributors'
 
 import metakernel
 
@@ -140,7 +138,7 @@ html_theme_path =  sphinx_bootstrap_theme.get_html_theme_path()
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['source/static']
+#html_static_path = ['source/static']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.

@@ -53,7 +53,7 @@ release:
 
 docs: clean
 	pip install -r docs/requirements.txt
-	make -C docs html
+	make -C docs html SPHINXOPTS="-W"
 
 help:
 	python docs/generate_help.py

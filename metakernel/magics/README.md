@@ -79,7 +79,7 @@ Examples:
 
 
 Options:
--------
+--------
 -f --filename  use the provided name as filename [default: None]
 
 ## `%edit`
@@ -170,7 +170,7 @@ Examples:
     %jigsaw Processing --workspace workspace1 --height 600
 
 Options:
--------
+--------
 -h --height    set height of iframe  [default: 350]
 -w --workspace use the provided name as workspace filename [default: None]
 
@@ -190,7 +190,7 @@ Use `%kx` or `%%kx` to send code to the kernel.
 Also returns the kernel as output.
 
 Options:
--------
+--------
 -k --kernel_name kernel name given to use for execution [default: default]
 
 ## `%kx`
@@ -209,7 +209,7 @@ Example:
 Use `%kernel MODULE CLASS [-k NAME]` to create a kernel.
 
 Options:
--------
+--------
 -k --kernel_name kernel name given to use for execution [default: None]
 
 ## `%latex`
@@ -242,7 +242,7 @@ Examples:
     %ls ..
 
 Options:
--------
+--------
 -r --recursive recursively descend into subdirectories [default: False]
 
 ## `%lsmagic`
@@ -276,7 +276,7 @@ Examples:
     %macro -d test
 
 Options:
--------
+--------
 -s --show      show macro [default: False]
 -l --list      list macros [default: False]
 -d --delete    delete a named macro [default: False]
@@ -322,7 +322,7 @@ supports %set).
 Use %px or %%px to send code to the cluster.
 
 Options:
--------
+--------
 -i --ids       the machine ids to use from the cluster [default: None]
 -k --kernel_name arbitrary name given to reference kernel [default: default]
 
@@ -341,7 +341,7 @@ Note: not all languages may support the %plot magic, and not all
 options may be supported.
 
 Options:
--------
+--------
 -h --height    Plot height in pixels
 -w --width     Plot width in pixels
 -r --resolution Resolution in pixels per inch
@@ -373,8 +373,8 @@ nodes in the cluster. For example, you could:
 
     %%px
     (define myfunc
-       (lambda (n)
-         (+ n 1)))
+    (lambda (n)
+    (+ n 1)))
 
 to define myfunc on all machines (use %%px -e to also define
 it in the running notebook or console). Then you can apply it
@@ -388,7 +388,7 @@ in the cluster.
 Note: not all languages may support running a function via this magic.
 
 Options:
--------
+--------
 -s --set_variable set the variable with the parallel results rather than returning them [default: None]
 
 ## `%px`
@@ -409,7 +409,7 @@ supports %set).
 Use %parallel to initialize the cluster.
 
 Options:
--------
+--------
 -s --set_variable set the variable with the parallel results rather than returning them [default: None]
 -e --evaluate  evaluate code in the current kernel, too. The current kernel should be of the same language as the cluster. [default: False]
 -k --kernel_name kernel name given to use for execution [default: None]
@@ -477,7 +477,7 @@ Examples:
 Note: not all languages may support %run.
 
 Options:
--------
+--------
 -l --language  use the provided language name as kernel [default: None]
 
 ## `%scheme`
@@ -596,7 +596,7 @@ Example:
 
 
 Options:
--------
+--------
 -a --append    append onto an existing file [default: False]
 
 ## `%%help`
@@ -647,7 +647,7 @@ Example:
 Use `%kernel MODULE CLASS [-k NAME]` to create a kernel.
 
 Options:
--------
+--------
 -k --kernel_name kernel name given to use for execution [default: None]
 
 ## `%%latex`
@@ -723,7 +723,7 @@ Example:
 Use %parallel to initialize the cluster.
 
 Options:
--------
+--------
 -s --set_variable set the variable with the parallel results rather than returning them [default: None]
 -e --evaluate  evaluate code in the current kernel, too. The current kernel should be of the same language as the cluster. [default: False]
 -k --kernel_name kernel name given to use for execution [default: None]
@@ -761,7 +761,7 @@ Examples:
 
 
 Options:
--------
+--------
 -e --eval_output Use the retval value from the Python cell as code in the kernel language. [default: False]
 
 ## `%%scheme`
@@ -790,7 +790,7 @@ Examples:
     "this = code"
 
 Options:
--------
+--------
 -e --eval_output Use the retval value from the Scheme cell as code in the kernel language. [default: False]
 
 ## `%%shell`
@@ -825,7 +825,7 @@ Examples:
     retval = 54 * 54
 
 Options:
--------
+--------
 -o --output    rather than showing the contents, show the results [default: False]
 
 ## `%%time`
@@ -871,6 +871,6 @@ Examples:
    }
 
 Options:
--------
+--------
 -l --language  Possible languages to be displayed within the iframe. Possible values are: python, python2, python3, java, javascript
 
