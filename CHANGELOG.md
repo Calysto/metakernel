@@ -2,11 +2,27 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.29.0
+
+([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.28.2...a339b3976ede13e5813f1f078acc031d6999f412))
+
+### Maintenance and upkeep improvements
+
+- Clean up testing and add more CI [#244](https://github.com/Calysto/metakernel/pull/244) ([@blink1073](https://github.com/blink1073))
+- Fix macos tests [#243](https://github.com/Calysto/metakernel/pull/243) ([@blink1073](https://github.com/blink1073))
+- Clean up CI and bump supported pythons [#242](https://github.com/Calysto/metakernel/pull/242) ([@blink1073](https://github.com/blink1073))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2021-12-02&to=2022-03-29&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2021-12-02..2022-03-29&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.28.2
 
 - Test with jupyter_kernel_test [#238](https://github.com/Calysto/metakernel/pull/238) ([@blink1073](https://github.com/blink1073))
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.28.1
 
