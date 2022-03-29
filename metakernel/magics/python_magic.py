@@ -142,26 +142,13 @@ class PythonMagic(Magic):
         position = (info['line_num'], info['column'])
         interpreter = Interpreter(text, [self.env])
 
-        if jedi.__version__ >= LooseVersion('0.12.0'):
-            lines = split_lines(text)
-            name = get_on_completion_name(
-                interpreter._module_node,
-                lines,
-                position
-            )
-            before = text[:len(text) - len(name)]
-        elif jedi.__version__ >= LooseVersion('0.10.0'):
-            lines = split_lines(text)
-            name = get_on_completion_name(
-                interpreter._get_module_node(),
-                lines,
-                position
-            )
-            before = text[:len(text) - len(name)]
-        else:
-            path = UserContext(text, position).get_path_until_cursor()
-            path, dot, like = completion_parts(path)
-            before = text[:len(text) - len(like)]
+        lines = split_lines(text)
+        name = get_on_completion_name(
+            interpreter._module_node,
+            lines,
+            position
+        )
+        before = text[:len(text) - len(name)]
 
         try:
             completions = interpreter.complete()
