@@ -1,25 +1,15 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from distutils.version import LooseVersion
 from metakernel import Magic, option, ExceptionWrapper
 import pydoc
 import sys
 import ast
-try:
-    import jedi
-    from jedi import Interpreter
-    if jedi.__version__ >= LooseVersion('0.11.0'):
-        from jedi.api.helpers import get_on_completion_name
-        from parso import split_lines
-    elif jedi.__version__ >= LooseVersion('0.10.0'):
-        from jedi.api.helpers import get_on_completion_name
-        from jedi.common import splitlines as split_lines
-    else:
-        from jedi.api.helpers import completion_parts
-        from jedi.parser.user_context import UserContext
-except ImportError:
-    jedi = None
+import jedi
+from jedi import Interpreter
+from jedi.api.helpers import get_on_completion_name
+from parso import split_lines
+
 
 def exec_then_eval(code, env):
     import traceback
@@ -152,26 +142,13 @@ class PythonMagic(Magic):
         position = (info['line_num'], info['column'])
         interpreter = Interpreter(text, [self.env])
 
-        if jedi.__version__ >= LooseVersion('0.12.0'):
-            lines = split_lines(text)
-            name = get_on_completion_name(
-                interpreter._module_node,
-                lines,
-                position
-            )
-            before = text[:len(text) - len(name)]
-        elif jedi.__version__ >= LooseVersion('0.10.0'):
-            lines = split_lines(text)
-            name = get_on_completion_name(
-                interpreter._get_module_node(),
-                lines,
-                position
-            )
-            before = text[:len(text) - len(name)]
-        else:
-            path = UserContext(text, position).get_path_until_cursor()
-            path, dot, like = completion_parts(path)
-            before = text[:len(text) - len(like)]
+        lines = split_lines(text)
+        name = get_on_completion_name(
+            interpreter._module_node,
+            lines,
+            position
+        )
+        before = text[:len(text) - len(name)]
 
         try:
             completions = interpreter.complete()

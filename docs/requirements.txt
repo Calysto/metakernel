@@ -9,3 +9,4 @@ recommonmark
 requests
 sphinx_bootstrap_theme
 numpydoc
+myst-parser

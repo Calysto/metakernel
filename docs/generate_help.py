@@ -22,6 +22,9 @@ for magic in sorted(kernel.cell_magics.keys()):
     text += "## `" + prefix + prefix + magic + "`\n\n"
     text += kernel.get_help_on(prefix + prefix + magic) + "\n\n"
 
+# Fix for "Title underline too short".
+text = text.replace('-------', '--------')
+
 with open(path, 'w') as fid:
     fid.write(text)
 

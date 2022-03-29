@@ -7,7 +7,7 @@ from IPython.display import Latex
 class LatexMagic(Magic):
 
     def line_latex(self, text):
-        """
+        r"""
         %latex TEXT - display text as LaTeX
 
         This line magic will display the TEXT on the line as LaTeX.
@@ -20,7 +20,7 @@ class LatexMagic(Magic):
         self.kernel.Display(latex)
 
     def cell_latex(self):
-        """
+        r"""
         %%latex - display contents of cell as LaTeX
 
         This cell magic will display the TEXT in the cell as LaTeX.

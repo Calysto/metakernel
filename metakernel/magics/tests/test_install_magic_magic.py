@@ -13,7 +13,7 @@ filename = get_local_magics_dir() + os.sep + "cd_magic.py"
 @pytest.mark.skipif(not has_network(), reason='no network')
 def test_install_magic_magic():
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute("%install_magic https://raw.githubusercontent.com/calysto/metakernel/master/metakernel/magics/cd_magic.py")
+    kernel.do_execute("%install_magic https://raw.githubusercontent.com/calysto/metakernel/main/metakernel/magics/cd_magic.py")
     text = get_log_text(kernel)
     assert re.match(".*Downloaded '.*ipython/metakernel/magics/cd_magic.py'", text, re.DOTALL | re.M), "Not downloaded"
     assert os.path.isfile(filename), ("File not found: %s" % filename)
