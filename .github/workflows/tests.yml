@@ -95,7 +95,7 @@ jobs:
           mkdir test
           tar --strip-components=1 -zxvf *.tar.gz -C ./test
           cd test
-          pip install .[test]
+          make install
       - name: Run Test
         run: |
           cd sdist/test
