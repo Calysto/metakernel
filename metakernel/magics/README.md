@@ -373,8 +373,8 @@ nodes in the cluster. For example, you could:
 
     %%px
     (define myfunc
-    (lambda (n)
-    (+ n 1)))
+       (lambda (n)
+         (+ n 1)))
 
 to define myfunc on all machines (use %%px -e to also define
 it in the running notebook or console). Then you can apply it
