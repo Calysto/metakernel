@@ -54,31 +54,12 @@ jobs:
         uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
         with:
           python_version: "3.7"
+      - name: Install normally
+        run: make install
       - name: Install miniumum versions
         uses: jupyterlab/maintainer-tools/.github/actions/install-minimums@v1
       - name: Run the unit tests
-        run: |
-          make test
-
-  test_prereleases:
-    name: Test Prereleases
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Base Setup
-        uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
-      - name: Install the Python dependencies
-        run: |
-          pip install --pre -e ".[test]"
-      - name: List installed packages
-        run: |
-          pip freeze
-          pip check
-      - name: Run the tests
-        run: |
-          make test
+        run: make test
 
   make_sdist:
     name: Make SDist
