@@ -38,5 +38,5 @@ filterwarnings= [
   "error",
   "ignore:the imp module is deprecated:DeprecationWarning:ipykernel",
   "ignore:distutils Version classes:DeprecationWarning:ipyparallel",
-  "ingore:unclosed:ResourceWarning:jupyter_client"
+  "ignore:unclosed:ResourceWarning:jupyter_client"
 ]
