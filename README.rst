@@ -3,7 +3,7 @@ A Jupyter kernel base class in Python which includes core magic functions (inclu
 .. image:: https://badge.fury.io/py/metakernel.png/
     :target: http://badge.fury.io/py/metakernel
 
-.. image:: https://coveralls.io/repos/Calysto/metakernel/badge.png?branch=master
+.. image:: https://coveralls.io/repos/Calysto/metakernel/badge.png?branch=main
   :target: https://coveralls.io/r/Calysto/metakernel
 
 .. image:: https://travis-ci.org/Calysto/metakernel.svg
@@ -207,10 +207,10 @@ Documentation is available online_. Magics have interactive help_ (and online).
 For version information, see the Changelog_.
 
 
-.. _here: http://nbviewer.ipython.org/github/Calysto/metakernel/tree/master/examples/
+.. _here: http://nbviewer.ipython.org/github/Calysto/metakernel/tree/main/examples/
 
-.. _help: https://github.com/Calysto/metakernel/blob/master/metakernel/magics/README.md
+.. _help: https://github.com/Calysto/metakernel/blob/main/metakernel/magics/README.md
 
 .. _online: http://Calysto.github.io/metakernel/
 
-.. _Changelog: https://github.com/Calysto/metakernel/blob/master/CHANGELOG.md
+.. _Changelog: https://github.com/Calysto/metakernel/blob/main/CHANGELOG.md

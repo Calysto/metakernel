@@ -37,4 +37,5 @@ filterwarnings= [
   # Fail on warnings
   "error",
   "ignore:the imp module is deprecated:DeprecationWarning:ipykernel"
+  "ignore:distutils Version classes:DeprecationWarning:ipyparallel",
 ]
