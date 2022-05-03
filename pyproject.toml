@@ -38,7 +38,7 @@ activity = ["portalocker"] # activity magic
 parallel = ["ipyparallel"] # parallel magic
 
 [tool.flit.sdist]
-include = ["metakernel_echo/", "metakernel_python/"]
+include = ["metakernel_echo/", "metakernel_python/", "Makefile"]
 
 [tool.jupyter-releaser]
 skip = ["check-links"]
