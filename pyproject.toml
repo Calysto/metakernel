@@ -1,6 +1,44 @@
 [build-system]
-requires = ["setuptools", "wheel", "ipykernel", "pexpect"]
-build-backend = "setuptools.build_meta"
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "metakernel"
+authors = [{name = "Metakernel Developers", email = "steven.silvester@ieee.org"}]
+classifiers = [
+    "License :: OSI Approved :: BSD License",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Framework :: IPython",
+    "Topic :: System :: Shells",
+]
+urls = {Homepage = "https://github.com/Calysto/metakernel"}
+requires-python = ">=3.7"
+dependencies = [
+    "ipykernel >=5.5.6",
+    "jupyter_core >=4.9.2",
+    "pexpect >=4.8",
+    "jedi >=0.18",
+]
+dynamic = ["description", "version"]
+
+[project.readme]
+file = "README.rst"
+content-type = "text/x-rst"
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-cov",
+    "requests",
+    "jupyter_kernel_test",
+    "pytest-timeout",
+]
+activity = ["portalocker"] # activity magic
+parallel = ["ipyparallel"] # parallel magic
+
+[tool.flit.sdist]
+include = ["metakernel_echo/", "metakernel_python/"]
 
 [tool.jupyter-releaser]
 skip = ["check-links"]
