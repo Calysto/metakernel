@@ -1,3 +1,4 @@
+"""A Jupyter kernel base class in Python which includes core magic functions (including help, command and file path completion, parallel and distributed processing, downloads, and much more)."""
 from ._metakernel import (
     ExceptionWrapper, MetaKernel, IPythonKernel, register_ipython_magics, get_metakernel,
     MetaKernelApp)

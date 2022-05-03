@@ -1,8 +1,8 @@
-from __future__ import print_function
-
+"""A Echo kernel for Jupyter"""
 from metakernel import MetaKernel
 import sys
 
+__version__ = "0.1.0"
 
 class MetaKernelEcho(MetaKernel):
     implementation = 'MetaKernel Echo'
