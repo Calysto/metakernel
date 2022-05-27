@@ -178,7 +178,7 @@ Options:
 
 %kernel MODULE CLASS [-k NAME] - construct a kernel for sending code.
 
-This line magic will contruct a kernel language so that you can
+This line magic will construct a kernel language so that you can
 communicate.
 
 Example:
@@ -459,7 +459,7 @@ Note that you will lose all computed values.
    kernel
 
 This magic will take the code in FILENAME and run it. The
-exact details of how the code runs are deterimined by your
+exact details of how the code runs are determined by your
 language.
 
 The --language LANG option will prefix the file contents with

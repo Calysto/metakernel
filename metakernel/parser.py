@@ -153,7 +153,7 @@ class Parser(object):
           and handled by the kernel.
 
         - Help magic is special:
-        -- It can be at the end of the line and takes precidence.
+        -- It can be at the end of the line and takes precedence.
         -- No code is executed when a help magic is present.
 
         Examples

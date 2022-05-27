@@ -29,7 +29,7 @@ class REPLWrapper(object):
     :class:`pexpect.spawn` in which a REPL has already been started,
     or a str command to start a new REPL process.
     :param str prompt_regex:  Regular expression representing process prompt, eg ">>>" in Python.
-    :param str continuation_prompt_regex: Regular expression repesenting process continuation prompt, e.g. "..." in Python.
+    :param str continuation_prompt_regex: Regular expression representing process continuation prompt, e.g. "..." in Python.
     :param str prompt_change_cmd: Optional kernel command that sets continuation-of-line-prompts, eg PS1 and PS2, such as "..." in Python.
         to something more unique. If this is ``None``, the prompt will not be
         changed. This will be formatted with the new and continuation prompts
