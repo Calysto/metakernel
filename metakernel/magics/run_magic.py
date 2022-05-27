@@ -16,7 +16,7 @@ class RunMagic(Magic):
            kernel
 
         This magic will take the code in FILENAME and run it. The
-        exact details of how the code runs are deterimined by your
+        exact details of how the code runs are determined by your
         language.
 
         The --language LANG option will prefix the file contents with

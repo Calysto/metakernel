@@ -17,7 +17,7 @@ class KernelMagic(Magic):
         """
         %kernel MODULE CLASS [-k NAME] - construct a kernel for sending code.
 
-        This line magic will contruct a kernel language so that you can
+        This line magic will construct a kernel language so that you can
         communicate.
 
         Example:

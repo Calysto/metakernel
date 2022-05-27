@@ -30,7 +30,7 @@
 
 ## 0.28.0
 
-*Note*  This was not uploaded to PyPI because it had an incorrect trove classifer
+*Note*  This was not uploaded to PyPI because it had an incorrect trove classifier
 
 - Add support for jupyter releaser [#234](https://github.com/Calysto/metakernel/pull/234) ([@blink1073](https://github.com/blink1073))
 - Modernize build and test [#233](https://github.com/Calysto/metakernel/pull/233) ([@blink1073](https://github.com/blink1073))

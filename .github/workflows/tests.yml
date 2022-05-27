@@ -56,7 +56,7 @@ jobs:
           python_version: "3.7"
       - name: Install normally
         run: make install
-      - name: Install miniumum versions
+      - name: Install minimum versions
         uses: jupyterlab/maintainer-tools/.github/actions/install-minimums@v1
       - name: Run the unit tests
         run: make test
