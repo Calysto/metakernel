@@ -86,6 +86,15 @@ class REPLWrapTestCase(unittest.TestCase):
         res = p.run_command('for a in range(3): print(a)\n')
         assert res.strip().splitlines() == ['0', '1', '2']
 
+    def test_bracketed_paste(self):
+        # Readline paste bracketing is easily toggled in bash, but can be harder elsewhere
+        # This tests that run_command() still works with it enabled (the default for readline,
+        # but overriden by bash and python)
+        bash = replwrap.bash()
+        bash.run_command("bind 'set enable-bracketed-paste on'")
+        res = bash.run_command("echo '1 2\n3 4'")
+        self.assertEqual(res.strip().splitlines(), ['1 2', '3 4'])
+
 
 if __name__ == '__main__':
     unittest.main()
