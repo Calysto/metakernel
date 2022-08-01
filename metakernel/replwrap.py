@@ -235,7 +235,7 @@ class REPLWrapper(object):
         for line in cmdlines[1:]:
             if not self.prompt_emit_cmd:
                 self._expect_prompt(timeout=timeout)
-                res.append(self.child.before)
+                res.append(strip_bracketing(self.child.before))
             self.sendline(line)
 
         # Command was fully submitted, now wait for the next prompt
@@ -246,7 +246,7 @@ class REPLWrapper(object):
 
         if self._stream_handler or self._line_handler:
             return u''
-        return u''.join(res + [self.child.before])
+        return u''.join(res + [strip_bracketing(self.child.before)])
 
     def interrupt(self, continuation=False):
         """Interrupt the process and wait for a prompt.
@@ -322,3 +322,11 @@ def bash(command="bash", prompt_regex=re.compile('[$#]')):
 def powershell(command='powershell', prompt_regex='>'):
     """"Start a powershell and return a :class:`REPLWrapper` object."""
     return REPLWrapper(command, prompt_regex, 'Function prompt {{ "{0}" }}', echo=True)
+
+
+def strip_bracketing(string, start='\x1b[?2004l', stop='\x1b[?2004h'):
+    """Strip 'bracketed paste' control characters, if they are present"""
+    if string.startswith(start) and string.endswith(stop):
+        return string[len(start):-len(stop)]
+    else:
+        return string
