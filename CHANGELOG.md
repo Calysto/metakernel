@@ -2,6 +2,31 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.29.1
+
+([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.29.0...68b0da7ad71de8e9802c9ab573344a3ea0a1a832))
+
+### Bugs fixed
+
+- Strip paste-bracketing control characters [#250](https://github.com/Calysto/metakernel/pull/250) ([@anewusername](https://github.com/anewusername))
+
+### Maintenance and upkeep improvements
+
+- Address deprecation warnings [#249](https://github.com/Calysto/metakernel/pull/249) ([@ellert](https://github.com/ellert))
+- Switch to flit build backend [#246](https://github.com/Calysto/metakernel/pull/246) ([@blink1073](https://github.com/blink1073))
+
+### Documentation improvements
+
+- Correct spelling mistakes [#248](https://github.com/Calysto/metakernel/pull/248) ([@EdwardBetts](https://github.com/EdwardBetts))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2022-03-29&to=2022-08-01&type=c))
+
+[@anewusername](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aanewusername+updated%3A2022-03-29..2022-08-01&type=Issues) | [@blink1073](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2022-03-29..2022-08-01&type=Issues) | [@EdwardBetts](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3AEdwardBetts+updated%3A2022-03-29..2022-08-01&type=Issues) | [@ellert](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aellert+updated%3A2022-03-29..2022-08-01&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.29.0
 
 ([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.28.2...a339b3976ede13e5813f1f078acc031d6999f412))
@@ -17,8 +42,6 @@
 ([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2021-12-02&to=2022-03-29&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2021-12-02..2022-03-29&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.28.2
 
