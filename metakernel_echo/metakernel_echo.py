@@ -2,7 +2,7 @@
 from metakernel import MetaKernel
 import sys
 
-__version__ = "0.1.0"
+__version__ = "0.19.1"
 
 class MetaKernelEcho(MetaKernel):
     implementation = 'MetaKernel Echo'
