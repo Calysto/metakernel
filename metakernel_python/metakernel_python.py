@@ -3,7 +3,7 @@ from IPython.core.inputtransformer2 import TransformerManager
 from metakernel import MetaKernel
 import sys
 
-__version__ = "0.1.0"
+__version__ = "0.19.1"
 
 class MetaKernelPython(MetaKernel):
     implementation = 'MetaKernel Python'
