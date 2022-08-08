@@ -1,6 +1,6 @@
 [build-system]
-requires = ["flit_core >=3.2,<4"]
-build-backend = "flit_core.buildapi"
+requires = ["hatchling >=1.5"]
+build-backend = "hatchling.build"
 
 [project]
 name = "metakernel"
@@ -37,8 +37,14 @@ test = [
 activity = ["portalocker"] # activity magic
 parallel = ["ipyparallel"] # parallel magic
 
-[tool.flit.sdist]
-include = ["metakernel_echo/", "metakernel_python/", "Makefile"]
+[tool.hatch.version]
+path = "metakernel/__init__.py"
+
+[tool.hatch.build]
+exclude = [
+  "docs/",
+  "examples",
+]
 
 [tool.jupyter-releaser]
 skip = ["check-links"]
