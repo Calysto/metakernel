@@ -2,6 +2,26 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.29.2
+
+([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.29.1...dbe3fc91a87bca68412faf640b58778204102b29))
+
+### Bugs fixed
+
+- Restore versions of metakernel-echo and metakernel-python [#252](https://github.com/Calysto/metakernel/pull/252) ([@ellert](https://github.com/ellert))
+
+### Maintenance and upkeep improvements
+
+- Switch to hatch backend [#254](https://github.com/Calysto/metakernel/pull/254) ([@blink1073](https://github.com/blink1073))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2022-08-01&to=2022-08-08&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2022-08-01..2022-08-08&type=Issues) | [@ellert](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aellert+updated%3A2022-08-01..2022-08-08&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.29.1
 
 ([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.29.0...68b0da7ad71de8e9802c9ab573344a3ea0a1a832))
@@ -24,8 +44,6 @@
 ([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2022-03-29&to=2022-08-01&type=c))
 
 [@anewusername](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aanewusername+updated%3A2022-03-29..2022-08-01&type=Issues) | [@blink1073](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2022-03-29..2022-08-01&type=Issues) | [@EdwardBetts](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3AEdwardBetts+updated%3A2022-03-29..2022-08-01&type=Issues) | [@ellert](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aellert+updated%3A2022-03-29..2022-08-01&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.29.0
 
