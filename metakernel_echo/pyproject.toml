@@ -1,6 +1,6 @@
 [build-system]
-requires = ["flit_core >=3.2,<4"]
-build-backend = "flit_core.buildapi"
+requires = ["hatchling >=1.5"]
+build-backend = "hatchling.build"
 
 [project]
 name = "metakernel_echo"
@@ -21,3 +21,6 @@ content-type = "text/plain"
 
 [project.urls]
 Homepage = "https://github.com/calysto/metakernel/tree/main/metakernel_echo"
+
+[tool.hatch.version]
+path = "metakernel_echo.py"
