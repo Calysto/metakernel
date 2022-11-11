@@ -67,16 +67,8 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v2
-      - name: Base Setup
-        uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
-      - name: Build SDist
-        run: |
-          pip install build
-          python -m build --sdist
-      - uses: actions/upload-artifact@v2
-        with:
-          name: "sdist"
-          path: dist/*.tar.gz
+      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+      - uses: jupyterlab/maintainer-tools/.github/actions/make-sdist@v1
 
   test_sdist:
     runs-on: ubuntu-latest
@@ -84,19 +76,14 @@ jobs:
     name: Install from SDist and Test
     timeout-minutes: 20
     steps:
-      - name: Base Setup
-        uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
-      - name: Download sdist
-        uses: actions/download-artifact@v2
-      - name: Install From SDist
-        run: |
-          set -ex
-          cd sdist
-          mkdir test
-          tar --strip-components=1 -zxvf *.tar.gz -C ./test
-          cd test
-          make install
-      - name: Run Test
-        run: |
-          cd sdist/test
-          make test
+      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+      - uses: jupyterlab/maintainer-tools/.github/actions/test-sdist@v1
+
+  link_check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+      - uses: jupyterlab/maintainer-tools/.github/actions/check-links@v1
+        with:
+          ignore_links: "http://some/file/from/* http://path/to/some/*"
