@@ -46,12 +46,6 @@ exclude = [
   "examples",
 ]
 
-[tool.jupyter-releaser]
-skip = ["check-links"]
-
-[tool.jupyter-releaser.options]
-ignore-links = ["http://some/file/from/*", "http://path/to/some/*"]
-
 [tool.tbump.version]
 current = "0.29.2"
 regex = '''
@@ -68,12 +62,7 @@ src = "metakernel/__init__.py"
 
 [tool.pytest.ini_options]
 addopts= "-raXs  --durations 10 --color=yes --doctest-modules"
-norecursedirs = [
-  "images",
-  "metakernel_python",
-  "metakernel_echo",
-  "docs"
-]
+testpaths = ["metakernel/tests"]
 timeout = 300
 # Restore this setting to debug failures
 # timeout_method = "thread"
