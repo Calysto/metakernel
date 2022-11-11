@@ -17,15 +17,7 @@ clean:
 
 test: clean
 	ipcluster start -n=3 &
-	python -m pytest || python -m pytest --lf
-	ipcluster stop
-	python metakernel_python/test_metakernel_python.py
-	make clean
-
-test_warn: clean
-	ipcluster start -n=3 &
-	export PYTHONWARNINGS="all"
-	python -m pytest || python -m pytest --lf
+	python -m pytest -W default || python -m pytest -W default --lf
 	ipcluster stop
 	python metakernel_python/test_metakernel_python.py
 	make clean
