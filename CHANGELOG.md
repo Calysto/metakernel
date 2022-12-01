@@ -2,6 +2,24 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.29.3
+
+([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.29.2...758c19d08fc74daff077b242c0fae30f82313479))
+
+### Maintenance and upkeep improvements
+
+- Bump actions/checkout from 2 to 3 [#258](https://github.com/Calysto/metakernel/pull/258) ([@dependabot](https://github.com/dependabot))
+- Maintenance cleanup [#257](https://github.com/Calysto/metakernel/pull/257) ([@blink1073](https://github.com/blink1073))
+- Use hatch for example projects [#256](https://github.com/Calysto/metakernel/pull/256) ([@blink1073](https://github.com/blink1073))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2022-08-08&to=2022-12-01&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2022-08-08..2022-12-01&type=Issues) | [@dependabot](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Adependabot+updated%3A2022-08-08..2022-12-01&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.29.2
 
 ([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.29.1...dbe3fc91a87bca68412faf640b58778204102b29))
@@ -19,8 +37,6 @@
 ([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2022-08-01&to=2022-08-08&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2022-08-01..2022-08-08&type=Issues) | [@ellert](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aellert+updated%3A2022-08-01..2022-08-08&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.29.1
 
