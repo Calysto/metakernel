@@ -46,20 +46,6 @@ exclude = [
   "examples",
 ]
 
-[tool.tbump.version]
-current = "0.29.3"
-regex = '''
-  (?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)
-  ((?P<channel>a|b|rc|.dev)(?P<release>\d+))?
-'''
-
-[tool.tbump.git]
-message_template = "Bump to {new_version}"
-tag_template = "v{new_version}"
-
-[[tool.tbump.file]]
-src = "metakernel/__init__.py"
-
 [tool.pytest.ini_options]
 addopts= "-raXs  --durations 10 --color=yes --doctest-modules"
 testpaths = ["metakernel/tests"]
@@ -70,5 +56,7 @@ filterwarnings= [
   # Fail on warnings
   "error",
   "ignore:unclosed event loop:ResourceWarning",
-  "ignore:There is no current event loop:DeprecationWarning"
+  "ignore:There is no current event loop:DeprecationWarning",
+  # When we run ipcluster and then run the tests we get this warning
+  "ignore:Widget._active_widgets is deprecated:DeprecationWarning",
 ]
