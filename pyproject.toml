@@ -58,5 +58,5 @@ filterwarnings= [
   "ignore:unclosed event loop:ResourceWarning",
   "ignore:There is no current event loop:DeprecationWarning",
   # When we run ipcluster and then run the tests we get this warning
-  "ignore:Widget._active_widgets is deprecated:DeprecationWarning",
+  "ignore:Widget.* is deprecated:DeprecationWarning",
 ]
