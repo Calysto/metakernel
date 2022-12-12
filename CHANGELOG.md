@@ -2,6 +2,23 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.29.4
+
+([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.29.3...5ec51d6828bf079b7ee2007f6351f4321434b49e))
+
+### Maintenance and upkeep improvements
+
+- Add back magics tests [#261](https://github.com/Calysto/metakernel/pull/261) ([@ellert](https://github.com/ellert))
+- Update tests for widgets 8 [#260](https://github.com/Calysto/metakernel/pull/260) ([@blink1073](https://github.com/blink1073))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2022-12-01&to=2022-12-12&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2022-12-01..2022-12-12&type=Issues) | [@ellert](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aellert+updated%3A2022-12-01..2022-12-12&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.29.3
 
 ([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.29.2...758c19d08fc74daff077b242c0fae30f82313479))
@@ -17,8 +34,6 @@
 ([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2022-08-08&to=2022-12-01&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2022-08-08..2022-12-01&type=Issues) | [@dependabot](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Adependabot+updated%3A2022-08-08..2022-12-01&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.29.2
 
