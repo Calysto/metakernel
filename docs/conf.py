@@ -286,8 +286,4 @@ numpydoc_show_class_members = False
 # -----------------------------------------------------------------------------
 # intersphinx
 # -----------------------------------------------------------------------------
-_python_doc_base = 'http://docs.python.org/2.7'
-intersphinx_mapping = {
-    _python_doc_base: None,
-}
-
+intersphinx_mapping = {'python': ('https://docs.python.org/3', None)}
