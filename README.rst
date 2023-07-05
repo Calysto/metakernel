@@ -207,7 +207,7 @@ Documentation is available online_. Magics have interactive help_ (and online).
 For version information, see the Changelog_.
 
 
-.. _here: http://nbviewer.ipython.org/github/Calysto/metakernel/tree/main/examples/
+.. _here: http://nbviewer.jupyter.org/github/Calysto/metakernel/tree/main/examples/
 
 .. _help: https://github.com/Calysto/metakernel/blob/main/metakernel/magics/README.md
 
