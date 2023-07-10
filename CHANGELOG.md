@@ -2,6 +2,28 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.29.5
+
+([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.29.4...7fd364a76586c5312d4afe7ea4c0307434b69693))
+
+### Maintenance and upkeep improvements
+
+- Ignore DeprecationWarnings for datetime.utcnow() [#265](https://github.com/Calysto/metakernel/pull/265) ([@ellert](https://github.com/ellert))
+- Update docs config [#263](https://github.com/Calysto/metakernel/pull/263) ([@blink1073](https://github.com/blink1073))
+- Update ci badge [#262](https://github.com/Calysto/metakernel/pull/262) ([@blink1073](https://github.com/blink1073))
+
+### Documentation improvements
+
+- Change nbviewer URL to use Jupyter [#264](https://github.com/Calysto/metakernel/pull/264) ([@rgbkrk](https://github.com/rgbkrk))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2022-12-12&to=2023-07-10&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2022-12-12..2023-07-10&type=Issues) | [@ellert](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aellert+updated%3A2022-12-12..2023-07-10&type=Issues) | [@rgbkrk](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Argbkrk+updated%3A2022-12-12..2023-07-10&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.29.4
 
 ([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.29.3...5ec51d6828bf079b7ee2007f6351f4321434b49e))
@@ -16,8 +38,6 @@
 ([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2022-12-01&to=2022-12-12&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2022-12-01..2022-12-12&type=Issues) | [@ellert](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aellert+updated%3A2022-12-01..2022-12-12&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.29.3
 
