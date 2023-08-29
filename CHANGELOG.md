@@ -2,6 +2,27 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.30.0
+
+([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.29.5...c9350d39036218f82bff6eb90685d1d3c964cba1))
+
+### Enhancements made
+
+- Updated dot magic, with tests [#268](https://github.com/Calysto/metakernel/pull/268) ([@dsblank](https://github.com/dsblank))
+
+### Bugs fixed
+
+- Update tests.yml [#270](https://github.com/Calysto/metakernel/pull/270) ([@dsblank](https://github.com/dsblank))
+- Fix magic completion [#269](https://github.com/Calysto/metakernel/pull/269) ([@dsblank](https://github.com/dsblank))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2023-07-10&to=2023-08-29&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2023-07-10..2023-08-29&type=Issues) | [@dsblank](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Adsblank+updated%3A2023-07-10..2023-08-29&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.29.5
 
 ([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.29.4...7fd364a76586c5312d4afe7ea4c0307434b69693))
@@ -21,8 +42,6 @@
 ([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2022-12-12&to=2023-07-10&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2022-12-12..2023-07-10&type=Issues) | [@ellert](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aellert+updated%3A2022-12-12..2023-07-10&type=Issues) | [@rgbkrk](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Argbkrk+updated%3A2022-12-12..2023-07-10&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.29.4
 
