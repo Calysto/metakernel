@@ -34,7 +34,7 @@ jobs:
         uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
 
       - name: Install graphviz on Linux
-        if: ${{ startsWith("ubuntu", matrix.os }}
+        if: ${{ startsWith(matrix.os, 'ubuntu') }}
         run: sudo apt install -y graphviz
       
       - name: Install dependencies
