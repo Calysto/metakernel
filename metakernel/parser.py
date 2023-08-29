@@ -126,7 +126,10 @@ class Parser(object):
         info['obj'] = obj
         info['full_obj'] = full_obj
 
-        info['start'] = end - len(obj)
+        if obj:
+            info['start'] = end - len(obj)
+        else:
+            info['start'] = 0
         info['end'] = end
         info['pre'] = code[:start]
         info['code'] = code[start: end]
