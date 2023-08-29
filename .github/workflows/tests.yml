@@ -36,7 +36,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install coveralls
-          apt install -y graphviz
+          sudo apt install -y graphviz
           make install
 
       - name: Run the tests
