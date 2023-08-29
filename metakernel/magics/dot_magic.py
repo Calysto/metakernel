@@ -23,6 +23,8 @@ class DotMagic(Magic):
         except:
             raise Exception("You need to install pydot")
         graph = pydot.graph_from_dot_data(str(code))
+        if isinstance(graph, list):
+            graph = graph[0]
         svg = graph.create_svg()
         if hasattr(svg, "decode"):
             svg = svg.decode("utf-8")
@@ -46,6 +48,8 @@ class DotMagic(Magic):
         except:
             raise Exception("You need to install pydot")
         graph = pydot.graph_from_dot_data(str(self.code))
+        if isinstance(graph, list):
+            graph = graph[0]
         svg = graph.create_svg()
         if hasattr(svg, "decode"):
             svg = svg.decode("utf-8")
