@@ -60,5 +60,5 @@ filterwarnings= [
   # When we run ipcluster and then run the tests we get this warning
   "ignore:Widget.* is deprecated:DeprecationWarning",
   # Deprecated in Python 3.12. Warnings from use in jupyter_client.
-  "ignore:datetime.utcnow.* is deprecated:DeprecationWarning",
+  "ignore:.*datetime.utcnow.* is deprecated:DeprecationWarning",
 ]
