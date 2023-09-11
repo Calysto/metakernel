@@ -2,6 +2,23 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.30.1
+
+([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.30.0...0ab2d9b2e46acc10bd86ca79d18afc423eeef7eb))
+
+### Maintenance and upkeep improvements
+
+- Adapt to Python 3.12.0rc2 [#272](https://github.com/Calysto/metakernel/pull/272) ([@ellert](https://github.com/ellert))
+- Bump actions/checkout from 3 to 4 [#271](https://github.com/Calysto/metakernel/pull/271) ([@dependabot](https://github.com/dependabot))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2023-08-29&to=2023-09-11&type=c))
+
+[@dependabot](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Adependabot+updated%3A2023-08-29..2023-09-11&type=Issues) | [@ellert](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aellert+updated%3A2023-08-29..2023-09-11&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.30.0
 
 ([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.29.5...c9350d39036218f82bff6eb90685d1d3c964cba1))
@@ -20,8 +37,6 @@
 ([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2023-07-10&to=2023-08-29&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2023-07-10..2023-08-29&type=Issues) | [@dsblank](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Adsblank+updated%3A2023-07-10..2023-08-29&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.29.5
 

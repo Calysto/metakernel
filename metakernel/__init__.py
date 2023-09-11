@@ -10,4 +10,4 @@ from .parser import Parser
 
 __all__ = ['Magic', 'MetaKernel', 'option']
 
-__version__ = '0.30.0'
+__version__ = '0.30.1'
