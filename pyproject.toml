@@ -13,7 +13,7 @@ classifiers = [
     "Topic :: System :: Shells",
 ]
 urls = {Homepage = "https://github.com/Calysto/metakernel"}
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 dependencies = [
     "ipykernel >=5.5.6",
     "jupyter_core >=4.9.2",
@@ -59,6 +59,6 @@ filterwarnings= [
   "ignore:There is no current event loop:DeprecationWarning",
   # When we run ipcluster and then run the tests we get this warning
   "ignore:Widget.* is deprecated:DeprecationWarning",
-  # Deprecated in Python 3.12. Warnings from use in jupyter_client.
-  "ignore:.*datetime.utcnow.* is deprecated:DeprecationWarning",
+  "module:datetime.datetime.utc:DeprecationWarning:dateutil",
+  "module:datetime.datetime.utc:DeprecationWarning:ipyparallel",
 ]
