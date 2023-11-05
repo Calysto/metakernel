@@ -59,6 +59,6 @@ filterwarnings= [
   "ignore:There is no current event loop:DeprecationWarning",
   # When we run ipcluster and then run the tests we get this warning
   "ignore:Widget.* is deprecated:DeprecationWarning",
-  "module:datetime.datetime.utcf:DeprecationWarning:dateutil",
-  "module:datetime.datetime.utcf:DeprecationWarning:ipyparallel",
+  "module:datetime.datetime.utc:DeprecationWarning:dateutil",
+  "module:datetime.datetime.utc:DeprecationWarning:ipyparallel",
 ]
