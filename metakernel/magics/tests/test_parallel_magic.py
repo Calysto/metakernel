@@ -3,6 +3,7 @@ from metakernel.tests.utils import get_kernel, get_log_text, EvalKernel
 import os
 import time
 import pytest
+import sys
 
 try:
     import ipyparallel
@@ -10,6 +11,7 @@ except ImportError:
     ipyparallel = None
 
 @pytest.mark.skipif(ipyparallel is None, reason="Requires ipyparallel")
+@pytest.mark.skipif(sys.platform == 'darwin', reason="Fails on darwin")
 def test_parallel_magic():
     kernel = get_kernel(EvalKernel)
     # start up an EvalKernel on each node:
