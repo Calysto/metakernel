@@ -56,25 +56,25 @@ Installation
 ----------------
 You can install Metakernel through ``pip``:
 
-.. code::bash
+.. code:: bash
 
  pip install metakernel --upgrade
 
 Installing `metakernel` from the `conda-forge` channel can be achieved by adding `conda-forge` to your channels with:
 
-.. code::bash
+.. code:: bash
 
  conda config --add channels conda-forge
 
 Once the `conda-forge` channel has been enabled, `metakernel` can be installed with:
 
-.. code::bash
+.. code:: bash
 
  conda install metakernel
 
 It is possible to list all of the versions of `metakernel` available on your platform with:
 
-.. code::bash
+.. code:: bash
 
  conda search metakernel --channel conda-forge
 
