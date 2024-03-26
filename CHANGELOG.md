@@ -2,6 +2,28 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.30.2
+
+([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.30.1...16f88e281040b5698b5eec32b580854424a236f7))
+
+### Maintenance and upkeep improvements
+
+- Add Release Workflows [#277](https://github.com/Calysto/metakernel/pull/277) ([@blink1073](https://github.com/blink1073))
+- Pin upper version of ipykernel [#276](https://github.com/Calysto/metakernel/pull/276) ([@blink1073](https://github.com/blink1073))
+- Clean up CI [#273](https://github.com/Calysto/metakernel/pull/273) ([@blink1073](https://github.com/blink1073))
+
+### Other merged PRs
+
+- Fix installation code blocks in readme [#274](https://github.com/Calysto/metakernel/pull/274) ([@Phoenix616](https://github.com/Phoenix616))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2023-09-11&to=2024-03-26&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2023-09-11..2024-03-26&type=Issues) | [@Phoenix616](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3APhoenix616+updated%3A2023-09-11..2024-03-26&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.30.1
 
 ([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.30.0...0ab2d9b2e46acc10bd86ca79d18afc423eeef7eb))
@@ -16,8 +38,6 @@
 ([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2023-08-29&to=2023-09-11&type=c))
 
 [@dependabot](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Adependabot+updated%3A2023-08-29..2023-09-11&type=Issues) | [@ellert](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aellert+updated%3A2023-08-29..2023-09-11&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.30.0
 
