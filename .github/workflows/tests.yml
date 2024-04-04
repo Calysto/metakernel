@@ -59,10 +59,8 @@ jobs:
         with:
           dependency_type: minimum
 
-      - name: Install normally
+      - name: Install
         run: make install
-      - name: Install minimum versions
-        uses: jupyterlab/maintainer-tools/.github/actions/install-minimums@v1
       - name: Run the unit tests
         run: make test
 
