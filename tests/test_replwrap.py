@@ -91,6 +91,11 @@ class REPLWrapTestCase(unittest.TestCase):
                 "This test fails on macOS because of REPL differences"
             )
 
+        if sys.version_info >= (3, 13):
+            raise unittest.SkipTest(
+                "This test fails on Python >= 3.13 because of REPL differences"
+            )
+
         p = replwrap.python(sys.executable)
         res = p.run_command("4+7")
         assert res.strip() == "11"
