@@ -18,7 +18,7 @@ class HelpMagic(Magic):
         ]
         strings = []
         if self.kernel.help_suffix:
-            strings += [s.format(self.kernel.help_suffix['help'])
+            strings += [s.format(self.kernel.help_suffix)
                         for s in suffixes]
         if 'help' in self.kernel.magic_prefixes:
             strings += [p.format(self.kernel.magic_prefixes['help'])
@@ -98,7 +98,7 @@ class HelpMagic(Magic):
                     return magic.get_help(minfo['type'], minfo['name'],
                                           level)
                 else:
-                    return ("No such %s magic named '%s', so can't really help with that" % 
+                    return ("No such %s magic named '%s', so can't really help with that" %
                             (minfo["type"], minfo["name"]))
             if magic:
                 the_help = magic.get_help_on(info, level)
