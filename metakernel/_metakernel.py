@@ -32,15 +32,6 @@ try:
 except ImportError:
     Widget = None
 
-try:
-    from IPython.utils.PyColorize import NeutralColors
-    RED = NeutralColors.colors["header"]
-    NORMAL = NeutralColors.colors["normal"]
-except:
-    from IPython.core.excolors import TermColors
-    RED = TermColors.Red
-    NORMAL = TermColors.Normal
-
 from IPython.core.formatters import IPythonDisplayFormatter
 from IPython.display import HTML
 from IPython.display import publish_display_data
