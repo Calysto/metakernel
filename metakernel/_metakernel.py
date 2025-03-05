@@ -49,6 +49,9 @@ from IPython.utils.tempdir import TemporaryDirectory
 from .config import get_history_file, get_local_magics_dir
 from .parser import Parser
 
+# Inlined from IPython TermColors after its removal.
+RED = "\033[0;31m"
+NORMAL = "\033[0m"
 class ExceptionWrapper(object):
     """
     Utility wrapper that we can use to get the kernel to respond properly for errors.
