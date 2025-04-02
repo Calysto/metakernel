@@ -2,6 +2,23 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.30.3
+
+([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.30.2...864d7a2d768b082d7e86a102dde883845db27035))
+
+### Maintenance and upkeep improvements
+
+- Add ipython 9 compat [#290](https://github.com/Calysto/metakernel/pull/290) ([@blink1073](https://github.com/blink1073))
+- Fix min version test [#278](https://github.com/Calysto/metakernel/pull/278) ([@blink1073](https://github.com/blink1073))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2024-03-26&to=2025-04-02&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2024-03-26..2025-04-02&type=Issues) | [@dsblank](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Adsblank+updated%3A2024-03-26..2025-04-02&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.30.2
 
 ([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.30.1...16f88e281040b5698b5eec32b580854424a236f7))
@@ -21,8 +38,6 @@
 ([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2023-09-11&to=2024-03-26&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2023-09-11..2024-03-26&type=Issues) | [@Phoenix616](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3APhoenix616+updated%3A2023-09-11..2024-03-26&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.30.1
 
