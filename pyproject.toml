@@ -13,7 +13,7 @@ classifiers = [
     "Topic :: System :: Shells",
 ]
 urls = {Homepage = "https://github.com/Calysto/metakernel"}
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 dependencies = [
     "ipykernel >=5.5.6,<7",
     "jupyter_core >=4.9.2",
@@ -61,4 +61,5 @@ filterwarnings= [
   "ignore:Widget.* is deprecated:DeprecationWarning",
   "module:datetime.datetime.utc:DeprecationWarning:dateutil",
   "module:datetime.datetime.utc:DeprecationWarning:ipyparallel",
+  "module:Parsing dates involving a day of month without a year:DeprecationWarning",
 ]
