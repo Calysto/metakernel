@@ -3,9 +3,6 @@ A Jupyter kernel base class in Python which includes core magic functions (inclu
 .. image:: https://badge.fury.io/py/metakernel.png/
     :target: http://badge.fury.io/py/metakernel
 
-.. image:: https://coveralls.io/repos/Calysto/metakernel/badge.png?branch=main
-  :target: https://coveralls.io/r/Calysto/metakernel
-
 .. image:: https://github.com/Calysto/metakernel/actions/workflows/tests.yml/badge.svg?query=branch%3Amain++
   :target: https://github.com/Calysto/metakernel/actions/workflows/tests.yml
 
