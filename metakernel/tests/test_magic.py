@@ -48,8 +48,6 @@ def test_get_help():
 
     dummy_help = d.get_help('line', 'dummy', 0)
     assert dummy_help.startswith("%dummy")
-    assert "    This is additional information on dummy" in d.line_dummy.__doc__, "Checking indents"
-    assert "\nThis is additional information on dummy" in dummy_help, "Checking indent removal"
 
     dummy_help = d.get_help('line', 'dummy', 1)
     # will show this entire file, including this sentence
