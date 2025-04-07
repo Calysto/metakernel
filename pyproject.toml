@@ -61,5 +61,5 @@ filterwarnings= [
   "ignore:Widget.* is deprecated:DeprecationWarning",
   "module:datetime.datetime.utc:DeprecationWarning:dateutil",
   "module:datetime.datetime.utc:DeprecationWarning:ipyparallel",
-  "module.datetime:DeprecationWarning:ipykernel"
+  "module:datetime:DeprecationWarning:ipykernel"
 ]
