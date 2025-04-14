@@ -24,8 +24,10 @@ def spawn(command, args=[], timeout=30, maxread=2000,
     '''
     codec_errors = kwargs.get('codec_errors', kwargs.get('errors', 'strict'))
     if pty is None:
-        command = shlex.split(command, posix=os.name == 'posix')
-        command += args
+        if args == []:
+            command = shlex.split(command, posix=os.name == 'posix')
+        else:
+            command += args
         child = PopenSpawn(command, timeout=timeout, maxread=maxread,
                            searchwindowsize=searchwindowsize,
                            logfile=logfile, cwd=cwd, env=env,

@@ -47,6 +47,7 @@ class REPLWrapper(object):
     we need to interrupt a continuation prompt.
     :param bool echo: Whether the child should echo, or in the case
     of Windows, whether the child does echo.
+    :param list args: Additional arguments to the spawning command
     """
 
     def __init__(self, cmd_or_spawn, prompt_regex, prompt_change_cmd,
@@ -56,9 +57,10 @@ class REPLWrapper(object):
                  extra_init_cmd=None,
                  prompt_emit_cmd=None,
                  force_prompt_on_continuation=False,
-                 echo=False):
+                 echo=False,
+                 args=[]):
         if isinstance(cmd_or_spawn, basestring):
-            self.child = pexpect.spawnu(cmd_or_spawn, echo=echo,
+            self.child = pexpect.spawnu(cmd_or_spawn, args, echo=echo,
                                         codec_errors="ignore",
                                         encoding="utf-8")
         else:
