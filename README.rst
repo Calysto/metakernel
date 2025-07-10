@@ -46,6 +46,7 @@ Kernels based on Metakernel
 - sas_kernel, https://github.com/sassoftware/sas_kernel
 - pysysh_kernel, https://github.com/Jaesin/psysh_kernel
 - calysto_bash, https://github.com/Calysto/calysto_bash
+- mit_scheme, https://github.com/twaclaw/mit-scheme-kernel
 
 ... and many others.
 
