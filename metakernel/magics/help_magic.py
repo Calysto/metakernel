@@ -18,7 +18,7 @@ class HelpMagic(Magic):
         ]
         strings = []
         if self.kernel.help_suffix:
-            strings += [s.format(self.kernel.help_suffix['help'])
+            strings += [s.format(self.kernel.help_suffix)
                         for s in suffixes]
         if 'help' in self.kernel.magic_prefixes:
             strings += [p.format(self.kernel.magic_prefixes['help'])
