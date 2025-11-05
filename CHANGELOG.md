@@ -2,6 +2,24 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.30.4
+
+([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.30.3...2fca1dcee729103a986e9a12c3cfc9dd9d00c73e))
+
+### Maintenance and upkeep improvements
+
+- Add support for ipykernel 7 and update supported Python versions [#296](https://github.com/Calysto/metakernel/pull/296) ([@blink1073](https://github.com/blink1073))
+- Bump actions/create-github-app-token from 1 to 2 [#292](https://github.com/Calysto/metakernel/pull/292) ([@dependabot](https://github.com/dependabot))
+- Update supported Pythons and fix links [#291](https://github.com/Calysto/metakernel/pull/291) ([@blink1073](https://github.com/blink1073))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2025-04-02&to=2025-11-05&type=c))
+
+[@blink1073](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2025-04-02..2025-11-05&type=Issues) | [@dependabot](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Adependabot+updated%3A2025-04-02..2025-11-05&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.30.3
 
 ([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.30.2...864d7a2d768b082d7e86a102dde883845db27035))
@@ -16,8 +34,6 @@
 ([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2024-03-26&to=2025-04-02&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2024-03-26..2025-04-02&type=Issues) | [@dsblank](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Adsblank+updated%3A2024-03-26..2025-04-02&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.30.2
 
