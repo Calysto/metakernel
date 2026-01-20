@@ -62,4 +62,5 @@ filterwarnings= [
   "module:datetime.datetime.utc:DeprecationWarning:dateutil",
   "module:datetime.datetime.utc:DeprecationWarning:ipyparallel",
   "module:Parsing dates involving a day of month without a year:DeprecationWarning",
+  "module:'setParseAction' deprecated - use 'set_parse_action':DeprecationWarning",
 ]
