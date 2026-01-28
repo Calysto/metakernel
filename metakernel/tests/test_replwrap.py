@@ -95,6 +95,13 @@ class REPLWrapTestCase(unittest.TestCase):
         res = bash.run_command("echo '1 2\n3 4'")
         self.assertEqual(res.strip().splitlines(), ['1 2', '3 4'])
 
+    def test_spawn_args(self):
+        p = replwrap.REPLWrapper(sys.executable, ">>> ",
+                       "import sys; sys.ps1={0!r}; sys.ps2={1!r}", 
+                       args=['-i', '-c', 'x=4+7'])
+        res = p.run_command('x-11')
+        assert res.strip() == '0'
+
 
 if __name__ == '__main__':
     unittest.main()
