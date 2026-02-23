@@ -17,11 +17,12 @@ from collections import OrderedDict
 
 warnings.filterwarnings('ignore', module='IPython.html.widgets')
 
+import comm
+import ipykernel # reconfigures comm
 from jupyter_core.paths import jupyter_config_path, jupyter_config_dir
 from IPython.paths import get_ipython_dir
 from ipykernel.kernelapp import IPKernelApp
 from ipykernel.kernelbase import Kernel
-from ipykernel.comm import CommManager
 from traitlets.config import Application
 from traitlets import Dict, Unicode
 
@@ -29,10 +30,11 @@ PY3 = sys.version_info[0] == 3
 
 try:
     from ipywidgets.widgets.widget import Widget
+    import ipywidgets as widgets
 except ImportError:
     Widget = None
 
-from IPython.core.formatters import IPythonDisplayFormatter
+from IPython.core.formatters import DisplayFormatter
 from IPython.display import HTML
 from IPython.display import publish_display_data
 from IPython.utils.tempdir import TemporaryDirectory
@@ -147,9 +149,14 @@ class MetaKernel(Kernel):
                   'kernel': self}
         if not PY3:
             kwargs['shell'] = None
-        self.comm_manager = CommManager(**kwargs)
+        self.comm_manager = comm.get_comm_manager()
+        # widgets have changed target name in 8.x, keeping for compatibility
         self.comm_manager.register_target('ipython.widget',
             lazy_import_handle_comm_opened)
+
+        # compatible with widgets 8.x
+        if Widget is not None:
+            widgets.register_comm_target()
 
         self.hist_file = get_history_file(self)
         self.parser = Parser(self.identifier_regex, self.func_call_regex,
@@ -157,7 +164,7 @@ class MetaKernel(Kernel):
         comm_msg_types = ['comm_open', 'comm_msg', 'comm_close']
         for msg_type in comm_msg_types:
             self.shell_handlers[msg_type] = getattr(self.comm_manager, msg_type)
-        self._ipy_formatter = IPythonDisplayFormatter()
+        self._display_formatter = DisplayFormatter() # pass kwargs?
         self.env = {}
         self.reload_magics()
         # provide a way to get the current instance
@@ -432,7 +439,7 @@ class MetaKernel(Kernel):
                     self.send_response(self.iopub_socket, 'error', content)
             else:
                 try:
-                    data = _formatter(retval, self.repr)
+                    data = self._display_formatter.format(retval)
                 except Exception as e:
                     self.Error(e)
                     return
@@ -632,7 +639,7 @@ class MetaKernel(Kernel):
             else:
                 self.log.debug('Display Data')
                 try:
-                    data = _formatter(item, self.repr)
+                    data = self._display_formatter.format(item)
                 except Exception as e:
                     self.Error(e)
                     return
@@ -901,52 +908,6 @@ def _split_magics_code(code, prefixes):
         ret_code_str += "\n"
     return (ret_magics_str, ret_code_str)
 
-
-def _formatter(data, repr_func):
-    reprs = {}
-    reprs['text/plain'] = repr_func(data)
-
-    lut = [("_repr_png_", "image/png"),
-           ("_repr_jpeg_", "image/jpeg"),
-           ("_repr_html_", "text/html"),
-           ("_repr_markdown_", "text/markdown"),
-           ("_repr_svg_", "image/svg+xml"),
-           ("_repr_latex_", "text/latex"),
-           ("_repr_json_", "application/json"),
-           ("_repr_javascript_", "application/javascript"),
-           ("_repr_pdf_", "application/pdf")]
-
-    for (attr, mimetype) in lut:
-        obj = getattr(data, attr, None)
-        if obj:
-            reprs[mimetype] = obj
-
-    format_dict = {}
-    metadata_dict = {}
-    for (mimetype, value) in reprs.items():
-        metadata = None
-        try:
-            value = value()
-        except Exception:
-            pass
-        if not value:
-            continue
-        if isinstance(value, tuple):
-            metadata = value[1]
-            value = value[0]
-        if isinstance(value, bytes):
-            try:
-                value = value.decode('utf-8')
-            except Exception:
-                value = base64.encodestring(value)
-                value = value.decode('utf-8')
-        try:
-            format_dict[mimetype] = str(value)
-        except:
-            format_dict[mimetype] = value
-        if metadata is not None:
-            metadata_dict[mimetype] = metadata
-    return (format_dict, metadata_dict)
 
 
 def format_message(*objects, **kwargs):
