@@ -7,7 +7,7 @@ class MatplotlibMagic(Magic):
     """
     Magic for using matplotlib with kernels other than ipython.
     """
-    def line_matplotlib(self, backend):
+    def line_matplotlib(self, backend) -> None:
         """
         %matplotlib BACKEND - set the matplotlib backend to BACKEND
 
@@ -45,5 +45,5 @@ class MatplotlibMagic(Magic):
         import matplotlib.backends.backend_webagg_core
         imp.reload(matplotlib.backends.backend_webagg_core)
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(MatplotlibMagic)

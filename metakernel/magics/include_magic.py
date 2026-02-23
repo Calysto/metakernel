@@ -6,7 +6,7 @@ import os
 
 class IncludeMagic(Magic):
 
-    def line_include(self, filenames):
+    def line_include(self, filenames) -> None:
         """
         %include FILENAME ... - include code from filename into this code
 
@@ -43,6 +43,6 @@ class IncludeMagic(Magic):
         else:
             self.code = text  + self.code
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(IncludeMagic)
 

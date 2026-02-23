@@ -8,7 +8,7 @@ import os
 
 class CDMagic(Magic):
 
-    def line_cd(self, path='.'):
+    def line_cd(self, path='.') -> None:
         """
         %cd PATH - change current directory of session
 
@@ -32,5 +32,5 @@ class CDMagic(Magic):
             self.kernel.Print(retval)
 
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(CDMagic)

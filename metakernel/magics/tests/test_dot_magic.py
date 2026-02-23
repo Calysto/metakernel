@@ -8,7 +8,7 @@ import pytest
 NO_DOT = shutil.which("dot") is None
 
 @pytest.mark.skipif(NO_DOT, reason="Requires dot from graphviz")
-def test_dot_magic_cell():
+def test_dot_magic_cell() -> None:
     kernel = get_kernel(EvalKernel)
     kernel.do_execute("""%%dot
 
@@ -19,7 +19,7 @@ graph A { a->b };
     assert "Display Data" in text, text
 
 @pytest.mark.skipif(NO_DOT, reason="Requires dot from graphviz")
-def test_dot_magic_line():
+def test_dot_magic_line() -> None:
     kernel = get_kernel(EvalKernel)
     kernel.do_execute("%dot graph A { a->b };")
 

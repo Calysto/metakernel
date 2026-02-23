@@ -6,7 +6,7 @@ import os
 
 class LoadMagic(Magic):
 
-    def line_load(self, filename):
+    def line_load(self, filename) -> None:
         """
         %load FILENAME - load code from filename into next cell
 
@@ -23,6 +23,6 @@ class LoadMagic(Magic):
             self.kernel.payload.append({"source": "set_next_input",
                                         "text": f.read()})
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(LoadMagic)
 

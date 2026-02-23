@@ -12,7 +12,7 @@ class FileMagic(Magic):
         '-a', '--append', action='store_true', default=False,
         help='append onto an existing file'
     )
-    def cell_file(self, filename, append=False):
+    def cell_file(self, filename, append=False) -> None:
         """
         %%file [--append|-a] FILENAME - write contents of cell to file
 
@@ -55,5 +55,5 @@ class FileMagic(Magic):
             self.kernel.Error(str(e))
         self.evaluate = False
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(FileMagic)

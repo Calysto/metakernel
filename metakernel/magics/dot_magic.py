@@ -7,7 +7,7 @@ from IPython.display import HTML
 
 class DotMagic(Magic):
 
-    def line_dot(self, code):
+    def line_dot(self, code) -> None:
         """
         %dot CODE - render code as Graphviz image
 
@@ -31,7 +31,7 @@ class DotMagic(Magic):
         html = HTML(svg)
         self.kernel.Display(html)
 
-    def cell_dot(self):
+    def cell_dot(self) -> None:
         """
         %%dot - render contents of cell as Graphviz image
 
@@ -57,10 +57,10 @@ class DotMagic(Magic):
         self.kernel.Display(html)
         self.evaluate = False
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(DotMagic)
 
-def register_ipython_magics():
+def register_ipython_magics() -> None:
     from metakernel import IPythonKernel
     from IPython.core.magic import register_cell_magic
     kernel = IPythonKernel()

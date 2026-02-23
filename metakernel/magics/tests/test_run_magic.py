@@ -2,7 +2,7 @@
 from metakernel.tests.utils import (get_kernel, EvalKernel, 
                                     get_log_text, clear_log_text)
 
-def test_run_magic():
+def test_run_magic() -> None:
     kernel = get_kernel(EvalKernel)
     kernel.do_execute("%%run %s" % __file__.replace(".pyc", ".py"))
     kernel.do_execute("TEST")

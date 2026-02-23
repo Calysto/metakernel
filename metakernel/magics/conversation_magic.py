@@ -7,7 +7,7 @@ from IPython.display import HTML
 
 class ConversationMagic(Magic):
 
-    def cell_conversation(self, id):
+    def cell_conversation(self, id) -> None:
         """
         %conversation ID - insert conversation by ID
         %%conversation ID - insert conversation by ID
@@ -26,7 +26,7 @@ class ConversationMagic(Magic):
 """ % id
         self.kernel.Display(HTML(html))
 
-    def line_conversation(self, id):
+    def line_conversation(self, id) -> None:
         """
         %conversation ID - insert conversation by ID
         %%conversation ID - insert conversation by ID
@@ -34,10 +34,10 @@ class ConversationMagic(Magic):
         self.cell_conversation(id)
         self.evaluate = False
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(ConversationMagic)
 
-def register_ipython_magics():
+def register_ipython_magics() -> None:
     from metakernel import IPythonKernel
     from IPython.core.magic import register_line_magic, register_cell_magic
     kernel = IPythonKernel()
@@ -47,7 +47,7 @@ def register_ipython_magics():
     def conversation(id):
         magic.line_conversation(id)
 
-    @register_cell_magic
+    @register_cell_magic  # type: ignore[no-redef]
     def conversation(id, cell):
         magic.code = cell
         magic.cell_conversation(id)

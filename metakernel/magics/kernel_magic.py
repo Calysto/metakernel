@@ -5,15 +5,16 @@ from metakernel import Magic, option
 import importlib
 import logging
 
+from typing import Any, Dict
 class KernelMagic(Magic):
-    kernels = {}
+    kernels: Dict[str, Any] = {}
     kernel_name = None
 
     @option(
         '-k', '--kernel_name', action='store', default="default",
         help='kernel name given to use for execution'
     )
-    def line_kernel(self, module_name, class_name, kernel_name="default"):
+    def line_kernel(self, module_name, class_name, kernel_name="default") -> None:
         """
         %kernel MODULE CLASS [-k NAME] - construct a kernel for sending code.
 
@@ -42,7 +43,7 @@ class KernelMagic(Magic):
         '-k', '--kernel_name', action='store', default=None,
         help='kernel name given to use for execution'
     )
-    def cell_kx(self, kernel_name=None):
+    def cell_kx(self, kernel_name=None) -> None:
         """
         %%kx [-k NAME] - send the cell code to the kernel.
 
@@ -68,7 +69,7 @@ class KernelMagic(Magic):
         '-k', '--kernel_name', action='store', default=None,
         help='kernel name given to use for execution'
     )
-    def line_kx(self, code, kernel_name=None):
+    def line_kx(self, code, kernel_name=None) -> None:
         """
         %kx CODE [-k NAME] - send the code to the kernel.
 
@@ -92,16 +93,16 @@ class KernelMagic(Magic):
     def post_process(self, retval):
         return self.retval
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(KernelMagic)
 
-def register_ipython_magics():
+def register_ipython_magics() -> None:
     from metakernel import IPythonKernel
     from IPython.core.magic import register_line_magic, register_cell_magic
     kernel = IPythonKernel()
     magic = KernelMagic(kernel)
 
-    @register_line_magic
+    @register_line_magic  # type: ignore[no-redef]
     def kernel(line):
         """
         line is module_name, class_name[, kernel_name]
@@ -114,7 +115,7 @@ def register_ipython_magics():
         magic.line_kernel(module_name, class_name, kernel_name)
 
     @register_cell_magic
-    def kx(line, cell):
+    def kx(line, cell):  # type: ignore[no-redef]
         """
         line is kernel_name, or "default"
         """

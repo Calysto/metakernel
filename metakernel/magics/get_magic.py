@@ -4,7 +4,7 @@
 from metakernel import Magic
 
 class GetMagic(Magic):
-    def line_get(self, variable):
+    def line_get(self, variable) -> None:
         """
         %get VARIABLE - get a variable from the kernel in a Python-type.
 
@@ -19,5 +19,5 @@ class GetMagic(Magic):
         return self.retval
 
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
    kernel.register_magics(GetMagic)

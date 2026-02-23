@@ -3,7 +3,7 @@ import textwrap
 from metakernel.tests.utils import get_kernel, get_log_text, clear_log_text
 
 
-def test_python_magic():
+def test_python_magic() -> None:
     kernel = get_kernel()
 
     text = '%python imp'
@@ -15,7 +15,7 @@ def test_python_magic():
     assert 'Return the binary representation of an integer' in helpstr, helpstr
 
 
-def test_python_magic2():
+def test_python_magic2() -> None:
     kernel = get_kernel()
     kernel.do_execute('%python retval = 1', None)
     assert '1' in get_log_text(kernel)
@@ -34,7 +34,7 @@ def test_python_magic2():
     test(2)'''), None)
     assert '3' in get_log_text(kernel)
 
-def test_python_magic3():
+def test_python_magic3() -> None:
     kernel = get_kernel()
     kernel.do_execute('%%python -e\n1 + 2', None)
     magic = kernel.get_magic('%%python')
@@ -61,7 +61,7 @@ def test_python_magic3():
     assert magic.retval == None
 
 
-def test_python_magic4():
+def test_python_magic4() -> None:
     kernel = get_kernel()
     kernel.do_execute('?%python', None)
     assert '%python CODE' in get_log_text(kernel)
@@ -77,7 +77,7 @@ def test_python_magic4():
     assert 'Return the octal representation of an integer' in ret['payload'][0]['data']['text/plain'], ret['payload'][0]['data']['text/plain']
 
 
-def test_python_magic5():
+def test_python_magic5() -> None:
     kernel = get_kernel()
     kernel.do_execute("%python print('hello')")
 

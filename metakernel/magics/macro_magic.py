@@ -21,7 +21,7 @@ class MacroMagic(Magic):
         }
 """}
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super(MacroMagic, self).__init__(*args, **kwargs)
         self._load_macros()
 
@@ -37,7 +37,7 @@ class MacroMagic(Magic):
         '-s', '--show', action='store_true', default=False,
         help='show macro'
     )
-    def line_macro(self, name, delete=False, list=False, show=False):
+    def line_macro(self, name, delete=False, list=False, show=False) -> None:
         """
         %macro NAME - execute a macro
         %macro -l [all|learned|system] - list macros
@@ -89,7 +89,7 @@ class MacroMagic(Magic):
                               error=True)
         self.evaluate = True
 
-    def _list_macros(self, name="all", retval="", error=False):
+    def _list_macros(self, name="all", retval="", error=False) -> None:
         retval += "Available macros:\n"
         if name in ["all", "system"]:
             retval += "    System:\n"
@@ -104,7 +104,7 @@ class MacroMagic(Magic):
         else:
             self.kernel.Print(retval)
 
-    def _load_macros(self):
+    def _load_macros(self) -> None:
         self.learned = {}
         local_macros_dir = self.kernel.get_local_magics_dir()
         # Search all of the places there could be macros:
@@ -118,12 +118,12 @@ class MacroMagic(Magic):
                 continue
             self.learned.update(data)
 
-    def _save_macros(self):
+    def _save_macros(self) -> None:
         local_macros_dir = self.kernel.get_local_magics_dir()
         filename = os.path.join(local_macros_dir, "macros.json")
         with open(filename, "w") as macros: macros.write(str(self.learned))
 
-    def cell_macro(self, name):
+    def cell_macro(self, name) -> None:
         """
         %%macro NAME - learn a new macro
 
@@ -142,6 +142,6 @@ class MacroMagic(Magic):
         self._save_macros()
         self.evaluate = False
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(MacroMagic)
 

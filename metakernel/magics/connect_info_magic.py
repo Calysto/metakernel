@@ -6,7 +6,7 @@ import json
 
 class ConnectInfoMagic(Magic):
 
-    def line_connect_info(self, dummy=None):
+    def line_connect_info(self, dummy=None) -> None:
         """
         %connect_info - show connection information
 
@@ -66,5 +66,5 @@ if this is the most recent Jupyter session you have started.
 """ % config
         self.kernel.Print(retval)
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(ConnectInfoMagic)

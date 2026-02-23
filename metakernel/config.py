@@ -22,7 +22,7 @@ def get_history_file(kernel):
     return path
 
 
-def get_local_magics_dir():
+def get_local_magics_dir() -> str:
     """
     Ensures that there is a ~/.ipython/metakernel/magics directory,
     and returns the path to it.

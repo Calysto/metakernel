@@ -1,8 +1,10 @@
 # Convenience imports from pexpect
-from __future__ import absolute_import
+from __future__ import annotations
+
 import os
 import shlex
 import signal
+from typing import Optional
 from pexpect import is_executable_file, EOF, TIMEOUT, __file__ as PEXPECT_DIR
 
 try:
@@ -10,7 +12,7 @@ try:
     import pty
 except ImportError:
     from pexpect.popen_spawn import PopenSpawn
-    pty = None
+    pty = None  # type: ignore[assignment]
 
 
 def spawn(command, args=[], timeout=30, maxread=2000,
@@ -57,7 +59,7 @@ def spawn(command, args=[], timeout=30, maxread=2000,
 spawnu = spawn
 
 
-def which(filename):
+def which(filename) -> Optional[str]:
     '''This takes a given filename; tries to find it in the environment path;
     then checks if it is executable. This returns the full path to the filename
     if found and executable. Otherwise this returns None.'''
@@ -76,8 +78,8 @@ def which(filename):
             if is_executable_file(ff):
                 return ff
         else:
-            pathext = os.environ.get('Pathext', '.exe;.com;.bat;.cmd')
-            pathext = pathext.split(os.pathsep) + ['']
+            pathext_str = os.environ.get('Pathext', '.exe;.com;.bat;.cmd')
+            pathext = pathext_str.split(os.pathsep) + ['']
             for ext in pathext:
                 if os.access(ff + ext, os.X_OK):
                     return ff + ext

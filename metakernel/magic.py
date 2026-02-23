@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import traceback
 import optparse
 import inspect
@@ -6,19 +8,16 @@ import os
 import shlex
 from ast import literal_eval as safe_eval
 
-try:
-    _maxsize = sys.maxint
-except:
-    # python3
-    _maxsize = sys.maxsize
+_maxsize = sys.maxsize
 
 PY3 = sys.version_info[0] == 3
 
+from typing import NoReturn
 class MagicOptionParser(optparse.OptionParser):
-    def error(self, msg):
+    def error(self, msg) -> NoReturn:
         raise Exception('Magic Parse error: "%s"' % msg)
 
-    def exit(self, status=0, msg=None):
+    def exit(self, status=0, msg=None) -> NoReturn:
         if msg:
             sys.stderr.write(msg)
         raise Exception(msg)
@@ -39,12 +38,12 @@ class Magic(object):
     writing a new magic inside magics/matplotlib_magic.py
     """
 
-    def __init__(self, kernel):
+    def __init__(self, kernel) -> None:
         self.kernel = kernel
         self.evaluate = True
         self.code = ''
 
-    def get_args(self, mtype, name, code, args) :
+    def get_args(self, mtype, name, code, args) -> tuple | Magic:
         self.code = code
         old_args = args
         mtype = mtype.replace('sticky', 'cell')
@@ -68,7 +67,7 @@ class Magic(object):
 
         return (args, kwargs, old_args)
 
-    def call_magic(self, mtype, name, code, args):
+    def call_magic(self, mtype, name, code, args) -> Magic:
         self.code = code
         old_args = args
         mtype = mtype.replace('sticky', 'cell')
@@ -106,12 +105,12 @@ class Magic(object):
             return Magic(self.kernel)
         return self
 
-    def get_help(self, mtype, name, level=0):
+    def get_help(self, mtype, name, level=0) -> str:
         if hasattr(self, mtype + '_' + name):
             func = getattr(self, mtype + '_' + name)
             if level == 0:
                 if func.__doc__:
-                    return _trim(func.__doc__)
+                    return _trim(func.__doc__)  # type: ignore[return-value]
                 else:
                     return "No help available for magic '%s' for %ss." % (name, mtype)
             else:
@@ -126,20 +125,20 @@ class Magic(object):
     def get_help_on(self, info, level=0):
         return "Sorry, no help is available on '%s'." % info['code']
 
-    def get_completions(self, info):
+    def get_completions(self, info) -> list:
             """
             Get completions based on info dict from magic.
             """
             return []
 
-    def get_magics(self, mtype):
+    def get_magics(self, mtype) -> list:
         magics = []
         for name in dir(self):
             if name.startswith(mtype + '_'):
                 magics.append(name.replace(mtype + '_', ''))
         return magics
 
-    def get_code(self):
+    def get_code(self) -> str:
         return self.code
 
     def post_process(self, retval):
@@ -170,7 +169,7 @@ def option(*args, **kwargs):
     return decorator
 
 
-def _parse_args(func, args, usage=None):
+def _parse_args(func, args, usage=None) -> tuple[list, dict]:
     """Parse the arguments given to a magic function"""
     if isinstance(args, list):
         args = ' '.join(args)
@@ -215,7 +214,7 @@ def _parse_args(func, args, usage=None):
     return new_args, kwargs
 
 
-def _split_args(args):
+def _split_args(args) -> list:
     try:
         # do not use posix mode, to avoid eating quote characters
         args = shlex.split(args, posix=False)
@@ -269,7 +268,7 @@ def _format_option(option):
     return output
 
 
-def _trim(docstring, return_lines=False):
+def _trim(docstring, return_lines=False) -> str | list:
     """
     Trim of unnecessary leading indentations.
     """
@@ -296,7 +295,7 @@ def _trim(docstring, return_lines=False):
         # Return a single string:
         return '\n'.join(trimmed)
 
-def _min_indent(lines):
+def _min_indent(lines) -> int:
     """
     Determine minimum indentation (first line doesn't count):
     """
@@ -307,7 +306,7 @@ def _min_indent(lines):
             indent = min(indent, len(line) - len(stripped))
     return indent
 
-def _indent(docstring, text):
+def _indent(docstring, text) -> str:
     """
     Returns text indented at appropriate indententation level.
     """

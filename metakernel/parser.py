@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import re
 import os
+from typing import Any
 
 IDENTIFIER_REGEX = r'[^\d\W][\w\.]*'
 FUNC_CALL_REGEX = r'([^\d\W][\w\.]*)\([^\)\()]*\Z'
@@ -14,7 +17,7 @@ class Parser(object):
     def __init__(self, identifier_regex=IDENTIFIER_REGEX,
                  function_call_regex=FUNC_CALL_REGEX,
                  magic_prefixes=MAGIC_PREFIXES,
-                 help_suffix=HELP_SUFFIX):
+                 help_suffix=HELP_SUFFIX) -> None:
         """Set up the regexes and magic characters.
 
         Parameters
@@ -49,7 +52,7 @@ class Parser(object):
         self.magic_prefixes = magic_prefixes
         self.help_suffix = help_suffix
 
-    def parse_code(self, code, start=0, end=-1):
+    def parse_code(self, code, start=0, end=-1) -> dict:
         """Parse an input buffer, extracting relevant information.
 
         Parameters
@@ -87,7 +90,7 @@ class Parser(object):
         start = min(start, end)
         start = max(0, start)
 
-        info = dict(code=code, magic=dict())
+        info: dict[str, Any] = dict(code=code, magic=dict())
 
         info['magic'] = self._parse_magic(code[:end])
 
@@ -102,7 +105,9 @@ class Parser(object):
             info['line'] = line = ''
             info['column'] = col = 0
 
-        obj = re.search(self.id_regex, line).group()
+        _match = re.search(self.id_regex, line)
+        assert _match is not None
+        obj = _match.group()
 
         full_obj = obj
 
@@ -138,7 +143,7 @@ class Parser(object):
         info['path_matches'] = self._get_path_matches(info)
         return info
 
-    def _parse_magic(self, code):
+    def _parse_magic(self, code) -> dict:
         """Find and parse magic calls in the buffer.
 
         Parameters
@@ -180,7 +185,7 @@ class Parser(object):
                               can be nested.
 
         """
-        info = {}
+        info: dict[str, Any] = {}
         code = code.lstrip()
 
         pre_magics = {}
@@ -203,6 +208,7 @@ class Parser(object):
             info['name'] = 'help'
             regex = r'(\%s+)\Z' % self.help_suffix
             match = re.search(regex, code.strip(), re.UNICODE)
+            assert match is not None
             suf = match.group()
             info['prefix'] = ''
             info['type'] = types[len(suf)]
@@ -245,7 +251,7 @@ class Parser(object):
             info['code'] = ''
         return info
 
-    def _get_path_matches(self, info):
+    def _get_path_matches(self, info) -> list:
         """Get a list of matching file system paths.
 
         There are 3 types of matches:
@@ -293,7 +299,7 @@ class Parser(object):
             return path.replace(' ', r'\ ')
 
 
-def _listdir(root):
+def _listdir(root) -> list:
     "List directory 'root' appending the path separator to subdirs."
     res = []
     root = os.path.expanduser(root)
@@ -308,7 +314,7 @@ def _listdir(root):
     return res
 
 
-def _complete_path(path=None):
+def _complete_path(path=None) -> list:
     """Perform completion of filesystem path.
     http://stackoverflow.com/questions/5637124/tab-completion-in-pythons-raw-input
     """

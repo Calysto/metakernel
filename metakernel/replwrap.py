@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import errno
 import sys
 import re
@@ -56,7 +58,7 @@ class REPLWrapper(object):
                  extra_init_cmd=None,
                  prompt_emit_cmd=None,
                  force_prompt_on_continuation=False,
-                 echo=False):
+                 echo=False) -> None:
         if isinstance(cmd_or_spawn, basestring):
             self.child = pexpect.spawnu(cmd_or_spawn, echo=echo,
                                         codec_errors="ignore",
@@ -103,12 +105,12 @@ class REPLWrapper(object):
 
         atexit.register(self.terminate)
 
-    def sendline(self, line):
+    def sendline(self, line) -> None:
         self.child.sendline(u(line))
         if self.echo:
             self.child.readline()
 
-    def set_prompt(self, prompt_regex, prompt_change_cmd):
+    def set_prompt(self, prompt_regex, prompt_change_cmd) -> None:
         self.child.expect(prompt_regex)
         self.sendline(prompt_change_cmd)
         self.prompt_change_cmd = prompt_change_cmd
@@ -204,7 +206,7 @@ class REPLWrapper(object):
         return pos
 
     def run_command(self, command, timeout=None, stream_handler=None,
-                    line_handler=None, stdin_handler=None):
+                    line_handler=None, stdin_handler=None) -> str:
         """Send a command to the REPL, wait for and return output.
         :param str command: The command to send. Trailing newlines are not needed.
           This should be a complete block of input that will trigger execution;
@@ -281,7 +283,7 @@ class REPLWrapper(object):
                 raise
 
 
-def python(command="python"):
+def python(command="python") -> REPLWrapper:
     """Start a Python shell and return a :class:`REPLWrapper` object."""
     if not pexpect.pty:
         raise OSError('Not supported on platform "%s"' % sys.platform)
@@ -289,7 +291,7 @@ def python(command="python"):
                        u("import sys; sys.ps1={0!r}; sys.ps2={1!r}"))
 
 
-def bash(command="bash", prompt_regex=re.compile('[$#]')):
+def bash(command="bash", prompt_regex=re.compile('[$#]')) -> REPLWrapper:
     """Start a bash shell and return a :class:`REPLWrapper` object."""
 
     # If the user runs 'env', the value of PS1 will be in the output. To avoid
@@ -298,7 +300,7 @@ def bash(command="bash", prompt_regex=re.compile('[$#]')):
     # environment variable, but not when bash displays the prompt.
     ps1 = PEXPECT_PROMPT[:5] + r'\[\]' + PEXPECT_PROMPT[5:]
     ps2 = PEXPECT_CONTINUATION_PROMPT[:5] + r'\[\]' + PEXPECT_CONTINUATION_PROMPT[5:]
-    prompt_change_cmd = u"PS1='{0}' PS2='{1}' PROMPT_COMMAND=''".format(ps1, ps2)
+    prompt_change_cmd: str | None = u"PS1='{0}' PS2='{1}' PROMPT_COMMAND=''".format(ps1, ps2)
 
     if os.name == 'nt':
         prompt_regex = u('__repl_ready__')
@@ -319,7 +321,7 @@ def bash(command="bash", prompt_regex=re.compile('[$#]')):
                        extra_init_cmd=extra_init_cmd)
 
 
-def powershell(command='powershell', prompt_regex='>'):
+def powershell(command='powershell', prompt_regex='>') -> REPLWrapper:
     """"Start a powershell and return a :class:`REPLWrapper` object."""
     return REPLWrapper(command, prompt_regex, 'Function prompt {{ "{0}" }}', echo=True)
 

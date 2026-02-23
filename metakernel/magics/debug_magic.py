@@ -9,7 +9,7 @@ from IPython.display import HTML, Javascript
 
 class DebugMagic(Magic):
 
-    def cell_debug(self, dummy):
+    def cell_debug(self, dummy) -> None:
         """
         %%debug - step through the code expression by expression
 
@@ -214,5 +214,5 @@ function reset() {
         time.sleep(.1)
         self.evaluate = False
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(DebugMagic)

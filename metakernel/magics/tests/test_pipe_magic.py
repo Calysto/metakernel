@@ -2,7 +2,7 @@ from metakernel.tests.utils import (get_kernel, get_log_text, EvalKernel,
                                     clear_log_text)
 
 
-def test_pipe_magic():
+def test_pipe_magic() -> None:
     kernel = get_kernel(EvalKernel)
     kernel.do_execute("""
 

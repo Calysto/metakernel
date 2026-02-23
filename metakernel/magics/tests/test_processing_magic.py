@@ -2,7 +2,7 @@
 from metakernel.tests.utils import (get_kernel, get_log_text, 
                                     clear_log_text, EvalKernel)
 
-def test_processing_magic():
+def test_processing_magic() -> None:
     kernel = get_kernel(EvalKernel)
     kernel.do_execute("""%%processing
 

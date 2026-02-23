@@ -1,7 +1,7 @@
 
 from metakernel.tests.utils import get_kernel, get_log_text
 
-def test_reload_magics_magic():
+def test_reload_magics_magic() -> None:
     kernel = get_kernel()
     kernel.do_execute("%reload_magics")
     text = get_log_text(kernel)

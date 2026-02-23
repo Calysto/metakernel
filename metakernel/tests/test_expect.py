@@ -31,16 +31,16 @@ from .. import pexpect
 # I should fix this at some point.
 
 FILTER=''.join([(len(repr(chr(x)))==3) and chr(x) or '.' for x in range(256)])
-def hex_dump(src, length=16):
+def hex_dump(src, length=16) -> str:
     result=[]
-    for i in xrange(0, len(src), length):
+    for i in range(0, len(src), length):
        s = src[i:i+length]
        hexa = ' '.join(["%02X"%ord(x) for x in s])
        printable = s.translate(FILTER)
        result.append("%04X   %-*s   %s\n" % (i, length*3, hexa, printable))
     return ''.join(result)
 
-def hex_diff(left, right):
+def hex_diff(left, right) -> str:
         diff = ['< %s\n> %s' % (_left, _right,) for _left, _right in zip(
             hex_dump(left).splitlines(), hex_dump(right).splitlines())
             if _left != _right]
@@ -49,11 +49,11 @@ def hex_diff(left, right):
 
 class ExpectTestCase (unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.PYTHONBIN = sys.executable
         os.chdir(os.path.dirname(__file__))
 
-    def test_expect (self):
+    def test_expect (self) -> None:
         the_old_way = subprocess.Popen(args=['ls', '-l', '/bin'],
                 stdout=subprocess.PIPE).communicate()[0].rstrip().decode('utf-8')
         p = pexpect.spawn('ls -l /bin')
@@ -70,7 +70,7 @@ class ExpectTestCase (unittest.TestCase):
                 ).replace('\r', '\n').replace('\n\n', '\n').rstrip()
         assert the_old_way == the_new_way, hex_diff(the_old_way, the_new_way)
 
-    def test_expect_exact (self):
+    def test_expect_exact (self) -> None:
         the_old_way = subprocess.Popen(args=['ls', '-l', '/bin'],
                 stdout=subprocess.PIPE).communicate()[0].rstrip().decode('utf-8')
         p = pexpect.spawn('ls -l /bin')
@@ -90,7 +90,7 @@ class ExpectTestCase (unittest.TestCase):
         self.assertEqual(p.before, 'hello')
         self.assertEqual(p.after, '.?')
 
-    def test_expect_eof (self):
+    def test_expect_eof (self) -> None:
         the_old_way = subprocess.Popen(args=['/bin/ls', '-l', '/bin'],
                 stdout=subprocess.PIPE).communicate()[0].rstrip().decode('utf-8')
         p = pexpect.spawn('/bin/ls -l /bin')
@@ -102,7 +102,7 @@ class ExpectTestCase (unittest.TestCase):
                 ).replace('\r', '\n').replace('\n\n', '\n').rstrip()
         assert the_old_way == the_new_way, hex_diff(the_old_way, the_new_way)
 
-    def test_expect_timeout (self):
+    def test_expect_timeout (self) -> None:
         p = pexpect.spawn('cat', timeout=5)
         p.expect(pexpect.TIMEOUT) # This tells it to wait for timeout.
         self.assertEqual(p.after, pexpect.TIMEOUT)

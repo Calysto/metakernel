@@ -10,7 +10,7 @@ class RunMagic(Magic):
         '-l', '--language', action='store', default=None,
         help='use the provided language name as kernel'
     )
-    def line_run(self, filename, language=None):
+    def line_run(self, filename, language=None) -> None:
         """
         %run [--language LANG] FILENAME - run code in filename by
            kernel
@@ -42,6 +42,6 @@ class RunMagic(Magic):
             self.code = "%%" + language + "\n" + self.code
             with open(filename) as f: self.code += "".join(f.readlines())
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(RunMagic)
 

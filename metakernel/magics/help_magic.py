@@ -136,5 +136,5 @@ class HelpMagic(Magic):
         return text
 
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(HelpMagic)

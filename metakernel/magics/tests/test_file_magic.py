@@ -3,7 +3,7 @@ import os
 from metakernel.tests.utils import get_kernel
 
 
-def test_file_magic():
+def test_file_magic() -> None:
     kernel = get_kernel()
     kernel.do_execute("""%%file TEST.txt
 LINE1
@@ -41,6 +41,6 @@ TEST3""")
         assert lines[1] == "TEST2\n"
         assert lines[2] == "TEST3"
 
-def teardown():
+def teardown() -> None:
     import shutil
     shutil.rmtree("/tmp/tmp", ignore_errors=True)

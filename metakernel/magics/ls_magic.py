@@ -10,7 +10,7 @@ class LSMagic(Magic):
         "-r", "--recursive", action="store_true", default=False,
         help='recursively descend into subdirectories'
     )
-    def line_ls(self, path=".", recursive=False):
+    def line_ls(self, path=".", recursive=False) -> None:
         """
         %ls PATH - list files and directories under PATH
 
@@ -27,5 +27,5 @@ class LSMagic(Magic):
         return self.retval
 
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
    kernel.register_magics(LSMagic)
