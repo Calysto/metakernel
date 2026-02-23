@@ -2,7 +2,7 @@ from Graphics import *
 from Myro import show
 
 # positive to left
-def dragon(arrow, level=4, size=200, direction=45):
+def dragon(arrow, level=4, size=200, direction=45) -> None:
     if level:
         arrow.rotate(direction)
         dragon(arrow, level-1, size/1.41421356237, 45)
@@ -12,7 +12,7 @@ def dragon(arrow, level=4, size=200, direction=45):
     else:
         arrow.forward(size)
 
-def draw_dragon4(center, size, counts, colors, angle=0):
+def draw_dragon4(center, size, counts, colors, angle=0) -> None:
     for color, count in zip(colors, counts):
         if color is not None:
             arrow = Arrow(center)

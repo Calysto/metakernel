@@ -4,7 +4,7 @@
 from metakernel import Magic
 
 class SetMagic(Magic):
-    def line_set(self, variable, value):
+    def line_set(self, variable, value) -> None:
         """
         %set VARIABLE VALUE - set a variable in the kernel.
 
@@ -21,5 +21,5 @@ class SetMagic(Magic):
         return retval
 
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
    kernel.register_magics(SetMagic)

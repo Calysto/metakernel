@@ -22,11 +22,7 @@ Magics to display pythontutor.com in the notebook.
 
 from metakernel import Magic, option
 from IPython.display import IFrame
-import sys
-if sys.version_info.major == 2 and sys.version_info.minor == 7:
-    from urllib import quote
-elif sys.version_info.major == 3 and sys.version_info.minor >= 3:
-    from urllib.parse import quote
+from urllib.parse import quote
     
 class TutorMagic(Magic):
 
@@ -35,7 +31,7 @@ class TutorMagic(Magic):
         help=("Possible languages to be displayed within the iframe. " +
               "Possible values are: python, python2, python3, java, javascript")
     )
-    def cell_tutor(self, language=None):
+    def cell_tutor(self, language=None) -> None:
         """
         %%tutor [--language=LANGUAGE] - show cell with 
         Online Python Tutor.
@@ -86,10 +82,10 @@ class TutorMagic(Magic):
         self.kernel.Display(IFrame(url, height=500, width="100%"))
         self.evaluate = False
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(TutorMagic)
 
-def register_ipython_magics():
+def register_ipython_magics() -> None:
     from metakernel import IPythonKernel
     from IPython.core.magic import register_cell_magic
     kernel = IPythonKernel()

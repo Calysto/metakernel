@@ -9,11 +9,11 @@ except:
     scheme = None
 
 class SchemeMagic(Magic):
-    def __init__(self, kernel):
+    def __init__(self, kernel) -> None:
         super(SchemeMagic, self).__init__(kernel)
         self.retval = None
 
-    def line_scheme(self, *args):
+    def line_scheme(self, *args) -> None:
         """
         %scheme CODE - evaluate code as Scheme
 
@@ -29,7 +29,7 @@ class SchemeMagic(Magic):
         code = " ".join(args)
         self.retval = self.eval(code)
 
-    def eval(self, code):
+    def eval(self, code):  # type: ignore[return]
         if scheme:
             return scheme.execute_string_rm(code.strip())
         else:
@@ -39,7 +39,7 @@ class SchemeMagic(Magic):
         "-e", "--eval_output", action="store_true", default=False,
         help="Use the retval value from the Scheme cell as code in the kernel language."
     )
-    def cell_scheme(self, eval_output=False):
+    def cell_scheme(self, eval_output=False) -> None:
         """
         %%scheme - evaluate contents of cell as Scheme
 
@@ -78,10 +78,10 @@ class SchemeMagic(Magic):
         else:
             return self.retval
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(SchemeMagic)
 
-def register_ipython_magics():
+def register_ipython_magics() -> None:
     from metakernel import IPythonKernel
     from IPython.core.magic import register_line_magic, register_cell_magic
     kernel = IPythonKernel()
@@ -92,7 +92,7 @@ def register_ipython_magics():
         magic.line_scheme(line)
         return magic.retval
 
-    @register_cell_magic
+    @register_cell_magic  # type: ignore[no-redef]
     def scheme(line, cell):
         magic.code = cell
         magic.cell_scheme()

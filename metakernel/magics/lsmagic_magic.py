@@ -7,7 +7,7 @@ import os
 
 class LSMagicMagic(Magic):
 
-    def line_lsmagic(self):
+    def line_lsmagic(self) -> None:
         """
         %lsmagic - list the current line and cell magics
         
@@ -34,5 +34,5 @@ class LSMagicMagic(Magic):
         ]
         self.kernel.Print('\n'.join(out))
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(LSMagicMagic)

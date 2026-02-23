@@ -4,10 +4,10 @@
 from metakernel import Magic, option
 
 class PipeMagic(Magic):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super(PipeMagic, self).__init__(*args, **kwargs)
 
-    def cell_pipe(self, pipe_str):
+    def cell_pipe(self, pipe_str) -> None:
         """
         %%pipe FUNCTION1 | FUNCTION2 ...
 
@@ -31,13 +31,13 @@ class PipeMagic(Magic):
             self.retval = self.kernel.do_function_direct(function, self.retval)
         self.evaluate = False
 
-    def post_process(self, retval):
+    def post_process(self, retval) -> str:
         return self.retval
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(PipeMagic)
 
-def register_ipython_magics():
+def register_ipython_magics() -> None:
     from IPython.core.magic import register_cell_magic
     from IPython import get_ipython
 

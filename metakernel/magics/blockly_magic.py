@@ -24,7 +24,7 @@ class BlocklyMagic(Magic):
         '-h', '--height', action='store', default=350,
         help='set height of iframe '
     )
-    def line_blockly(self, page_from_origin=None, page_from_local=None, template_data=None, height=350):
+    def line_blockly(self, page_from_origin=None, page_from_local=None, template_data=None, height=350) -> None:
         """
         %blockly - show visual code
 
@@ -53,16 +53,11 @@ class BlocklyMagic(Magic):
             height = 350
         if template_data is not None:
             if page_from_local is not None:
-                with open(html_from_local, "rb") as fp:
+                with open(page_from_local, "rb") as fp:
                     html_template = fp.read().decode("utf-8")
             elif page_from_origin is not None:
-                try:
-                    import urllib.request
-                    urlopen = urllib.request.urlopen
-                except:  # python2
-                    import urllib
-                    urlopen = urllib.urlopen
-                page_template = urlopen(page_from_origin).read().decode("utf-8")
+                import urllib.request
+                page_template = urllib.request.urlopen(page_from_origin).read().decode("utf-8")
             else:
                 raise ValueError("No -l or -o is provided")
             with open(template_data+'-toolbox.xml', "rb") as fp:
@@ -85,11 +80,11 @@ class BlocklyMagic(Magic):
             self.kernel.Display(IFrame("https://developers-dot-devsite-v2-prod.appspot.com/blockly/blockly-demo/blockly-demo", width='100%', height=height))
 
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(Magic)
 
 
-def register_ipython_magics():
+def register_ipython_magics() -> None:
     from metakernel import IPythonKernel
     from IPython.core.magic import register_line_magic
     kernel = IPythonKernel()

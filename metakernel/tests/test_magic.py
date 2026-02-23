@@ -8,7 +8,7 @@ class Dummy(Magic):
         '-s', '--size', action='store',
         help='Pixel size of plots, "width,height"'
          )
-        def line_dummy(self, foo, size=None):
+        def line_dummy(self, foo, size=None) -> None:
             """
             %dummy [options] foo - Perform dummy operation on foo
 
@@ -31,7 +31,7 @@ class Dummy(Magic):
             pass
 
 
-def test_get_magics():
+def test_get_magics() -> None:
     kernel = get_kernel()
     d = Dummy(kernel)
     line = d.get_magics('line')
@@ -42,7 +42,7 @@ def test_get_magics():
     assert 'eggs' in line
 
 
-def test_get_help():
+def test_get_help() -> None:
     kernel = get_kernel()
     d = Dummy(kernel)
 
@@ -62,7 +62,7 @@ def test_get_help():
             spam_help
 
 
-def test_option():
+def test_option() -> None:
     kernel = get_kernel()
     d = Dummy(kernel)
     assert 'Options:' in d.line_dummy.__doc__

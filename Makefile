@@ -1,5 +1,5 @@
 # Note: This is meant for Metakernel developer use only
-.PHONY: all clean test test_warn cover release help
+.PHONY: all clean test test_warn cover release help typing
 
 
 all: install
@@ -35,3 +35,6 @@ docs: clean
 
 help:
 	python docs/generate_help.py
+
+typing:
+	mypy metakernel/
