@@ -79,6 +79,7 @@ filterwarnings= [
   "error",
   "ignore:unclosed event loop:ResourceWarning",
   "ignore:There is no current event loop:DeprecationWarning",
+  "ignore:zmq.eventloop.ioloop is deprecated in pyzmq 17:DeprecationWarning",
   # When we run ipcluster and then run the tests we get this warning
   "ignore:Widget.* is deprecated:DeprecationWarning",
   "module:datetime.datetime.utc:DeprecationWarning:dateutil",
