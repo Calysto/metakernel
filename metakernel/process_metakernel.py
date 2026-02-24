@@ -1,10 +1,11 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, annotations
 from . import MetaKernel
 from pexpect import EOF
 from .replwrap import REPLWrapper, bash
 from subprocess import check_output
 import re
 import sys
+from typing import Optional, Any
 
 __version__ = '0.0'
 
@@ -18,10 +19,10 @@ class TextOutput(object):
     text.
     """
 
-    def __init__(self, output):
+    def __init__(self, output) -> None:
         self.output = output
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.output
 
 
@@ -29,7 +30,7 @@ class ProcessMetaKernel(MetaKernel):
     implementation = 'process_kernel'
     implementation_version = __version__
     language = 'process'
-    language_info = {
+    language_info: dict[str, Any] = {
         # 'mimetype': 'text/x-python',
         # 'language': 'python',
         # ------ If different from 'language':
@@ -43,17 +44,18 @@ class ProcessMetaKernel(MetaKernel):
         m = version_pat.search(self.banner)
         return m.group(1)
 
-    _banner = "Process"
+    _banner: str | None = "Process"
 
     @property
-    def banner(self):
+    def banner(self) -> str:
+        assert self._banner is not None
         return self._banner
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         MetaKernel.__init__(self, *args, **kwargs)
-        self.wrapper = None
+        self.wrapper: Optional[REPLWrapper] = None
 
-    def do_execute_direct(self, code, silent=False):
+    def do_execute_direct(self, code, silent=False) -> TextOutput | None:
         """Execute the code in the subprocess.
         """
         if not self.wrapper:
@@ -70,7 +72,7 @@ class ProcessMetaKernel(MetaKernel):
                 'payload': [],
                 'user_expressions': {},
             }
-            return
+            return None
 
         interrupted = False
         output = ''
@@ -89,7 +91,7 @@ class ProcessMetaKernel(MetaKernel):
             error = RuntimeError('End of File')
             tb = 'End of File'
         except Exception as e:
-            ex_type, error, tb = sys.exc_info()
+            ex_type, error, tb = sys.exc_info()  # type: ignore[assignment]
             self.Error(str(e))
 
         if interrupted:
@@ -129,8 +131,9 @@ class ProcessMetaKernel(MetaKernel):
                 stream_handler(output)
             else:
                 return TextOutput(output)
+        return None
 
-    def check_exitcode(self):
+    def check_exitcode(self) -> tuple[int, None]:
         """
         Return (1, ["trace"]) if error.
         """
@@ -164,17 +167,18 @@ class ProcessMetaKernel(MetaKernel):
         """
         raise NotImplementedError
 
-    def do_shutdown(self, restart):
+    def do_shutdown(self, restart) -> dict[str, str]:
         """
         Shut down the app gracefully, saving history.
         """
-        try:
-            self.wrapper.terminate()
-        except Exception as e:
-            self.Error(str(e))
-        super(ProcessMetaKernel, self).do_shutdown(restart)
+        if self.wrapper is not None:
+            try:
+                self.wrapper.terminate()
+            except Exception as e:
+                self.Error(str(e))
+        return super(ProcessMetaKernel, self).do_shutdown(restart)
 
-    def restart_kernel(self):
+    def restart_kernel(self) -> None:
         """Restart the kernel"""
         self.wrapper = self.makeWrapper()
 
@@ -190,7 +194,7 @@ class DynamicKernel(ProcessMetaKernel):
                  prompt_change=None,
                  prompt_cmd=None,
                  extra_init_cmd=None,
-                 stdin_prompt_regex=None):
+                 stdin_prompt_regex=None) -> None:
         self.executable = executable
         self.orig_prompt = orig_prompt
         self.prompt_change = prompt_change
@@ -204,11 +208,11 @@ class DynamicKernel(ProcessMetaKernel):
         self.language_info['file_extension'] = file_extension
         super(DynamicKernel, self).__init__()
 
-    def makeWrapper(self):
+    def makeWrapper(self) -> REPLWrapper:
         return REPLWrapper(self.executable,
                            self.orig_prompt,
                            self.prompt_change,
-                           prompt_cmd=self.prompt_cmd,
+                           prompt_emit_cmd=self.prompt_cmd,
                            stdin_prompt_regex=self.stdin_prompt_regex,
                            extra_init_cmd=self.extra_init_cmd)
 
@@ -229,7 +233,7 @@ class BashKernel(ProcessMetaKernel):
     # Identifiers:
     implementation = 'bash_kernel'
     language = 'bash'
-    language_info = {
+    language_info: dict[str, Any] = {
         'mimetype': 'text/x-bash',
         'language': 'bash',
         # ------ If different from 'language':
@@ -238,9 +242,9 @@ class BashKernel(ProcessMetaKernel):
         'file_extension': 'sh',
     }
 
-    _banner = None
+    _banner: str | None = None
     @property
-    def banner(self):
+    def banner(self) -> str:
         if self._banner is None:
             self._banner = check_output(['bash', '--version']).decode('utf-8')
         return self._banner

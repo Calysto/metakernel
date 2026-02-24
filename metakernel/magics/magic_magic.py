@@ -1,12 +1,13 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
 
 from metakernel import Magic
 
 
 class MagicMagic(Magic):
 
-    def line_magic(self, line):
+    def line_magic(self, line) -> None:
         """
         %magic - show installed magics
 
@@ -23,16 +24,16 @@ class MagicMagic(Magic):
             cell_magics.append(magic.get_help('cell', name).split("\n")[0])
 
         prefixes = self.kernel.magic_prefixes
-        line_magics = ("\n    ".join(sorted(line_magics)))
-        line_magics = line_magics.replace('%', prefixes['magic'])
-        cell_magics = ("\n    ".join(sorted(cell_magics)))
-        cell_magics = cell_magics.replace('%', prefixes['magic'])
+        line_magic_text = ("\n    ".join(sorted(line_magics)))
+        line_magic_text = line_magic_text.replace('%', prefixes['magic'])
+        cell_magic_text = ("\n    ".join(sorted(cell_magics)))
+        cell_magic_text = cell_magic_text.replace('%', prefixes['magic'])
 
         self.kernel.Print("Line magics:")
-        self.kernel.Print("    " + line_magics)
+        self.kernel.Print("    " + line_magic_text)
         self.kernel.Print("")
         self.kernel.Print("Cell magics:")
-        self.kernel.Print("    " + cell_magics)
+        self.kernel.Print("    " + cell_magic_text)
         self.kernel.Print("")
         self.kernel.Print("Shell shortcut:")
         self.kernel.Print("    %s COMMAND ... - execute command in shell" % prefixes['shell'])
@@ -45,7 +46,7 @@ class MagicMagic(Magic):
             self.kernel.Print("    " + string)
         self.kernel.Print("")
 
-    def get_magic(self, info, get_args=False):
+    def get_magic(self, info, get_args=False) -> Magic | None:
 
         if not info['magic']:
             return None
@@ -81,5 +82,5 @@ class MagicMagic(Magic):
                                     minfo['code'], minfo['args'])
 
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(MagicMagic)

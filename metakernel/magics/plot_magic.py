@@ -30,7 +30,7 @@ class PlotMagic(Magic):
         '-h', '--height', action='store',
         help='Plot height in pixels'
     )
-    def line_plot(self, *args, **kwargs):
+    def line_plot(self, *args, **kwargs) -> None:
         """
         %plot [options] backend - configure plotting for the session.
 
@@ -58,5 +58,5 @@ class PlotMagic(Magic):
         self.kernel.handle_plot_settings()
 
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(PlotMagic)

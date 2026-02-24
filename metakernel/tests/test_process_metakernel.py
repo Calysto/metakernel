@@ -5,7 +5,7 @@ from metakernel.tests.utils import get_kernel, get_log_text
 from metakernel.process_metakernel import BashKernel
 
 
-def test_process_metakernel():
+def test_process_metakernel() -> None:
     kernel = get_kernel(BashKernel)
     kernel.do_execute("cat \"%s\"" % __file__, False)
     log_text = get_log_text(kernel)

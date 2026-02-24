@@ -6,7 +6,7 @@ from metakernel import Magic
 
 class RestartMagic(Magic):
 
-    def line_restart(self):
+    def line_restart(self) -> None:
         """
         %restart - restart session
 
@@ -21,5 +21,5 @@ class RestartMagic(Magic):
         self.kernel.do_shutdown(True)
 
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(RestartMagic)

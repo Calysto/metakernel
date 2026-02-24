@@ -1,13 +1,16 @@
+from __future__ import annotations
+
 from metakernel import MetaKernel
 try:
     from jupyter_client import session as ss
 except ImportError:
-    from IPython.kernel.zmq import session as ss
+    from IPython.kernel.zmq import session as ss  # type: ignore[no-redef]
 import zmq
 import logging
+from logging import Logger, StreamHandler
 
 try:
-    from StringIO import StringIO
+    from StringIO import StringIO  # type: ignore[import]
 except ImportError:
     from io import StringIO
 
@@ -19,7 +22,7 @@ class EvalKernel(MetaKernel):
     language_version = '0.1'
     banner = "Eval kernel - evaluates simple Python statements and expressions"
 
-    def set_variable(self, name, value):
+    def set_variable(self, name, value) -> None:
         """
         Set a variable in the kernel language.
         """
@@ -37,7 +40,7 @@ class EvalKernel(MetaKernel):
         python_magic = self.line_magics['python']
         return python_magic.eval(code.strip())
 
-    def do_execute_meta(self, code):
+    def do_execute_meta(self, code) -> str | None:
         if code == "reset":
             return "RESET"
         elif code == "stop":
@@ -49,12 +52,12 @@ class EvalKernel(MetaKernel):
         else:
             raise Exception("Unknown meta command: '%s'" % code)
 
-    def initialize_debug(self, code):
+    def initialize_debug(self, code) -> str:
         return "highlight: [%s, %s, %s, %s]" % (0, 0, 1, 0)
 
 
-def has_network():
-    import requests
+def has_network() -> bool:
+    import requests  # type: ignore[import-untyped]
     try:
         _ = requests.head('http://google.com', timeout=3)
         return True
@@ -63,21 +66,22 @@ def has_network():
     return False
 
 
-def get_log():
+from metakernel._metakernel import MetaKernel
+def get_log() -> Logger:
     log = logging.getLogger('test')
     log.setLevel(logging.DEBUG)
 
     for hdlr in log.handlers:
         log.removeHandler(hdlr)
 
-    hdlr = logging.StreamHandler(StringIO())
+    hdlr = StreamHandler(StringIO())
     hdlr.setLevel(logging.DEBUG)
     log.addHandler(hdlr)
 
     return log
 
 
-def get_kernel(kernel_class=MetaKernel):
+def get_kernel(kernel_class=MetaKernel) -> MetaKernel:
     context = zmq.Context.instance()
     iopub_socket = context.socket(zmq.PUB)
 
@@ -86,14 +90,16 @@ def get_kernel(kernel_class=MetaKernel):
     return kernel
 
 
-def clear_log_text(obj):
+def clear_log_text(obj) -> None:
     """Clear the log text from a kernel or a log object."""
     if isinstance(obj, MetaKernel):
         log = obj.log
     else:
         log = obj
-    log.handlers[0].stream.truncate(0)
-    log.handlers[0].stream.seek(0)
+    handler = log.handlers[0]
+    assert isinstance(handler, StreamHandler)
+    handler.stream.truncate(0)
+    handler.stream.seek(0)
 
 
 def get_log_text(obj):
@@ -102,5 +108,6 @@ def get_log_text(obj):
         log = obj.log
     else:
         log = obj
-    return log.handlers[0].stream.getvalue()
-
+    handler = log.handlers[0]
+    assert isinstance(handler, StreamHandler)
+    return handler.stream.getvalue()

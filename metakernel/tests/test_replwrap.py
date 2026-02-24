@@ -9,19 +9,19 @@ from metakernel.tests.utils import get_log, get_log_text
 
 class REPLWrapTestCase(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         super(REPLWrapTestCase, self).setUp()
         self.save_ps1 = os.getenv('PS1', r'\$')
         self.save_ps2 = os.getenv('PS2', '>')
         os.putenv('PS1', r'\$')
         os.putenv('PS2', '>')
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         super(REPLWrapTestCase, self).tearDown()
         os.putenv('PS1', self.save_ps1)
         os.putenv('PS2', self.save_ps2)
 
-    def test_bash(self):
+    def test_bash(self) -> None:
         bash = replwrap.bash()
         res = bash.run_command("time")
         assert 'real' in res, res
@@ -46,7 +46,7 @@ class REPLWrapTestCase(unittest.TestCase):
         text = get_log_text(logger)
         assert '1\n2\n3' in text
 
-    def test_multiline(self):
+    def test_multiline(self) -> None:
         bash = replwrap.bash()
         res = bash.run_command("echo '1 2\n3 4'")
         self.assertEqual(res.strip().splitlines(), ['1 2', '3 4'])
@@ -63,7 +63,7 @@ class REPLWrapTestCase(unittest.TestCase):
         res = bash.run_command("echo '1 2\n3 4'")
         self.assertEqual(res.strip().splitlines(), ['1 2', '3 4'])
 
-    def test_existing_spawn(self):
+    def test_existing_spawn(self) -> None:
         child = pexpect.spawnu("bash", timeout=5, echo=False)
         repl = replwrap.REPLWrapper(child, re.compile('[$#]'),
                                     "PS1='{0}' PS2='{1}' "
@@ -72,7 +72,7 @@ class REPLWrapTestCase(unittest.TestCase):
         res = repl.run_command("echo $HOME")
         assert res.startswith('/'), res
 
-    def test_python(self):
+    def test_python(self) -> None:
         if platform.python_implementation() == 'PyPy':
             raise unittest.SkipTest("This test fails on PyPy because of REPL differences")
 
@@ -86,7 +86,7 @@ class REPLWrapTestCase(unittest.TestCase):
         res = p.run_command('for a in range(3): print(a)\n')
         assert res.strip().splitlines() == ['0', '1', '2']
 
-    def test_bracketed_paste(self):
+    def test_bracketed_paste(self) -> None:
         # Readline paste bracketing is easily toggled in bash, but can be harder elsewhere
         # This tests that run_command() still works with it enabled (the default for readline,
         # but overriden by bash and python)

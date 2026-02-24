@@ -1,7 +1,9 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
 
 from metakernel import Magic, option, ExceptionWrapper
+from typing import Any, Optional
 import pydoc
 import sys
 import ast
@@ -11,14 +13,18 @@ from jedi.api.helpers import get_on_completion_name
 from parso import split_lines
 
 
-def exec_then_eval(code, env):
+from metakernel._metakernel import ExceptionWrapper
+
+
+def exec_then_eval(code, env) -> Any:
     import traceback
     try:
         block = ast.parse(code, mode="exec")
         last = block.body.pop()
         if type(last) != ast.Expr:
             block.body.append(last)
-            retval = exec(compile(block, "python cell", mode="exec"), env)
+            exec(compile(block, "python cell", mode="exec"), env)
+            retval = None
         else:
             exec(compile(block, "python cell", mode="exec"), env)
             retval = eval(compile(ast.Expression(last.value),
@@ -31,18 +37,18 @@ def exec_then_eval(code, env):
     except Exception as exc:
         ex_type, ex, tb = sys.exc_info()
         line1 = ["Traceback (most recent call last):"]
-        line2 = ["%s: %s" % (ex.__class__.__name__, str(ex))]
+        ex_name = ex_type.__name__ if ex_type is not None else "Exception"
+        line2 = ["%s: %s" % (ex_name, str(ex))]
         tb_format = line1 + [line.rstrip() for line in traceback.format_tb(tb)[1:]] + line2
-        return ExceptionWrapper(ex_type.__name__, repr(exc.args), tb_format)
-
+        return ExceptionWrapper(ex_name, repr(exc.args), tb_format)
 class PythonMagic(Magic):
 
-    def __init__(self, kernel):
+    def __init__(self, kernel) -> None:
         super(PythonMagic, self).__init__(kernel)
         self.env = globals()['__builtins__'].copy()
-        self.retval = None
+        self.retval: Any = None
 
-    def line_python(self, *args):
+    def line_python(self, *args) -> None:
         """
         %python CODE - evaluate code as Python
 
@@ -61,7 +67,7 @@ class PythonMagic(Magic):
         self.retval = self.eval(code)
         self.env["retval"] = None
 
-    def eval(self, code):
+    def eval(self, code) -> Any:
         import IPython.display
         import metakernel.display
         # monkey patch IPython.display.display
@@ -81,7 +87,7 @@ class PythonMagic(Magic):
         "-e", "--eval_output", action="store_true", default=False,
         help="Use the retval value from the Python cell as code in the kernel language."
     )
-    def cell_python(self, eval_output=False):
+    def cell_python(self, eval_output=False) -> None:
         """
         %%python - evaluate contents of cell as Python
 
@@ -117,7 +123,7 @@ class PythonMagic(Magic):
             if eval_output:
                 retval = self.eval(self.code)
                 self.code = str(self.env["retval"]) if ("retval" in self.env and
-                                                        self.env["retval"] != None) else retval
+                                                        self.env["retval"] != None) else str(retval)
                 self.retval = None
                 self.env["retval"] = None
                 self.evaluate = True
@@ -126,13 +132,13 @@ class PythonMagic(Magic):
                 self.env["retval"] = None
                 self.evaluate = False
 
-    def post_process(self, retval):
+    def post_process(self, retval) -> Any:
         if retval is not None:
             return retval
         else:
             return self.retval
 
-    def get_completions(self, info):
+    def get_completions(self, info) -> list:
         '''Get Python completions'''
         # https://github.com/davidhalter/jedi/blob/master/jedi/utils.py
         if jedi is None:
@@ -161,7 +167,7 @@ class PythonMagic(Magic):
 
         return [c[info['start']:] for c in completions]
 
-    def get_help_on(self, info, level=0, none_on_fail=False):
+    def get_help_on(self, info, level=0, none_on_fail=False) -> str | None:
         """Implement basic help for functions"""
         if not info['code']:
             return None if none_on_fail else ''
@@ -190,5 +196,5 @@ class PythonMagic(Magic):
         else:
             return strhelp
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(PythonMagic)

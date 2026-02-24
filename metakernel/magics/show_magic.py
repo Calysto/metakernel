@@ -10,7 +10,7 @@ class ShowMagic(Magic):
         '-o', '--output', action='store_true', default=False,
         help='rather than showing the contents, show the results'
     )
-    def cell_show(self, output=False):
+    def cell_show(self, output=False) -> None:
         """
         %%show [-o]- show cell contents or results in system pager
 
@@ -33,13 +33,13 @@ class ShowMagic(Magic):
         else:
             self.evaluate = True
 
-    def post_process(self, results):
+    def post_process(self, results) -> None:
         if self.show_output:
             self.kernel.payload = [{"data": {"text/plain": self.kernel.repr(results)},
                                     "start_line_number": 0,
                                     "source": "page"}]
         return None
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(ShowMagic)
 

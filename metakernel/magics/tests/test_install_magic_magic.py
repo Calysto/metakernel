@@ -11,7 +11,7 @@ filename = get_local_magics_dir() + os.sep + "cd_magic.py"
 
 
 @pytest.mark.skipif(not has_network(), reason='no network')
-def test_install_magic_magic():
+def test_install_magic_magic() -> None:
     kernel = get_kernel(EvalKernel)
     kernel.do_execute("%install_magic https://raw.githubusercontent.com/calysto/metakernel/main/metakernel/magics/cd_magic.py")
     text = get_log_text(kernel)
@@ -19,7 +19,7 @@ def test_install_magic_magic():
     assert os.path.isfile(filename), ("File not found: %s" % filename)
 
 
-def teardown():
+def teardown() -> None:
     try:
         os.remove(filename)
     except OSError:

@@ -2,7 +2,7 @@ from metakernel import Magic, option
 from IPython.display import IFrame
     
 class BrainMagic(Magic):
-    def cell_brain(self):
+    def cell_brain(self) -> None:
         """
         %%brain - run a cell as brain control code
         for a calysto.simulation.
@@ -23,10 +23,10 @@ def brain():
         new_code = ("    ".join(line + "\n" for line in text.split("\n")))
         self.code = pre_code + new_code + post_code
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(BrainMagic)
 
-def register_ipython_magics():
+def register_ipython_magics() -> None:
     from metakernel import IPythonKernel
     from IPython.core.magic import register_cell_magic
     kernel = IPythonKernel()

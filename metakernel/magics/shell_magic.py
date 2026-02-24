@@ -1,21 +1,22 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from __future__ import print_function
+from __future__ import annotations, print_function
 from metakernel import Magic, pexpect
-from metakernel.replwrap import powershell, bash
+from metakernel.replwrap import REPLWrapper, powershell, bash
+from typing import Optional
 import os
 
 
 class ShellMagic(Magic):
 
-    def __init__(self, kernel):
+    def __init__(self, kernel) -> None:
         super(ShellMagic, self).__init__(kernel)
-        self.repl = None
-        self.cmd = None
+        self.repl: Optional[REPLWrapper] = None
+        self.cmd: Optional[str] = None
         self.start_process()
 
-    def line_shell(self, *args):
+    def line_shell(self, *args) -> None:
         """
         %shell COMMAND - run the line as a shell command
 
@@ -46,12 +47,13 @@ class ShellMagic(Magic):
         if os.path.exists(cwd):
             os.chdir(cwd)
 
-    def eval(self, cmd, incremental=False):
+    def eval(self, cmd, incremental=False) -> str:
+        assert self.repl is not None
         stream_handler = self.kernel.Print if incremental else None
         return self.repl.run_command(cmd, timeout=None,
                                      stream_handler=stream_handler)
 
-    def start_process(self):
+    def start_process(self) -> None:
         if self.repl is not None:
             self.repl.child.terminate()
 
@@ -69,7 +71,7 @@ class ShellMagic(Magic):
                 msg = "The command was not found or was not executable: sh"
                 raise Exception(msg)
 
-    def cell_shell(self):
+    def cell_shell(self) -> None:
         """
         %%shell - run the contents of the cell as shell commands
 
@@ -89,14 +91,14 @@ class ShellMagic(Magic):
         self.line_shell(self.code)
         self.evaluate = False
 
-    def get_completions(self, info):
+    def get_completions(self, info) -> list:
         if self.cmd == 'cmd':
             return []
         command = 'compgen -cdfa "%s"' % info['code']
         completion_text = self.eval(command)
         return completion_text.split()
 
-    def get_help_on(self, info, level=0):
+    def get_help_on(self, info, level=0) -> str:
         expr = info['code'].rstrip()
         if self.cmd == 'cmd':
             resp = self.eval('help %s' % expr)
@@ -110,5 +112,5 @@ class ShellMagic(Magic):
             return "Sorry, no help is available on '%s'." % expr
 
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(ShellMagic)

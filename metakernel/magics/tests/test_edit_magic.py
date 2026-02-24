@@ -2,7 +2,7 @@
 from metakernel.tests.utils import (get_kernel, get_log_text, 
                                     clear_log_text, EvalKernel)
 
-def test_edit_magic():
+def test_edit_magic() -> None:
     kernel = get_kernel(EvalKernel)
 
     results = kernel.do_execute("%%edit %s" % __file__)

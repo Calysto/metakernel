@@ -3,7 +3,7 @@ from metakernel import Parser
 import os
 
 
-def test_parser():
+def test_parser() -> None:
     p = Parser()
 
     info = p.parse_code('import nump')
@@ -27,7 +27,7 @@ def test_parser():
     assert info['magic']['type'] == 'line'
 
 
-def test_scheme_parser():
+def test_scheme_parser() -> None:
     function_call_regex = r'\(([^\d\W][\w\.]*)[^\)\()]*\Z'
     p = Parser(function_call_regex=function_call_regex)
 
@@ -35,7 +35,7 @@ def test_scheme_parser():
     assert info['help_obj'] == 'oct'
 
 
-def test_path_completions():
+def test_path_completions() -> None:
     p = Parser()
 
     if not os.name == 'nt':
@@ -52,13 +52,14 @@ def test_path_completions():
                 assert f[1:] in p.parse_code('.')['path_matches']
 
 
-def test_complete0():
+def test_complete0() -> None:
     p = Parser()
     info = p.parse_code('abcdefghijklmnop', 0, 4)
     assert info['obj'] == 'abcd', info
 
 
-def get_parser():
+from metakernel.parser import Parser
+def get_parser() -> Parser:
     p = Parser()
     try:
         os.mkdir("/tmp/Test Dir")
@@ -68,61 +69,61 @@ def get_parser():
     return p
 
 
-def test_complete1():
+def test_complete1() -> None:
     p = get_parser()
     info = p.parse_code('/tmp/')
     assert "Test\\ Dir/" in info['path_matches'], info['path_matches']
 
 
-def test_complete2():
+def test_complete2() -> None:
     p = get_parser()
     info = p.parse_code('open("/tmp/')
     assert "Test Dir/" in info['path_matches'], info
 
 
-def test_complete3():
+def test_complete3() -> None:
     p = get_parser()
     info = p.parse_code('/tmp/Test Dir/temp.txt', 0, 14)
     assert "test.txt" in info['path_matches'], info
 
 
-def test_complete4():
+def test_complete4() -> None:
     p = get_parser()
     info = p.parse_code('/tmp/Test Dir')
     assert 'Dir/test.txt' in info['path_matches'], info
 
 
-def test_complete5():
+def test_complete5() -> None:
     p = get_parser()
     info = p.parse_code('/tmp/Test Dir/')
     assert "test.txt" in info['path_matches'], info
 
 
-def test_complete6():
+def test_complete6() -> None:
     p = get_parser()
     info = p.parse_code('/tmp/Test')
     assert "Test\\ Dir/" in info['path_matches'], info['path_matches']
 
 
-def test_complete7():
+def test_complete7() -> None:
     p = get_parser()
     info = p.parse_code('/tmp/Test Dir/test.txt')
     assert not info['path_matches'], info
 
 
-def test_complete8():
+def test_complete8() -> None:
     p = get_parser()
     info = p.parse_code('/tmp/Test Dir/', 0, 9)
     assert 'Test\\ Dir/' in info['path_matches'], info
 
 
-def test_complete9():
+def test_complete9() -> None:
     p = get_parser()
     info = p.parse_code('fluff\n/tmp/Test ')
     assert 'Dir/' in info['path_matches'], info
 
 
-def test_complete10():
+def test_complete10() -> None:
     p = get_parser()
     info = p.parse_code('/tmp/Test\\ Dir')
     assert 'Dir/test.txt' in info['path_matches']

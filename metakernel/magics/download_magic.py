@@ -3,24 +3,14 @@
 
 
 from metakernel import Magic, option
-import urllib
-try:
-    import urlparse
-except ImportError:
-    from urllib import parse as urlparse
+import urllib.parse as urlparse
+import urllib.request
 import os
 
-try:
-    urllib.URLopener
-    def download(url, filename):
-        opener = urllib.URLopener()
-        opener.retrieve(url, filename)
-except: # python3
-    import urllib.request
-    def download(url, filename):
-        g = urllib.request.urlopen(url)
-        with open(filename, 'wb') as f:
-            f.write(g.read())        
+def download(url, filename):
+    g = urllib.request.urlopen(url)
+    with open(filename, 'wb') as f:
+        f.write(g.read())
 
 class DownloadMagic(Magic):
 
@@ -28,7 +18,7 @@ class DownloadMagic(Magic):
         '-f', '--filename', action='store', default=None,
         help='use the provided name as filename'
     )
-    def line_download(self, url, filename=None):
+    def line_download(self, url, filename=None) -> None:
         """
         %download URL [-f FILENAME] - download file from URL
 
@@ -63,10 +53,10 @@ class DownloadMagic(Magic):
             self.kernel.Error(str(e))
 
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(DownloadMagic)
 
-def register_ipython_magics():
+def register_ipython_magics() -> None:
     from metakernel import IPythonKernel
     from IPython.core.magic import register_line_magic
     kernel = IPythonKernel()

@@ -7,12 +7,8 @@ import string
 import random
 import os
 
-try:
-    import urllib.request
-    urlopen = urllib.request.urlopen
-except: # python2
-    import urllib
-    urlopen = urllib.urlopen
+import urllib.request
+urlopen = urllib.request.urlopen
 
 def download(url):
     g = urlopen(url)
@@ -28,7 +24,7 @@ class JigsawMagic(Magic):
         '-h', '--height', action='store', default=350,
         help='set height of iframe '
     )
-    def line_jigsaw(self, language, workspace=None, height=350):
+    def line_jigsaw(self, language, workspace=None, height=350) -> None:
         """
         %jigsaw LANGUAGE - show visual code editor/generator
 
@@ -191,10 +187,10 @@ class JigsawMagic(Magic):
         self.kernel.Display(Javascript(script))
         self.kernel.Display(IFrame(html_filename, width='100%', height=height))
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(JigsawMagic)
 
-def register_ipython_magics():
+def register_ipython_magics() -> None:
     from metakernel import IPythonKernel
     from IPython.core.magic import register_line_magic
     kernel = IPythonKernel()

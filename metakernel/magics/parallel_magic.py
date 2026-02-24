@@ -1,7 +1,9 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
 
 from metakernel import Magic, option
+from typing import Optional, Any
 import logging
 import time
 
@@ -14,14 +16,14 @@ class Slice(object):
 slicer = Slice() ## instance to parse slices
 
 class ParallelMagic(Magic):
-    client = None
-    view = None
-    view_load_balanced = None
-    module_name = None
-    class_name = None
-    kernel_name = None
-    ids = None
-    retval = None
+    client: Any = None
+    view: Any = None
+    view_load_balanced: Any = None
+    module_name: Any = None
+    class_name: Any = None
+    kernel_name: Any = None
+    ids: Any = None
+    retval: Any = None
     retry = False
 
     @option(
@@ -33,7 +35,7 @@ class ParallelMagic(Magic):
         help='the machine ids to use from the cluster'
 
     )
-    def line_parallel(self, module_name, class_name, kernel_name="default", ids=None):
+    def line_parallel(self, module_name, class_name, kernel_name="default", ids=None) -> None:
         """
         %parallel MODULE CLASS [-k NAME] [-i [...]] - construct an interface to the cluster.
 
@@ -160,7 +162,7 @@ kernels['%(kernel_name)s'] = %(class_name)s()
         '-s', '--set_variable', action='store', default=None,
         help='set the variable with the parallel results rather than returning them'
     )
-    def line_px(self, expression, kernel_name=None, evaluate=False, set_variable=None):
+    def line_px(self, expression, kernel_name=None, evaluate=False, set_variable=None) -> None:
         """
         %px EXPRESSION - send EXPRESSION to the cluster.
 
@@ -226,7 +228,7 @@ kernels['%(kernel_name)s'] = %(class_name)s()
         '-s', '--set_variable', action='store', default=None,
         help='set the variable with the parallel results rather than returning them'
     )
-    def cell_px(self, kernel_name=None, evaluate=False, set_variable=None):
+    def cell_px(self, kernel_name=None, evaluate=False, set_variable=None) -> None:
         """
         %%px - send cell to the cluster.
 
@@ -252,7 +254,7 @@ kernels['%(kernel_name)s'] = %(class_name)s()
         '-s', '--set_variable', action='store', default=None,
         help='set the variable with the parallel results rather than returning them'
     )
-    def line_pmap(self, function_name, args, kernel_name=None, set_variable=None):
+    def line_pmap(self, function_name, args, kernel_name=None, set_variable=None) -> None:
         """
         %pmap FUNCTION [ARGS1,ARGS2,...] - ("parallel map") call a FUNCTION on args
 
@@ -299,7 +301,7 @@ kernels['%(kernel_name)s'] = %(class_name)s()
         except ImportError:
             from IPython.parallel.util import interactive
         f = interactive(lambda arg, kname=kernel_name, fname=function_name: \
-                        kernels[kname].do_function_direct(fname, arg))
+                        kernels[kname].do_function_direct(fname, arg))  # type: ignore[name-defined]
         results = self.view_load_balanced.map_async(f, eval(args))
         if set_variable is None:
             self.retval = results
@@ -307,7 +309,7 @@ kernels['%(kernel_name)s'] = %(class_name)s()
             self.kernel.set_variable(set_variable, results)
             self.retval = None
 
-    def post_process(self, retval):
+    def post_process(self, retval) -> str | None:
         try:
             ## any will crash on numpy arrays
             if isinstance(self.retval, list) and not any(self.retval):
@@ -316,5 +318,5 @@ kernels['%(kernel_name)s'] = %(class_name)s()
             pass
         return self.retval
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(ParallelMagic)

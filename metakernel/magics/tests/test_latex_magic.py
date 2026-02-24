@@ -3,7 +3,7 @@ from metakernel.tests.utils import (get_kernel, get_log_text,
                                     clear_log_text)
 
 
-def test_latex_magic():
+def test_latex_magic() -> None:
     kernel = get_kernel()
     kernel.do_execute("%latex $x_1 = \\dfrac{a}{b}$")
     text = get_log_text(kernel)

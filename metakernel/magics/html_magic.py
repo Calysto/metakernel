@@ -7,7 +7,7 @@ from IPython.display import HTML
 
 class HTMLMagic(Magic):
 
-    def line_html(self, code):
+    def line_html(self, code) -> None:
         """
         %html CODE - display code as HTML
 
@@ -21,7 +21,7 @@ class HTMLMagic(Magic):
         html = HTML(code)
         self.kernel.Display(html)
 
-    def cell_html(self):
+    def cell_html(self) -> None:
         """
         %%html - display contents of cell as HTML
 
@@ -39,5 +39,5 @@ class HTMLMagic(Magic):
         self.kernel.Display(html)
         self.evaluate = False
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(HTMLMagic)

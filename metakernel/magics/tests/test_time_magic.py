@@ -2,7 +2,7 @@
 from metakernel.tests.utils import get_kernel, get_log_text, EvalKernel
 import re
 
-def test_time_magic():
+def test_time_magic() -> None:
     kernel = get_kernel(EvalKernel)
     kernel.do_execute("""%%time
 x = 1

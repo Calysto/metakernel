@@ -6,7 +6,7 @@ import time
 
 class TimeMagic(Magic):
 
-    def cell_time(self):
+    def cell_time(self) -> None:
         """
         %%time - show time to run cell
 
@@ -29,5 +29,5 @@ class TimeMagic(Magic):
         return retval
 
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(TimeMagic)

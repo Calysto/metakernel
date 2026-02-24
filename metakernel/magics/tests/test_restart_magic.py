@@ -1,7 +1,7 @@
 from metakernel.tests.utils import get_kernel, EvalKernel, get_log_text
 
 
-def test_restart_magic():
+def test_restart_magic() -> None:
     kernel = get_kernel(EvalKernel)
 
     kernel.do_execute('a=1')

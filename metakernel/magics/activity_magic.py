@@ -1,33 +1,39 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+from __future__ import annotations
+
 try:
     from ipywidgets import widgets
 except ImportError:
     widgets = None
 from metakernel import Magic, option
+from typing import Any
 import os
 import getpass
 import datetime
 
-def touch(fname, times=None):
+def touch(fname, times=None) -> None:
     with open(fname, 'a'):
         os.utime(fname, times)
 
+from typing import List, Optional
+
 class Activity(object):
-    def __init__(self):
-        self.questions = []
-        self.filename = None
-        self.results_filename = None
-        self.instructors = []
+    def __init__(self) -> None:
+        self.questions: List[Any] = []
+        self.filename: Optional[str] = None
+        self.results_filename: Optional[str] = None
+        self.instructors: List[Any] = []
         self.show_initial = True
         self.last_id = None
 
-    def load(self, filename):
+    def load(self, filename) -> None:
         if filename.startswith("~"):
             filename = os.path.expanduser(filename)
         filename = os.path.abspath(filename)
         self.filename = filename
+        assert self.filename is not None
         with open(self.filename) as fp:
             json_text = "".join(fp.readlines())
         self.load_json(json_text)
@@ -35,7 +41,7 @@ class Activity(object):
             self.results_filename = filename + ".results"
         touch(self.results_filename)
 
-    def load_json(self, json_text):
+    def load_json(self, json_text) -> None:
         # Allow use of widgets:
         if widgets is None:
             return
@@ -67,7 +73,7 @@ class Activity(object):
         else:
             raise Exception("not a valid 'activity': use ['poll']")
 
-    def use_question(self, index):
+    def use_question(self, index) -> None:
         self.set_question(self.questions[index].question)
         self.set_id(self.questions[index].id)
         self.results_html.layout.visibility = "hidden"
@@ -82,7 +88,7 @@ class Activity(object):
             self.choice_row_list[i].layout.visibility = "visible"
             self.buttons[i].layout.visibility = "visible"
 
-    def create_widget(self):
+    def create_widget(self) -> None:
         self.id_widget = widgets.HTML("")
         self.question_widget = widgets.HTML("")
         self.choice_widgets = []
@@ -115,14 +121,14 @@ class Activity(object):
         self.top_level = widgets.VBox([widgets.HBox([self.stack, right_stack]),
                                        self.output])
 
-    def set_question(self, question):
+    def set_question(self, question) -> None:
         self.question_widget.value = "<h1>%s</h1>" % question
 
-    def set_id(self, id):
+    def set_id(self, id) -> None:
         self.id_widget.value = "<p><b>Question ID</b>: %s</p>" % id
         self.id = id
 
-    def handle_results(self, sender):
+    def handle_results(self, sender) -> None:
         # write out when we show the Results:
         self.handle_submit(sender)
         if self.last_id == self.questions[self.index].id:
@@ -131,6 +137,7 @@ class Activity(object):
             self.show_initial = True
             self.last_id = self.questions[self.index].id
         data = {}
+        assert self.results_filename is not None
         with open(self.results_filename) as fp:
             line = fp.readline()
             while line:
@@ -161,7 +168,7 @@ class Activity(object):
                 print(sorted(choices.keys()))
                 print(barvalues)
 
-    def handle_submit(self, sender):
+    def handle_submit(self, sender) -> None:
         import portalocker
         with portalocker.Lock(self.results_filename, "a+") as g:
             g.write("%s::%s::%s::%s\n" % (self.id, getpass.getuser(), datetime.datetime.today(), sender.description))
@@ -171,31 +178,31 @@ class Activity(object):
         with self.output:
             print("Received: " + sender.description)
 
-    def handle_next(self, sender):
+    def handle_next(self, sender) -> None:
         if self.index < len(self.questions) - 1:
             self.index += 1
             self.use_question(self.index)
             self.output.clear_output()
 
-    def handle_prev(self, sender):
+    def handle_prev(self, sender) -> None:
         if self.index > 0:
             self.index -= 1
             self.use_question(self.index)
             self.output.clear_output()
 
-    def render(self):
+    def render(self) -> None:
         from metakernel.display import display
         display(self.top_level)
 
 class Question(object):
-    def __init__(self, id, question, options):
+    def __init__(self, id, question, options) -> None:
         self.id = id
         self.question = question
         self.options = options
 
 class ActivityMagic(Magic):
 
-    def line_activity(self, filename, mode=None):
+    def line_activity(self, filename, mode=None) -> None:
         """
         %activity FILENAME - run a widget-based activity
           (poll, classroom response, clicker-like activity)
@@ -265,7 +272,7 @@ class ActivityMagic(Magic):
             activity.load(filename)
             activity.render()
 
-    def cell_activity(self, filename):
+    def cell_activity(self, filename) -> None:
         """
         %%activity FILENAME - make an activity from
           a JSON structure
@@ -296,15 +303,16 @@ class ActivityMagic(Magic):
         activity = Activity()
         activity.load(filename)
         # Make sure results file is writable:
+        assert activity.results_filename is not None
         os.chmod(activity.results_filename, 0o777)
         # Ok, let's test it (MetaKernel):
         self.line_activity(filename)
         self.evaluate = False
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(ActivityMagic)
 
-def register_ipython_magics():
+def register_ipython_magics() -> None:
     from metakernel import IPythonKernel
     from metakernel.utils import add_docs
     from IPython.core.magic import register_line_magic, register_cell_magic
@@ -319,7 +327,7 @@ def register_ipython_magics():
     def activity(line):
         kernel.call_magic("%activity " + line)
 
-    @register_cell_magic
+    @register_cell_magic  # type: ignore[no-redef]
     @add_docs(magic.cell_activity.__doc__)
     def activity(line, cell):
         magic.code = cell

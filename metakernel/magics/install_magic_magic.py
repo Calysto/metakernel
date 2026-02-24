@@ -2,27 +2,18 @@
 # Distributed under the terms of the Modified BSD License.
 
 from metakernel import Magic
-import urllib
-try:
-    import urlparse
-except ImportError:
-    from urllib import parse as urlparse
+import urllib.parse as urlparse
+import urllib.request
 import os
 
-try:
-    urllib.URLopener
-    def download(url, filename):
-        opener = urllib.URLopener()
-        opener.retrieve(url, filename)
-except: # python3
-    def download(url, filename):
-        g = urllib.request.urlopen(url)
-        with open(filename, 'wb') as f:
-            f.write(g.read())
+def download(url, filename):
+    g = urllib.request.urlopen(url)
+    with open(filename, 'wb') as f:
+        f.write(g.read())
 
 class InstallMagicMagic(Magic):
 
-    def line_install_magic(self, url):
+    def line_install_magic(self, url) -> None:
         """
         %install_magic URL - download and install magic from URL
 
@@ -45,6 +36,6 @@ class InstallMagicMagic(Magic):
         except Exception as e:
             self.kernel.Error(str(e))
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(InstallMagicMagic)
 

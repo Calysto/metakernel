@@ -12,7 +12,7 @@ except ImportError:
 
 @pytest.mark.skipif(ipyparallel is None, reason="Requires ipyparallel")
 @pytest.mark.skipif(sys.platform == 'darwin', reason="Fails on darwin")
-def test_parallel_magic():
+def test_parallel_magic() -> None:
     kernel = get_kernel(EvalKernel)
     # start up an EvalKernel on each node:
     kernel.do_execute("%parallel metakernel_python MetaKernelPython", False)

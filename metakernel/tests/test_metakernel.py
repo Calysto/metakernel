@@ -8,7 +8,7 @@ from metakernel import MetaKernel
 from metakernel.tests.utils import (get_kernel, get_log_text, EvalKernel,
                                     clear_log_text)
 
-def test_magics():
+def test_magics() -> None:
     kernel = get_kernel()
     for magic in ['cd', 'connect_info', 'download', 'html', 'install_magic',
                   'javascript', 'latex', 'lsmagic', 'magic', 'plot',
@@ -25,7 +25,7 @@ def test_magics():
         assert ntf.name in log_text
 
 
-def test_help():
+def test_help() -> None:
     kernel = get_kernel()
     resp = kernel.get_help_on('%shell', 0)
     assert 'run the line as a shell command' in resp
@@ -38,7 +38,7 @@ def test_help():
     assert resp == "Sorry, no help is available on 'what'.", ("response was actually %s" % resp)
 
 
-def test_complete():
+def test_complete() -> None:
     kernel = get_kernel()
     comp = kernel.do_complete('%connect_', len('%connect_'))
     assert comp['matches'] == ['%connect_info'], str(comp['matches'])
@@ -51,7 +51,7 @@ def test_complete():
     assert '%%html' in comp['matches']
 
 
-def test_inspect():
+def test_inspect() -> None:
     kernel = get_kernel()
     kernel.do_inspect('%lsmagic', len('%lsmagic'))
     log_text = get_log_text(kernel)
@@ -60,7 +60,7 @@ def test_inspect():
     kernel.do_inspect('%lsmagic ', len('%lsmagic') + 1)
 
 
-def test_path_complete():
+def test_path_complete() -> None:
     kernel = get_kernel()
     comp = kernel.do_complete('~/.ipytho', len('~/.ipytho'))
     assert comp['matches'] == ['ipython/']
@@ -79,13 +79,13 @@ def test_path_complete():
             assert path in comp['matches'], (comp['matches'], path)
 
 
-def test_ls_path_complete():
+def test_ls_path_complete() -> None:
     kernel = get_kernel()
     comp = kernel.do_complete('! ls ~/.ipytho', len('! ls ~/.ipytho'))
     assert comp['matches'] == ['ipython/'], comp
 
 
-def test_history():
+def test_history() -> None:
     kernel = get_kernel()
     kernel.do_execute('!ls', False)
     kernel.do_execute('%cd ~', False)
@@ -103,7 +103,7 @@ def test_history():
     assert '%cd ~'
 
 
-def test_sticky_magics():
+def test_sticky_magics() -> None:
     kernel = get_kernel()
     kernel.do_execute('%%%html\nhello', None)
     text = get_log_text(kernel)
@@ -116,15 +116,15 @@ def test_sticky_magics():
     assert 'html removed from session magics' in text
 
 
-def test_shell_partial_quote():
+def test_shell_partial_quote() -> None:
     kernel = get_kernel()
     kernel.do_execute('%cd "/home/', False)
     text = get_log_text(kernel)
     assert """No such file or directory: '"/home/'""" in text, text
 
-def test_other_kernels():
+def test_other_kernels() -> None:
     class SchemeKernel(MetaKernel):
-        help_suffix = {}
+        help_suffix = {}  # type: ignore[assignment,var-annotated]
         def do_execute_direct(self, code):
             return "OK"
 
@@ -137,37 +137,47 @@ def test_other_kernels():
     assert "Sorry, no help is available on 'dir?'." == message, message
 
     content = kernel.do_inspect('dir', len('dir'))
+    assert content is not None
     assert (content['status'] == 'aborted' and
             content['found'] == False), "do_inspect should abort, and be not found"
 
     content = kernel.do_inspect('len(dir', len('len(dir'))
+    assert content is not None
     assert (content['status'] == 'aborted' and
             content['found'] == False), "do_inspect should abort, and be not found"
 
     content = kernel.do_inspect('(dir', len('(dir'))
+    assert content is not None
     assert (content['status'] == 'aborted' and
             content['found'] == False), "do_inspect should abort, and be not found"
 
     # Now change it so that there is help available:
-    kernel.get_kernel_help_on = lambda info, level=0, none_on_fail=False: \
-                                   "Help is available on '%s'." % info['obj']
+    kernel.get_kernel_help_on = (  # type: ignore[method-assign]
+        lambda info, level=0, none_on_fail=False: "Help is available on '%s'." % info['obj']
+    )
     content = kernel.do_inspect('dir', len('dir'))
+    assert content is not None
     message = content["data"]["text/plain"]
     match = re.match("Help is available on '(.*)'", message)
+    assert match is not None
     assert match.groups()[0] == "dir", message + " for 'dir'"
 
     content = kernel.do_inspect('len(dir', len('len(dir'))
+    assert content is not None
     message = content["data"]["text/plain"]
     match = re.match("Help is available on '(.*)'", message)
+    assert match is not None
     assert match.groups()[0] == "dir", message + " for 'dir'"
 
     content = kernel.do_inspect('(dir', len('(dir'))
+    assert content is not None
     message = content["data"]["text/plain"]
     match = re.match("Help is available on '(.*)'", message)
+    assert match is not None
     assert match.groups()[0] == "dir", message + " for 'dir'"
 
 
-def test_do_execute_meta():
+def test_do_execute_meta() -> None:
     kernel = get_kernel(EvalKernel)
     kernel.do_execute("~~META~~: reset")
     text = get_log_text(kernel)
@@ -190,14 +200,14 @@ def test_do_execute_meta():
     clear_log_text(kernel)
 
 
-def test_do_execute_meta2():
+def test_do_execute_meta2() -> None:
     kernel = get_kernel()
     for code in ['reset, stop', 'step', 'inspect ', 'garbage']:
         with pytest.raises(Exception):
             kernel.do_execute("~~META~~: %s" % code)
 
 
-def test_misc():
+def test_misc() -> None:
     class TestKernel(MetaKernel):
         def do_execute_file(self, filename):
             self.Print("This language does not support running files")
@@ -225,6 +235,6 @@ def test_misc():
 
     assert kernel.do_inspect('hello', 10) is None
 
-def teardown():
+def teardown() -> None:
     if os.path.exists("TEST.txt"):
         os.remove("TEST.txt")

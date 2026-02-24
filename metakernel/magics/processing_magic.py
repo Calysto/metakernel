@@ -9,7 +9,7 @@ from IPython.display import HTML
 class ProcessingMagic(Magic):
     canvas_id = 0
 
-    def cell_processing(self, dummy=None):
+    def cell_processing(self, dummy=None) -> None:
         """
         %%processing - run the cell in the language Processing
 
@@ -48,10 +48,10 @@ require([window.location.protocol + "//calysto.github.io/javascripts/processing/
         self.kernel.Display(html)
         self.evaluate = False
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(ProcessingMagic)
 
-def register_ipython_magics():
+def register_ipython_magics() -> None:
     from metakernel import IPythonKernel
     from IPython.core.magic import register_cell_magic
     kernel = IPythonKernel()

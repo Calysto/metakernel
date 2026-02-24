@@ -62,6 +62,7 @@ exclude = [
   "docs/",
   "examples",
 ]
+artifacts = ["metakernel/py.typed"]
 
 [tool.pytest.ini_options]
 addopts= "-raXs  --durations 10 --color=yes --doctest-modules"
@@ -81,3 +82,12 @@ filterwarnings= [
   "module:Parsing dates involving a day of month without a year:DeprecationWarning",
   "module:'setParseAction' deprecated - use 'set_parse_action':DeprecationWarning",
 ]
+
+[tool.mypy]
+python_version = "3.9"
+warn_unused_configs = true
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "metakernel.images.*"
+ignore_errors = true

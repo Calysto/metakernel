@@ -6,7 +6,7 @@ from IPython.display import Latex
 
 class LatexMagic(Magic):
 
-    def line_latex(self, text):
+    def line_latex(self, text) -> None:
         r"""
         %latex TEXT - display text as LaTeX
 
@@ -19,7 +19,7 @@ class LatexMagic(Magic):
         latex = Latex(text)
         self.kernel.Display(latex)
 
-    def cell_latex(self):
+    def cell_latex(self) -> None:
         r"""
         %%latex - display contents of cell as LaTeX
 
@@ -35,5 +35,5 @@ class LatexMagic(Magic):
         self.kernel.Display(latex)
         self.evaluate = False
 
-def register_magics(kernel):
+def register_magics(kernel) -> None:
     kernel.register_magics(LatexMagic)
