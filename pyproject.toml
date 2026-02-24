@@ -28,8 +28,8 @@ file = "README.rst"
 content-type = "text/x-rst"
 
 [project.optional-dependencies]
-activity = ["portalocker"] # activity magic
-parallel = ["ipyparallel"] # parallel magic
+activity = ["portalocker >= 2.4.0"] # activity magic
+parallel = ["ipyparallel >= 8.3.0"] # parallel magic
 
 [dependency-groups]
 test = [
