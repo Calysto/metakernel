@@ -40,6 +40,10 @@ test = [
     "pytest-timeout",
 ]
 cover = [{include-group = "test"}]
+typing = [
+    "mypy>=1.0",
+    "types-requests",
+]
 docs = [
     "IPython",
     "pypandoc",

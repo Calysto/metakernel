@@ -44,6 +44,10 @@ cover: clean
 docs: clean
     uv run --group docs make -C docs html SPHINXOPTS="-W"
 
+# Run type checking
+typing:
+    uv run --group typing mypy metakernel
+
 # Regenerate magics/README.md from magic docstrings
 help:
     uv run python docs/generate_help.py
