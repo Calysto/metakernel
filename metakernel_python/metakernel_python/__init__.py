@@ -1,9 +1,9 @@
 """A Python kernel for Jupyter."""
 from IPython.core.inputtransformer2 import TransformerManager
 from metakernel import MetaKernel
-import sys
 
 __version__ = "0.19.1"
+
 
 class MetaKernelPython(MetaKernel):
     implementation = 'MetaKernel Python'
@@ -23,13 +23,6 @@ class MetaKernelPython(MetaKernel):
         # 'version'       : "x.y.z",
         'file_extension': '.py',
         'help_links': MetaKernel.help_links,
-    }
-    kernel_json = {
-        "argv": [
-            sys.executable, "-m", "metakernel_python", "-f", "{connection_file}"],
-        "display_name": "MetaKernel Python",
-        "language": "python",
-        "name": "metakernel_python"
     }
 
     def __init__(self, *args, **kwargs):
@@ -72,6 +65,3 @@ class MetaKernelPython(MetaKernel):
         if status == 'incomplete':
             r['indent'] = ' ' * indent_spaces
         return r
-
-if __name__ == '__main__':
-    MetaKernelPython.run_as_main()

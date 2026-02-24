@@ -1,6 +1,8 @@
-.PHONY: test
+.PHONY: install test
 
+
+install:
+	pip install -e .
 
 test:
-	pip install -e .
 	ipython console --kernel=metakernel_echo

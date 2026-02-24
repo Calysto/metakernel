@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling >=1.5"]
+requires = ["hatchling >=1.10.0", "jupyter_client"]
 build-backend = "hatchling.build"
 
 [project]
@@ -9,7 +9,6 @@ classifiers = [
     "Framework :: IPython",
     "License :: OSI Approved :: BSD License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 2",
     "Topic :: System :: Shells",
 ]
 dependencies = ["metakernel"]
@@ -23,4 +22,9 @@ content-type = "text/plain"
 Homepage = "https://github.com/calysto/metakernel/tree/main/metakernel_echo"
 
 [tool.hatch.version]
-path = "metakernel_echo.py"
+path = "metakernel_echo/__init__.py"
+
+[tool.hatch.build.hooks.custom]
+
+[tool.hatch.build.targets.wheel.shared-data]
+"data_kernelspec/share" = "share"
