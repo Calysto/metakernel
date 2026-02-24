@@ -33,11 +33,11 @@ parallel = ["ipyparallel >= 8.3.0"] # parallel magic
 
 [dependency-groups]
 test = [
-    "pytest",
-    "pytest-cov",
-    "requests",
-    "jupyter_kernel_test",
-    "pytest-timeout",
+    "pytest>=8.0",
+    "pytest-cov>=7.0",
+    "requests>=2.0",
+    "jupyter_kernel_test>=0.7",
+    "pytest-timeout>=2.4",
 ]
 cover = [{include-group = "test"}]
 typing = [

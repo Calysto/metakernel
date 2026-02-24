@@ -1516,11 +1516,11 @@ provides-extras = ["activity", "parallel"]
 
 [package.metadata.requires-dev]
 cover = [
-    { name = "jupyter-kernel-test" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
-    { name = "pytest-timeout" },
-    { name = "requests" },
+    { name = "jupyter-kernel-test", specifier = ">=0.7" },
+    { name = "pytest", specifier = ">=8.0" },
+    { name = "pytest-cov", specifier = ">=7.0" },
+    { name = "pytest-timeout", specifier = ">=2.4" },
+    { name = "requests", specifier = ">=2.0" },
 ]
 docs = [
     { name = "ipython" },
@@ -1536,11 +1536,11 @@ docs = [
     { name = "sphinxcontrib-napoleon" },
 ]
 test = [
-    { name = "jupyter-kernel-test" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
-    { name = "pytest-timeout" },
-    { name = "requests" },
+    { name = "jupyter-kernel-test", specifier = ">=0.7" },
+    { name = "pytest", specifier = ">=8.0" },
+    { name = "pytest-cov", specifier = ">=7.0" },
+    { name = "pytest-timeout", specifier = ">=2.4" },
+    { name = "requests", specifier = ">=2.0" },
 ]
 typing = [
     { name = "mypy", specifier = ">=1.0" },

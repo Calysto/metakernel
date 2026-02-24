@@ -26,14 +26,14 @@ test-parallel: clean
     uv run --with ipyparallel ipcluster start -n=3 &
     uv run --group test pytest -W default || uv run --group test pytest -W default --lf
     uv run --with ipyparallel ipcluster stop
-    uv run --with ./metakernelt_python --group test python metakernel_python/test_metakernel_python.py
+    uv run --with ./metakernel_python --group test python metakernel_python/test_metakernel_python.py
 
 # Run tests with coverage
 cover: clean
     uv run --with ipyparallel ipcluster start -n=3 &
     uv run --group cover pytest --cov=metakernel || uv run --group cover pytest --lf --cov=metakernel
     uv run --with ipyparallel ipcluster stop
-    uv run --with ./metakernelt_python --group test python metakernel_python/test_metakernel_python.py
+    uv run --with ./metakernel_python --group test python metakernel_python/test_metakernel_python.py
     uv run --group cover coverage annotate
 
 # Build Sphinx HTML documentation
