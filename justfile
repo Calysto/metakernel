@@ -46,7 +46,7 @@ typing:
 
 # Regenerate magics/README.md from magic docstrings
 help:
-    uv run python docs/generate_help.py
+    uv run --with ./metakernel_python python docs/generate_help.py
 
 # Launch metakernel_python kernel interactively (for manual testing)
 try-python:
