@@ -53,10 +53,10 @@ jobs:
         run: just help
 
       - name: Test with coverage
-        name: just cover
+        run: just cover
 
       - name: Test typing
-        name: just typing
+        run: just typing
 
   test_miniumum_versions:
     name: Test Minimum Versions
