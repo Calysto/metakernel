@@ -1,5 +1,9 @@
-.PHONY: test
+.PHONY: install test
+
+
+install:
+	pip install -e .
+	jupyter kernelspec list | grep metakernel_python
 
 test:
-	pip install -e .
 	ipython console --kernel=metakernel_python
