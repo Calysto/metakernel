@@ -28,6 +28,10 @@ file = "README.rst"
 content-type = "text/x-rst"
 
 [project.optional-dependencies]
+activity = ["portalocker"] # activity magic
+parallel = ["ipyparallel"] # parallel magic
+
+[dependency-groups]
 test = [
     "pytest",
     "pytest-cov",
@@ -35,8 +39,20 @@ test = [
     "jupyter_kernel_test",
     "pytest-timeout",
 ]
-activity = ["portalocker"] # activity magic
-parallel = ["ipyparallel"] # parallel magic
+cover = [{include-group = "test"}]
+docs = [
+    "IPython",
+    "pypandoc",
+    "sphinx_rtd_theme",
+    "nbsphinx",
+    "jupyter_sphinx",
+    "sphinxcontrib-napoleon",
+    "recommonmark",
+    "sphinx_bootstrap_theme",
+    "numpydoc",
+    "myst-parser",
+    "pydot",
+]
 
 [tool.hatch.version]
 path = "metakernel/__init__.py"
