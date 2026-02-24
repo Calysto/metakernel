@@ -13,7 +13,7 @@ classifiers = [
     "Topic :: System :: Shells",
 ]
 urls = {Homepage = "https://github.com/Calysto/metakernel"}
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "comm >=0.1.0",
     "ipykernel >=5.5.6",
@@ -42,20 +42,20 @@ test = [
 cover = [{include-group = "test"}]
 typing = [
     "mypy>=1.0",
-    "types-requests",
+    "types-requests>=2.32.4.20260107",
 ]
 docs = [
-    "IPython",
-    "pypandoc",
-    "sphinx_rtd_theme",
-    "nbsphinx",
-    "jupyter_sphinx",
-    "sphinxcontrib-napoleon",
-    "recommonmark",
-    "sphinx_bootstrap_theme",
-    "numpydoc",
-    "myst-parser",
-    "pydot",
+    "IPython>=8.0",
+    "pypandoc>=1.16",
+    "sphinx_rtd_theme>=3.1",
+    "nbsphinx>=0.9",
+    "jupyter_sphinx>=0.5",
+    "sphinxcontrib-napoleon>=0.7",
+    "recommonmark>=0.7",
+    "sphinx_bootstrap_theme>=0.8",
+    "numpydoc>=1.10",
+    "myst-parser>=4.0",
+    "pydot>=4.0",
 ]
 
 [tool.hatch.version]
