@@ -4,13 +4,9 @@
 default:
     @just --list
 
-# Install all packages for development
+# Install all package for development
 install: clean
     uv sync --extra parallel --extra activity --group test
-    uv pip install ./metakernel_python
-    python -m metakernel_python install --user
-    uv pip install ./metakernel_echo
-    python -m metakernel_echo install --user
 
 # Remove build artifacts and cached bytecode
 clean:
@@ -54,10 +50,8 @@ help:
 
 # Launch metakernel_python kernel interactively (for manual testing)
 try-python:
-    uv pip install -e ./metakernel_python
-    ipython console --kernel=metakernel_python
+    uv run --with ./metakernel_python --with ipython ipython console --kernel=metakernel_python
 
 # Launch metakernel_echo kernel interactively (for manual testing)
 try-echo:
-    uv pip install -e ./metakernel_echo
-    ipython console --kernel=metakernel_echo
+    uv run --with ./metakernel_echo --with ipython ipython console --kernel=metakernel_echo
