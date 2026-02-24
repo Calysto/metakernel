@@ -44,15 +44,19 @@ jobs:
         run: sudo apt install -y graphviz
 
       - name: Install dependencies
-        run: |
-          uv pip install coveralls
-          just install
+        run: just install
 
-      - name: Run the tests
-        run: |
-          just docs
-          just help
-          just cover
+      - name: Run the docs
+        run: just docs
+
+      - name: Check the help
+        run: just help
+
+      - name: Test with coverage
+        name: just cover
+
+      - name: Test typing
+        name: just typing
 
   test_miniumum_versions:
     name: Test Minimum Versions
@@ -74,26 +78,7 @@ jobs:
       - name: Install
         run: just install
       - name: Run the unit tests
-        run: just test
-
-  typing:
-    name: Typing
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Base Setup
-        uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-
-      - name: Install just
-        uses: extractions/setup-just@v2
-
-      - name: Run type checking
-        run: just typing
+        run: 
 
   make_sdist:
     name: Make SDist
