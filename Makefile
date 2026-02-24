@@ -6,8 +6,8 @@ all: install
 
 install: clean
 	pip install  --upgrade --upgrade-strategy eager -e .[parallel,activity,test]
-	pip install ./metakernel_python
-	pip install ./metakernel_echo
+	$(MAKE) -C metakernel_python install
+	$(MAKE) -C metakernel_echo install
 
 clean:
 	rm -rf build dist
