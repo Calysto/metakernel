@@ -23,17 +23,17 @@ test-file FILE:
 
 # Run the full test suite with parallel cluster
 test-parallel: clean
-    ipcluster start -n=3 &
+    uv run --with ipyparallel ipcluster start -n=3 &
     uv run --group test pytest -W default || uv run --group test pytest -W default --lf
-    ipcluster stop
+    uv run --with ipyparallel ipcluster stop
     uv run --group test python metakernel_python/test_metakernel_python.py
 
 # Run tests with coverage
 cover: clean
-    ipcluster start -n=3 &
+    uv run --with ipyparallel ipcluster start -n=3 &
     uv run --group cover pytest --cov=metakernel || uv run --group cover pytest --lf --cov=metakernel
-    ipcluster stop
-    uv run --group cover python metakernel_python/test_metakernel_python.py
+    uv run --with ipyparallel ipcluster stop
+    uv run --group test python metakernel_python/test_metakernel_python.py
     uv run --group cover coverage annotate
 
 # Build Sphinx HTML documentation

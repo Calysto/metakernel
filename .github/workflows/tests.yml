@@ -63,6 +63,8 @@ jobs:
     timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v6
+
       - name: Install uv
         uses: astral-sh/setup-uv@v5
 
@@ -93,6 +95,8 @@ jobs:
     steps:
       - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
       - uses: jupyterlab/maintainer-tools/.github/actions/test-sdist@v1
+        with:
+          package_spec: '--group test --editable .'
 
   link_check:
     runs-on: ubuntu-latest
