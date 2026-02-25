@@ -64,6 +64,10 @@ jobs:
     - name: Install just
       uses: extractions/setup-just@v2
 
+    - name: Install
+      run: just install
+        
+
     - name: Run pre-commit
       run: just pre-commit
     
@@ -92,6 +96,7 @@ jobs:
 
       - name: Install
         run: just install
+
       - name: Run the unit tests
         run: just test
 
@@ -142,7 +147,7 @@ jobs:
         uses: jupyter-server/jupyter_releaser/.github/actions/check-release@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          
+
   tests_check: # This job does nothing and is only used for the branch protection
     if: always()
     needs:
