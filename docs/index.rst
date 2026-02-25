@@ -29,6 +29,7 @@ Features
    :maxdepth: 1
 
    source/installation
+   source/new_kernel
    source/api
    source/info
 
@@ -41,6 +42,12 @@ Documentation for the functions included in Jupyter Kernel.
 ------------------------------------------------
 
 How to install Jupyter Kernel.
+
+
+`Creating a New Kernel <source/new_kernel.html>`_
+--------------------------------------------------
+
+How to build and package a new Jupyter kernel using MetaKernel.
 
 
 `Information <source/info.html>`_
