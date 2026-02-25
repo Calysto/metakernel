@@ -11,7 +11,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Topic :: System :: Shells",
 ]
-dependencies = ["metakernel", "jedi"]
+dependencies = ["metakernel", "jedi", "ipython"]
 dynamic = ["description", "version"]
 
 [project.readme]
