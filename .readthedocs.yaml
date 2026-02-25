@@ -6,7 +6,4 @@ build:
   commands:
     - pip install uv
     - uv sync --group docs
-    - uv run sphinx-build -b html docs/source $READTHEDOCS_OUTPUT/html
-# Build documentation in the docs/ directory with Sphinx
-sphinx:
-  configuration: docs/conf.py
+    - uv run sphinx-build -c docs -b html docs/source $READTHEDOCS_OUTPUT/html
