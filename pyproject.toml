@@ -24,8 +24,8 @@ dependencies = [
 dynamic = ["description", "version"]
 
 [project.readme]
-file = "README.rst"
-content-type = "text/x-rst"
+file = "README.md"
+content-type = "text/markdown"
 
 [project.optional-dependencies]
 activity = ["portalocker"] # activity magic
