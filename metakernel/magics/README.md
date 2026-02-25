@@ -2,7 +2,10 @@
 
 ## `%activity`
 
+```
 %activity FILENAME - run a widget-based activity
+```
+
 (poll, classroom response, clicker-like activity)
 
 This magic will load the JSON in the filename.
@@ -14,7 +17,9 @@ Examples:
 
 ## `%cd`
 
+```
 %cd PATH - change current directory of session
+```
 
 This line magic is used to change the directory of the
 notebook or console.
@@ -27,7 +32,9 @@ Example:
 
 ## `%connect_info`
 
+```
 %connect_info - show connection information
+```
 
 This line magic will show the connection information for this
 language kernel instance. This information is only necessary
@@ -56,12 +63,17 @@ if this is the most recent Jupyter session you have started.
 
 ## `%conversation`
 
+```
 %conversation ID - insert conversation by ID
+```
+
 %%conversation ID - insert conversation by ID
 
 ## `%dot`
 
+```
 %dot CODE - render code as Graphviz image
+```
 
 This line magic will render the Graphiz CODE, and render
 it as an image.
@@ -71,7 +83,9 @@ Example:
 
 ## `%download`
 
+```
 %download URL [-f FILENAME] - download file from URL
+```
 
 This line magic will download and save a file. By
 default it will use the same filename as the URL.
@@ -87,7 +101,9 @@ Examples:
 
 ## `%edit`
 
+```
 %edit FILENAME - load code from filename into next cell for editing
+```
 
 This line magic will open the file in the next cell, and allow
 you edit it.
@@ -99,7 +115,9 @@ Example:
 
 ## `%get`
 
+```
 %get VARIABLE - get a variable from the kernel in a Python-type.
+```
 
 This line magic is used to get a variable.
 
@@ -108,11 +126,15 @@ Examples:
 
 ## `%help`
 
+```
 This is MetaKernel Python. It implements a Python interpreter.
+```
 
 ## `%html`
 
+```
 %html CODE - display code as HTML
+```
 
 This line magic will send the CODE to the browser as
 HTML.
@@ -122,7 +144,9 @@ Example:
 
 ## `%include`
 
+```
 %include FILENAME ... - include code from filename into this code
+```
 
 This line magic will get the contents of a file and include it
 in this cell evaluation.
@@ -136,14 +160,18 @@ Examples:
 
 ## `%install`
 
+```
 %install PACKAGE - install package
+```
 
 Example:
 %install calico-spell-check
 
 ## `%install_magic`
 
+```
 %install_magic URL - download and install magic from URL
+```
 
 This line magic will copy the file at the URL into your
 personal magic folder.
@@ -153,7 +181,9 @@ Example:
 
 ## `%javascript`
 
+```
 %javascript CODE - send code as JavaScript
+```
 
 This line magic will execute the CODE on the line as
 JavaScript in the browser.
@@ -163,7 +193,9 @@ Example:
 
 ## `%jigsaw`
 
+```
 %jigsaw LANGUAGE - show visual code editor/generator
+```
 
 This line magic will allow visual code editing or generation.
 
@@ -179,7 +211,9 @@ Examples:
 
 ## `%kernel`
 
+```
 %kernel MODULE CLASS [-k NAME] - construct a kernel for sending code.
+```
 
 This line magic will construct a kernel language so that you can
 communicate.
@@ -200,7 +234,9 @@ Also returns the kernel as output.
 
 ## `%kx`
 
+```
 %kx CODE [-k NAME] - send the code to the kernel.
+```
 
 This line magic will send the CODE to the kernel
 for execution.
@@ -221,7 +257,9 @@ Use `%kernel MODULE CLASS [-k NAME]` to create a kernel.
 
 ## `%latex`
 
+```
 %latex TEXT - display text as LaTeX
+```
 
 This line magic will display the TEXT on the line as LaTeX.
 
@@ -230,7 +268,9 @@ Example:
 
 ## `%load`
 
+```
 %load FILENAME - load code from filename into next cell
+```
 
 This line magic will get the contents of a file and load it
 into the next cell.
@@ -240,7 +280,9 @@ Example:
 
 ## `%ls`
 
+```
 %ls PATH - list files and directories under PATH
+```
 
 This line magic is used to list the directory contents.
 
@@ -254,7 +296,9 @@ Examples:
 
 ## `%lsmagic`
 
+```
 %lsmagic - list the current line and cell magics
+```
 
 This line magic will list all of the available cell and line
 magics installed in the system and in your personal magic
@@ -265,7 +309,10 @@ Example:
 
 ## `%macro`
 
+```
 %macro NAME - execute a macro
+```
+
 %macro -l [all|learned|system] - list macros
 %macro [-s] [-d] NAME - show or delete a macro
 
@@ -292,14 +339,18 @@ print "Ok!"
 
 ## `%magic`
 
+```
 %magic - show installed magics
+```
 
 This line magic shows all of the install magics, either from
 the system magic folder, or your own private magic folder.
 
 ## `%matplotlib`
 
+```
 %matplotlib BACKEND - set the matplotlib backend to BACKEND
+```
 
 This line magic will set (and reload) the items associated
 with the matplotlib backend.
@@ -318,7 +369,9 @@ plt.show()
 
 ## `%parallel`
 
-%parallel MODULE CLASS [-k NAME] \[-i [...]\] - construct an interface to the cluster.
+```
+%parallel MODULE CLASS [-k NAME] [-i [...]] - construct an interface to the cluster.
+```
 
 Example:
 
@@ -341,7 +394,9 @@ Use %px or %%px to send code to the cluster.
 
 ## `%plot`
 
+```
 %plot [options] backend - configure plotting for the session.
+```
 
 This line magic will configure the plot settings for this
 language.
@@ -364,7 +419,9 @@ options may be supported.
 
 ## `%pmap`
 
+```
 %pmap FUNCTION [ARGS1,ARGS2,...] - ("parallel map") call a FUNCTION on args
+```
 
 This line magic will apply a function name to all of the
 arguments given one at a time using a dynamic load balancing scheduler.
@@ -412,7 +469,9 @@ Note: not all languages may support running a function via this magic.
 
 ## `%px`
 
+```
 %px EXPRESSION - send EXPRESSION to the cluster.
+```
 
 Example:
 
@@ -437,7 +496,9 @@ Use %parallel to initialize the cluster.
 
 ## `%python`
 
+```
 %python CODE - evaluate code as Python
+```
 
 This line magic will evaluate the CODE (either expression or
 statement) as Python code.
@@ -451,7 +512,9 @@ Examples:
 
 ## `%reload_magics`
 
+```
 %reload_magics - reload the magics from the installed files
+```
 
 Example:
 %reload_magics
@@ -464,7 +527,9 @@ automatically if you install a new magic.
 
 ## `%restart`
 
+```
 %restart - restart session
+```
 
 This line magic will restart the connection to the language
 kernel.
@@ -476,7 +541,10 @@ Note that you will lose all computed values.
 
 ## `%run`
 
+```
 %run [--language LANG] FILENAME - run code in filename by
+```
+
 kernel
 
 This magic will take the code in FILENAME and run it. The
@@ -505,7 +573,9 @@ Note: not all languages may support %run.
 
 ## `%scheme`
 
+```
 %scheme CODE - evaluate code as Scheme
+```
 
 This line magic will evaluate the CODE (either expression or
 statement) as Scheme code.
@@ -517,7 +587,9 @@ Examples:
 
 ## `%set`
 
+```
 %set VARIABLE VALUE - set a variable in the kernel.
+```
 
 This line magic is used to set a variable to a Python value.
 
@@ -527,7 +599,9 @@ Examples:
 
 ## `%shell`
 
+```
 %shell COMMAND - run the line as a shell command
+```
 
 This line command will run the COMMAND in the bash shell.
 
@@ -545,7 +619,10 @@ You can also use "!" instead of "%shell".
 
 ## `%%activity`
 
+```
 %%activity FILENAME - make an activity from
+```
+
 a JSON structure
 
 This magic will construct a Python file from the cell's
@@ -568,7 +645,10 @@ In this example, users will load
 
 ## `%%brain`
 
+```
 %%brain - run a cell as brain control code
+```
+
 for a calysto.simulation.
 
 Requires calysto.
@@ -579,12 +659,17 @@ robot.forward(1)
 
 ## `%%conversation`
 
+```
 %conversation ID - insert conversation by ID
+```
+
 %%conversation ID - insert conversation by ID
 
 ## `%%debug`
 
+```
 %%debug - step through the code expression by expression
+```
 
 This cell magic will step through the code in the cell,
 if the kernel supports debugging.
@@ -598,7 +683,9 @@ Example:
 
 ## `%%dot`
 
+```
 %%dot - render contents of cell as Graphviz image
+```
 
 This cell magic will send the cell to the browser as
 HTML.
@@ -612,7 +699,9 @@ graph A { a->b };
 
 ## `%%file`
 
+```
 %%file [--append|-a] FILENAME - write contents of cell to file
+```
 
 This cell magic will create or append the cell contents into/onto
 a file.
@@ -627,11 +716,15 @@ This will append this line onto the file "log.txt"
 
 ## `%%help`
 
+```
 This is MetaKernel Python. It implements a Python interpreter.
+```
 
 ## `%%html`
 
+```
 %%html - display contents of cell as HTML
+```
 
 This cell magic will send the cell to the browser as
 HTML.
@@ -647,7 +740,9 @@ Example:
 
 ## `%%javascript`
 
+```
 %%javascript - send contents of cell as JavaScript
+```
 
 This cell magic will execute the contents of the cell as
 JavaScript in the browser.
@@ -661,7 +756,9 @@ element.html("Hello this is <b>bold</b>!")
 
 ## `%%kx`
 
+```
 %%kx [-k NAME] - send the cell code to the kernel.
+```
 
 This cell magic will send the cell to be evaluated by
 the kernel. The kernel must have been created use the
@@ -684,7 +781,9 @@ Use `%kernel MODULE CLASS [-k NAME]` to create a kernel.
 
 ## `%%latex`
 
+```
 %%latex - display contents of cell as LaTeX
+```
 
 This cell magic will display the TEXT in the cell as LaTeX.
 
@@ -698,7 +797,9 @@ $x_2 = a^{n - 1}$
 
 ## `%%macro`
 
+```
 %%macro NAME - learn a new macro
+```
 
 This cell macro will learn the macro in the
 cell. The cell contents are just commands (macros
@@ -715,7 +816,9 @@ Ok!
 
 ## `%%pipe`
 
+```
 %%pipe FUNCTION1 | FUNCTION2 ...
+```
 
 The pipe cell will "pipe" the contents of a cell
 through a series of function calls. All of the
@@ -735,7 +838,9 @@ f3(f2(f1("CELL CONTENTS")))
 
 ## `%%processing`
 
+```
 %%processing - run the cell in the language Processing
+```
 
 This cell magic will execute the contents of the cell as a
 Processing program. This uses the Java-based Processing
@@ -753,7 +858,9 @@ draw() {
 
 ## `%%px`
 
+```
 %%px - send cell to the cluster.
+```
 
 Example:
 
@@ -772,7 +879,9 @@ Use %parallel to initialize the cluster.
 
 ## `%%python`
 
+```
 %%python - evaluate contents of cell as Python
+```
 
 This cell magic will evaluate the cell (either expression or
 statement) as Python code.
@@ -809,7 +918,9 @@ retval = "'(this is code in the kernel language)"
 
 ## `%%scheme`
 
+```
 %%scheme - evaluate contents of cell as Scheme
+```
 
 This cell magic will evaluate the cell (either expression or
 statement) as Scheme code.
@@ -840,7 +951,9 @@ Examples:
 
 ## `%%shell`
 
-%%shell - run the contents of the cell as shell commands
+```
+ %%shell - run the contents of the cell as shell commands
+```
 
 This shell command will run the cell contents in the bash shell.
 
@@ -857,7 +970,9 @@ You can also use "!!" instead of "%%shell".
 
 ## `%%show`
 
+```
 %%show [-o]- show cell contents or results in system pager
+```
 
 This cell magic will put the contents or results of the cell
 into the system pager.
@@ -877,7 +992,9 @@ retval = 54 * 54
 
 ## `%%time`
 
+```
 %%time - show time to run cell
+```
 
 Put this magic at the top of a cell and the amount of time
 taken to execute the code will be displayed before the output.
@@ -891,7 +1008,10 @@ may fluctuate with number of users, system, load, etc.
 
 ## `%%tutor`
 
+```
 %%tutor [--language=LANGUAGE] - show cell with
+```
+
 Online Python Tutor.
 
 Defaults to use the language of the current kernel.
