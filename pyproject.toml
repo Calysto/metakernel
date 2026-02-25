@@ -50,7 +50,7 @@ artifacts = ["metakernel/py.typed"]
 
 [tool.pytest.ini_options]
 addopts= "-raXs  --durations 10 --color=yes --doctest-modules"
-testpaths = ["metakernel/tests", "metakernel/magics/tests"]
+testpaths = ["tests", "tests/magics"]
 timeout = 300
 # Restore this setting to debug failures
 # timeout_method = "thread"
