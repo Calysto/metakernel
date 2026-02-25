@@ -1,13 +1,16 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from metakernel import Magic, option
-import inspect
 import ast
+import inspect
 import os
 
+from metakernel import Magic, option
+
+
 class MacroMagic(Magic):
-    macros = {"renumber-cells": """%%javascript
+    macros = {
+        "renumber-cells": """%%javascript
 
         var cells = IPython.notebook.get_cells();
         // We only keep the code cells.
@@ -19,31 +22,29 @@ class MacroMagic(Magic):
         for (var i = 0; i < cells.length; i++) {
             cells[i].set_input_prompt(i + 1);
         }
-"""}
+"""
+    }
 
     def __init__(self, *args, **kwargs) -> None:
-        super(MacroMagic, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._load_macros()
 
     @option(
-        '-d', '--delete', action='store_true', default=False,
-        help='delete a named macro'
+        "-d",
+        "--delete",
+        action="store_true",
+        default=False,
+        help="delete a named macro",
     )
-    @option(
-        '-l', '--list', action='store_true', default=False,
-        help='list macros'
-    )
-    @option(
-        '-s', '--show', action='store_true', default=False,
-        help='show macro'
-    )
+    @option("-l", "--list", action="store_true", default=False, help="list macros")
+    @option("-s", "--show", action="store_true", default=False, help="show macro")
     def line_macro(self, name, delete=False, list=False, show=False) -> None:
         """
         %macro NAME - execute a macro
         %macro -l [all|learned|system] - list macros
         %macro [-s] [-d] NAME - show or delete a macro
 
-        This line macro will execute, show, list, or delete the 
+        This line macro will execute, show, list, or delete the
         named macro.
 
         Examples:
@@ -71,7 +72,7 @@ class MacroMagic(Magic):
                 self._save_macros()
             else:
                 self.code = self.code.strip()
-                if self.code: 
+                if self.code:
                     self.code += "\n"
                 self.code += self.learned[name]
         elif name in self.macros:
@@ -79,14 +80,13 @@ class MacroMagic(Magic):
                 raise Exception("Can't delete system macro")
             else:
                 self.code = self.code.strip()
-                if self.code: 
+                if self.code:
                     self.code += "\n"
                 self.code += self.macros[name]
         elif name == "":
             self._list_macros()
         else:
-            self._list_macros(retval="No such macro: '%s'\n\n" % name,
-                              error=True)
+            self._list_macros(retval="No such macro: '%s'\n\n" % name, error=True)
         self.evaluate = True
 
     def _list_macros(self, name="all", retval="", error=False) -> None:
@@ -108,20 +108,27 @@ class MacroMagic(Magic):
         self.learned = {}
         local_macros_dir = self.kernel.get_local_magics_dir()
         # Search all of the places there could be macros:
-        files = [os.path.join(os.path.dirname(os.path.abspath(__file__)), "macros.json"),
-                 os.path.join(os.path.dirname(os.path.abspath(inspect.getfile(self.__class__))), "macros.json"),
-                 os.path.join(local_macros_dir, "macros.json")]
+        files = [
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), "macros.json"),
+            os.path.join(
+                os.path.dirname(os.path.abspath(inspect.getfile(self.__class__))),
+                "macros.json",
+            ),
+            os.path.join(local_macros_dir, "macros.json"),
+        ]
         for macro_file in files:
             try:
-                with open(macro_file) as mf: data = ast.literal_eval(mf.read())
-            except:
+                with open(macro_file) as mf:
+                    data = ast.literal_eval(mf.read())
+            except Exception:
                 continue
             self.learned.update(data)
 
     def _save_macros(self) -> None:
         local_macros_dir = self.kernel.get_local_magics_dir()
         filename = os.path.join(local_macros_dir, "macros.json")
-        with open(filename, "w") as macros: macros.write(str(self.learned))
+        with open(filename, "w") as macros:
+            macros.write(str(self.learned))
 
     def cell_macro(self, name) -> None:
         """
@@ -142,6 +149,6 @@ class MacroMagic(Magic):
         self._save_macros()
         self.evaluate = False
 
+
 def register_magics(kernel) -> None:
     kernel.register_magics(MacroMagic)
-

@@ -1,11 +1,12 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from metakernel import Magic
 import json
 
-class ConnectInfoMagic(Magic):
+from metakernel import Magic
 
+
+class ConnectInfoMagic(Magic):
     def line_connect_info(self, dummy=None) -> None:
         """
         %connect_info - show connection information
@@ -34,17 +35,19 @@ class ConnectInfoMagic(Magic):
         connection_file = self.kernel.config["IPKernelApp"]["connection_file"]
         try:
             config = json.loads(open(connection_file).read())
-        except:
-            config = {"stdin_port": "UNKNOWN",
-                      "shell_port": "UNKNOWN",
-                      "iopub_port": "UNKNOWN",
-                      "hb_port": "UNKNOWN",
-                      "ip": "UNKNOWN",
-                      "key": "UNKNOWN",
-                      "signature_scheme": "UNKNOWN",
-                      "transport": "UNKNOWN"
+        except Exception:
+            config = {
+                "stdin_port": "UNKNOWN",
+                "shell_port": "UNKNOWN",
+                "iopub_port": "UNKNOWN",
+                "hb_port": "UNKNOWN",
+                "ip": "UNKNOWN",
+                "key": "UNKNOWN",
+                "signature_scheme": "UNKNOWN",
+                "transport": "UNKNOWN",
             }
-        retval = """{
+        retval = (
+            """{
   "stdin_port": %(stdin_port)s,
   "shell_port": %(shell_port)s,
   "iopub_port": %(iopub_port)s,
@@ -63,8 +66,11 @@ or, if you are local, you can connect with just:
 or even just:
     $> ipython <app> --existing
 if this is the most recent Jupyter session you have started.
-""" % config
+"""
+            % config
+        )
         self.kernel.Print(retval)
+
 
 def register_magics(kernel) -> None:
     kernel.register_magics(ConnectInfoMagic)

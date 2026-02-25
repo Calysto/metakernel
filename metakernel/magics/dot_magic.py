@@ -2,16 +2,17 @@
 # Distributed under the terms of the Modified BSD License.
 
 
-from metakernel import Magic
 from IPython.display import HTML
 
-class DotMagic(Magic):
+from metakernel import Magic
 
+
+class DotMagic(Magic):
     def line_dot(self, code) -> None:
         """
         %dot CODE - render code as Graphviz image
 
-        This line magic will render the Graphiz CODE, and render 
+        This line magic will render the Graphiz CODE, and render
         it as an image.
 
         Example:
@@ -20,8 +21,8 @@ class DotMagic(Magic):
         """
         try:
             import pydot
-        except:
-            raise Exception("You need to install pydot")
+        except ImportError:
+            raise Exception("You need to install pydot") from None
         graph = pydot.graph_from_dot_data(str(code))
         if isinstance(graph, list):
             graph = graph[0]
@@ -45,8 +46,8 @@ class DotMagic(Magic):
         """
         try:
             import pydot
-        except:
-            raise Exception("You need to install pydot")
+        except ImportError:
+            raise Exception("You need to install pydot") from None
         graph = pydot.graph_from_dot_data(str(self.code))
         if isinstance(graph, list):
             graph = graph[0]
@@ -57,12 +58,16 @@ class DotMagic(Magic):
         self.kernel.Display(html)
         self.evaluate = False
 
+
 def register_magics(kernel) -> None:
     kernel.register_magics(DotMagic)
 
+
 def register_ipython_magics() -> None:
-    from metakernel import IPythonKernel
     from IPython.core.magic import register_cell_magic
+
+    from metakernel import IPythonKernel
+
     kernel = IPythonKernel()
     magic = DotMagic(kernel)
 

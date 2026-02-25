@@ -1,4 +1,3 @@
-
 from tests.utils import get_kernel, get_log_text
 
 
@@ -6,7 +5,8 @@ def test_connect_info_magic() -> None:
     kernel = get_kernel()
     kernel.do_execute("%connect_info")
     text = get_log_text(kernel)
-    assert """{
+    assert (
+        """{
   "stdin_port": UNKNOWN,
   "shell_port": UNKNOWN,
   "iopub_port": UNKNOWN,
@@ -25,5 +25,6 @@ or, if you are local, you can connect with just:
 or even just:
     $> ipython <app> --existing
 if this is the most recent Jupyter session you have started.
-""".strip() in text, text
-
+""".strip()
+        in text
+    ), text

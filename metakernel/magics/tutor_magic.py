@@ -10,7 +10,7 @@ Magics to display pythontutor.com in the notebook.
 # https://github.com/kikocorreoso/tutormagic
 # and Doug Blank's
 # http://jupyter.cs.brynmawr.edu/hub/dblank/public/Examples/Online%20Python%20Tutor.ipynb
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Copyright (C) 2015 Kiko Correoso and the pythontutor.com developers
 #
 # Distributed under the terms of the MIT License. The full license is in
@@ -18,22 +18,29 @@ Magics to display pythontutor.com in the notebook.
 #
 # Contributors:
 #   kikocorreoso
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+
+from urllib.parse import quote
+
+from IPython.display import IFrame
 
 from metakernel import Magic, option
-from IPython.display import IFrame
-from urllib.parse import quote
-    
-class TutorMagic(Magic):
 
+
+class TutorMagic(Magic):
     @option(
-        '-l', '--language', action='store', nargs = 1,
-        help=("Possible languages to be displayed within the iframe. " +
-              "Possible values are: python, python2, python3, java, javascript")
+        "-l",
+        "--language",
+        action="store",
+        nargs=1,
+        help=(
+            "Possible languages to be displayed within the iframe. "
+            + "Possible values are: python, python2, python3, java, javascript"
+        ),
     )
     def cell_tutor(self, language=None) -> None:
         """
-        %%tutor [--language=LANGUAGE] - show cell with 
+        %%tutor [--language=LANGUAGE] - show cell with
         Online Python Tutor.
 
         Defaults to use the language of the current kernel.
@@ -45,11 +52,11 @@ class TutorMagic(Magic):
            b = 1
            a + b
 
-           [You will see an iframe with the pythontutor.com page 
+           [You will see an iframe with the pythontutor.com page
            including the code above.]
 
            %%tutor --language=java
-           
+
            public class Test {
                public Test() {
                }
@@ -61,10 +68,12 @@ class TutorMagic(Magic):
         """
         if language is None:
             language = self.kernel.language_info["name"]
-        if language not in ['python', 'python2', 'python3', 'java', 'javascript']:
-            raise ValueError("{} not supported. Only the following options are allowed: "
-                             "'python2', 'python3', 'java', 'javascript'".format(language))
-        
+        if language not in ["python", "python2", "python3", "java", "javascript"]:
+            raise ValueError(
+                f"{language} not supported. Only the following options are allowed: "
+                "'python2', 'python3', 'java', 'javascript'"
+            )
+
         url = "https://pythontutor.com/iframe-embed.html#code="
         url += quote(self.code)
         url += "&origin=opt-frontend.js&cumulative=false&heapPrimitives=false"
@@ -82,12 +91,16 @@ class TutorMagic(Magic):
         self.kernel.Display(IFrame(url, height=500, width="100%"))
         self.evaluate = False
 
+
 def register_magics(kernel) -> None:
     kernel.register_magics(TutorMagic)
 
+
 def register_ipython_magics() -> None:
-    from metakernel import IPythonKernel
     from IPython.core.magic import register_cell_magic
+
+    from metakernel import IPythonKernel
+
     kernel = IPythonKernel()
     magic = TutorMagic(kernel)
 

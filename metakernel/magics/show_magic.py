@@ -2,13 +2,15 @@
 # Distributed under the terms of the Modified BSD License.
 
 from metakernel import Magic, option
-import os
+
 
 class ShowMagic(Magic):
-
     @option(
-        '-o', '--output', action='store_true', default=False,
-        help='rather than showing the contents, show the results'
+        "-o",
+        "--output",
+        action="store_true",
+        default=False,
+        help="rather than showing the contents, show the results",
     )
     def cell_show(self, output=False) -> None:
         """
@@ -25,21 +27,29 @@ class ShowMagic(Magic):
             retval = 54 * 54
         """
         self.show_output = output
-        if not output: # show contents
-            self.kernel.payload = [{"data": {"text/plain": self.code},
-                                    "start_line_number": 0,
-                                    "source": "page"}]
+        if not output:  # show contents
+            self.kernel.payload = [
+                {
+                    "data": {"text/plain": self.code},
+                    "start_line_number": 0,
+                    "source": "page",
+                }
+            ]
             self.evaluate = False
         else:
             self.evaluate = True
 
     def post_process(self, results) -> None:
         if self.show_output:
-            self.kernel.payload = [{"data": {"text/plain": self.kernel.repr(results)},
-                                    "start_line_number": 0,
-                                    "source": "page"}]
+            self.kernel.payload = [
+                {
+                    "data": {"text/plain": self.kernel.repr(results)},
+                    "start_line_number": 0,
+                    "source": "page",
+                }
+            ]
         return None
+
 
 def register_magics(kernel) -> None:
     kernel.register_magics(ShowMagic)
-

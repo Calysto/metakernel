@@ -1,11 +1,12 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from metakernel import Magic, option
 import os
 
-class IncludeMagic(Magic):
+from metakernel import Magic
 
+
+class IncludeMagic(Magic):
     def line_include(self, filenames) -> None:
         """
         %include FILENAME ... - include code from filename into this code
@@ -22,12 +23,13 @@ class IncludeMagic(Magic):
         """
         text = ""
         filenames = filenames.split()
-        prefix = self.kernel.magic_prefixes['magic']
+        prefix = self.kernel.magic_prefixes["magic"]
         for filename in filenames:
             if filename.startswith("~"):
                 filename = os.path.expanduser(filename)
             filename = os.path.abspath(filename)
-            with open(filename) as f: text += f.read() + "\n"
+            with open(filename) as f:
+                text += f.read() + "\n"
         if self.code.lstrip().startswith(prefix):
             lines = self.code.lstrip().split("\n")
             new_lines = []
@@ -41,8 +43,8 @@ class IncludeMagic(Magic):
                 new_lines.append(text)
             self.code = "\n".join(new_lines)
         else:
-            self.code = text  + self.code
+            self.code = text + self.code
+
 
 def register_magics(kernel) -> None:
     kernel.register_magics(IncludeMagic)
-

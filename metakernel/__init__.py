@@ -1,13 +1,33 @@
 """A Jupyter kernel base class in Python which includes core magic functions (including help, command and file path completion, parallel and distributed processing, downloads, and much more)."""
-from ._metakernel import (
-    ExceptionWrapper, MetaKernel, IPythonKernel, register_ipython_magics, get_metakernel,
-    MetaKernelApp)
+
 from . import pexpect
-from .replwrap import REPLWrapper, u
-from .process_metakernel import ProcessMetaKernel
+from ._metakernel import (
+    ExceptionWrapper,
+    IPythonKernel,
+    MetaKernel,
+    MetaKernelApp,
+    get_metakernel,
+    register_ipython_magics,
+)
 from .magic import Magic, option
 from .parser import Parser
+from .process_metakernel import ProcessMetaKernel
+from .replwrap import REPLWrapper, u
 
-__all__ = ['Magic', 'MetaKernel', 'option']
+__all__ = [
+    "ExceptionWrapper",
+    "IPythonKernel",
+    "Magic",
+    "MetaKernel",
+    "MetaKernelApp",
+    "Parser",
+    "ProcessMetaKernel",
+    "REPLWrapper",
+    "get_metakernel",
+    "option",
+    "pexpect",
+    "register_ipython_magics",
+    "u",
+]
 
-__version__ = '0.30.4'
+__version__ = "0.30.4"

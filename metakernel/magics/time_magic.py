@@ -1,11 +1,12 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from metakernel import Magic
 import time
 
-class TimeMagic(Magic):
+from metakernel import Magic
 
+
+class TimeMagic(Magic):
     def cell_time(self) -> None:
         """
         %%time - show time to run cell

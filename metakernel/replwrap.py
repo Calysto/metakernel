@@ -1,27 +1,28 @@
 from __future__ import annotations
 
+import atexit
 import errno
-import sys
+import os
 import re
 import signal
-import os
+import sys
 import time
-import atexit
 
 from . import pexpect
 
 
 def u(s):
     return s
+
+
 basestring = str
 
-PEXPECT_PROMPT = u('PEXPECT_PROMPT>')
-PEXPECT_STDIN_PROMPT = u('PEXPECT_PROMPT+')
-PEXPECT_CONTINUATION_PROMPT = u('PEXPECT_PROMPT_')
+PEXPECT_PROMPT = u("PEXPECT_PROMPT>")
+PEXPECT_STDIN_PROMPT = u("PEXPECT_PROMPT+")
+PEXPECT_CONTINUATION_PROMPT = u("PEXPECT_PROMPT_")
 
 
-class REPLWrapper(object):
-
+class REPLWrapper:
     """Wrapper for a REPL.
 
     All prompts are interpreted as regexes.  If you have special
@@ -51,18 +52,23 @@ class REPLWrapper(object):
     of Windows, whether the child does echo.
     """
 
-    def __init__(self, cmd_or_spawn, prompt_regex, prompt_change_cmd,
-                 new_prompt_regex=PEXPECT_PROMPT,
-                 continuation_prompt_regex=PEXPECT_CONTINUATION_PROMPT,
-                 stdin_prompt_regex=PEXPECT_STDIN_PROMPT,
-                 extra_init_cmd=None,
-                 prompt_emit_cmd=None,
-                 force_prompt_on_continuation=False,
-                 echo=False) -> None:
+    def __init__(
+        self,
+        cmd_or_spawn,
+        prompt_regex,
+        prompt_change_cmd,
+        new_prompt_regex=PEXPECT_PROMPT,
+        continuation_prompt_regex=PEXPECT_CONTINUATION_PROMPT,
+        stdin_prompt_regex=PEXPECT_STDIN_PROMPT,
+        extra_init_cmd=None,
+        prompt_emit_cmd=None,
+        force_prompt_on_continuation=False,
+        echo=False,
+    ) -> None:
         if isinstance(cmd_or_spawn, basestring):
-            self.child = pexpect.spawnu(cmd_or_spawn, echo=echo,
-                                        codec_errors="ignore",
-                                        encoding="utf-8")
+            self.child = pexpect.spawnu(
+                cmd_or_spawn, echo=echo, codec_errors="ignore", encoding="utf-8"
+            )
         else:
             self.child = cmd_or_spawn
 
@@ -87,9 +93,10 @@ class REPLWrapper(object):
             self.prompt_regex = u(prompt_regex)
             self.prompt_change_cmd = None
         else:
-            self.set_prompt(prompt_regex,
-                            prompt_change_cmd.format(new_prompt_regex,
-                                                     continuation_prompt_regex))
+            self.set_prompt(
+                prompt_regex,
+                prompt_change_cmd.format(new_prompt_regex, continuation_prompt_regex),
+            )
             self.prompt_regex = new_prompt_regex
         self.continuation_prompt_regex = continuation_prompt_regex
         self.stdin_prompt_regex = stdin_prompt_regex
@@ -116,10 +123,12 @@ class REPLWrapper(object):
         self.prompt_change_cmd = prompt_change_cmd
 
     def _expect_prompt(self, timeout=None):
-        """Expect a prompt from the child.
-        """
-        expects = [self.prompt_regex, self.continuation_prompt_regex,
-                   self.stdin_prompt_regex]
+        """Expect a prompt from the child."""
+        expects = [
+            self.prompt_regex,
+            self.continuation_prompt_regex,
+            self.stdin_prompt_regex,
+        ]
         if self.prompt_emit_cmd:
             self.sendline(self.prompt_emit_cmd)
 
@@ -137,7 +146,7 @@ class REPLWrapper(object):
             # got a stdin prompt
             if pos == 2:
                 if not self._stdin_handler:
-                    raise ValueError('Stdin Requested but not stdin handler available')
+                    raise ValueError("Stdin Requested but not stdin handler available")
 
                 resp = self._stdin_handler(self.child.after)
                 self.sendline(resp)
@@ -146,8 +155,7 @@ class REPLWrapper(object):
                 self._line_handler(self.child.before.rstrip())
 
     def _expect_prompt_stream(self, expects, timeout=None):
-        """Expect a prompt with streaming output.
-        """
+        """Expect a prompt with streaming output."""
         stream_handler = self._stream_handler
         stdin_handler = self._stdin_handler
 
@@ -163,7 +171,7 @@ class REPLWrapper(object):
         # Wait for a prompt, handling carriage returns.
         while True:
             if time.time() - t0 > timeout:
-                raise pexpect.TIMEOUT('Timed out')
+                raise pexpect.TIMEOUT("Timed out")
 
             try:
                 # Wait for a prompt.
@@ -172,9 +180,9 @@ class REPLWrapper(object):
                 # Process any carriage returns in the stream.
                 while 1:
                     try:
-                        self.child.expect([u('\r')], timeout=0)
+                        self.child.expect([u("\r")], timeout=0)
                         if unhandled_cr:
-                            stream_handler('\r')
+                            stream_handler("\r")
                         stream_handler(self.child.before)
                         unhandled_cr = True
                     except pexpect.TIMEOUT:
@@ -186,13 +194,13 @@ class REPLWrapper(object):
 
             # Handle cr state.
             if unhandled_cr:
-                line = '\r' + line
+                line = "\r" + line
             unhandled_cr = False
 
             # Handle stdin request.
             if pos == 2:
                 if not stdin_handler:
-                    raise ValueError('Stdin Requested but no stdin handler available')
+                    raise ValueError("Stdin Requested but no stdin handler available")
                 resp = stdin_handler(line + self.child.after)
                 self.sendline(resp)
                 continue
@@ -205,8 +213,14 @@ class REPLWrapper(object):
             break
         return pos
 
-    def run_command(self, command, timeout=None, stream_handler=None,
-                    line_handler=None, stdin_handler=None) -> str:
+    def run_command(
+        self,
+        command,
+        timeout=None,
+        stream_handler=None,
+        line_handler=None,
+        stdin_handler=None,
+    ) -> str:
         """Send a command to the REPL, wait for and return output.
         :param str command: The command to send. Trailing newlines are not needed.
           This should be a complete block of input that will trigger execution;
@@ -223,8 +237,8 @@ class REPLWrapper(object):
         # Split up multiline commands and feed them in bit-by-bit
         cmdlines = command.splitlines()
         # splitlines ignores trailing newlines - add it back in manually
-        if command.endswith('\n'):
-            cmdlines.append('')
+        if command.endswith("\n"):
+            cmdlines.append("")
         if not cmdlines:
             raise ValueError("No command was given")
 
@@ -244,11 +258,13 @@ class REPLWrapper(object):
         if self._expect_prompt(timeout=timeout) == 1:
             # We got the continuation prompt - command was incomplete
             self.interrupt(continuation=True)
-            raise ValueError("Continuation prompt found - input was incomplete:\n" + command)
+            raise ValueError(
+                "Continuation prompt found - input was incomplete:\n" + command
+            )
 
         if self._stream_handler or self._line_handler:
-            return u''
-        return u''.join(res + [strip_bracketing(self.child.before)])
+            return ""
+        return "".join(res + [strip_bracketing(self.child.before)])
 
     def interrupt(self, continuation=False):
         """Interrupt the process and wait for a prompt.
@@ -262,7 +278,7 @@ class REPLWrapper(object):
         else:
             self.child.kill(signal.SIGINT)
         if continuation and self._force_prompt_on_continuation:
-            self.sendline(self.prompt_change_cmd or '')
+            self.sendline(self.prompt_change_cmd or "")
         while 1:
             try:
                 self._expect_prompt(timeout=-1)
@@ -287,24 +303,25 @@ def python(command="python") -> REPLWrapper:
     """Start a Python shell and return a :class:`REPLWrapper` object."""
     if not pexpect.pty:
         raise OSError('Not supported on platform "%s"' % sys.platform)
-    return REPLWrapper(command, u(">>> "),
-                       u("import sys; sys.ps1={0!r}; sys.ps2={1!r}"))
+    return REPLWrapper(
+        command, u(">>> "), u("import sys; sys.ps1={0!r}; sys.ps2={1!r}")
+    )
 
 
-def bash(command="bash", prompt_regex=re.compile('[$#]')) -> REPLWrapper:
+def bash(command="bash", prompt_regex=re.compile("[$#]")) -> REPLWrapper:
     """Start a bash shell and return a :class:`REPLWrapper` object."""
 
     # If the user runs 'env', the value of PS1 will be in the output. To avoid
     # replwrap seeing that as the next prompt, we'll embed the marker characters
     # for invisible characters in the prompt; these show up when inspecting the
     # environment variable, but not when bash displays the prompt.
-    ps1 = PEXPECT_PROMPT[:5] + r'\[\]' + PEXPECT_PROMPT[5:]
-    ps2 = PEXPECT_CONTINUATION_PROMPT[:5] + r'\[\]' + PEXPECT_CONTINUATION_PROMPT[5:]
-    prompt_change_cmd: str | None = u"PS1='{0}' PS2='{1}' PROMPT_COMMAND=''".format(ps1, ps2)
+    ps1 = PEXPECT_PROMPT[:5] + r"\[\]" + PEXPECT_PROMPT[5:]
+    ps2 = PEXPECT_CONTINUATION_PROMPT[:5] + r"\[\]" + PEXPECT_CONTINUATION_PROMPT[5:]
+    prompt_change_cmd: str | None = f"PS1='{ps1}' PS2='{ps2}' PROMPT_COMMAND=''"
 
-    if os.name == 'nt':
-        prompt_regex = u('__repl_ready__')
-        prompt_emit_cmd = u('echo __repl_ready__')
+    if os.name == "nt":
+        prompt_regex = u("__repl_ready__")
+        prompt_emit_cmd = u("echo __repl_ready__")
         prompt_change_cmd = None
     else:
         prompt_emit_cmd = None
@@ -312,23 +329,26 @@ def bash(command="bash", prompt_regex=re.compile('[$#]')) -> REPLWrapper:
     extra_init_cmd = "export TERM=dumb PAGER=cat"
 
     # Make sure the bash shell has a valid ending character.
-    bashrc = os.path.join(os.path.dirname(pexpect.PEXPECT_DIR), 'bashrc.sh')
-    child = pexpect.spawn(command, ['--rcfile', bashrc], echo=False,
-                          encoding='utf-8')
+    bashrc = os.path.join(os.path.dirname(pexpect.PEXPECT_DIR), "bashrc.sh")
+    child = pexpect.spawn(command, ["--rcfile", bashrc], echo=False, encoding="utf-8")
 
-    return REPLWrapper(child, prompt_regex, prompt_change_cmd,
-                       prompt_emit_cmd=prompt_emit_cmd,
-                       extra_init_cmd=extra_init_cmd)
+    return REPLWrapper(
+        child,
+        prompt_regex,
+        prompt_change_cmd,
+        prompt_emit_cmd=prompt_emit_cmd,
+        extra_init_cmd=extra_init_cmd,
+    )
 
 
-def powershell(command='powershell', prompt_regex='>') -> REPLWrapper:
-    """"Start a powershell and return a :class:`REPLWrapper` object."""
+def powershell(command="powershell", prompt_regex=">") -> REPLWrapper:
+    """ "Start a powershell and return a :class:`REPLWrapper` object."""
     return REPLWrapper(command, prompt_regex, 'Function prompt {{ "{0}" }}', echo=True)
 
 
-def strip_bracketing(string, start='\x1b[?2004l', stop='\x1b[?2004h'):
+def strip_bracketing(string, start="\x1b[?2004l", stop="\x1b[?2004h"):
     """Strip 'bracketed paste' control characters, if they are present"""
     if string.startswith(start) and string.endswith(stop):
-        return string[len(start):-len(stop)]
+        return string[len(start) : -len(stop)]
     else:
         return string

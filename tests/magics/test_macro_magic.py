@@ -1,13 +1,14 @@
-
-from tests.utils import (get_kernel, get_log_text, EvalKernel,
-                                    clear_log_text)
+from tests.utils import EvalKernel, clear_log_text, get_kernel, get_log_text
 
 
 def test_macro_magic() -> None:
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute("""%%macro testme
+    kernel.do_execute(
+        """%%macro testme
 print("ok")
-    """, False)
+    """,
+        False,
+    )
     kernel.do_execute("%macro testme", False)
     text = get_log_text(kernel)
     assert "ok" in text, text
@@ -23,5 +24,3 @@ print("ok")
     text = get_log_text(kernel)
     assert "testme" not in text, text
     clear_log_text(kernel)
-
-    

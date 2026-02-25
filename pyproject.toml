@@ -75,3 +75,19 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = "metakernel.images.*"
 ignore_errors = true
+
+[tool.ruff]
+exclude = ["examples/echo_kernel.ipynb"]
+
+[tool.ruff.lint]
+extend-select = [
+  "B",      # flake8-bugbear
+  "I",      # isort
+  "RUF",    # Ruff-specific
+  "UP",     # pyupgrade
+]
+ignore = ["RUF012", "UP031", "RUF005", "UP045"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["UP031", "E402", "RUF012", "F841"]
+"metakernel/pexpect.py" = ["F401"]

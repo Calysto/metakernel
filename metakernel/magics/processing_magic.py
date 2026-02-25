@@ -1,9 +1,9 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from metakernel import Magic
 from IPython.display import HTML
 
+from metakernel import Magic
 
 
 class ProcessingMagic(Magic):
@@ -16,7 +16,7 @@ class ProcessingMagic(Magic):
         This cell magic will execute the contents of the cell as a
         Processing program. This uses the Java-based Processing
         language.
-        
+
         Example:
 
             %%processing
@@ -29,12 +29,12 @@ class ProcessingMagic(Magic):
         """%%processing - run contents of cell as a Processing script"""
 
         repr_code = repr(self.code)
-        if repr_code.startswith('u'):
+        if repr_code.startswith("u"):
             repr_code = repr_code[1:]
 
-        env = {"code": repr_code,
-               "id": self.canvas_id}
-        code = """
+        env = {"code": repr_code, "id": self.canvas_id}
+        code = (
+            """
 <canvas id="canvas_%(id)s"></canvas>
 <script>
 require([window.location.protocol + "//calysto.github.io/javascripts/processing/processing.js"], function () {
@@ -43,23 +43,28 @@ require([window.location.protocol + "//calysto.github.io/javascripts/processing/
     var processingInstance = new Processing("canvas_%(id)s", cc);
 });
 </script>
-""" % env
+"""
+            % env
+        )
         html = HTML(code)
         self.kernel.Display(html)
         self.evaluate = False
 
+
 def register_magics(kernel) -> None:
     kernel.register_magics(ProcessingMagic)
 
+
 def register_ipython_magics() -> None:
-    from metakernel import IPythonKernel
     from IPython.core.magic import register_cell_magic
+
+    from metakernel import IPythonKernel
+
     kernel = IPythonKernel()
     magic = ProcessingMagic(kernel)
 
     @register_cell_magic
     def processing(line, cell):
-        """
-        """
+        """ """
         magic.code = cell
         magic.cell_processing()

@@ -1,2 +1,3 @@
 import os
-os.environ['JUPYTER_PLATFORM_DIRS'] = '1'
+
+os.environ["JUPYTER_PLATFORM_DIRS"] = "1"

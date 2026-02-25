@@ -1,29 +1,31 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from metakernel import Magic, option
-from IPython.display import IFrame, Javascript
-import string
 import random
-import os
-
+import string
 import urllib.request
+
+from IPython.display import IFrame, Javascript
+
+from metakernel import Magic, option
+
 urlopen = urllib.request.urlopen
+
 
 def download(url):
     g = urlopen(url)
     return g.read().decode("utf-8")
 
-class JigsawMagic(Magic):
 
+class JigsawMagic(Magic):
     @option(
-        '-w', '--workspace', action='store', default=None,
-        help='use the provided name as workspace filename'
+        "-w",
+        "--workspace",
+        action="store",
+        default=None,
+        help="use the provided name as workspace filename",
     )
-    @option(
-        '-h', '--height', action='store', default=350,
-        help='set height of iframe '
-    )
+    @option("-h", "--height", action="store", default=350, help="set height of iframe ")
     def line_jigsaw(self, language, workspace=None, height=350) -> None:
         """
         %jigsaw LANGUAGE - show visual code editor/generator
@@ -38,7 +40,12 @@ class JigsawMagic(Magic):
         # Copy iframe html to here (must come from same domain):
         # Make up a random workspace name:
         if workspace is None:
-            workspace = "jigsaw-workspace-" + (''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for i in range(6)))
+            workspace = "jigsaw-workspace-" + (
+                "".join(
+                    random.SystemRandom().choice(string.ascii_uppercase + string.digits)
+                    for i in range(6)
+                )
+            )
         workspace_filename = workspace + ".xml"
         html_text = download("https://calysto.github.io/jigsaw/" + language + ".html")
         html_filename = workspace + ".html"
@@ -183,16 +190,20 @@ class JigsawMagic(Magic):
         // rendering
     }
 """
-        script = script.replace("MYWORKSPACENAME", workspace_filename);
+        script = script.replace("MYWORKSPACENAME", workspace_filename)
         self.kernel.Display(Javascript(script))
-        self.kernel.Display(IFrame(html_filename, width='100%', height=height))
+        self.kernel.Display(IFrame(html_filename, width="100%", height=height))
+
 
 def register_magics(kernel) -> None:
     kernel.register_magics(JigsawMagic)
 
+
 def register_ipython_magics() -> None:
-    from metakernel import IPythonKernel
     from IPython.core.magic import register_line_magic
+
+    from metakernel import IPythonKernel
+
     kernel = IPythonKernel()
     magic = JigsawMagic(kernel)
     # Make magics callable:

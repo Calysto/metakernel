@@ -5,7 +5,6 @@ from metakernel import Magic
 
 
 class RestartMagic(Magic):
-
     def line_restart(self) -> None:
         """
         %restart - restart session

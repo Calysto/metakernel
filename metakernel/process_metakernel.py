@@ -1,18 +1,21 @@
-from __future__ import absolute_import, annotations
-from . import MetaKernel
-from pexpect import EOF
-from .replwrap import REPLWrapper, bash
-from subprocess import check_output
+from __future__ import annotations
+
 import re
 import sys
-from typing import Optional, Any
+from subprocess import check_output
+from typing import Any, Optional
 
-__version__ = '0.0'
+from pexpect import EOF
 
-version_pat = re.compile(r'version (\d+(\.\d+)+)')
+from . import MetaKernel
+from .replwrap import REPLWrapper, bash
+
+__version__ = "0.0"
+
+version_pat = re.compile(r"version (\d+(\.\d+)+)")
 
 
-class TextOutput(object):
+class TextOutput:
     """Wrapper for text output whose repr is the text itself.
 
     This avoids `repr(output)` adding quotation marks around already-rendered
@@ -27,9 +30,9 @@ class TextOutput(object):
 
 
 class ProcessMetaKernel(MetaKernel):
-    implementation = 'process_kernel'
+    implementation = "process_kernel"
     implementation_version = __version__
-    language = 'process'
+    language = "process"
     language_info: dict[str, Any] = {
         # 'mimetype': 'text/x-python',
         # 'language': 'python',
@@ -56,8 +59,7 @@ class ProcessMetaKernel(MetaKernel):
         self.wrapper: Optional[REPLWrapper] = None
 
     def do_execute_direct(self, code, silent=False) -> TextOutput | None:
-        """Execute the code in the subprocess.
-        """
+        """Execute the code in the subprocess."""
         if not self.wrapper:
             self.wrapper = self.makeWrapper()
 
@@ -67,63 +69,68 @@ class ProcessMetaKernel(MetaKernel):
 
         if not code.strip():
             self.kernel_resp = {
-                'status': 'ok',
-                'execution_count': self.execution_count,
-                'payload': [],
-                'user_expressions': {},
+                "status": "ok",
+                "execution_count": self.execution_count,
+                "payload": [],
+                "user_expressions": {},
             }
             return None
 
         interrupted = False
-        output = ''
+        output = ""
         error = None
         stream_handler = self.Write if not silent else None
         try:
-            output = wrapper.run_command(code.rstrip(), timeout=None,
-                                         stream_handler=stream_handler,
-                                         stdin_handler=self.raw_input)
-        except KeyboardInterrupt as e:
+            output = wrapper.run_command(
+                code.rstrip(),
+                timeout=None,
+                stream_handler=stream_handler,
+                stdin_handler=self.raw_input,
+            )
+        except KeyboardInterrupt:
             interrupted = True
             output = wrapper.interrupt()
         except EOF:
             self.Print(child.before)
             self.do_shutdown(True)
-            error = RuntimeError('End of File')
-            tb = 'End of File'
+            error = RuntimeError("End of File")
+            tb = "End of File"
         except Exception as e:
-            ex_type, error, tb = sys.exc_info()  # type: ignore[assignment]
+            _ex_type, error, tb = sys.exc_info()  # type: ignore[assignment]
             self.Error(str(e))
 
         if interrupted:
             self.kernel_resp = {
-                'status': 'abort',
-                'execution_count': self.execution_count,
+                "status": "abort",
+                "execution_count": self.execution_count,
             }
 
         exitcode, trace = self.check_exitcode()
 
         if exitcode:
             self.kernel_resp = {
-                'status': 'error',
-                'execution_count': self.execution_count,
-                'ename': '', 'evalue': str(exitcode),
-                'traceback': trace,
+                "status": "error",
+                "execution_count": self.execution_count,
+                "ename": "",
+                "evalue": str(exitcode),
+                "traceback": trace,
             }
 
         elif error:
             self.kernel_resp = {
-                'status': 'error',
-                'execution_count': self.execution_count,
-                'ename': '', 'evalue': str(error),
-                'traceback': str(tb),
+                "status": "error",
+                "execution_count": self.execution_count,
+                "ename": "",
+                "evalue": str(error),
+                "traceback": str(tb),
             }
 
         else:
             self.kernel_resp = {
-                'status': 'ok',
-                'execution_count': self.execution_count,
-                'payload': [],
-                'user_expressions': {},
+                "status": "ok",
+                "execution_count": self.execution_count,
+                "payload": [],
+                "user_expressions": {},
             }
 
         if output:
@@ -176,7 +183,7 @@ class ProcessMetaKernel(MetaKernel):
                 self.wrapper.terminate()
             except Exception as e:
                 self.Error(str(e))
-        return super(ProcessMetaKernel, self).do_shutdown(restart)
+        return super().do_shutdown(restart)
 
     def restart_kernel(self) -> None:
         """Restart the kernel"""
@@ -184,17 +191,19 @@ class ProcessMetaKernel(MetaKernel):
 
 
 class DynamicKernel(ProcessMetaKernel):
-    def __init__(self,
-                 executable,
-                 language,
-                 mimetype="text/plain",
-                 implementation="metakernel",
-                 file_extension='txt',
-                 orig_prompt=None,
-                 prompt_change=None,
-                 prompt_cmd=None,
-                 extra_init_cmd=None,
-                 stdin_prompt_regex=None) -> None:
+    def __init__(
+        self,
+        executable,
+        language,
+        mimetype="text/plain",
+        implementation="metakernel",
+        file_extension="txt",
+        orig_prompt=None,
+        prompt_change=None,
+        prompt_cmd=None,
+        extra_init_cmd=None,
+        stdin_prompt_regex=None,
+    ) -> None:
         self.executable = executable
         self.orig_prompt = orig_prompt
         self.prompt_change = prompt_change
@@ -203,18 +212,20 @@ class DynamicKernel(ProcessMetaKernel):
         self.stdin_prompt_regex = stdin_prompt_regex
         self.implementation = implementation
         self.language = language
-        self.language_info['mimetype'] = mimetype
-        self.language_info['language'] = language
-        self.language_info['file_extension'] = file_extension
-        super(DynamicKernel, self).__init__()
+        self.language_info["mimetype"] = mimetype
+        self.language_info["language"] = language
+        self.language_info["file_extension"] = file_extension
+        super().__init__()
 
     def makeWrapper(self) -> REPLWrapper:
-        return REPLWrapper(self.executable,
-                           self.orig_prompt,
-                           self.prompt_change,
-                           prompt_emit_cmd=self.prompt_cmd,
-                           stdin_prompt_regex=self.stdin_prompt_regex,
-                           extra_init_cmd=self.extra_init_cmd)
+        return REPLWrapper(
+            self.executable,
+            self.orig_prompt,
+            self.prompt_change,
+            prompt_emit_cmd=self.prompt_cmd,
+            stdin_prompt_regex=self.stdin_prompt_regex,
+            extra_init_cmd=self.extra_init_cmd,
+        )
 
     """
     DynamicKernel(executable="bash",
@@ -231,27 +242,30 @@ class DynamicKernel(ProcessMetaKernel):
 
 class BashKernel(ProcessMetaKernel):
     # Identifiers:
-    implementation = 'bash_kernel'
-    language = 'bash'
+    implementation = "bash_kernel"
+    language = "bash"
     language_info: dict[str, Any] = {
-        'mimetype': 'text/x-bash',
-        'language': 'bash',
+        "mimetype": "text/x-bash",
+        "language": "bash",
         # ------ If different from 'language':
         # 'codemirror_mode': 'language',
         # 'pygments_lexer': 'language',
-        'file_extension': 'sh',
+        "file_extension": "sh",
     }
 
     _banner: str | None = None
+
     @property
     def banner(self) -> str:
         if self._banner is None:
-            self._banner = check_output(['bash', '--version']).decode('utf-8')
+            self._banner = check_output(["bash", "--version"]).decode("utf-8")
         return self._banner
 
     def makeWrapper(self):
         return bash()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     from IPython.kernel.zmq.kernelapp import IPKernelApp
+
     IPKernelApp.launch_instance(kernel_class=BashKernel)

@@ -2,17 +2,19 @@
 Magics to have disqus conversation in the notebook.
 """
 
-from metakernel import Magic
 from IPython.display import HTML
 
-class ConversationMagic(Magic):
+from metakernel import Magic
 
+
+class ConversationMagic(Magic):
     def cell_conversation(self, id) -> None:
         """
         %conversation ID - insert conversation by ID
         %%conversation ID - insert conversation by ID
         """
-        html = """
+        html = (
+            """
 <div id="disqus_thread"></div>
 <script>
 (function() { // DON'T EDIT BELOW THIS LINE
@@ -23,7 +25,9 @@ class ConversationMagic(Magic):
 })();
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-""" % id
+"""
+            % id
+        )
         self.kernel.Display(HTML(html))
 
     def line_conversation(self, id) -> None:
@@ -34,12 +38,16 @@ class ConversationMagic(Magic):
         self.cell_conversation(id)
         self.evaluate = False
 
+
 def register_magics(kernel) -> None:
     kernel.register_magics(ConversationMagic)
 
+
 def register_ipython_magics() -> None:
+    from IPython.core.magic import register_cell_magic, register_line_magic
+
     from metakernel import IPythonKernel
-    from IPython.core.magic import register_line_magic, register_cell_magic
+
     kernel = IPythonKernel()
     magic = ConversationMagic(kernel)
 
@@ -48,6 +56,6 @@ def register_ipython_magics() -> None:
         magic.line_conversation(id)
 
     @register_cell_magic  # type: ignore[no-redef]
-    def conversation(id, cell):
+    def conversation(id, cell):  # noqa: F811
         magic.code = cell
         magic.cell_conversation(id)

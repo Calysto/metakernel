@@ -3,6 +3,7 @@
 
 from metakernel import Magic
 
+
 class SetMagic(Magic):
     def line_set(self, variable, value) -> None:
         """
@@ -22,4 +23,4 @@ class SetMagic(Magic):
 
 
 def register_magics(kernel) -> None:
-   kernel.register_magics(SetMagic)
+    kernel.register_magics(SetMagic)

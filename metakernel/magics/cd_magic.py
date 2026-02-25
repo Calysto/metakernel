@@ -2,13 +2,13 @@
 # Distributed under the terms of the Modified BSD License.
 
 
-from metakernel import Magic
 import os
+
+from metakernel import Magic
 
 
 class CDMagic(Magic):
-
-    def line_cd(self, path='.') -> None:
+    def line_cd(self, path=".") -> None:
         """
         %cd PATH - change current directory of session
 

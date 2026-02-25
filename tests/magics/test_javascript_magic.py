@@ -1,6 +1,5 @@
+from tests.utils import EvalKernel, get_kernel, get_log_text
 
-from tests.utils import (get_kernel, get_log_text, 
-                                    clear_log_text, EvalKernel)
 
 def test_javascript_magic() -> None:
     kernel = get_kernel(EvalKernel)
@@ -10,4 +9,3 @@ console.log("Hello from Javascript");
 """)
     text = get_log_text(kernel)
     assert "Display Data" in text, text
-

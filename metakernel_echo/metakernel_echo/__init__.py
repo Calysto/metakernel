@@ -1,18 +1,19 @@
 """A Echo kernel for Jupyter"""
+
 from metakernel import MetaKernel
 
 __version__ = "0.19.1"
 
 
 class MetaKernelEcho(MetaKernel):
-    implementation = 'MetaKernel Echo'
-    implementation_version = '1.0'
-    language = 'text'
-    language_version = '0.1'
+    implementation = "MetaKernel Echo"
+    implementation_version = "1.0"
+    language = "text"
+    language_version = "0.1"
     banner = "MetaKernel Echo - as useful as a parrot"
     language_info = {
-        'mimetype': 'text/plain',
-        'name': 'text',
+        "mimetype": "text/plain",
+        "name": "text",
         # ------ If different from 'language':
         # 'codemirror_mode': {
         #    "version": 2,
@@ -20,8 +21,8 @@ class MetaKernelEcho(MetaKernel):
         # }
         # 'pygments_lexer': 'language',
         # 'version'       : "x.y.z",
-        'file_extension': '.txt',
-        'help_links': MetaKernel.help_links,
+        "file_extension": ".txt",
+        "help_links": MetaKernel.help_links,
     }
 
     def get_usage(self):

@@ -3,14 +3,14 @@
 ## `%activity`
 
 %activity FILENAME - run a widget-based activity
-  (poll, classroom response, clicker-like activity)
+(poll, classroom response, clicker-like activity)
 
 This magic will load the JSON in the filename.
 
 Examples:
-    %activity /home/teacher/activity1
-    %activity /home/teacher/activity1 new
-    %activity /home/teacher/activity1 edit
+%activity /home/teacher/activity1
+%activity /home/teacher/activity1 new
+%activity /home/teacher/activity1 edit
 
 ## `%cd`
 
@@ -23,7 +23,7 @@ Note that this is not the same directory as used by
 the %shell magics.
 
 Example:
-    %cd ..
+%cd ..
 
 ## `%connect_info`
 
@@ -35,18 +35,22 @@ if you are interested in making additional connections to the
 running kernel.
 
 Example:
-    %connect_info
+%connect_info
 
 Paste the given JSON into a file, and connect with:
 
-    $> ipython <app> --existing <file>
+```
+$> ipython <app> --existing <file>
+```
 
 or, if you are local, you can connect with just:
 
-    $> ipython <app> --existing %(key)s
+```
+$> ipython <app> --existing %(key)s
+```
 
 or even just:
-    $> ipython <app> --existing
+$> ipython <app> --existing
 
 if this is the most recent Jupyter session you have started.
 
@@ -63,7 +67,7 @@ This line magic will render the Graphiz CODE, and render
 it as an image.
 
 Example:
-    %dot graph A { a->b };
+%dot graph A { a->b };
 
 ## `%download`
 
@@ -74,13 +78,12 @@ default it will use the same filename as the URL.
 You can give it another name using -f.
 
 Examples:
-    %%download http://some/file/from/internet.txt -f myfile.txt
-    %%download http://some/file/from/program.ss
+%%download http://some/file/from/internet.txt -f myfile.txt
+%%download http://some/file/from/program.ss
 
+## Options:
 
-Options:
---------
--f --filename  use the provided name as filename [default: None]
+-f --filename use the provided name as filename [default: None]
 
 ## `%edit`
 
@@ -92,7 +95,7 @@ you edit it.
 This is a shortcut for %load, and appending a "%%file" as first line.
 
 Example:
-    %edit myprogram.ss
+%edit myprogram.ss
 
 ## `%get`
 
@@ -101,7 +104,7 @@ Example:
 This line magic is used to get a variable.
 
 Examples:
-    %get x
+%get x
 
 ## `%help`
 
@@ -115,7 +118,7 @@ This line magic will send the CODE to the browser as
 HTML.
 
 Example:
-    %html <u>This is underlined!</u>
+%html <u>This is underlined!</u>
 
 ## `%include`
 
@@ -128,15 +131,15 @@ You can have multiple %include's at the beginning of a cell,
 and they will be included in order.
 
 Examples:
-    %include myprog.py
-    %include myprog1.py myprog2.py
+%include myprog.py
+%include myprog1.py myprog2.py
 
 ## `%install`
 
 %install PACKAGE - install package
 
 Example:
-    %install calico-spell-check
+%install calico-spell-check
 
 ## `%install_magic`
 
@@ -146,7 +149,7 @@ This line magic will copy the file at the URL into your
 personal magic folder.
 
 Example:
-    %install_magic http://path/to/some/magic.py
+%install_magic http://path/to/some/magic.py
 
 ## `%javascript`
 
@@ -156,7 +159,7 @@ This line magic will execute the CODE on the line as
 JavaScript in the browser.
 
 Example:
-    %javascript console.log("Print in the browser console")
+%javascript console.log("Print in the browser console")
 
 ## `%jigsaw`
 
@@ -165,13 +168,13 @@ Example:
 This line magic will allow visual code editing or generation.
 
 Examples:
-    %jigsaw Processing
-    %jigsaw Python
-    %jigsaw Processing --workspace workspace1 --height 600
+%jigsaw Processing
+%jigsaw Python
+%jigsaw Processing --workspace workspace1 --height 600
 
-Options:
---------
--h --height    set height of iframe  [default: 350]
+## Options:
+
+-h --height set height of iframe [default: 350]
 -w --workspace use the provided name as workspace filename [default: None]
 
 ## `%kernel`
@@ -183,14 +186,16 @@ communicate.
 
 Example:
 
-    %kernel bash_kernel BashKernel -k bash
+```
+%kernel bash_kernel BashKernel -k bash
+```
 
 Use `%kx` or `%%kx` to send code to the kernel.
 
 Also returns the kernel as output.
 
-Options:
---------
+## Options:
+
 -k --kernel_name kernel name given to use for execution [default: default]
 
 ## `%kx`
@@ -204,12 +209,14 @@ Returns the result of the execution as output.
 
 Example:
 
-    %kernel ls -al
+```
+%kernel ls -al
+```
 
 Use `%kernel MODULE CLASS [-k NAME]` to create a kernel.
 
-Options:
---------
+## Options:
+
 -k --kernel_name kernel name given to use for execution [default: None]
 
 ## `%latex`
@@ -219,7 +226,7 @@ Options:
 This line magic will display the TEXT on the line as LaTeX.
 
 Example:
-    %latex $x_1 = \dfrac{a}{b}$
+%latex $x_1 = \\dfrac{a}{b}$
 
 ## `%load`
 
@@ -229,7 +236,7 @@ This line magic will get the contents of a file and load it
 into the next cell.
 
 Example:
-    %load myprog.py
+%load myprog.py
 
 ## `%ls`
 
@@ -238,11 +245,11 @@ Example:
 This line magic is used to list the directory contents.
 
 Examples:
-    %ls .
-    %ls ..
+%ls .
+%ls ..
 
-Options:
---------
+## Options:
+
 -r --recursive recursively descend into subdirectories [default: False]
 
 ## `%lsmagic`
@@ -254,7 +261,7 @@ magics installed in the system and in your personal magic
 folder.
 
 Example:
-    %lsmagic
+%lsmagic
 
 ## `%macro`
 
@@ -266,20 +273,22 @@ This line macro will execute, show, list, or delete the
 named macro.
 
 Examples:
-    %macro renumber-cells
+%macro renumber-cells
 
-    %%macro test
-    print "Ok!"
+```
+%%macro test
+print "Ok!"
 
-    %macro -l all
+%macro -l all
 
-    %macro -d test
+%macro -d test
+```
 
-Options:
---------
--s --show      show macro [default: False]
--l --list      list macros [default: False]
--d --delete    delete a named macro [default: False]
+## Options:
+
+-s --show show macro [default: False]
+-l --list list macros [default: False]
+-d --delete delete a named macro [default: False]
 
 ## `%magic`
 
@@ -299,21 +308,25 @@ Also, monkeypatches the IPython.display.display
 to work with metakernel-based kernels.
 
 Example:
-    %matplotlib notebook
+%matplotlib notebook
 
-    import matplotlib.pyplot as plt
-    plt.plot([3, 8, 2, 5, 1])
-    plt.show()
+```
+import matplotlib.pyplot as plt
+plt.plot([3, 8, 2, 5, 1])
+plt.show()
+```
 
 ## `%parallel`
 
-%parallel MODULE CLASS [-k NAME] [-i [...]] - construct an interface to the cluster.
+%parallel MODULE CLASS [-k NAME] \[-i [...]\] - construct an interface to the cluster.
 
 Example:
 
-    %parallel bash_kernel BashKernel
-    %parallel bash_kernel BashKernel -k bash
-    %parallel bash_kernel BashKernel -i [0,2:5,9,...]
+```
+%parallel bash_kernel BashKernel
+%parallel bash_kernel BashKernel -k bash
+%parallel bash_kernel BashKernel -i [0,2:5,9,...]
+```
 
 cluster_size and cluster_rank variables are set upon
 initialization of the remote node (if the kernel
@@ -321,9 +334,9 @@ supports %set).
 
 Use %px or %%px to send code to the cluster.
 
-Options:
---------
--i --ids       the machine ids to use from the cluster [default: None]
+## Options:
+
+-i --ids the machine ids to use from the cluster [default: None]
 -k --kernel_name arbitrary name given to reference kernel [default: default]
 
 ## `%plot`
@@ -334,20 +347,20 @@ This line magic will configure the plot settings for this
 language.
 
 Examples:
-    %plot qt --format=png
-    %plot inline -w 640
+%plot qt --format=png
+%plot inline -w 640
 
 Note: not all languages may support the %plot magic, and not all
 options may be supported.
 
-Options:
---------
--h --height    Plot height in pixels
--w --width     Plot width in pixels
+## Options:
+
+-h --height Plot height in pixels
+-w --width Plot width in pixels
 -r --resolution Resolution in pixels per inch
--b --backend   Backend selection [default: inline]
--f --format    Plot format (png, svg or jpg).
--s --size      Pixel size of plots, "width,height"
+-b --backend Backend selection [default: inline]
+-f --format Plot format (png, svg or jpg).
+-s --size Pixel size of plots, "width,height"
 
 ## `%pmap`
 
@@ -362,33 +375,39 @@ You must first setup a cluster using the %parallel magic.
 
 Examples:
 
-    %pmap function-name-in-language range(10)
-    %pmap function-name-in-language [1,2,3,4]
-    %pmap run_experiment range(1,100,5)
-    %pmap run_experiment ["test1","test2","test3"]
-    %pmap f [(1,4,7),(2,3,5),(7,2,2)]
+```
+%pmap function-name-in-language range(10)
+%pmap function-name-in-language [1,2,3,4]
+%pmap run_experiment range(1,100,5)
+%pmap run_experiment ["test1","test2","test3"]
+%pmap f [(1,4,7),(2,3,5),(7,2,2)]
+```
 
 The function name must be a function that is available on all
 nodes in the cluster. For example, you could:
 
-    %%px
-    (define myfunc
-       (lambda (n)
-         (+ n 1)))
+```
+%%px
+(define myfunc
+   (lambda (n)
+     (+ n 1)))
+```
 
 to define myfunc on all machines (use %%px -e to also define
 it in the running notebook or console). Then you can apply it
 to a list of arguments:
 
-    %%pmap myfunc range(100)
+```
+%%pmap myfunc range(100)
+```
 
 The load balancer will run myfunc on the next available node
 in the cluster.
 
 Note: not all languages may support running a function via this magic.
 
-Options:
---------
+## Options:
+
 -s --set_variable set the variable with the parallel results rather than returning them [default: None]
 
 ## `%px`
@@ -397,10 +416,12 @@ Options:
 
 Example:
 
-    %px sys.version
-    %px -k scheme (define x 42)
-    %px x
-    %px cluster_rank
+```
+%px sys.version
+%px -k scheme (define x 42)
+%px x
+%px cluster_rank
+```
 
 cluster_size and cluster_rank variables are set upon
 initialization of the remote node (if the kernel
@@ -408,10 +429,10 @@ supports %set).
 
 Use %parallel to initialize the cluster.
 
-Options:
---------
+## Options:
+
 -s --set_variable set the variable with the parallel results rather than returning them [default: None]
--e --evaluate  evaluate code in the current kernel, too. The current kernel should be of the same language as the cluster. [default: False]
+-e --evaluate evaluate code in the current kernel, too. The current kernel should be of the same language as the cluster. [default: False]
 -k --kernel_name kernel name given to use for execution [default: None]
 
 ## `%python`
@@ -424,16 +445,16 @@ statement) as Python code.
 Note that the version of Python is that of the notebook server.
 
 Examples:
-    %python x = 42
-    %python import math
-    %python x + math.pi
+%python x = 42
+%python import math
+%python x + math.pi
 
 ## `%reload_magics`
 
 %reload_magics - reload the magics from the installed files
 
 Example:
-    %reload_magics
+%reload_magics
 
 This line magic will reload the magics installed in the
 system, and in your private magic folder.
@@ -449,14 +470,14 @@ This line magic will restart the connection to the language
 kernel.
 
 Example:
-    %restart
+%restart
 
 Note that you will lose all computed values.
 
 ## `%run`
 
 %run [--language LANG] FILENAME - run code in filename by
-   kernel
+kernel
 
 This magic will take the code in FILENAME and run it. The
 exact details of how the code runs are determined by your
@@ -467,18 +488,20 @@ The --language LANG option will prefix the file contents with
 appear before the contents of the file.
 
 Examples:
-    %run filename.ss
-    %run -l python filename.py
+%run filename.ss
+%run -l python filename.py
 
-    %kx calysto_scheme.kernel CalystoScheme
-    %run --language kx filename.ss
-    %run --language "kx default" filename.ss
+```
+%kx calysto_scheme.kernel CalystoScheme
+%run --language kx filename.ss
+%run --language "kx default" filename.ss
+```
 
 Note: not all languages may support %run.
 
-Options:
---------
--l --language  use the provided language name as kernel [default: None]
+## Options:
+
+-l --language use the provided language name as kernel [default: None]
 
 ## `%scheme`
 
@@ -488,9 +511,9 @@ This line magic will evaluate the CODE (either expression or
 statement) as Scheme code.
 
 Examples:
-    %scheme (define x 42)
-    %scheme (import "math")
-    %scheme (+ x + math.pi)
+%scheme (define x 42)
+%scheme (import "math")
+%scheme (+ x + math.pi)
 
 ## `%set`
 
@@ -499,8 +522,8 @@ Examples:
 This line magic is used to set a variable to a Python value.
 
 Examples:
-    %set x 42
-    %set x [1, 2, 3]
+%set x 42
+%set x [1, 2, 3]
 
 ## `%shell`
 
@@ -509,12 +532,12 @@ Examples:
 This line command will run the COMMAND in the bash shell.
 
 Examples:
-    %shell ls -al
-    %shell cd
+%shell ls -al
+%shell cd
 
- Note: this is a persistent connection to a shell.
- The working directory is synchronized to that of the notebook
- before and after each call.
+Note: this is a persistent connection to a shell.
+The working directory is synchronized to that of the notebook
+before and after each call.
 
 You can also use "!" instead of "%shell".
 
@@ -523,22 +546,22 @@ You can also use "!" instead of "%shell".
 ## `%%activity`
 
 %%activity FILENAME - make an activity from
-  a JSON structure
+a JSON structure
 
 This magic will construct a Python file from the cell's
 content, a JSON structure.
 
 Example:
-    %%activity /home/teacher/activity1
-    {"activity": "poll",
-     "instructors": ["teacher01"],
-     "results_file": "/home/teacher/activity1.results",
-     "items": [{"id": "...",
-                "type": "multiple choice",
-                "question": "...",
-                "options": ["...", ...]
-               }, ...]
-    }
+%%activity /home/teacher/activity1
+{"activity": "poll",
+"instructors": ["teacher01"],
+"results_file": "/home/teacher/activity1.results",
+"items": \[{"id": "...",
+"type": "multiple choice",
+"question": "...",
+"options": ["...", ...]
+}, ...\]
+}
 
 In this example, users will load
 /home/teacher/activity1
@@ -551,8 +574,8 @@ for a calysto.simulation.
 Requires calysto.
 
 Examples:
-   %%brain
-   robot.forward(1)
+%%brain
+robot.forward(1)
 
 ## `%%conversation`
 
@@ -567,9 +590,11 @@ This cell magic will step through the code in the cell,
 if the kernel supports debugging.
 
 Example:
-    %%debug
+%%debug
 
-    (define x 1)
+```
+(define x 1)
+```
 
 ## `%%dot`
 
@@ -579,9 +604,11 @@ This cell magic will send the cell to the browser as
 HTML.
 
 Example:
-    %%dot
+%%dot
 
-    graph A { a->b };
+```
+graph A { a->b };
+```
 
 ## `%%file`
 
@@ -591,13 +618,12 @@ This cell magic will create or append the cell contents into/onto
 a file.
 
 Example:
-    %%file -a log.txt
-    This will append this line onto the file "log.txt"
+%%file -a log.txt
+This will append this line onto the file "log.txt"
 
+## Options:
 
-Options:
---------
--a --append    append onto an existing file [default: False]
+-a --append append onto an existing file [default: False]
 
 ## `%%help`
 
@@ -611,11 +637,13 @@ This cell magic will send the cell to the browser as
 HTML.
 
 Example:
-    %%html
+%%html
 
-    <script src="..."></script>
+```
+<script src="..."></script>
 
-    <div>Contents of div tag</div>
+<div>Contents of div tag</div>
+```
 
 ## `%%javascript`
 
@@ -625,9 +653,11 @@ This cell magic will execute the contents of the cell as
 JavaScript in the browser.
 
 Example:
-    %%javascript
+%%javascript
 
-    element.html("Hello this is <b>bold</b>!")
+```
+element.html("Hello this is <b>bold</b>!")
+```
 
 ## `%%kx`
 
@@ -641,13 +671,15 @@ Returns the result of the execution as output.
 
 Example:
 
-    %%kernel bash
-    ls -al
+```
+%%kernel bash
+ls -al
+```
 
 Use `%kernel MODULE CLASS [-k NAME]` to create a kernel.
 
-Options:
---------
+## Options:
+
 -k --kernel_name kernel name given to use for execution [default: None]
 
 ## `%%latex`
@@ -657,10 +689,12 @@ Options:
 This cell magic will display the TEXT in the cell as LaTeX.
 
 Example:
-    %%latex
-    $x_1 = \dfrac{a}{b}$
+%%latex
+$x_1 = \\dfrac{a}{b}$
 
-    $x_2 = a^{n - 1}$
+```
+$x_2 = a^{n - 1}$
+```
 
 ## `%%macro`
 
@@ -671,11 +705,13 @@ cell. The cell contents are just commands (macros
 or code in the kernel language).
 
 Example:
-    %%macro test
-    print "Ok!"
+%%macro test
+print "Ok!"
 
-    %macro test
-    Ok!
+```
+%macro test
+Ok!
+```
 
 ## `%%pipe`
 
@@ -688,12 +724,14 @@ the kernel must support the `do_function_direct`
 method.
 
 Example:
-    %%pipe f1 | f2 | f3
-    CELL CONTENTS
+%%pipe f1 | f2 | f3
+CELL CONTENTS
 
-    is the same as issuing:
+```
+is the same as issuing:
 
-    f3(f2(f1("CELL CONTENTS")))
+f3(f2(f1("CELL CONTENTS")))
+```
 
 ## `%%processing`
 
@@ -705,11 +743,13 @@ language.
 
 Example:
 
-    %%processing
-    setup() {
-    }
-    draw() {
-    }
+```
+%%processing
+setup() {
+}
+draw() {
+}
+```
 
 ## `%%px`
 
@@ -717,15 +757,17 @@ Example:
 
 Example:
 
-    %%px
-    (define x 42)
+```
+%%px
+(define x 42)
+```
 
 Use %parallel to initialize the cluster.
 
-Options:
---------
+## Options:
+
 -s --set_variable set the variable with the parallel results rather than returning them [default: None]
--e --evaluate  evaluate code in the current kernel, too. The current kernel should be of the same language as the cluster. [default: False]
+-e --evaluate evaluate code in the current kernel, too. The current kernel should be of the same language as the cluster. [default: False]
 -k --kernel_name kernel name given to use for execution [default: None]
 
 ## `%%python`
@@ -746,22 +788,23 @@ language.
 Note that the version of Python is that of the notebook server.
 
 Examples:
-    %%python
-    x = 42
+%%python
+x = 42
 
-    %%python
-    import math
-    retval = x + math.pi
+```
+%%python
+import math
+retval = x + math.pi
 
-    %%python -e
-    retval = "'(this is code in the kernel language)"
+%%python -e
+retval = "'(this is code in the kernel language)"
 
-    %%python -e
-    "'(this is code in the kernel language)"
+%%python -e
+"'(this is code in the kernel language)"
+```
 
+## Options:
 
-Options:
---------
 -e --eval_output Use the retval value from the Python cell as code in the kernel language. [default: False]
 
 ## `%%scheme`
@@ -776,39 +819,41 @@ will be used as code for the cell to be evaluated by the host
 language.
 
 Examples:
-    %%scheme
-    (define x 42)
+%%scheme
+(define x 42)
 
-    %%scheme
-    (import "math")
-    (define retval (+ x math.pi))
+```
+%%scheme
+(import "math")
+(define retval (+ x math.pi))
 
-    %%scheme -e
-    (define retval "this = code")
+%%scheme -e
+(define retval "this = code")
 
-    %%scheme -e
-    "this = code"
+%%scheme -e
+"this = code"
+```
 
-Options:
---------
+## Options:
+
 -e --eval_output Use the retval value from the Scheme cell as code in the kernel language. [default: False]
 
 ## `%%shell`
 
- %%shell - run the contents of the cell as shell commands
+%%shell - run the contents of the cell as shell commands
 
- This shell command will run the cell contents in the bash shell.
+This shell command will run the cell contents in the bash shell.
 
- Example:
-     %%shell
-        cd ..
-        ls -al
+Example:
+%%shell
+cd ..
+ls -al
 
 Note: this is a persistent connection to a shell.
-  The working directory is synchronized to that of the notebook
-  before and after each call.
+The working directory is synchronized to that of the notebook
+before and after each call.
 
- You can also use "!!" instead of "%%shell".
+You can also use "!!" instead of "%%shell".
 
 ## `%%show`
 
@@ -818,15 +863,17 @@ This cell magic will put the contents or results of the cell
 into the system pager.
 
 Examples:
-    %%show
-    This information will appear in the pager.
+%%show
+This information will appear in the pager.
 
-    %%show --output
-    retval = 54 * 54
+```
+%%show --output
+retval = 54 * 54
+```
 
-Options:
---------
--o --output    rather than showing the contents, show the results [default: False]
+## Options:
+
+-o --output rather than showing the contents, show the results [default: False]
 
 ## `%%time`
 
@@ -836,8 +883,8 @@ Put this magic at the top of a cell and the amount of time
 taken to execute the code will be displayed before the output.
 
 Example:
-    %%time
-    [code for your language goes here!]
+%%time
+[code for your language goes here!]
 
 This just reports real time taken to execute a program. This
 may fluctuate with number of users, system, load, etc.
@@ -851,26 +898,25 @@ Defaults to use the language of the current kernel.
 'python' is an alias for 'python3'.
 
 Examples:
-   %%tutor -l python3
-   a = 1
-   b = 1
-   a + b
+%%tutor -l python3
+a = 1
+b = 1
+a + b
 
-   [You will see an iframe with the pythontutor.com page
-   including the code above.]
+\[You will see an iframe with the pythontutor.com page
+including the code above.\]
 
-   %%tutor --language=java
+%%tutor --language=java
 
-   public class Test {
-       public Test() {
-       }
-       public static void main(String[] args) {
-           int x = 1;
-           System.out.println("Hi");
-       }
-   }
+public class Test {
+public Test() {
+}
+public static void main(String[] args) {
+int x = 1;
+System.out.println("Hi");
+}
+}
 
-Options:
---------
--l --language  Possible languages to be displayed within the iframe. Possible values are: python, python2, python3, java, javascript
+## Options:
 
+-l --language Possible languages to be displayed within the iframe. Possible values are: python, python2, python3, java, javascript

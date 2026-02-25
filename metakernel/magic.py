@@ -1,18 +1,19 @@
 from __future__ import annotations
 
-import traceback
-import optparse
 import inspect
-import sys
+import optparse
 import os
 import shlex
+import sys
+import traceback
 from ast import literal_eval as safe_eval
+from typing import NoReturn
 
 _maxsize = sys.maxsize
 
 PY3 = sys.version_info[0] == 3
 
-from typing import NoReturn
+
 class MagicOptionParser(optparse.OptionParser):
     def error(self, msg) -> NoReturn:
         raise Exception('Magic Parse error: "%s"' % msg)
@@ -26,7 +27,7 @@ class MagicOptionParser(optparse.OptionParser):
     ## currently --help gives syntax error
 
 
-class Magic(object):
+class Magic:
     """
     Base class to define magics for MetaKernel based kernels.
 
@@ -41,54 +42,52 @@ class Magic(object):
     def __init__(self, kernel) -> None:
         self.kernel = kernel
         self.evaluate = True
-        self.code = ''
+        self.code = ""
 
     def get_args(self, mtype, name, code, args) -> tuple | Magic:
         self.code = code
         old_args = args
-        mtype = mtype.replace('sticky', 'cell')
+        mtype = mtype.replace("sticky", "cell")
 
-        func = getattr(self, mtype + '_' + name)
+        func = getattr(self, mtype + "_" + name)
         try:
             args, kwargs = _parse_args(func, args, usage=self.get_help(mtype, name))
         except Exception as e:
             self.kernel.Error(str(e))
             return self
-        arg_spec = inspect.getfullargspec(func) if PY3 \
-                   else inspect.getargspec(func)
+        arg_spec = inspect.getfullargspec(func) if PY3 else inspect.getargspec(func)
         fargs = arg_spec.args
-        if fargs[0] == 'self':
+        if fargs[0] == "self":
             fargs = fargs[1:]
 
-        fargs = [f for f in fargs if not f in kwargs.keys()]
+        fargs = [f for f in fargs if f not in kwargs.keys()]
         if len(args) > len(fargs) and not arg_spec.varargs:
-            extra = ' '.join(str(s) for s in (args[len(fargs) - 1:]))
-            args = args[:len(fargs) - 1] + [extra]
+            extra = " ".join(str(s) for s in (args[len(fargs) - 1 :]))
+            args = args[: len(fargs) - 1] + [extra]
 
         return (args, kwargs, old_args)
 
     def call_magic(self, mtype, name, code, args) -> Magic:
         self.code = code
         old_args = args
-        mtype = mtype.replace('sticky', 'cell')
+        mtype = mtype.replace("sticky", "cell")
 
-        func = getattr(self, mtype + '_' + name)
+        func = getattr(self, mtype + "_" + name)
         try:
             args, kwargs = _parse_args(func, args, usage=self.get_help(mtype, name))
         except Exception as e:
             self.kernel.Error(str(e))
             return self
 
-        arg_spec = inspect.getfullargspec(func) if PY3 \
-                   else inspect.getargspec(func)
+        arg_spec = inspect.getfullargspec(func) if PY3 else inspect.getargspec(func)
         fargs = arg_spec.args
-        if fargs[0] == 'self':
+        if fargs[0] == "self":
             fargs = fargs[1:]
 
-        fargs = [f for f in fargs if not f in kwargs.keys()]
+        fargs = [f for f in fargs if f not in kwargs.keys()]
         if len(args) > len(fargs) and not arg_spec.varargs:
-            extra = ' '.join(str(s) for s in (args[len(fargs) - 1:]))
-            args = args[:len(fargs) - 1] + [extra]
+            extra = " ".join(str(s) for s in (args[len(fargs) - 1 :]))
+            args = args[: len(fargs) - 1] + [extra]
 
         try:
             try:
@@ -96,8 +95,10 @@ class Magic(object):
             except TypeError:
                 func(old_args)
         except Exception as exc:
-            msg = "Error in calling magic '%s' on %s:\n    %s\n    args: %s\n    kwargs: %s" % (
-                name, mtype, str(exc), args, kwargs)
+            msg = (
+                "Error in calling magic '%s' on %s:\n    %s\n    args: %s\n    kwargs: %s"
+                % (name, mtype, str(exc), args, kwargs)
+            )
             self.kernel.Error(msg)
             self.kernel.Error(traceback.format_exc())
             self.kernel.Error(self.get_help(mtype, name))
@@ -106,8 +107,8 @@ class Magic(object):
         return self
 
     def get_help(self, mtype, name, level=0) -> str:
-        if hasattr(self, mtype + '_' + name):
-            func = getattr(self, mtype + '_' + name)
+        if hasattr(self, mtype + "_" + name):
+            func = getattr(self, mtype + "_" + name)
             if level == 0:
                 if func.__doc__:
                     return _trim(func.__doc__)  # type: ignore[return-value]
@@ -116,26 +117,27 @@ class Magic(object):
             else:
                 filename = inspect.getfile(func)
                 if filename and os.path.exists(filename):
-                    with open(filename) as f: return f.read()
+                    with open(filename) as f:
+                        return f.read()
                 else:
                     return "No help available for magic '%s' for %ss." % (name, mtype)
         else:
             return "No such magic '%s' for %ss." % (name, mtype)
 
     def get_help_on(self, info, level=0):
-        return "Sorry, no help is available on '%s'." % info['code']
+        return "Sorry, no help is available on '%s'." % info["code"]
 
     def get_completions(self, info) -> list:
-            """
-            Get completions based on info dict from magic.
-            """
-            return []
+        """
+        Get completions based on info dict from magic.
+        """
+        return []
 
     def get_magics(self, mtype) -> list:
         magics = []
         for name in dir(self):
-            if name.startswith(mtype + '_'):
-                magics.append(name.replace(mtype + '_', ''))
+            if name.startswith(mtype + "_"):
+                magics.append(name.replace(mtype + "_", ""))
         return magics
 
     def get_code(self) -> str:
@@ -146,14 +148,14 @@ class Magic(object):
 
 
 def option(*args, **kwargs):
-    """Return decorator that adds a magic option to a function.
-    """
+    """Return decorator that adds a magic option to a function."""
+
     def decorator(func):
         help_text = ""
-        if not getattr(func, 'has_options', False):
+        if not getattr(func, "has_options", False):
             func.has_options = True
             func.options = []
-            help_text += 'Options:\n-------\n'
+            help_text += "Options:\n-------\n"
         try:
             option = optparse.Option(*args, **kwargs)
         except optparse.OptionError:
@@ -166,26 +168,27 @@ def option(*args, **kwargs):
         else:
             func.__doc__ = help_text
         return func
+
     return decorator
 
 
 def _parse_args(func, args, usage=None) -> tuple[list, dict]:
     """Parse the arguments given to a magic function"""
     if isinstance(args, list):
-        args = ' '.join(args)
+        args = " ".join(args)
 
     args = _split_args(args)
 
     kwargs = dict()
-    if getattr(func, 'has_options', False):
+    if getattr(func, "has_options", False):
         parser = MagicOptionParser(usage=usage, conflict_handler="resolve")
         parser.add_options(func.options)
 
         left = []
         value = None
-        if '--' in args:
-            left = args[:args.index('--')]
-            value, args = parser.parse_args(args[args.index('--') + 1:])
+        if "--" in args:
+            left = args[: args.index("--")]
+            value, args = parser.parse_args(args[args.index("--") + 1 :])
         else:
             while args:
                 try:
@@ -202,13 +205,13 @@ def _parse_args(func, args, usage=None) -> tuple[list, dict]:
     for arg in args:
         try:
             new_args.append(safe_eval(arg))
-        except:
+        except Exception:
             new_args.append(arg)
 
-    for (key, value) in kwargs.items():
+    for key, value in kwargs.items():
         try:
             kwargs[key] = safe_eval(value)
-        except:
+        except Exception:
             pass
 
     return new_args, kwargs
@@ -218,31 +221,30 @@ def _split_args(args) -> list:
     try:
         # do not use posix mode, to avoid eating quote characters
         args = shlex.split(args, posix=False)
-    except:
+    except Exception:
         # parse error; let's pass args along rather than crashing
         args = args.split()
 
     new_args = []
-    temp = ''
+    temp = ""
     for arg in args:
-        if arg.startswith('-'):
+        if arg.startswith("-"):
             new_args.append(arg)
 
         elif temp:
-
-            arg = temp + ' ' + arg
+            arg = temp + " " + arg
             try:
                 safe_eval(arg)
-            except:
+            except Exception:
                 temp = arg
             else:
                 new_args.append(arg)
-                temp = ''
+                temp = ""
 
-        elif arg.startswith(('(', '[', '{')) or '(' in arg:
+        elif arg.startswith(("(", "[", "{")) or "(" in arg:
             try:
                 safe_eval(arg)
-            except:
+            except Exception:
                 temp = arg
             else:
                 new_args.append(arg)
@@ -257,14 +259,14 @@ def _split_args(args) -> list:
 
 
 def _format_option(option):
-    output = ''
+    output = ""
     if option._short_opts:
-        output = option._short_opts[0] + ' '
-    output += option.get_opt_string() + ' '
-    output += ' ' * (15 - len(output))
-    output += option.help + ' '
-    if not option.default == ('NO', 'DEFAULT'):
-        output += '[default: %s]' % option.default
+        output = option._short_opts[0] + " "
+    output += option.get_opt_string() + " "
+    output += " " * (15 - len(output))
+    output += option.help + " "
+    if not option.default == ("NO", "DEFAULT"):
+        output += "[default: %s]" % option.default
     return output
 
 
@@ -274,7 +276,7 @@ def _trim(docstring, return_lines=False) -> str | list:
     """
     # from: http://legacy.python.org/dev/peps/pep-0257/
     if not docstring:
-        return ''
+        return ""
     # Convert tabs to spaces (following the normal Python rules)
     # and split into a list of lines:
     lines = docstring.expandtabs().splitlines()
@@ -293,7 +295,8 @@ def _trim(docstring, return_lines=False) -> str | list:
         return trimmed
     else:
         # Return a single string:
-        return '\n'.join(trimmed)
+        return "\n".join(trimmed)
+
 
 def _min_indent(lines) -> int:
     """
@@ -305,6 +308,7 @@ def _min_indent(lines) -> int:
         if stripped:
             indent = min(indent, len(line) - len(stripped))
     return indent
+
 
 def _indent(docstring, text) -> str:
     """

@@ -1,8 +1,10 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from metakernel import Magic
 from IPython.display import Javascript
+
+from metakernel import Magic
+
 
 class JavascriptMagic(Magic):
     def line_javascript(self, code) -> None:
@@ -37,6 +39,6 @@ class JavascriptMagic(Magic):
             self.kernel.Display(jscode)
             self.evaluate = False
 
+
 def register_magics(kernel) -> None:
     kernel.register_magics(JavascriptMagic)
-

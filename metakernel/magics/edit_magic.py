@@ -2,11 +2,12 @@
 # Distributed under the terms of the Modified BSD License.
 
 
-from metakernel import Magic, option
 import os
 
-class EditMagic(Magic):
+from metakernel import Magic
 
+
+class EditMagic(Magic):
     def line_edit(self, filename) -> None:
         """
         %edit FILENAME - load code from filename into next cell for editing
@@ -24,10 +25,15 @@ class EditMagic(Magic):
         if filename.startswith("~"):
             filename = os.path.expanduser(filename)
         filename = os.path.abspath(filename)
-        with open(filename) as f: text = f.read()
-        self.kernel.payload.append({"source": "set_next_input",
-                                    "text": "%%file " + orig_filename + "\n" + text})
+        with open(filename) as f:
+            text = f.read()
+        self.kernel.payload.append(
+            {
+                "source": "set_next_input",
+                "text": "%%file " + orig_filename + "\n" + text,
+            }
+        )
+
 
 def register_magics(kernel) -> None:
     kernel.register_magics(EditMagic)
-

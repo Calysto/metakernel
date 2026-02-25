@@ -1,23 +1,25 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from metakernel import Magic
+import os
 import urllib.parse as urlparse
 import urllib.request
-import os
+
+from metakernel import Magic
+
 
 def download(url, filename):
     g = urllib.request.urlopen(url)
-    with open(filename, 'wb') as f:
+    with open(filename, "wb") as f:
         f.write(g.read())
 
-class InstallMagicMagic(Magic):
 
+class InstallMagicMagic(Magic):
     def line_install_magic(self, url) -> None:
         """
         %install_magic URL - download and install magic from URL
 
-        This line magic will copy the file at the URL into your 
+        This line magic will copy the file at the URL into your
         personal magic folder.
 
         Example:
@@ -25,7 +27,7 @@ class InstallMagicMagic(Magic):
 
         """
         parts = urlparse.urlsplit(url)
-        #('http', 'example.com', '/somefile.zip', '', '')
+        # ('http', 'example.com', '/somefile.zip', '', '')
         path = parts[2]
         filename = os.path.basename(path)
         magic_filename = os.path.join(self.kernel.get_local_magics_dir(), filename)
@@ -36,6 +38,6 @@ class InstallMagicMagic(Magic):
         except Exception as e:
             self.kernel.Error(str(e))
 
+
 def register_magics(kernel) -> None:
     kernel.register_magics(InstallMagicMagic)
-

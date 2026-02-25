@@ -1,6 +1,4 @@
-
-from tests.utils import (get_kernel, get_log_text,
-                                    clear_log_text)
+from tests.utils import clear_log_text, get_kernel, get_log_text
 
 
 def test_latex_magic() -> None:

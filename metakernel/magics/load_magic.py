@@ -1,11 +1,12 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from metakernel import Magic, option
 import os
 
-class LoadMagic(Magic):
+from metakernel import Magic
 
+
+class LoadMagic(Magic):
     def line_load(self, filename) -> None:
         """
         %load FILENAME - load code from filename into next cell
@@ -20,9 +21,8 @@ class LoadMagic(Magic):
             filename = os.path.expanduser(filename)
         filename = os.path.abspath(filename)
         with open(filename) as f:
-            self.kernel.payload.append({"source": "set_next_input",
-                                        "text": f.read()})
+            self.kernel.payload.append({"source": "set_next_input", "text": f.read()})
+
 
 def register_magics(kernel) -> None:
     kernel.register_magics(LoadMagic)
-

@@ -1,17 +1,17 @@
-
-from tests.utils import get_kernel, get_log_text, EvalKernel
-import os
-import time
-import pytest
 import sys
+
+import pytest
+
+from tests.utils import EvalKernel, get_kernel, get_log_text
 
 try:
     import ipyparallel
 except ImportError:
     ipyparallel = None
 
+
 @pytest.mark.skipif(ipyparallel is None, reason="Requires ipyparallel")
-@pytest.mark.skipif(sys.platform == 'darwin', reason="Fails on darwin")
+@pytest.mark.skipif(sys.platform == "darwin", reason="Fails on darwin")
 def test_parallel_magic() -> None:
     kernel = get_kernel(EvalKernel)
     # start up an EvalKernel on each node:
@@ -21,14 +21,14 @@ def test_parallel_magic() -> None:
     results = get_log_text(kernel)
     assert "[0, 1, 2]" in results, results
 
+
 # Starting the cluster from here doesn't work with pytest
 # so we start `ipcluster` before we test.
 
-#def setup_func():
+# def setup_func():
 #    ## start up a cluster in the background with three nodes:
 #    os.system("ipcluster start --n=3 &")
 
-#def teardown():
+# def teardown():
 #    ## shutdown the cluster:
 #    os.system("ipcluster stop")
-

@@ -1,7 +1,4 @@
-
-import os
-from tests.utils import (get_kernel, get_log_text,
-                                    clear_log_text)
+from tests.utils import clear_log_text, get_kernel, get_log_text
 
 
 def test_ls_magic() -> None:
@@ -9,11 +6,11 @@ def test_ls_magic() -> None:
     kernel.do_execute("%ls /tmp")
     text = get_log_text(kernel)
     ## FIXME: failing on Travis
-    #assert '/tmp/' in text, text[:100]
+    # assert '/tmp/' in text, text[:100]
     clear_log_text(kernel)
 
     kernel.do_execute("%ls /tmp --recursive")
     text = get_log_text(kernel)
     ## FIXME: failing on Travis
-    #assert '/tmp' in text, text[:100]
+    # assert '/tmp' in text, text[:100]
     clear_log_text(kernel)
