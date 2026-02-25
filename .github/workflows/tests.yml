@@ -91,9 +91,12 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
       - uses: jupyterlab/maintainer-tools/.github/actions/test-sdist@v1
         with:
-          package_spec: '--group test --editable .'
+          package_spec: '.'
+          test_command: "uv run --group test pytest"
 
   pre-commit:
     name: Pre-commit
