@@ -33,20 +33,24 @@ jobs:
       - name: Base Setup
         uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install just
+        uses: extractions/setup-just@v2
+
       - name: Install graphviz on Linux
         if: ${{ startsWith(matrix.os, 'ubuntu') }}
         run: sudo apt install -y graphviz
 
       - name: Install dependencies
-        run: |
-          pip install coveralls
-          make install
+        run: just install
 
       - name: Run the tests
         run: |
-          make docs
-          make help
-          make cover
+          just docs
+          just help
+          just cover
 
   test_miniumum_versions:
     name: Test Minimum Versions
@@ -59,10 +63,16 @@ jobs:
         with:
           dependency_type: minimum
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install just
+        uses: extractions/setup-just@v2
+
       - name: Install
-        run: make install
+        run: just install
       - name: Run the unit tests
-        run: make test
+        run: just test
 
   make_sdist:
     name: Make SDist
@@ -81,7 +91,12 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
       - uses: jupyterlab/maintainer-tools/.github/actions/test-sdist@v1
+        with:
+          package_spec: '.'
+          test_command: "uv run --group test pytest"
 
   pre-commit:
     name: Pre-commit

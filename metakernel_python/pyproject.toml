@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling >= 1.10.0", "jupyter_client"]
+requires = ["hatchling >= 1.10.0", "jupyter_client", "ipython"]
 build-backend = "hatchling.build"
 
 [project]
@@ -11,7 +11,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Topic :: System :: Shells",
 ]
-dependencies = ["metakernel", "jedi"]
+dependencies = ["metakernel", "jedi", "ipython"]
 dynamic = ["description", "version"]
 
 [project.readme]
