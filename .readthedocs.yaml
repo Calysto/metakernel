@@ -6,4 +6,4 @@ build:
   commands:
     - pip install uv
     - uv sync --group docs
-    - uv run sphinx-build -c docs -b html docs/source $READTHEDOCS_OUTPUT/html
+    - uv run sphinx-build -c docs -b html docs $READTHEDOCS_OUTPUT/html
