@@ -14,12 +14,12 @@ prefix = kernel.magic_prefixes["magic"]
 text = "# Line Magics\n\n"
 for magic in sorted(kernel.line_magics.keys()):
     text += "## `" + prefix + magic + "`\n\n"
-    text += "    " + kernel.get_help_on(prefix + magic) + "\n\n"
+    text += kernel.get_help_on(prefix + magic) + "\n\n"
 
 text += "# Cell Magics\n\n"
 for magic in sorted(kernel.cell_magics.keys()):
     text += "## `" + prefix + prefix + magic + "`\n\n"
-    text += "    " + kernel.get_help_on(prefix + prefix + magic) + "\n\n"
+    text += kernel.get_help_on(prefix + prefix + magic) + "\n\n"
 
 # Fix for "Title underline too short".
 text = text.replace("-------", "--------")
