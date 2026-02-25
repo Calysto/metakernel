@@ -92,6 +92,8 @@ jobs:
     steps:
       - uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
       - uses: jupyterlab/maintainer-tools/.github/actions/test-sdist@v1
+        with:
+          package_spec: '--group test --editable .'
 
   pre-commit:
     name: Pre-commit
