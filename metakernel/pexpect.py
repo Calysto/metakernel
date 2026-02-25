@@ -4,9 +4,9 @@ from __future__ import annotations
 import os
 import shlex
 import signal
-from typing import Optional
+from typing import Any, Optional
 
-from pexpect import EOF, TIMEOUT, is_executable_file
+from pexpect import EOF, TIMEOUT, is_executable_file  # type:ignore[attr-defined]
 from pexpect import __file__ as PEXPECT_DIR
 
 try:
@@ -18,22 +18,24 @@ except ImportError:
 
     pty = None  # type: ignore[assignment]
 
+__all__ = ["EOF", "PEXPECT_DIR", "TIMEOUT", "pty", "spawn", "spawnu", "which"]
+
 
 def spawn(
-    command,
-    args=None,
-    timeout=30,
-    maxread=2000,
-    searchwindowsize=None,
-    logfile=None,
-    cwd=None,
-    env=None,
-    ignore_sighup=True,
-    echo=True,
-    encoding="utf-8",
-    **kwargs,
-):
-    """This is the main entry point for Pexpect. Use this functio to start
+    command: str,
+    args: Any = None,
+    timeout: int = 30,
+    maxread: int = 2000,
+    searchwindowsize: Any = None,
+    logfile: Any = None,
+    cwd: Any = None,
+    env: Any = None,
+    ignore_sighup: bool = True,
+    echo: bool = True,
+    encoding: str = "utf-8",
+    **kwargs: Any,
+) -> Any:
+    """This is the main entry point for Pexpect. Use this function to start
     and control child applications.
 
     See https://github.com/pexpect/pexpect/blob/master/pexpect/pty_spawn.py
@@ -43,7 +45,7 @@ def spawn(
         args = []
     codec_errors = kwargs.get("codec_errors", kwargs.get("errors", "strict"))
     if pty is None:
-        command = shlex.split(command, posix=os.name == "posix")
+        command = shlex.split(command, posix=os.name == "posix")  # type:ignore[unreachable]
         command += args
         child = PopenSpawn(
             command,
@@ -90,7 +92,7 @@ def spawn(
 spawnu = spawn
 
 
-def which(filename) -> Optional[str]:
+def which(filename: str) -> Optional[str]:
     """This takes a given filename; tries to find it in the environment path;
     then checks if it is executable. This returns the full path to the filename
     if found and executable. Otherwise this returns None."""
@@ -105,11 +107,11 @@ def which(filename) -> Optional[str]:
     pathlist = p.split(os.pathsep)
     for path in pathlist:
         ff = os.path.join(path, filename)
-        if pty:
+        if pty is not None:
             if is_executable_file(ff):
                 return ff
         else:
-            pathext_str = os.environ.get("Pathext", ".exe;.com;.bat;.cmd")
+            pathext_str = os.environ.get("Pathext", ".exe;.com;.bat;.cmd")  # type:ignore[unreachable]
             pathext = pathext_str.split(os.pathsep) + [""]
             for ext in pathext:
                 if os.access(ff + ext, os.X_OK):

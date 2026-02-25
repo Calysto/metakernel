@@ -22,7 +22,7 @@ class HelpMagic(Magic):
             strings += [p.format(self.kernel.magic_prefixes["help"]) for p in prefixes]
         return sorted(strings)
 
-    def line_help(self, text):
+    def line_help(self, text: str) -> str | None:
         """
         %help TEXT - get help on the given text
 
@@ -33,9 +33,9 @@ class HelpMagic(Magic):
             %help dir
 
         """
-        return self.get_help_on(text, 0, False)
+        return self.get_text_help_on(text, 0, False)
 
-    def cell_help(self, text):
+    def cell_help(self, text: str) -> str | None:
         """
         %%help TEXT - get detailed help on the given text
 
@@ -47,9 +47,11 @@ class HelpMagic(Magic):
            %%help dir
 
         """
-        return self.get_help_on(text, 1, False)
+        return self.get_text_help_on(text, 1, False)
 
-    def get_help_on(self, text, level, none_on_fail=False, cursor_pos=-1):
+    def get_text_help_on(
+        self, text: str, level: int, none_on_fail: bool = False, cursor_pos: int = -1
+    ) -> str | None:
         """
         Examples
         ========
@@ -80,6 +82,7 @@ class HelpMagic(Magic):
                 if minfo["args"]:
                     info = self.kernel.parse_code(minfo["args"])
                 elif magic:
+                    assert isinstance(magic, Magic)
                     return magic.get_help(minfo["type"], minfo["name"], level)
 
             else:
@@ -90,6 +93,7 @@ class HelpMagic(Magic):
                 elif minfo["args"]:
                     info = self.kernel.parse_code(minfo["args"])
                 elif magic:
+                    assert isinstance(magic, Magic)
                     return magic.get_help(minfo["type"], minfo["name"], level)
                 else:
                     return (
@@ -97,6 +101,7 @@ class HelpMagic(Magic):
                         % (minfo["type"], minfo["name"])
                     )
             if magic:
+                assert isinstance(magic, Magic)
                 the_help = magic.get_help_on(info, level)
                 self.kernel.log.error("got")
                 self.kernel.log.error(the_help)
@@ -111,7 +116,7 @@ class HelpMagic(Magic):
         else:
             return self.kernel.get_kernel_help_on(info, level, none_on_fail)
 
-    def _prep_text(self, text):
+    def _prep_text(self, text: str) -> str:
         text = text.strip()
 
         magic = self.kernel.magic_prefixes["magic"]

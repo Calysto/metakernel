@@ -30,3 +30,21 @@ repos:
       - id: ruff-format
       - id: ruff-check
         args: ["--fix", "--show-fixes"]
+
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.6.14
+    hooks:
+      - id: uv-lock
+
+  - repo: https://github.com/crate-ci/typos
+    rev: "v1.42.0"
+    hooks:
+      - id: typos
+        args: []
+
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: "v1.10.0"
+    hooks:
+      - id: rst-backticks
+      - id: rst-directive-colons
+      - id: rst-inline-touching-normal

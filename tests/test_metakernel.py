@@ -146,7 +146,7 @@ def test_other_kernels() -> None:
     class SchemeKernel(MetaKernel):
         help_suffix = {}  # type: ignore[assignment,var-annotated]
 
-        def do_execute_direct(self, code):
+        def do_execute_direct(self, code, *args, **kwargs):
             return "OK"
 
     kernel = get_kernel(SchemeKernel)

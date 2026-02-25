@@ -7,15 +7,15 @@ import pydoc
 import sys
 from typing import Any
 
-import jedi
+import jedi  # type:ignore[import-untyped]
 from jedi import Interpreter
-from jedi.api.helpers import get_on_completion_name
-from parso import split_lines
+from jedi.api.helpers import get_on_completion_name  # type:ignore[import-untyped]
+from parso import split_lines  # type:ignore[attr-defined]
 
-from metakernel import ExceptionWrapper, Magic, option
+from metakernel import ExceptionWrapper, Magic, MetaKernel, option
 
 
-def exec_then_eval(code, env) -> Any:
+def exec_then_eval(code: str, env: dict[str, Any]) -> Any:
     import traceback
 
     try:
@@ -47,12 +47,12 @@ def exec_then_eval(code, env) -> Any:
 
 
 class PythonMagic(Magic):
-    def __init__(self, kernel) -> None:
+    def __init__(self, kernel: MetaKernel) -> None:
         super().__init__(kernel)
         self.env = globals()["__builtins__"].copy()
         self.retval: Any = None
 
-    def line_python(self, *args) -> None:
+    def line_python(self, *args: Any) -> None:
         """
         %python CODE - evaluate code as Python
 
@@ -71,7 +71,7 @@ class PythonMagic(Magic):
         self.retval = self.eval(code)
         self.env["retval"] = None
 
-    def eval(self, code) -> Any:
+    def eval(self, code: str) -> Any:
         import IPython.display
 
         import metakernel.display
@@ -96,7 +96,7 @@ class PythonMagic(Magic):
         default=False,
         help="Use the retval value from the Python cell as code in the kernel language.",
     )
-    def cell_python(self, eval_output=False) -> None:
+    def cell_python(self, eval_output: bool = False) -> None:
         """
         %%python - evaluate contents of cell as Python
 
@@ -144,13 +144,13 @@ class PythonMagic(Magic):
                 self.env["retval"] = None
                 self.evaluate = False
 
-    def post_process(self, retval) -> Any:
+    def post_process(self, retval: Any) -> Any:
         if retval is not None:
             return retval
         else:
             return self.retval
 
-    def get_completions(self, info) -> list:
+    def get_completions(self, info: dict[str, Any]) -> list[str]:
         """Get Python completions"""
         # https://github.com/davidhalter/jedi/blob/master/jedi/utils.py
         if jedi is None:
@@ -175,7 +175,9 @@ class PythonMagic(Magic):
 
         return [c[info["start"] :] for c in completions]
 
-    def get_help_on(self, info, level=0, none_on_fail=False) -> str | None:
+    def get_help_on(
+        self, info: dict[str, Any], level: int = 0, none_on_fail: bool = False
+    ) -> str | None:
         """Implement basic help for functions"""
         if not info["code"]:
             return None if none_on_fail else ""
@@ -204,5 +206,5 @@ class PythonMagic(Magic):
             return strhelp
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(PythonMagic)

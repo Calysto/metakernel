@@ -1,7 +1,7 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from metakernel import Magic
+from metakernel import Magic, MetaKernel
 
 
 class MatplotlibMagic(Magic):
@@ -9,7 +9,7 @@ class MatplotlibMagic(Magic):
     Magic for using matplotlib with kernels other than ipython.
     """
 
-    def line_matplotlib(self, backend) -> None:
+    def line_matplotlib(self, backend: str) -> None:
         """
         %matplotlib BACKEND - set the matplotlib backend to BACKEND
 
@@ -53,5 +53,5 @@ class MatplotlibMagic(Magic):
         imp.reload(matplotlib.backends.backend_webagg_core)
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(MatplotlibMagic)

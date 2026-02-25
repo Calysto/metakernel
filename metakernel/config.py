@@ -1,9 +1,10 @@
 import os
+from typing import Any
 
 from IPython.paths import get_ipython_dir
 
 
-def get_history_file(kernel):
+def get_history_file(kernel: Any) -> str:
     """Gets the history file for the kernel.
 
     Histories are stored in ~/.ipython/metakernel/history

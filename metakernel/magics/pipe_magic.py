@@ -41,7 +41,7 @@ def register_magics(kernel) -> None:
 
 
 def register_ipython_magics() -> None:
-    from IPython import get_ipython
+    from IPython import get_ipython  # type:ignore[attr-defined]
     from IPython.core.magic import register_cell_magic
 
     @register_cell_magic

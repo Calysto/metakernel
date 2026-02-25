@@ -13,10 +13,10 @@ try:
 except ImportError:
     widgets = None
 
-from metakernel import Magic
+from metakernel import Magic, MetaKernel
 
 
-def touch(fname, times=None) -> None:
+def touch(fname: str, times: Any = None) -> None:
     with open(fname, "a"):
         os.utime(fname, times)
 
@@ -30,7 +30,7 @@ class Activity:
         self.show_initial = True
         self.last_id = None
 
-    def load(self, filename) -> None:
+    def load(self, filename: str) -> None:
         if filename.startswith("~"):
             filename = os.path.expanduser(filename)
         filename = os.path.abspath(filename)
@@ -43,7 +43,7 @@ class Activity:
             self.results_filename = filename + ".results"
         touch(self.results_filename)
 
-    def load_json(self, json_text) -> None:
+    def load_json(self, json_text: str) -> None:
         # Allow use of widgets:
         if widgets is None:
             return
@@ -79,7 +79,7 @@ class Activity:
         else:
             raise Exception("not a valid 'activity': use ['poll']")
 
-    def use_question(self, index) -> None:
+    def use_question(self, index: int) -> None:
         self.set_question(self.questions[index].question)
         self.set_id(self.questions[index].id)
         self.results_html.layout.visibility = "hidden"
@@ -143,14 +143,14 @@ class Activity:
             [widgets.HBox([self.stack, right_stack]), self.output]
         )
 
-    def set_question(self, question) -> None:
+    def set_question(self, question: str) -> None:
         self.question_widget.value = "<h1>%s</h1>" % question
 
-    def set_id(self, id) -> None:
+    def set_id(self, id: Any) -> None:
         self.id_widget.value = "<p><b>Question ID</b>: %s</p>" % id
         self.id = id
 
-    def handle_results(self, sender) -> None:
+    def handle_results(self, sender: Any) -> None:
         # write out when we show the Results:
         self.handle_submit(sender)
         if self.last_id == self.questions[self.index].id:
@@ -195,7 +195,7 @@ class Activity:
                 print(sorted(choices.keys()))
                 print(barvalues)
 
-    def handle_submit(self, sender) -> None:
+    def handle_submit(self, sender: Any) -> None:
         import portalocker
 
         with portalocker.Lock(self.results_filename, "a+") as g:
@@ -214,13 +214,13 @@ class Activity:
         with self.output:
             print("Received: " + sender.description)
 
-    def handle_next(self, sender) -> None:
+    def handle_next(self, sender: Any) -> None:
         if self.index < len(self.questions) - 1:
             self.index += 1
             self.use_question(self.index)
             self.output.clear_output()
 
-    def handle_prev(self, sender) -> None:
+    def handle_prev(self, sender: Any) -> None:
         if self.index > 0:
             self.index -= 1
             self.use_question(self.index)
@@ -233,14 +233,14 @@ class Activity:
 
 
 class Question:
-    def __init__(self, id, question, options) -> None:
+    def __init__(self, id: Any, question: str, options: Any) -> None:
         self.id = id
         self.question = question
         self.options = options
 
 
 class ActivityMagic(Magic):
-    def line_activity(self, filename, mode=None) -> None:
+    def line_activity(self, filename: str, mode: Any = None) -> None:
         """
         %activity FILENAME - run a widget-based activity
           (poll, classroom response, clicker-like activity)
@@ -252,7 +252,7 @@ class ActivityMagic(Magic):
             %activity /home/teacher/activity1 new
             %activity /home/teacher/activity1 edit
         """
-        from IPython import get_ipython
+        from IPython import get_ipython  # type:ignore[attr-defined]
 
         if mode == "new":
             text = '''
@@ -311,7 +311,7 @@ class ActivityMagic(Magic):
             activity.load(filename)
             activity.render()
 
-    def cell_activity(self, filename) -> None:
+    def cell_activity(self, filename: str) -> None:
         """
         %%activity FILENAME - make an activity from
           a JSON structure
@@ -349,7 +349,7 @@ class ActivityMagic(Magic):
         self.evaluate = False
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(ActivityMagic)
 
 

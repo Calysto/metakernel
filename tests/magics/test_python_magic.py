@@ -45,27 +45,27 @@ def test_python_magic3() -> None:
     kernel = get_kernel()
     kernel.do_execute("%%python -e\n1 + 2", None)
     magic = kernel.get_magic("%%python")
-    assert magic.retval is None
+    assert magic.retval is None  # type:ignore[attr-defined]
 
     kernel = get_kernel()
     kernel.do_execute("%%python\n1 + 2", None)
     magic = kernel.get_magic("%%python")
-    assert magic.retval == 3
+    assert magic.retval == 3  # type:ignore[attr-defined]
 
     kernel = get_kernel()
     kernel.do_execute("%%python\n1 + 2\n2 + 3", None)
     magic = kernel.get_magic("%%python")
-    assert magic.retval == 5
+    assert magic.retval == 5  # type:ignore[attr-defined]
 
     kernel = get_kernel()
     kernel.do_execute("%%python\nretval = 1 + 2\n2 + 3", None)
     magic = kernel.get_magic("%%python")
-    assert magic.retval == 3
+    assert magic.retval == 3  # type:ignore[attr-defined]
 
     kernel = get_kernel()
     kernel.do_execute("%%python\nimport math", None)
     magic = kernel.get_magic("%%python")
-    assert magic.retval is None
+    assert magic.retval is None  # type:ignore[attr-defined]
 
 
 def test_python_magic4() -> None:

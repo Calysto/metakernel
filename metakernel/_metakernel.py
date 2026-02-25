@@ -12,7 +12,7 @@ import sys
 import warnings
 from collections import OrderedDict
 from subprocess import CalledProcessError
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import comm
 from ipykernel.kernelapp import IPKernelApp
@@ -20,7 +20,7 @@ from ipykernel.kernelbase import Kernel
 from IPython.core.formatters import DisplayFormatter
 from IPython.display import publish_display_data
 from IPython.paths import get_ipython_dir
-from IPython.utils.tempdir import TemporaryDirectory
+from IPython.utils.tempdir import TemporaryDirectory  # type:ignore[attr-defined]
 from jupyter_core.paths import jupyter_config_dir, jupyter_config_path
 from traitlets import Dict, Unicode
 from traitlets.config import Application
@@ -28,13 +28,16 @@ from traitlets.config import Application
 from .config import get_history_file, get_local_magics_dir
 from .parser import Parser
 
+if TYPE_CHECKING:
+    from .magic import Magic
+
 warnings.filterwarnings("ignore", module="IPython.html.widgets")
 
 PY3 = sys.version_info[0] == 3
 
 try:
-    import ipywidgets as widgets
-    from ipywidgets.widgets.widget import Widget
+    import ipywidgets as widgets  #  type:ignore[import-not-found]
+    from ipywidgets.widgets.widget import Widget  #  type:ignore[import-not-found]
 except ImportError:
     Widget = None
 
@@ -50,7 +53,7 @@ class ExceptionWrapper:
     When the return value of your execute is an instance of this, an error will be thrown similar to Ipykernel
     """
 
-    def __init__(self, ename, evalue, traceback) -> None:
+    def __init__(self, ename: str, evalue: Any, traceback: Any) -> None:
         self.ename = ename
         self.evalue = evalue
         self.traceback = traceback
@@ -59,13 +62,13 @@ class ExceptionWrapper:
         return f"{self.ename}: {self.evalue}\n{self.traceback}"
 
 
-def lazy_import_handle_comm_opened(*args, **kwargs) -> None:
+def lazy_import_handle_comm_opened(*args: Any, **kwargs: Any) -> None:
     if Widget is None:
         return
     Widget.handle_comm_opened(*args, **kwargs)
 
 
-def get_metakernel():
+def get_metakernel() -> MetaKernel | None:
     """
     Get the MetaKernel instance.
     """
@@ -104,7 +107,7 @@ class MetaKernel(Kernel):
     meta_kernel = None
 
     @classmethod
-    def run_as_main(cls, *args, **kwargs) -> None:
+    def run_as_main(cls, *args: Any, **kwargs: Any) -> None:
         """Launch or install a metakernel.
 
         Modules implementing a metakernel subclass can use the following lines:
@@ -115,16 +118,16 @@ class MetaKernel(Kernel):
         kwargs["app_name"] = cls.app_name
         MetaKernelApp.launch_instance(kernel_class=cls, *args, **kwargs)  # noqa: B026
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)  # type:ignore[no-untyped-call]
         if MetaKernel.meta_kernel is None:
             MetaKernel.meta_kernel = self
-        if self.log is None:  # type: ignore[has-type]
+        if self.log is None:
             # This occurs if we call as a stand-alone kernel
             # (eg, not as a process)
             # FIXME: take care of input/output, eg StringIO
             #        make work without a session
-            self.log = logging.Logger(".metakernel")
+            self.log = logging.Logger(".metakernel")  # type:ignore[unreachable]
         else:
             # Write has already been set
             try:
@@ -134,12 +137,12 @@ class MetaKernel(Kernel):
         self.redirect_to_log = False
         self.shell = None
         self.sticky_magics: OrderedDict[str, str] = OrderedDict()
-        self._i = None
-        self._ii = None
-        self._iii = None
-        self._ = None
-        self.__ = None
-        self.___ = None
+        self._i: str | None = None
+        self._ii: str | None = None
+        self._iii: str | None = None
+        self._: str | None = None
+        self.__: str | None = None
+        self.___: str | None = None
         self.max_hist_cache = 1000
         self.hist_cache: list[str] = []
         kwargs = {"parent": self, "kernel": self}
@@ -186,15 +189,15 @@ class MetaKernel(Kernel):
             self.log.setLevel(level)
             self.redirect_to_log = False
 
-    def makeSubkernel(self, kernel) -> None:
+    def makeSubkernel(self, kernel: MetaKernel) -> None:
         """
         Run this method in an IPython kernel to set
         this kernel's input/output settings.
         """
-        from IPython import get_ipython
+        from IPython import get_ipython  # type:ignore[attr-defined]
         from IPython.display import display
 
-        shell = get_ipython()
+        shell = get_ipython()  # type:ignore[no-untyped-call]
         if shell:  # we are running under an IPython kernel
             self.session = shell.kernel.session
             self.Display = display  # type: ignore[method-assign]
@@ -207,19 +210,19 @@ class MetaKernel(Kernel):
     #####################################
     # Methods which provide kernel - specific behavior
 
-    def set_variable(self, name, value):
+    def set_variable(self, name: str, value: Any) -> None:
         """
         Set a variable to a Python-typed value.
         """
         pass
 
-    def get_variable(self, name):
+    def get_variable(self, name: str) -> Any:
         """
         Lookup a variable name and return a Python-typed value.
         """
         pass
 
-    def repr(self, item) -> str:
+    def repr(self, item: Any) -> str:
         """The repr of the kernel."""
         return repr(item)
 
@@ -227,14 +230,16 @@ class MetaKernel(Kernel):
         """Get the usage statement for the kernel."""
         return "This is a usage statement."
 
-    def get_kernel_help_on(self, info, level=0, none_on_fail=False) -> str | None:
+    def get_kernel_help_on(
+        self, info: dict[str, Any], level: int = 0, none_on_fail: bool = False
+    ) -> str | None:
         """Get help on an object.  Called by the help magic."""
         if none_on_fail:
             return None
         else:
             return "Sorry, no help is available on '%s'." % info["code"]
 
-    def handle_plot_settings(self):
+    def handle_plot_settings(self) -> None:
         """Handle the current plot settings"""
         pass
 
@@ -245,19 +250,19 @@ class MetaKernel(Kernel):
         base = get_ipython_dir()
         return os.path.join(base, "metakernel", "magics")
 
-    def get_completions(self, info) -> list:
+    def get_completions(self, info: dict[str, Any]) -> list[str]:
         """
         Get completions from kernel based on info dict.
         """
         return []
 
-    def do_execute_direct(self, code, silent=False):
+    def do_execute_direct(self, code: str, silent: bool = False) -> Any:
         """
         Execute code in the kernel language.
         """
         pass
 
-    def do_execute_file(self, filename):
+    def do_execute_file(self, filename: str) -> Any:
         """
         Default code for running a file. Just opens the file, and sends
         the text to do_execute_direct.
@@ -265,7 +270,7 @@ class MetaKernel(Kernel):
         with open(filename) as f:
             return self.do_execute_direct("".join(f.readlines()))
 
-    def do_execute_meta(self, code) -> Any:
+    def do_execute_meta(self, code: str) -> Any:
         """
         Execute meta code in the kernel. This uses the execute infrastructure
         but allows JavaScript to talk directly to the kernel bypassing normal
@@ -289,7 +294,7 @@ class MetaKernel(Kernel):
         else:
             raise Exception("Unknown meta command: '%s'" % code)
 
-    def initialize_debug(self, code) -> str:
+    def initialize_debug(self, code: str) -> str:
         """
         This function is used with the %%debug magic for highlighting
         lines of code, and for initializing debug functions.
@@ -299,14 +304,14 @@ class MetaKernel(Kernel):
         # return "highlight: [%s, %s, %s, %s]" % (line1, col1, line2, col2)
         return ""
 
-    def do_function_direct(self, function_name, arg):
+    def do_function_direct(self, function_name: str, arg: Any) -> Any:
         """
         Call a function in the kernel language with args (as a single item).
         """
         f = self.do_execute_direct(function_name)
         return f(arg)
 
-    def restart_kernel(self):
+    def restart_kernel(self) -> None:
         """Restart the kernel"""
         pass
 
@@ -315,12 +320,15 @@ class MetaKernel(Kernel):
 
     def do_execute(
         self,
-        code,
-        silent=False,
-        store_history=True,
-        user_expressions=None,
-        allow_stdin=False,
-    ) -> dict:
+        code: Any,
+        silent: Any = False,
+        store_history: Any = None,
+        user_expressions: Any = None,
+        allow_stdin: Any = None,
+        *,
+        cell_meta: Any = None,
+        cell_id: Any = None,
+    ) -> Any:
         """Handle code execution.
 
         https://jupyter-client.readthedocs.io/en/stable/messaging.html#execute
@@ -388,7 +396,7 @@ class MetaKernel(Kernel):
                     if not magic.evaluate:
                         break
                 else:
-                    break
+                    break  # type:ignore[unreachable]
             # Execute code, if any:
             if (magic is None or magic.evaluate) and code.strip() != "":
                 if code.startswith("~~META~~:"):
@@ -411,7 +419,7 @@ class MetaKernel(Kernel):
 
         return self.kernel_resp
 
-    def post_execute(self, retval, code, silent) -> None:
+    def post_execute(self, retval: Any, code: str, silent: bool) -> None:
         """Post-execution actions
 
         Handle special kernel variables and display response if not silent.
@@ -445,7 +453,7 @@ class MetaKernel(Kernel):
                     self.send_response(self.iopub_socket, "error", content)
             else:
                 try:
-                    data = self._display_formatter.format(retval)
+                    data = self._display_formatter.format(retval)  # type:ignore[no-untyped-call]
                 except Exception as e:
                     self.Error(e)
                     return
@@ -462,16 +470,16 @@ class MetaKernel(Kernel):
 
     def do_history(
         self,
-        hist_access_type,
-        output,
-        raw,
-        session=None,
-        start=None,
-        stop=None,
-        n=None,
-        pattern=None,
-        unique=False,
-    ) -> dict[str, str | list]:
+        hist_access_type: str | None,
+        output: str | None,
+        raw: bool | None,
+        session: Any = None,
+        start: int | None = None,
+        stop: int | None = None,
+        n: int | None = None,
+        pattern: Any = None,
+        unique: bool = False,
+    ) -> dict[str, str | list[Any]]:
         """
         Access history at startup.
 
@@ -481,7 +489,7 @@ class MetaKernel(Kernel):
             self.hist_cache = json.loads(fid.read() or "[]")
         return {"status": "ok", "history": [(None, None, h) for h in self.hist_cache]}
 
-    def do_shutdown(self, restart) -> dict[str, str]:
+    def do_shutdown(self, restart: bool) -> dict[str, Any]:
         """
         Shut down the app gracefully, saving history.
 
@@ -497,7 +505,7 @@ class MetaKernel(Kernel):
             self.Print("Done!")
         return {"status": "ok", "restart": restart}
 
-    def do_is_complete(self, code) -> dict[str, str]:
+    def do_is_complete(self, code: str) -> dict[str, str]:
         """
         Given code as string, returns dictionary with 'status' representing
         whether code is ready to evaluate. Possible values for status are:
@@ -529,7 +537,7 @@ class MetaKernel(Kernel):
         else:
             return {"status": "incomplete"}
 
-    def do_complete(self, code, cursor_pos) -> dict:
+    def do_complete(self, code: str, cursor_pos: int) -> dict[str, Any]:
         """Handle code completion for the kernel.
 
         https://jupyter-client.readthedocs.io/en/stable/messaging.html#completion
@@ -592,8 +600,8 @@ class MetaKernel(Kernel):
         return content
 
     def do_inspect(
-        self, code, cursor_pos, detail_level=0, omit_sections=()
-    ) -> dict | None:
+        self, code: str, cursor_pos: int, detail_level: int = 0, omit_sections: Any = ()
+    ) -> dict[str, Any] | None:
         """Object introspection.
 
         https://jupyter-client.readthedocs.io/en/stable/messaging.html#introspection
@@ -618,11 +626,11 @@ class MetaKernel(Kernel):
 
         return content
 
-    def clear_output(self, wait=False) -> None:
+    def clear_output(self, wait: bool = False) -> None:
         """Clear the output of the kernel."""
         self.send_response(self.iopub_socket, "clear_output", {"wait": wait})
 
-    def Display(self, *objects, **kwargs) -> None:
+    def Display(self, *objects: Any, **kwargs: Any) -> None:
         """Display one or more objects using rich display.
 
         Supports a `clear_output` keyword argument that clears the output before displaying.
@@ -648,14 +656,14 @@ class MetaKernel(Kernel):
             else:
                 self.log.debug("Display Data")
                 try:
-                    data = self._display_formatter.format(item)
+                    data = self._display_formatter.format(item)  # type:ignore[no-untyped-call]
                 except Exception as e:
                     self.Error(e)
                     return
                 content = {"data": data[0], "metadata": data[1]}
                 self.send_response(self.iopub_socket, "display_data", content)
 
-    def Print(self, *objects, **kwargs) -> None:
+    def Print(self, *objects: Any, **kwargs: Any) -> None:
         """Print `objects` to the iopub stream, separated by `sep` and followed by `end`.
 
         Items can be strings or `Widget` instances.
@@ -674,7 +682,7 @@ class MetaKernel(Kernel):
         else:
             self.send_response(self.iopub_socket, "stream", stream_content)
 
-    def Write(self, message) -> None:
+    def Write(self, message: str) -> None:
         """Write message directly to the iopub stdout with no added end character."""
         stream_content = {"name": "stdout", "text": message}
         self.log.debug("Write: %s" % message)
@@ -683,7 +691,7 @@ class MetaKernel(Kernel):
         else:
             self.send_response(self.iopub_socket, "stream", stream_content)
 
-    def Error(self, *objects, **kwargs) -> None:
+    def Error(self, *objects: Any, **kwargs: Any) -> None:
         """Print `objects` to stdout, separated by `sep` and followed by `end`.
 
         Objects are cast to strings.
@@ -696,7 +704,7 @@ class MetaKernel(Kernel):
         else:
             self.send_response(self.iopub_socket, "stream", stream_content)
 
-    def Error_display(self, *objects, **kwargs) -> None:
+    def Error_display(self, *objects: Any, **kwargs: Any) -> None:
         """Print `objects` to stdout is they area strings, separated by `sep` and followed by `end`.
         All other objects are rendered using the Display method
         Objects are cast to strings.
@@ -769,7 +777,7 @@ class MetaKernel(Kernel):
             except Exception as e:
                 self.log.error("Can't load '%s': error: %s" % (magic, e))
 
-    def register_magics(self, magic_klass) -> None:
+    def register_magics(self, magic_klass: type[Magic]) -> None:
         """Register magics for a given magic_klass."""
         magic = magic_klass(self)
         line_magics = magic.get_magics("line")
@@ -779,40 +787,48 @@ class MetaKernel(Kernel):
         for name in cell_magics:
             self.cell_magics[name] = magic
 
-    def send_response(self, *args, **kwargs) -> None:
+    def send_response(self, *args: Any, **kwargs: Any) -> None:
         ### if we are running via %parallel, we might not have a
         ### session
         if self.session:
-            super().send_response(*args, **kwargs)
+            super().send_response(*args, **kwargs)  # type:ignore[no-untyped-call]
 
-    def call_magic(self, line):
+    def call_magic(self, line: str) -> Magic:
         """
         Given an line, such as "%download http://example.com/", parse
         and execute magic.
         """
         return self.get_magic(line)
 
-    def get_magic(self, text):
+    def get_magic(self, text: str) -> Magic:
         ## FIXME: Bad name, use call_magic instead.
         # if first line matches a magic,
         # call magic.call_magic() and return magic object
         info = self.parse_code(text)
         magic = self.line_magics["magic"]
-        return magic.get_magic(info)
+        return magic.get_magic(info)  # type:ignore[no-any-return]
 
-    def get_magic_args(self, text):
+    def get_magic_args(self, text: str) -> Magic:
         # if first line matches a magic,
         # call magic.call_magic() and return magic args
         info = self.parse_code(text)
         magic = self.line_magics["magic"]
-        return magic.get_magic(info, get_args=True)
+        return magic.get_magic(info, get_args=True)  # type:ignore[no-any-return]
 
-    def get_help_on(self, expr, level=0, none_on_fail=False, cursor_pos=-1):
+    def get_help_on(
+        self,
+        expr: str,
+        level: int = 0,
+        none_on_fail: bool = False,
+        cursor_pos: int = -1,
+    ) -> Any:
         """Get help for an expression using the help magic."""
         help_magic = self.line_magics["help"]
-        return help_magic.get_help_on(expr, level, none_on_fail, cursor_pos)
+        return help_magic.get_text_help_on(expr, level, none_on_fail, cursor_pos)
 
-    def parse_code(self, code, cursor_start=0, cursor_end=-1):
+    def parse_code(
+        self, code: str, cursor_start: int = 0, cursor_end: int = -1
+    ) -> dict[str, Any]:
         """Parse code using our parser."""
         return self.parser.parse_code(code, cursor_start, cursor_end)
 
@@ -822,8 +838,8 @@ class MetaKernel(Kernel):
             retval += key + " " + self.sticky_magics[key] + "\n"
         return retval
 
-    def _send_shell_response(self, socket, stream_type, content) -> None:
-        publish_display_data({"text/plain": content["text"]})
+    def _send_shell_response(self, socket: Any, stream_type: str, content: Any) -> None:
+        publish_display_data({"text/plain": content["text"]})  # type:ignore[no-untyped-call]
 
 
 class MetaKernelApp(IPKernelApp):
@@ -831,11 +847,11 @@ class MetaKernelApp(IPKernelApp):
 
     config_dir = Unicode()
 
-    def _config_dir_default(self):
+    def _config_dir_default(self) -> str:
         return jupyter_config_dir()
 
     @property
-    def config_file_paths(self):
+    def config_file_paths(self) -> list[str]:  # type:ignore[override]
         path = jupyter_config_path()
         if self.config_dir not in path:
             path.insert(0, self.config_dir)
@@ -843,22 +859,22 @@ class MetaKernelApp(IPKernelApp):
         return path
 
     @classmethod
-    def launch_instance(cls, *args, **kwargs) -> None:
+    def launch_instance(cls, *args: Any, **kwargs: Any) -> None:
         cls.name = kwargs.pop("app_name", "metakernel")
         super().launch_instance(*args, **kwargs)
 
     @property
-    def subcommands(self) -> dict[str, tuple]:
+    def subcommands(self) -> dict[str, Any]:  # type:ignore[override]
         # Slightly awkward way to pass the actual kernel class to the install
         # subcommand.
 
         class KernelInstallerApp(Application):
             kernel_class = self.kernel_class
 
-            def initialize(self, argv=None):
+            def initialize(self, argv: Any = None) -> None:
                 self.argv = argv
 
-            def start(self):
+            def start(self) -> None:
                 kernel_spec = self.kernel_class().kernel_json
                 with TemporaryDirectory() as td:
                     dirname = os.path.join(td, kernel_spec["name"])
@@ -875,7 +891,7 @@ class MetaKernelApp(IPKernelApp):
                         except OSError:
                             data = pkgutil.get_data("metakernel", "images/" + filename)
                         with open(os.path.join(dirname, filename), "wb") as f:
-                            f.write(data)
+                            f.write(data)  # type:ignore[arg-type]
                     try:
                         subprocess.check_call(
                             [sys.executable, "-m", "jupyter", "kernelspec", "install"]
@@ -888,7 +904,7 @@ class MetaKernelApp(IPKernelApp):
         return {"install": (KernelInstallerApp, "Install this kernel")}
 
 
-def _split_magics_code(code, prefixes) -> tuple[str, str]:
+def _split_magics_code(code: str, prefixes: dict[str, Any]) -> tuple[str, str]:
     lines = code.split("\n")
     ret_magics = []
     ret_code = []
@@ -910,14 +926,14 @@ def _split_magics_code(code, prefixes) -> tuple[str, str]:
     return (ret_magics_str, ret_code_str)
 
 
-def format_message(*objects, **kwargs):
+def format_message(*objects: Any, **kwargs: Any) -> str:
     """
     Format a message like print() does.
     """
-    objects = [str(i) for i in objects]
-    sep = kwargs.get("sep", " ")
-    end = kwargs.get("end", "\n")
-    return sep.join(objects) + end
+    str_objects = [str(i) for i in objects]
+    sep: str = kwargs.get("sep", " ")
+    end: str = kwargs.get("end", "\n")
+    return sep.join(str_objects) + end
 
 
 class IPythonKernel(MetaKernel):
@@ -934,7 +950,7 @@ class IPythonKernel(MetaKernel):
     def __init__(self) -> None:
         from metakernel.magics.magic_magic import MagicMagic
 
-        self.line_magics = {"magic": MagicMagic(self)}
+        self.line_magics: dict[str, Magic] = {"magic": MagicMagic(self)}
         self.cell_magics = {}
         self.parser = Parser(
             self.identifier_regex,
@@ -944,22 +960,22 @@ class IPythonKernel(MetaKernel):
         )
         self.shell = None
 
-    def Display(self, *objects, **kwargs):
+    def Display(self, *objects: Any, **kwargs: Any) -> Any:
         """Display an object in the kernel, using `IPython.display`."""
         from IPython.display import display
 
-        return display(*objects, **kwargs)
+        return display(*objects, **kwargs)  # type:ignore[no-untyped-call]
 
-    def Error(self, *objects, **kwargs) -> None:
+    def Error(self, *objects: Any, **kwargs: Any) -> None:
         """Print `objects` to stderr, separated by `sep` and followed by `end`."""
         sys.stderr.write(format_message(*objects, **kwargs))
 
-    def Print(self, *objects, **kwargs) -> None:
+    def Print(self, *objects: Any, **kwargs: Any) -> None:
         """Print `objects` to stdout, separated by `sep` and followed by `end`."""
         sys.stdout.write(format_message(*objects, **kwargs))
 
 
-def register_ipython_magics(*magics) -> None:
+def register_ipython_magics(*magics: str) -> None:
     """
     Loads all magics (or specified magics) that have a
     register_ipython_magics function defined.

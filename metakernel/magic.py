@@ -7,7 +7,12 @@ import shlex
 import sys
 import traceback
 from ast import literal_eval as safe_eval
-from typing import NoReturn
+from typing import TYPE_CHECKING, Any, Callable, NoReturn, TypeVar
+
+if TYPE_CHECKING:
+    from . import MetaKernel
+
+_F = TypeVar("_F", bound=Callable[..., Any])
 
 _maxsize = sys.maxsize
 
@@ -15,10 +20,10 @@ PY3 = sys.version_info[0] == 3
 
 
 class MagicOptionParser(optparse.OptionParser):
-    def error(self, msg) -> NoReturn:
+    def error(self, msg: str) -> NoReturn:
         raise Exception('Magic Parse error: "%s"' % msg)
 
-    def exit(self, status=0, msg=None) -> NoReturn:
+    def exit(self, status: int = 0, msg: Any = None) -> NoReturn:
         if msg:
             sys.stderr.write(msg)
         raise Exception(msg)
@@ -39,12 +44,12 @@ class Magic:
     writing a new magic inside magics/matplotlib_magic.py
     """
 
-    def __init__(self, kernel) -> None:
+    def __init__(self, kernel: MetaKernel) -> None:
         self.kernel = kernel
         self.evaluate = True
         self.code = ""
 
-    def get_args(self, mtype, name, code, args) -> tuple | Magic:
+    def get_args(self, mtype: str, name: str, code: str, args: Any) -> Any:
         self.code = code
         old_args = args
         mtype = mtype.replace("sticky", "cell")
@@ -67,7 +72,7 @@ class Magic:
 
         return (args, kwargs, old_args)
 
-    def call_magic(self, mtype, name, code, args) -> Magic:
+    def call_magic(self, mtype: str, name: str, code: str, args: Any) -> Magic:
         self.code = code
         old_args = args
         mtype = mtype.replace("sticky", "cell")
@@ -106,7 +111,7 @@ class Magic:
             return Magic(self.kernel)
         return self
 
-    def get_help(self, mtype, name, level=0) -> str:
+    def get_help(self, mtype: str, name: str, level: int = 0) -> str:
         if hasattr(self, mtype + "_" + name):
             func = getattr(self, mtype + "_" + name)
             if level == 0:
@@ -124,16 +129,16 @@ class Magic:
         else:
             return "No such magic '%s' for %ss." % (name, mtype)
 
-    def get_help_on(self, info, level=0):
+    def get_help_on(self, info: dict[str, Any], level: int = 0) -> str | None:
         return "Sorry, no help is available on '%s'." % info["code"]
 
-    def get_completions(self, info) -> list:
+    def get_completions(self, info: dict[str, Any]) -> list[str]:
         """
         Get completions based on info dict from magic.
         """
         return []
 
-    def get_magics(self, mtype) -> list:
+    def get_magics(self, mtype: str) -> list[str]:
         magics = []
         for name in dir(self):
             if name.startswith(mtype + "_"):
@@ -143,18 +148,18 @@ class Magic:
     def get_code(self) -> str:
         return self.code
 
-    def post_process(self, retval):
+    def post_process(self, retval: Any) -> Any:
         return retval
 
 
-def option(*args, **kwargs):
+def option(*args: Any, **kwargs: Any) -> Callable[[_F], _F]:
     """Return decorator that adds a magic option to a function."""
 
-    def decorator(func):
+    def decorator(func: _F) -> _F:
         help_text = ""
         if not getattr(func, "has_options", False):
-            func.has_options = True
-            func.options = []
+            func.has_options = True  # type:ignore[attr-defined]
+            func.options = []  # type:ignore[attr-defined]
             help_text += "Options:\n-------\n"
         try:
             option = optparse.Option(*args, **kwargs)
@@ -162,7 +167,7 @@ def option(*args, **kwargs):
             help_text += args[0] + "\n"
         else:
             help_text += _format_option(option) + "\n"
-            func.options.append(option)
+            func.options.append(option)  # type:ignore[attr-defined]
         if func.__doc__:
             func.__doc__ += _indent(func.__doc__, help_text)
         else:
@@ -172,7 +177,9 @@ def option(*args, **kwargs):
     return decorator
 
 
-def _parse_args(func, args, usage=None) -> tuple[list, dict]:
+def _parse_args(
+    func: Any, args: Any, usage: Any = None
+) -> tuple[list[Any], dict[str, Any]]:
     """Parse the arguments given to a magic function"""
     if isinstance(args, list):
         args = " ".join(args)
@@ -217,7 +224,7 @@ def _parse_args(func, args, usage=None) -> tuple[list, dict]:
     return new_args, kwargs
 
 
-def _split_args(args) -> list:
+def _split_args(args: Any) -> list[Any]:
     try:
         # do not use posix mode, to avoid eating quote characters
         args = shlex.split(args, posix=False)
@@ -258,7 +265,7 @@ def _split_args(args) -> list:
     return new_args
 
 
-def _format_option(option):
+def _format_option(option: Any) -> str:
     output = ""
     if option._short_opts:
         output = option._short_opts[0] + " "
@@ -267,10 +274,10 @@ def _format_option(option):
     output += option.help + " "
     if not option.default == ("NO", "DEFAULT"):
         output += "[default: %s]" % option.default
-    return output
+    return str(output)
 
 
-def _trim(docstring, return_lines=False) -> str | list:
+def _trim(docstring: str, return_lines: bool = False) -> str | list[str]:
     """
     Trim of unnecessary leading indentations.
     """
@@ -298,7 +305,7 @@ def _trim(docstring, return_lines=False) -> str | list:
         return "\n".join(trimmed)
 
 
-def _min_indent(lines) -> int:
+def _min_indent(lines: list[str]) -> int:
     """
     Determine minimum indentation (first line doesn't count):
     """
@@ -310,7 +317,7 @@ def _min_indent(lines) -> int:
     return indent
 
 
-def _indent(docstring, text) -> str:
+def _indent(docstring: str, text: str) -> str:
     """
     Returns text indented at appropriate indententation level.
     """

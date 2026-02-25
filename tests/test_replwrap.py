@@ -95,7 +95,7 @@ class REPLWrapTestCase(unittest.TestCase):
     def test_bracketed_paste(self) -> None:
         # Readline paste bracketing is easily toggled in bash, but can be harder elsewhere
         # This tests that run_command() still works with it enabled (the default for readline,
-        # but overriden by bash and python)
+        # but overridden by bash and python)
         bash = replwrap.bash()
         bash.run_command("bind 'set enable-bracketed-paste on'")
         res = bash.run_command("echo '1 2\n3 4'")

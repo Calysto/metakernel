@@ -15,10 +15,10 @@ class Parser:
 
     def __init__(
         self,
-        identifier_regex=IDENTIFIER_REGEX,
-        function_call_regex=FUNC_CALL_REGEX,
-        magic_prefixes=MAGIC_PREFIXES,
-        help_suffix=HELP_SUFFIX,
+        identifier_regex: str = IDENTIFIER_REGEX,
+        function_call_regex: str = FUNC_CALL_REGEX,
+        magic_prefixes: dict[str, Any] = MAGIC_PREFIXES,
+        help_suffix: str = HELP_SUFFIX,
     ) -> None:
         """Set up the regexes and magic characters.
 
@@ -56,7 +56,7 @@ class Parser:
         self.magic_prefixes = magic_prefixes
         self.help_suffix = help_suffix
 
-    def parse_code(self, code, start=0, end=-1) -> dict:
+    def parse_code(self, code: str, start: int = 0, end: int = -1) -> dict[str, Any]:
         """Parse an input buffer, extracting relevant information.
 
         Parameters
@@ -147,7 +147,7 @@ class Parser:
         info["path_matches"] = self._get_path_matches(info)
         return info
 
-    def _parse_magic(self, code) -> dict:
+    def _parse_magic(self, code: str) -> dict[str, Any]:
         """Find and parse magic calls in the buffer.
 
         Parameters
@@ -255,7 +255,7 @@ class Parser:
             info["code"] = ""
         return info
 
-    def _get_path_matches(self, info) -> list:
+    def _get_path_matches(self, info: dict[str, Any]) -> list[str]:
         """Get a list of matching file system paths.
 
         There are 3 types of matches:
@@ -266,12 +266,12 @@ class Parser:
         line = info["line"]
         obj = info["obj"]
 
-        def get_regex_matches(regex):
+        def get_regex_matches(regex: Any) -> list[str]:
             matches = []
-            path = re.findall(regex, line.replace(r"\ ", " "))
+            path_list = re.findall(regex, line.replace(r"\ ", " "))
 
-            if path:
-                path = "".join(path[0])
+            if path_list:
+                path = "".join(path_list[0])
                 matches = _complete_path(path)
 
                 if len(path) > len(obj) and not path == ".":
@@ -291,7 +291,7 @@ class Parser:
 
         return list(set(matches))
 
-    def escape_path(self, path):
+    def escape_path(self, path: str) -> str:
         """Escape an unquoted path.
 
         Kernels may modify path escaping by overwriting this method in their
@@ -303,7 +303,7 @@ class Parser:
             return path.replace(" ", r"\ ")
 
 
-def _listdir(root) -> list:
+def _listdir(root: str) -> list[str]:
     "List directory 'root' appending the path separator to subdirs."
     res = []
     root = os.path.expanduser(root)
@@ -318,7 +318,7 @@ def _listdir(root) -> list:
     return res
 
 
-def _complete_path(path=None) -> list:
+def _complete_path(path: Any = None) -> list[str]:
     """Perform completion of filesystem path.
     http://stackoverflow.com/questions/5637124/tab-completion-in-pythons-raw-input
     """

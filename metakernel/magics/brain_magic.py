@@ -38,7 +38,7 @@ def register_ipython_magics() -> None:
 
     @register_cell_magic
     def brain(line, cell):
-        from IPython import get_ipython
+        from IPython import get_ipython  # type:ignore[attr-defined]
 
         ipkernel = get_ipython()
         magic.code = cell

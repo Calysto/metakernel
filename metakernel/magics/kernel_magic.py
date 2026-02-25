@@ -133,7 +133,7 @@ def register_ipython_magics() -> None:
         magic.line_kernel(module_name, class_name, kernel_name)
 
     @register_cell_magic
-    def kx(line, cell):  # type: ignore[no-redef]
+    def kx(line, cell):
         """
         line is kernel_name, or "default"
         """

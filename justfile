@@ -7,7 +7,7 @@ default:
 
 # Install for development
 install:
-    uv sync --all-groups
+    uv sync
     uv tool run pre-commit install
 
 # Clean build artifacts
@@ -49,7 +49,7 @@ help:
 
 # Run type checking
 typing:
-    uv run mypy metakernel/
+    uv run --group typing mypy . --install-types --non-interactive
 
 # Run linter
 lint:

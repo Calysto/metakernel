@@ -81,7 +81,7 @@ release = metakernel.__version__
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = []
+# exclude_patterns = []
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 # default_role = None
@@ -108,7 +108,7 @@ pygments_style = "sphinx"
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-import sphinx_bootstrap_theme  # noqa: E402
+import sphinx_bootstrap_theme  # type:ignore[import-not-found] # noqa: E402
 
 html_theme = "bootstrap"
 
@@ -200,14 +200,14 @@ htmlhelp_basename = "Metakerneldoc"
 
 # -- Options for LaTeX output --------------------------------------------------
 
-latex_elements = {
-    # The paper size ('letterpaper' or 'a4paper').
-    #'papersize': 'letterpaper',
-    # The font size ('10pt', '11pt' or '12pt').
-    #'pointsize': '10pt',
-    # Additional stuff for the LaTeX preamble.
-    #'preamble': '',
-}
+# latex_elements = {
+# The paper size ('letterpaper' or 'a4paper').
+#'papersize': 'letterpaper',
+# The font size ('10pt', '11pt' or '12pt').
+#'pointsize': '10pt',
+# Additional stuff for the LaTeX preamble.
+#'preamble': '',
+# }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
@@ -294,7 +294,7 @@ todo_include_todos = False
 
 autoclass_content = "both"
 autodoc_member_order = "bysource"
-autodoc_default_flags = []
+# autodoc_default_flags = []
 
 # autodoc_default_flags = ['members', 'undoc-members']
 

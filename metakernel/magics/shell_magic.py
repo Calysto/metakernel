@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 import os
-from typing import Optional
+from typing import Any, Optional
 
 from metakernel import Magic, pexpect
 from metakernel.replwrap import REPLWrapper, bash, powershell
@@ -91,14 +91,14 @@ class ShellMagic(Magic):
         self.line_shell(self.code)
         self.evaluate = False
 
-    def get_completions(self, info) -> list:
+    def get_completions(self, info) -> list[str]:
         if self.cmd == "cmd":
             return []
         command = 'compgen -cdfa "%s"' % info["code"]
         completion_text = self.eval(command)
         return completion_text.split()
 
-    def get_help_on(self, info, level=0) -> str:
+    def get_help_on(self, info: dict[str, Any], level: int = 0) -> str:
         expr = info["code"].rstrip()
         if self.cmd == "cmd":
             resp = self.eval("help %s" % expr)
