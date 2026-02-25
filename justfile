@@ -8,7 +8,7 @@ default:
 # Install for development
 install:
     uv sync --all-groups
-    uv run pre-commit install
+    uv tool run pre-commit install
 
 # Clean build artifacts
 clean:
