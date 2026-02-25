@@ -1,7 +1,5 @@
-from __future__ import annotations, print_function
+from __future__ import annotations
 
-import base64
-import codecs
 import glob
 import importlib
 import inspect
@@ -10,44 +8,42 @@ import logging
 import os
 import pkgutil
 import subprocess
-from subprocess import CalledProcessError
 import sys
 import warnings
 from collections import OrderedDict
-
-warnings.filterwarnings('ignore', module='IPython.html.widgets')
+from subprocess import CalledProcessError
+from typing import Any
 
 import comm
-import ipykernel # reconfigures comm
-from jupyter_core.paths import jupyter_config_path, jupyter_config_dir
-from IPython.paths import get_ipython_dir
 from ipykernel.kernelapp import IPKernelApp
 from ipykernel.kernelbase import Kernel
-from traitlets.config import Application
+from IPython.core.formatters import DisplayFormatter
+from IPython.display import publish_display_data
+from IPython.paths import get_ipython_dir
+from IPython.utils.tempdir import TemporaryDirectory
+from jupyter_core.paths import jupyter_config_dir, jupyter_config_path
 from traitlets import Dict, Unicode
-from typing import Any
+from traitlets.config import Application
+
+from .config import get_history_file, get_local_magics_dir
+from .parser import Parser
+
+warnings.filterwarnings("ignore", module="IPython.html.widgets")
 
 PY3 = sys.version_info[0] == 3
 
 try:
-    from ipywidgets.widgets.widget import Widget
     import ipywidgets as widgets
+    from ipywidgets.widgets.widget import Widget
 except ImportError:
     Widget = None
-
-from IPython.core.formatters import DisplayFormatter
-from IPython.display import HTML
-from IPython.display import publish_display_data
-from IPython.utils.tempdir import TemporaryDirectory
-
-from .config import get_history_file, get_local_magics_dir
-from .parser import Parser
 
 # Inlined from IPython TermColors after its removal.
 RED = "\033[0;31m"
 NORMAL = "\033[0m"
 
-class ExceptionWrapper(object):
+
+class ExceptionWrapper:
     """
     Utility wrapper that we can use to get the kernel to respond properly for errors.
 
@@ -60,7 +56,7 @@ class ExceptionWrapper(object):
         self.traceback = traceback
 
     def __repr__(self) -> str:
-        return '{}: {}\n{}'.format(self.ename, self.evalue, self.traceback)
+        return f"{self.ename}: {self.evalue}\n{self.traceback}"
 
 
 def lazy_import_handle_comm_opened(*args, **kwargs) -> None:
@@ -79,15 +75,15 @@ def get_metakernel():
 class MetaKernel(Kernel):
     """The base MetaKernel class."""
 
-    app_name = 'metakernel'
-    identifier_regex = r'[^\d\W][\w\.]*'
-    func_call_regex = r'([^\d\W][\w\.]*)\([^\)\()]*\Z'
-    magic_prefixes = dict(magic='%', shell='!', help='?')
-    help_suffix = '?'
+    app_name = "metakernel"
+    identifier_regex = r"[^\d\W][\w\.]*"
+    func_call_regex = r"([^\d\W][\w\.]*)\([^\)\()]*\Z"
+    magic_prefixes = dict(magic="%", shell="!", help="?")
+    help_suffix = "?"
     help_links = [
         {
-            'text': "MetaKernel Magics",
-            'url': "https://metakernel.readthedocs.io/en/latest/source/README.html",
+            "text": "MetaKernel Magics",
+            "url": "https://metakernel.readthedocs.io/en/latest/source/README.html",
         },
     ]
     language_info: dict[str, Any] = {
@@ -101,9 +97,9 @@ class MetaKernel(Kernel):
         # 'pygments_lexer': 'language',
         # 'version'       : "x.y.z",
         # 'file_extension': '.py',
-        'help_links': help_links,
+        "help_links": help_links,
     }
-    plot_settings = Dict(dict(backend='inline')).tag(config=True)
+    plot_settings = Dict(dict(backend="inline")).tag(config=True)
 
     meta_kernel = None
 
@@ -116,11 +112,11 @@ class MetaKernel(Kernel):
             if __name__ == '__main__':
                 MetaKernelSubclass.run_as_main()
         """
-        kwargs['app_name'] = cls.app_name
-        MetaKernelApp.launch_instance(kernel_class=cls, *args, **kwargs)
+        kwargs["app_name"] = cls.app_name
+        MetaKernelApp.launch_instance(kernel_class=cls, *args, **kwargs)  # noqa: B026
 
     def __init__(self, *args, **kwargs) -> None:
-        super(MetaKernel, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if MetaKernel.meta_kernel is None:
             MetaKernel.meta_kernel = self
         if self.log is None:  # type: ignore[has-type]
@@ -133,7 +129,7 @@ class MetaKernel(Kernel):
             # Write has already been set
             try:
                 sys.stdout.write = self.Write  # type: ignore[method-assign]
-            except:
+            except Exception:
                 pass  # Can't change stdout
         self.redirect_to_log = False
         self.shell = None
@@ -146,26 +142,30 @@ class MetaKernel(Kernel):
         self.___ = None
         self.max_hist_cache = 1000
         self.hist_cache: list[str] = []
-        kwargs = {'parent': self,
-                  'kernel': self}
+        kwargs = {"parent": self, "kernel": self}
         if not PY3:
-            kwargs['shell'] = None
+            kwargs["shell"] = None
         self.comm_manager = comm.get_comm_manager()
         # widgets have changed target name in 8.x, keeping for compatibility
-        self.comm_manager.register_target('ipython.widget',
-            lazy_import_handle_comm_opened)
+        self.comm_manager.register_target(
+            "ipython.widget", lazy_import_handle_comm_opened
+        )
 
         # compatible with widgets 8.x
         if Widget is not None:
             widgets.register_comm_target()
 
         self.hist_file = get_history_file(self)
-        self.parser = Parser(self.identifier_regex, self.func_call_regex,
-                             self.magic_prefixes, self.help_suffix)
-        comm_msg_types = ['comm_open', 'comm_msg', 'comm_close']
+        self.parser = Parser(
+            self.identifier_regex,
+            self.func_call_regex,
+            self.magic_prefixes,
+            self.help_suffix,
+        )
+        comm_msg_types = ["comm_open", "comm_msg", "comm_close"]
         for msg_type in comm_msg_types:
             self.shell_handlers[msg_type] = getattr(self.comm_manager, msg_type)
-        self._display_formatter = DisplayFormatter() # pass kwargs?
+        self._display_formatter = DisplayFormatter()  # pass kwargs?
         self.env: dict[str, Any] = {}
         self.reload_magics()
         # provide a way to get the current instance
@@ -193,8 +193,9 @@ class MetaKernel(Kernel):
         """
         from IPython import get_ipython
         from IPython.display import display
+
         shell = get_ipython()
-        if shell: # we are running under an IPython kernel
+        if shell:  # we are running under an IPython kernel
             self.session = shell.kernel.session
             self.Display = display  # type: ignore[method-assign]
             self.send_response = self._send_shell_response  # type: ignore[method-assign]
@@ -231,7 +232,7 @@ class MetaKernel(Kernel):
         if none_on_fail:
             return None
         else:
-            return "Sorry, no help is available on '%s'." % info['code']
+            return "Sorry, no help is available on '%s'." % info["code"]
 
     def handle_plot_settings(self):
         """Handle the current plot settings"""
@@ -242,7 +243,7 @@ class MetaKernel(Kernel):
         Returns the path to local magics dir (eg ~/.ipython/metakernel/magics)
         """
         base = get_ipython_dir()
-        return os.path.join(base, 'metakernel', 'magics')
+        return os.path.join(base, "metakernel", "magics")
 
     def get_completions(self, info) -> list:
         """
@@ -295,7 +296,7 @@ class MetaKernel(Kernel):
 
         Return the empty string if highlighting is not supported.
         """
-        #return "highlight: [%s, %s, %s, %s]" % (line1, col1, line2, col2)
+        # return "highlight: [%s, %s, %s, %s]" % (line1, col1, line2, col2)
         return ""
 
     def do_function_direct(self, function_name, arg):
@@ -312,8 +313,14 @@ class MetaKernel(Kernel):
     ############################################
     # Implement base class methods
 
-    def do_execute(self, code, silent=False, store_history=True, user_expressions=None,
-                   allow_stdin=False) -> dict:
+    def do_execute(
+        self,
+        code,
+        silent=False,
+        store_history=True,
+        user_expressions=None,
+        allow_stdin=False,
+    ) -> dict:
         """Handle code execution.
 
         https://jupyter-client.readthedocs.io/en/stable/messaging.html#execute
@@ -322,16 +329,16 @@ class MetaKernel(Kernel):
         self._allow_stdin = allow_stdin
         # Create a default response:
         self.kernel_resp = {
-            'status': 'ok',
+            "status": "ok",
             # The base class increments the execution count
-            'execution_count': self.execution_count,
-            'payload': [],
-            'user_expressions': {},
+            "execution_count": self.execution_count,
+            "payload": [],
+            "user_expressions": {},
         }
 
         # TODO: remove this when IPython fixes this
         # This happens at startup when the language is set to python
-        if '_usage.page_guiref' in code:
+        if "_usage.page_guiref" in code:
             return self.kernel_resp
 
         if code and store_history:
@@ -344,9 +351,8 @@ class MetaKernel(Kernel):
         self.payload = []
         retval = None
 
-        if info['magic'] and info['magic']['name'] == 'help':
-
-            if info['magic']['type'] == 'line':
+        if info["magic"] and info["magic"]["name"] == "help":
+            if info["magic"]["type"] == "line":
                 level = 0
             else:
                 level = 1
@@ -357,14 +363,14 @@ class MetaKernel(Kernel):
                     "source": "page",
                 }
                 if isinstance(text, dict):
-                    content["data"] = text ## {mime-type: ..., mime-type:...}
+                    content["data"] = text  ## {mime-type: ..., mime-type:...}
                     self.log.debug(str(text))
                 else:
                     content["data"] = {"text/plain": text}
                     self.log.debug(text)
                 self.payload = [content]
 
-        elif info['magic'] or self.sticky_magics:
+        elif info["magic"] or self.sticky_magics:
             retval = None
             if self.sticky_magics:
                 magics, code = _split_magics_code(code, self.magic_prefixes)
@@ -372,8 +378,7 @@ class MetaKernel(Kernel):
             stack = []
             # Handle magics:
             magic = None
-            prefixes = ((self.magic_prefixes['shell'],
-                         self.magic_prefixes['magic']))
+            prefixes = (self.magic_prefixes["shell"], self.magic_prefixes["magic"])
             while code.startswith(prefixes):
                 magic = self.get_magic(code)
                 if magic is not None:
@@ -385,7 +390,7 @@ class MetaKernel(Kernel):
                 else:
                     break
             # Execute code, if any:
-            if ((magic is None or magic.evaluate) and code.strip() != ""):
+            if (magic is None or magic.evaluate) and code.strip() != "":
                 if code.startswith("~~META~~:"):
                     retval = self.do_execute_meta(code[9:].strip())
                 else:
@@ -401,8 +406,8 @@ class MetaKernel(Kernel):
 
         self.post_execute(retval, code, silent)
 
-        if 'payload' in self.kernel_resp:
-            self.kernel_resp['payload'] = self.payload
+        if "payload" in self.kernel_resp:
+            self.kernel_resp["payload"] = self.payload
 
         return self.kernel_resp
 
@@ -418,7 +423,7 @@ class MetaKernel(Kernel):
         self.set_variable("_i" + str(self.execution_count), code)
         self._iii = self._ii
         self._ii = code
-        if (retval is not None):
+        if retval is not None:
             # --------------------------------------
             # Handle out's (only when non-null)
             self.set_variable("___", self.___)
@@ -429,15 +434,15 @@ class MetaKernel(Kernel):
             self.__ = retval
             self.log.debug(retval)
             if isinstance(retval, ExceptionWrapper):
-                self.kernel_resp['status'] = 'error'
+                self.kernel_resp["status"] = "error"
                 content = {
-                    'traceback':  retval.traceback,
-                    'evalue': retval.evalue,
-                    'ename': retval.ename,
+                    "traceback": retval.traceback,
+                    "evalue": retval.evalue,
+                    "ename": retval.ename,
                 }
                 self.kernel_resp.update(content)
                 if not silent:
-                    self.send_response(self.iopub_socket, 'error', content)
+                    self.send_response(self.iopub_socket, "error", content)
             else:
                 try:
                     data = self._display_formatter.format(retval)
@@ -445,18 +450,28 @@ class MetaKernel(Kernel):
                     self.Error(e)
                     return
                 content = {
-                    'execution_count': self.execution_count,
-                    'data': data[0],
-                    'metadata': data[1],
+                    "execution_count": self.execution_count,
+                    "data": data[0],
+                    "metadata": data[1],
                 }
                 if not silent:
                     if Widget and isinstance(retval, Widget):
                         self.Display(retval)
                         return
-                    self.send_response(self.iopub_socket, 'execute_result', content)
+                    self.send_response(self.iopub_socket, "execute_result", content)
 
-    def do_history(self, hist_access_type, output, raw, session=None,
-                   start=None, stop=None, n=None, pattern=None, unique=False) -> dict[str, str | list]:
+    def do_history(
+        self,
+        hist_access_type,
+        output,
+        raw,
+        session=None,
+        start=None,
+        stop=None,
+        n=None,
+        pattern=None,
+        unique=False,
+    ) -> dict[str, str | list]:
         """
         Access history at startup.
 
@@ -464,7 +479,7 @@ class MetaKernel(Kernel):
         """
         with open(self.hist_file) as fid:
             self.hist_cache = json.loads(fid.read() or "[]")
-        return {'status': 'ok', 'history': [(None, None, h) for h in self.hist_cache]}
+        return {"status": "ok", "history": [(None, None, h) for h in self.hist_cache]}
 
     def do_shutdown(self, restart) -> dict[str, str]:
         """
@@ -474,13 +489,13 @@ class MetaKernel(Kernel):
         """
         if self.hist_file:
             with open(self.hist_file, "w") as fid:
-                json.dump(self.hist_cache[-self.max_hist_cache:], fid)
+                json.dump(self.hist_cache[-self.max_hist_cache :], fid)
         if restart:
             self.Print("Restarting kernel...")
             self.restart_kernel()
             self.reload_magics()
             self.Print("Done!")
-        return {'status': 'ok', 'restart': restart}
+        return {"status": "ok", "restart": restart}
 
     def do_is_complete(self, code) -> dict[str, str]:
         """
@@ -502,17 +517,17 @@ class MetaKernel(Kernel):
 
         https://jupyter-client.readthedocs.io/en/stable/messaging.html#code-completeness
         """
-        if code.startswith(self.magic_prefixes['magic']):
+        if code.startswith(self.magic_prefixes["magic"]):
             ## force requirement to end with an empty line
             if code.endswith("\n"):
-                return {'status' : 'complete'}
+                return {"status": "complete"}
             else:
-                return {'status' : 'incomplete'}
+                return {"status": "incomplete"}
         # otherwise, how to know is complete?
         elif code.endswith("\n"):
-            return {'status' : 'complete'}
+            return {"status": "complete"}
         else:
-            return {'status' : 'incomplete'}
+            return {"status": "incomplete"}
 
     def do_complete(self, code, cursor_pos) -> dict:
         """Handle code completion for the kernel.
@@ -521,63 +536,64 @@ class MetaKernel(Kernel):
         """
         info = self.parse_code(code, 0, cursor_pos)
         content = {
-            'matches': [],
-            'cursor_start': info['start'],
-            'cursor_end': info['end'],
-            'status': 'ok',
-            'metadata': {}
+            "matches": [],
+            "cursor_start": info["start"],
+            "cursor_end": info["end"],
+            "status": "ok",
+            "metadata": {},
         }
 
-        matches = info['path_matches']
+        matches = info["path_matches"]
 
-        if info['magic']:
-
+        if info["magic"]:
             # if the last line contains another magic, use that
-            line_info = self.parse_code(info['line'])
-            if line_info['magic']:
+            line_info = self.parse_code(info["line"])
+            if line_info["magic"]:
                 info = line_info
 
-            if info['magic']['type'] == 'line':
+            if info["magic"]["type"] == "line":
                 magics = self.line_magics
             else:
                 magics = self.cell_magics
 
-            if info['magic']['name'] in magics:
-                magic = magics[info['magic']['name']]
-                info = info['magic']
-                if info['type'] == 'cell' and info['code']:
-                    info = self.parse_code(info['code'])
+            if info["magic"]["name"] in magics:
+                magic = magics[info["magic"]["name"]]
+                info = info["magic"]
+                if info["type"] == "cell" and info["code"]:
+                    info = self.parse_code(info["code"])
                 else:
-                    info = self.parse_code(info['args'])
+                    info = self.parse_code(info["args"])
 
                 matches.extend(magic.get_completions(info))
 
-            elif not info['magic']['code'] and not info['magic']['args']:
+            elif not info["magic"]["code"] and not info["magic"]["args"]:
                 matches = []
                 for name in magics.keys():
-                    if name.startswith(info['magic']['name']):
-                        pre = info['magic']['prefix']
+                    if name.startswith(info["magic"]["name"]):
+                        pre = info["magic"]["prefix"]
                         matches.append(pre + name)
-                        info['start'] -= len(pre)
-                        info['full_obj'] = pre + info['full_obj']
-                        info['obj'] = pre + info['obj']
+                        info["start"] -= len(pre)
+                        info["full_obj"] = pre + info["full_obj"]
+                        info["obj"] = pre + info["obj"]
 
         else:
             matches.extend(self.get_completions(info))
 
-        if info['full_obj'] and len(info['full_obj']) > len(info['obj']):
-            new_list = [m for m in matches if m.startswith(info['full_obj'])]
+        if info["full_obj"] and len(info["full_obj"]) > len(info["obj"]):
+            new_list = [m for m in matches if m.startswith(info["full_obj"])]
             if new_list:
-                content['cursor_end'] = (content['cursor_end'] +
-                                         len(info['full_obj']) -
-                                         len(info['obj']))
+                content["cursor_end"] = (
+                    content["cursor_end"] + len(info["full_obj"]) - len(info["obj"])
+                )
                 matches = new_list
 
         content["matches"] = sorted(matches)
 
         return content
 
-    def do_inspect(self, code, cursor_pos, detail_level=0, omit_sections=()) -> dict | None:
+    def do_inspect(
+        self, code, cursor_pos, detail_level=0, omit_sections=()
+    ) -> dict | None:
         """Object introspection.
 
         https://jupyter-client.readthedocs.io/en/stable/messaging.html#introspection
@@ -585,14 +601,15 @@ class MetaKernel(Kernel):
         if cursor_pos > len(code):
             return None
 
-        content = {'status': 'aborted', 'data': {}, 'found': False, 'metadata': {}}
-        docstring = self.get_help_on(code, detail_level, none_on_fail=True,
-             cursor_pos=cursor_pos)
+        content = {"status": "aborted", "data": {}, "found": False, "metadata": {}}
+        docstring = self.get_help_on(
+            code, detail_level, none_on_fail=True, cursor_pos=cursor_pos
+        )
 
         if docstring:
             content["status"] = "ok"
             content["found"] = True
-            if isinstance(docstring, dict): ## {"text/plain": ..., mime-type: ...}
+            if isinstance(docstring, dict):  ## {"text/plain": ..., mime-type: ...}
                 content["data"] = docstring
                 self.log.debug(str(docstring))
             else:
@@ -601,11 +618,9 @@ class MetaKernel(Kernel):
 
         return content
 
-
     def clear_output(self, wait=False) -> None:
         """Clear the output of the kernel."""
-        self.send_response(self.iopub_socket, 'clear_output',
-                           {'wait': wait})
+        self.send_response(self.iopub_socket, "clear_output", {"wait": wait})
 
     def Display(self, *objects, **kwargs) -> None:
         """Display one or more objects using rich display.
@@ -614,45 +629,31 @@ class MetaKernel(Kernel):
 
         See https://ipython.readthedocs.io/en/stable/config/integrating.html?highlight=display#rich-display
         """
-        if kwargs.get('clear_output'):
+        if kwargs.get("clear_output"):
             self.clear_output(wait=True)
 
         for item in objects:
             if Widget and isinstance(item, Widget):
-                self.log.debug('Display Widget')
+                self.log.debug("Display Widget")
                 data = {
-                    'text/plain': repr(item),
-                    'application/vnd.jupyter.widget-view+json': {
-                    'version_major': 2,
-                    'version_minor': 0,
-                    'model_id': item._model_id
-                    }
-                    }
-                content = {
-                    'data': data,
-                    'metadata': {}
-                    }
-                self.send_response(
-                    self.iopub_socket,
-                    'display_data',
-                    content
-                )
+                    "text/plain": repr(item),
+                    "application/vnd.jupyter.widget-view+json": {
+                        "version_major": 2,
+                        "version_minor": 0,
+                        "model_id": item._model_id,
+                    },
+                }
+                content = {"data": data, "metadata": {}}
+                self.send_response(self.iopub_socket, "display_data", content)
             else:
-                self.log.debug('Display Data')
+                self.log.debug("Display Data")
                 try:
                     data = self._display_formatter.format(item)
                 except Exception as e:
                     self.Error(e)
                     return
-                content = {
-                    'data': data[0],
-                    'metadata': data[1]
-                }
-                self.send_response(
-                    self.iopub_socket,
-                    'display_data',
-                    content
-                )
+                content = {"data": data[0], "metadata": data[1]}
+                self.send_response(self.iopub_socket, "display_data", content)
 
     def Print(self, *objects, **kwargs) -> None:
         """Print `objects` to the iopub stream, separated by `sep` and followed by `end`.
@@ -666,23 +667,21 @@ class MetaKernel(Kernel):
         non_widgets = [i for i in objects if not (Widget and isinstance(i, Widget))]
         message = format_message(*non_widgets, **kwargs)
 
-        stream_content = {
-            'name': 'stdout', 'text': message}
-        self.log.debug('Print: %s' % message.rstrip())
+        stream_content = {"name": "stdout", "text": message}
+        self.log.debug("Print: %s" % message.rstrip())
         if self.redirect_to_log:
             self.log.info(message.rstrip())
         else:
-            self.send_response(self.iopub_socket, 'stream', stream_content)
+            self.send_response(self.iopub_socket, "stream", stream_content)
 
     def Write(self, message) -> None:
         """Write message directly to the iopub stdout with no added end character."""
-        stream_content = {
-            'name': 'stdout', 'text': message}
-        self.log.debug('Write: %s' % message)
+        stream_content = {"name": "stdout", "text": message}
+        self.log.debug("Write: %s" % message)
         if self.redirect_to_log:
             self.log.info(message)
         else:
-            self.send_response(self.iopub_socket, 'stream', stream_content)
+            self.send_response(self.iopub_socket, "stream", stream_content)
 
     def Error(self, *objects, **kwargs) -> None:
         """Print `objects` to stdout, separated by `sep` and followed by `end`.
@@ -690,15 +689,12 @@ class MetaKernel(Kernel):
         Objects are cast to strings.
         """
         message = format_message(*objects, **kwargs)
-        self.log.debug('Error: %s' % message.rstrip())
-        stream_content = {
-            'name': 'stderr',
-            'text': RED + message + NORMAL
-        }
+        self.log.debug("Error: %s" % message.rstrip())
+        stream_content = {"name": "stderr", "text": RED + message + NORMAL}
         if self.redirect_to_log:
             self.log.info(message.rstrip())
         else:
-            self.send_response(self.iopub_socket, 'stream', stream_content)
+            self.send_response(self.iopub_socket, "stream", stream_content)
 
     def Error_display(self, *objects, **kwargs) -> None:
         """Print `objects` to stdout is they area strings, separated by `sep` and followed by `end`.
@@ -709,7 +705,7 @@ class MetaKernel(Kernel):
         msg_dict = {}
         for item in objects:
             if not isinstance(item, str):
-                self.log.debug('Item type:{}'.format(type(item)) )
+                self.log.debug(f"Item type:{type(item)}")
                 self.Display(item)
             else:
                 # msg is the error for str
@@ -721,18 +717,15 @@ class MetaKernel(Kernel):
             else:
                 msg_dict[k] = v
 
-        message = format_message(' '.join(msg), **kwargs)
+        message = format_message(" ".join(msg), **kwargs)
         if len(msg_dict.keys()) > 0:
-            message = format_message(' '.join(msg), msg_dict)
-        self.log.debug('Error: %s' % message.rstrip())
-        stream_content = {
-            'name': 'stderr',
-            'text': RED + message + NORMAL
-        }
+            message = format_message(" ".join(msg), msg_dict)
+        self.log.debug("Error: %s" % message.rstrip())
+        stream_content = {"name": "stderr", "text": RED + message + NORMAL}
         if self.redirect_to_log:
             self.log.info(message.rstrip())
         else:
-            self.send_response(self.iopub_socket, 'stream', stream_content)
+            self.send_response(self.iopub_socket, "stream", stream_content)
 
     ##############################
     # Private API and methods not likely to be overridden
@@ -749,12 +742,18 @@ class MetaKernel(Kernel):
         local_magics_dir = get_local_magics_dir()
         # Search all of the places there could be magics:
         try:
-            paths = [os.path.join(os.path.dirname(
-                os.path.abspath(inspect.getfile(self.__class__))), "magics")]
-        except:
+            paths = [
+                os.path.join(
+                    os.path.dirname(os.path.abspath(inspect.getfile(self.__class__))),
+                    "magics",
+                )
+            ]
+        except Exception:
             paths = []
-        paths += [local_magics_dir,
-                  os.path.join(os.path.dirname(os.path.abspath(__file__)), "magics")]
+        paths += [
+            local_magics_dir,
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), "magics"),
+        ]
         for magic_dir in paths:
             sys.path.append(magic_dir)
             magic_files.extend(glob.glob(os.path.join(magic_dir, "*.py")))
@@ -773,8 +772,8 @@ class MetaKernel(Kernel):
     def register_magics(self, magic_klass) -> None:
         """Register magics for a given magic_klass."""
         magic = magic_klass(self)
-        line_magics = magic.get_magics('line')
-        cell_magics = magic.get_magics('cell')
+        line_magics = magic.get_magics("line")
+        cell_magics = magic.get_magics("cell")
         for name in line_magics:
             self.line_magics[name] = magic
         for name in cell_magics:
@@ -784,7 +783,7 @@ class MetaKernel(Kernel):
         ### if we are running via %parallel, we might not have a
         ### session
         if self.session:
-            super(MetaKernel, self).send_response(*args, **kwargs)
+            super().send_response(*args, **kwargs)
 
     def call_magic(self, line):
         """
@@ -798,20 +797,19 @@ class MetaKernel(Kernel):
         # if first line matches a magic,
         # call magic.call_magic() and return magic object
         info = self.parse_code(text)
-        magic = self.line_magics['magic']
+        magic = self.line_magics["magic"]
         return magic.get_magic(info)
 
     def get_magic_args(self, text):
         # if first line matches a magic,
         # call magic.call_magic() and return magic args
         info = self.parse_code(text)
-        magic = self.line_magics['magic']
+        magic = self.line_magics["magic"]
         return magic.get_magic(info, get_args=True)
 
-    def get_help_on(self, expr, level=0, none_on_fail=False,
-            cursor_pos=-1):
+    def get_help_on(self, expr, level=0, none_on_fail=False, cursor_pos=-1):
         """Get help for an expression using the help magic."""
-        help_magic = self.line_magics['help']
+        help_magic = self.line_magics["help"]
         return help_magic.get_help_on(expr, level, none_on_fail, cursor_pos)
 
     def parse_code(self, code, cursor_start=0, cursor_end=-1):
@@ -821,11 +819,11 @@ class MetaKernel(Kernel):
     def _get_sticky_magics(self) -> str:
         retval = ""
         for key in self.sticky_magics:
-            retval += (key + " " + self.sticky_magics[key] + "\n")
+            retval += key + " " + self.sticky_magics[key] + "\n"
         return retval
 
     def _send_shell_response(self, socket, stream_type, content) -> None:
-        publish_display_data({ 'text/plain': content['text'] })
+        publish_display_data({"text/plain": content["text"]})
 
 
 class MetaKernelApp(IPKernelApp):
@@ -846,8 +844,8 @@ class MetaKernelApp(IPKernelApp):
 
     @classmethod
     def launch_instance(cls, *args, **kwargs) -> None:
-        cls.name = kwargs.pop('app_name', 'metakernel')
-        super(MetaKernelApp, cls).launch_instance(*args, **kwargs)
+        cls.name = kwargs.pop("app_name", "metakernel")
+        super().launch_instance(*args, **kwargs)
 
     @property
     def subcommands(self) -> dict[str, tuple]:
@@ -863,29 +861,31 @@ class MetaKernelApp(IPKernelApp):
             def start(self):
                 kernel_spec = self.kernel_class().kernel_json
                 with TemporaryDirectory() as td:
-                    dirname = os.path.join(td, kernel_spec['name'])
+                    dirname = os.path.join(td, kernel_spec["name"])
                     os.mkdir(dirname)
-                    with open(os.path.join(dirname, 'kernel.json'), 'w') as f:
+                    with open(os.path.join(dirname, "kernel.json"), "w") as f:
                         json.dump(kernel_spec, f, sort_keys=True)
-                    filenames = ['logo-64x64.png', 'logo-32x32.png']
+                    filenames = ["logo-64x64.png", "logo-32x32.png"]
                     name = self.kernel_class.__module__
                     for filename in filenames:
                         try:
-                            data = pkgutil.get_data(name.split('.')[0],
-                                                    'images/' + filename)
-                        except (OSError, IOError):
-                            data = pkgutil.get_data('metakernel',
-                                'images/' + filename)
-                        with open(os.path.join(dirname, filename), 'wb') as f:
+                            data = pkgutil.get_data(
+                                name.split(".")[0], "images/" + filename
+                            )
+                        except OSError:
+                            data = pkgutil.get_data("metakernel", "images/" + filename)
+                        with open(os.path.join(dirname, filename), "wb") as f:
                             f.write(data)
                     try:
                         subprocess.check_call(
-                            [sys.executable, '-m', 'jupyter',
-                            'kernelspec', 'install'] + self.argv + [dirname])
+                            [sys.executable, "-m", "jupyter", "kernelspec", "install"]
+                            + self.argv
+                            + [dirname]
+                        )
                     except CalledProcessError as exc:
                         sys.exit(exc.returncode)
 
-        return {'install': (KernelInstallerApp, 'Install this kernel')}
+        return {"install": (KernelInstallerApp, "Install this kernel")}
 
 
 def _split_magics_code(code, prefixes) -> tuple[str, str]:
@@ -893,8 +893,8 @@ def _split_magics_code(code, prefixes) -> tuple[str, str]:
     ret_magics = []
     ret_code = []
     index = 0
-    shell = prefixes['shell']
-    magic = prefixes['magic']
+    shell = prefixes["shell"]
+    magic = prefixes["magic"]
     while index < len(lines) and lines[index].startswith((shell, magic)):
         ret_magics.append(lines[index])
         index += 1
@@ -910,14 +910,13 @@ def _split_magics_code(code, prefixes) -> tuple[str, str]:
     return (ret_magics_str, ret_code_str)
 
 
-
 def format_message(*objects, **kwargs):
     """
     Format a message like print() does.
     """
     objects = [str(i) for i in objects]
-    sep = kwargs.get('sep', ' ')
-    end = kwargs.get('end', '\n')
+    sep = kwargs.get("sep", " ")
+    end = kwargs.get("end", "\n")
     return sep.join(objects) + end
 
 
@@ -925,33 +924,38 @@ class IPythonKernel(MetaKernel):
     """
     Class to make an IPython Kernel look like a MetaKernel Kernel.
     """
+
     language_info: dict[str, Any] = {
-        'mimetype': 'text/x-python',
-        'name': 'python',
-        'file_extension': '.py',
+        "mimetype": "text/x-python",
+        "name": "python",
+        "file_extension": ".py",
     }
 
     def __init__(self) -> None:
         from metakernel.magics.magic_magic import MagicMagic
-        self.line_magics = {'magic': MagicMagic(self)}
+
+        self.line_magics = {"magic": MagicMagic(self)}
         self.cell_magics = {}
-        self.parser = Parser(self.identifier_regex, self.func_call_regex,
-                             self.magic_prefixes, self.help_suffix)
+        self.parser = Parser(
+            self.identifier_regex,
+            self.func_call_regex,
+            self.magic_prefixes,
+            self.help_suffix,
+        )
         self.shell = None
 
     def Display(self, *objects, **kwargs):
         """Display an object in the kernel, using `IPython.display`."""
         from IPython.display import display
+
         return display(*objects, **kwargs)
 
     def Error(self, *objects, **kwargs) -> None:
-        """Print `objects` to stderr, separated by `sep` and followed by `end`.
-        """
+        """Print `objects` to stderr, separated by `sep` and followed by `end`."""
         sys.stderr.write(format_message(*objects, **kwargs))
 
     def Print(self, *objects, **kwargs) -> None:
-        """Print `objects` to stdout, separated by `sep` and followed by `end`.
-        """
+        """Print `objects` to stdout, separated by `sep` and followed by `end`."""
         sys.stdout.write(format_message(*objects, **kwargs))
 
 
@@ -963,8 +967,10 @@ def register_ipython_magics(*magics) -> None:
     magic_filenames = [name + "_magic.py" for name in magics] if magics else []
     local_magics_dir = get_local_magics_dir()
     # Search all of the places there could be magics:
-    paths = [local_magics_dir,
-             os.path.join(os.path.dirname(os.path.abspath(__file__)), "magics")]
+    paths = [
+        local_magics_dir,
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "magics"),
+    ]
 
     magic_files = []
     for magic_dir in paths:

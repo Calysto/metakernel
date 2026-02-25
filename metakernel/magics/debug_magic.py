@@ -1,14 +1,13 @@
-# -*- coding: utf-8 -*-
-
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
 
-from metakernel import Magic
 from IPython.display import HTML, Javascript
 
-class DebugMagic(Magic):
+from metakernel import Magic
 
+
+class DebugMagic(Magic):
     def cell_debug(self, dummy) -> None:
         """
         %%debug - step through the code expression by expression
@@ -204,15 +203,19 @@ function reset() {
 </script>
 """
         import time
+
         html = HTML(html_code)
         self.kernel.Display(html)
-        time.sleep(.1)
-        data = self.kernel.initialize_debug("\n" + self.code) ## add a line so line numbers will be correct
-        time.sleep(.1)
+        time.sleep(0.1)
+        data = self.kernel.initialize_debug(
+            "\n" + self.code
+        )  ## add a line so line numbers will be correct
+        time.sleep(0.1)
         if data.startswith("highlight: "):
             self.kernel.Display(Javascript("highlight(cell, %s);" % data[11:]))
-        time.sleep(.1)
+        time.sleep(0.1)
         self.evaluate = False
+
 
 def register_magics(kernel) -> None:
     kernel.register_magics(DebugMagic)

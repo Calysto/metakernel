@@ -1,6 +1,7 @@
-
-from tests.utils import get_kernel, get_log_text, EvalKernel
 import re
+
+from tests.utils import EvalKernel, get_kernel, get_log_text
+
 
 def test_time_magic() -> None:
     kernel = get_kernel(EvalKernel)
@@ -9,6 +10,6 @@ x = 1
 """)
     text = get_log_text(kernel)
 
-    assert re.match(".*Time: .* seconds.", text, re.MULTILINE | re.DOTALL) != None, text
-  
-
+    assert (
+        re.match(".*Time: .* seconds.", text, re.MULTILINE | re.DOTALL) is not None
+    ), text

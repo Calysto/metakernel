@@ -1,23 +1,25 @@
 from __future__ import annotations
 
-import re
 import os
+import re
 from typing import Any
 
-IDENTIFIER_REGEX = r'[^\d\W][\w\.]*'
-FUNC_CALL_REGEX = r'([^\d\W][\w\.]*)\([^\)\()]*\Z'
-MAGIC_PREFIXES = dict(magic='%', shell='!', help='?')
-HELP_SUFFIX = '?'
+IDENTIFIER_REGEX = r"[^\d\W][\w\.]*"
+FUNC_CALL_REGEX = r"([^\d\W][\w\.]*)\([^\)\()]*\Z"
+MAGIC_PREFIXES = dict(magic="%", shell="!", help="?")
+HELP_SUFFIX = "?"
 
 
-class Parser(object):
-
+class Parser:
     """Parse an input buffer using language-specific regexes."""
 
-    def __init__(self, identifier_regex=IDENTIFIER_REGEX,
-                 function_call_regex=FUNC_CALL_REGEX,
-                 magic_prefixes=MAGIC_PREFIXES,
-                 help_suffix=HELP_SUFFIX) -> None:
+    def __init__(
+        self,
+        identifier_regex=IDENTIFIER_REGEX,
+        function_call_regex=FUNC_CALL_REGEX,
+        magic_prefixes=MAGIC_PREFIXES,
+        help_suffix=HELP_SUFFIX,
+    ) -> None:
         """Set up the regexes and magic characters.
 
         Parameters
@@ -31,22 +33,24 @@ class Parser(object):
         help_suffix : str
             Character to use for help suffix.
         """
-        self.func_call_regex = re.compile(function_call_regex + r'\Z',
-                                          re.UNICODE)
-        default_regex = r'[^\d\W][\w\.]*'
-        self.id_regex = re.compile(r'(\{0}+{1}\Z|{2}\Z|\Z)'.format(
-            magic_prefixes['magic'], default_regex,
-            identifier_regex), re.UNICODE)
+        self.func_call_regex = re.compile(function_call_regex + r"\Z", re.UNICODE)
+        default_regex = r"[^\d\W][\w\.]*"
+        self.id_regex = re.compile(
+            r"(\{}+{}\Z|{}\Z|\Z)".format(
+                magic_prefixes["magic"], default_regex, identifier_regex
+            ),
+            re.UNICODE,
+        )
 
-        self.magic_regex = '|'.join([default_regex, identifier_regex])
+        self.magic_regex = "|".join([default_regex, identifier_regex])
 
         full_path_regex = r'([\w/\.~][^\'"]*)\Z'
-        self.unquoted_path = re.compile(r'\A{0}| {0}'.format(full_path_regex),
-                                        re.UNICODE)
-        self.quoted_path = re.compile(r'[\'"]%s' % full_path_regex,
-                                      re.UNICODE)
+        self.unquoted_path = re.compile(
+            rf"\A{full_path_regex}| {full_path_regex}", re.UNICODE
+        )
+        self.quoted_path = re.compile(r'[\'"]%s' % full_path_regex, re.UNICODE)
 
-        single_path_regex = r'([\w/\.~][^ ]*)\Z'
+        single_path_regex = r"([\w/\.~][^ ]*)\Z"
         self.single_path = re.compile(single_path_regex, re.UNICODE)
 
         self.magic_prefixes = magic_prefixes
@@ -82,7 +86,7 @@ class Parser(object):
             mid : str, Text between start and end
             post : str, Text after end
             path_matches : list, File system path matches for text
-           """
+        """
         if end == -1:
             end = len(code)
         end = min(len(code), end)
@@ -92,18 +96,18 @@ class Parser(object):
 
         info: dict[str, Any] = dict(code=code, magic=dict())
 
-        info['magic'] = self._parse_magic(code[:end])
+        info["magic"] = self._parse_magic(code[:end])
 
-        info['lines'] = lines = code[:end].splitlines()
+        info["lines"] = lines = code[:end].splitlines()
 
-        info['line_num'] = line_num = len(lines)
+        info["line_num"] = line_num = len(lines)
 
-        if info['line_num']:
-            info['line'] = line = lines[-1]
-            info['column'] = col = len(lines[-1])
+        if info["line_num"]:
+            info["line"] = line = lines[-1]
+            info["column"] = col = len(lines[-1])
         else:
-            info['line'] = line = ''
-            info['column'] = col = 0
+            info["line"] = line = ""
+            info["column"] = col = 0
 
         _match = re.search(self.id_regex, line)
         assert _match is not None
@@ -120,27 +124,27 @@ class Parser(object):
 
         func_call = re.search(self.func_call_regex, line)
         if func_call and not obj:
-            info['help_obj'] = func_call.groups()[0]
-            info['help_col'] = line.index(obj) + len(obj)
-            info['help_pos'] = end - len(line) + col
+            info["help_obj"] = func_call.groups()[0]
+            info["help_col"] = line.index(obj) + len(obj)
+            info["help_pos"] = end - len(line) + col
         else:
-            info['help_obj'] = full_obj
-            info['help_col'] = col
-            info['help_pos'] = end
+            info["help_obj"] = full_obj
+            info["help_col"] = col
+            info["help_pos"] = end
 
-        info['obj'] = obj
-        info['full_obj'] = full_obj
+        info["obj"] = obj
+        info["full_obj"] = full_obj
 
         if obj:
-            info['start'] = end - len(obj)
+            info["start"] = end - len(obj)
         else:
-            info['start'] = 0
-        info['end'] = end
-        info['pre'] = code[:start]
-        info['code'] = code[start: end]
-        info['post'] = code[end:]
+            info["start"] = 0
+        info["end"] = end
+        info["pre"] = code[:start]
+        info["code"] = code[start:end]
+        info["post"] = code[end:]
 
-        info['path_matches'] = self._get_path_matches(info)
+        info["path_matches"] = self._get_path_matches(info)
         return info
 
     def _parse_magic(self, code) -> dict:
@@ -189,66 +193,66 @@ class Parser(object):
         code = code.lstrip()
 
         pre_magics = {}
-        for (name, prefix) in self.magic_prefixes.items():
-            match = re.match(r'(\%s+)' % prefix, code, re.UNICODE)
+        for name, prefix in self.magic_prefixes.items():
+            match = re.match(r"(\%s+)" % prefix, code, re.UNICODE)
             if match:
                 pre_magics[name] = match.groups()[0]
 
-        types = ['none', 'line', 'cell', 'sticky']
+        types = ["none", "line", "cell", "sticky"]
 
-        if 'help' in pre_magics:
-            info['name'] = 'help'
-            pre = pre_magics['help']
-            info['prefix'] = pre
-            info['full_name'] = pre + 'help'
-            info['type'] = types[len(pre)]
-            info['index'] = code.index(pre)
+        if "help" in pre_magics:
+            info["name"] = "help"
+            pre = pre_magics["help"]
+            info["prefix"] = pre
+            info["full_name"] = pre + "help"
+            info["type"] = types[len(pre)]
+            info["index"] = code.index(pre)
 
         elif self.help_suffix and code.rstrip().endswith(self.help_suffix):
-            info['name'] = 'help'
-            regex = r'(\%s+)\Z' % self.help_suffix
+            info["name"] = "help"
+            regex = r"(\%s+)\Z" % self.help_suffix
             match = re.search(regex, code.strip(), re.UNICODE)
             assert match is not None
             suf = match.group()
-            info['prefix'] = ''
-            info['type'] = types[len(suf)]
-            info['full_name'] = 'help' + suf
-            info['index'] = len(code) - len(suf)
+            info["prefix"] = ""
+            info["type"] = types[len(suf)]
+            info["full_name"] = "help" + suf
+            info["index"] = len(code) - len(suf)
 
-        elif 'magic' in pre_magics:
-            pre = pre_magics['magic']
-            info['prefix'] = pre
-            info['type'] = types[len(pre)]
-            match = re.match(self.magic_regex, code[len(pre):])
+        elif "magic" in pre_magics:
+            pre = pre_magics["magic"]
+            info["prefix"] = pre
+            info["type"] = types[len(pre)]
+            match = re.match(self.magic_regex, code[len(pre) :])
             if match:
                 obj = match.group()
             else:
-                obj = ''
-            info['name'] = obj
-            info['full_name'] = pre + obj
-            info['index'] = code.index(pre + obj) + len(pre + obj)
+                obj = ""
+            info["name"] = obj
+            info["full_name"] = pre + obj
+            info["index"] = code.index(pre + obj) + len(pre + obj)
 
-        elif 'shell' in pre_magics:
-            info['name'] = 'shell'
-            pre = pre_magics['shell']
-            info['prefix'] = pre
-            info['type'] = types[len(pre)]
-            info['full_name'] = pre
-            info['index'] = code.index(pre) + len(pre)
+        elif "shell" in pre_magics:
+            info["name"] = "shell"
+            pre = pre_magics["shell"]
+            info["prefix"] = pre
+            info["type"] = types[len(pre)]
+            info["full_name"] = pre
+            info["index"] = code.index(pre) + len(pre)
 
         else:
             return info
 
-        info['rest'] = code[info['index']:].rstrip()
+        info["rest"] = code[info["index"] :].rstrip()
 
-        if info['rest']:
-            lines = info['rest'].splitlines()
-            info['args'] = lines[0].strip()
-            info['code'] = '\n'.join(lines[1:])
+        if info["rest"]:
+            lines = info["rest"].splitlines()
+            info["args"] = lines[0].strip()
+            info["code"] = "\n".join(lines[1:])
 
         else:
-            info['args'] = ''
-            info['code'] = ''
+            info["args"] = ""
+            info["code"] = ""
         return info
 
     def _get_path_matches(self, info) -> list:
@@ -259,21 +263,21 @@ class Parser(object):
         - quote mark followed by start character
         - single string of text with no spaces
         """
-        line = info['line']
-        obj = info['obj']
+        line = info["line"]
+        obj = info["obj"]
 
         def get_regex_matches(regex):
             matches = []
-            path = re.findall(regex, line.replace(r'\ ', ' '))
+            path = re.findall(regex, line.replace(r"\ ", " "))
 
             if path:
-                path = ''.join(path[0])
+                path = "".join(path[0])
                 matches = _complete_path(path)
 
-                if len(path) > len(obj) and not path == '.':
-                    matches = [m[len(path) - len(obj):] for m in matches]
-                elif path == '.':
-                    matches = [m[1:] for m in matches if m.startswith('.')]
+                if len(path) > len(obj) and not path == ".":
+                    matches = [m[len(path) - len(obj) :] for m in matches]
+                elif path == ".":
+                    matches = [m[1:] for m in matches if m.startswith(".")]
 
             return [m.strip() for m in matches if not m.strip() == obj]
 
@@ -282,8 +286,8 @@ class Parser(object):
         matches = [self.escape_path(m) for m in matches]
         matches += get_regex_matches(self.quoted_path)
 
-        if os.path.isdir(info['obj']):
-            matches.append(info['obj'] + os.sep)
+        if os.path.isdir(info["obj"]):
+            matches.append(info["obj"] + os.sep)
 
         return list(set(matches))
 
@@ -294,9 +298,9 @@ class Parser(object):
         own parser instance.
         """
         if os.name == "nt":
-            return '"{}"'.format(path)
+            return f'"{path}"'
         else:
-            return path.replace(' ', r'\ ')
+            return path.replace(" ", r"\ ")
 
 
 def _listdir(root) -> list:
@@ -309,7 +313,7 @@ def _listdir(root) -> list:
             if os.path.isdir(path):
                 name += os.sep
             res.append(name)
-    except:
+    except Exception:
         pass  # no need to report invalid paths
     return res
 
@@ -318,17 +322,17 @@ def _complete_path(path=None) -> list:
     """Perform completion of filesystem path.
     http://stackoverflow.com/questions/5637124/tab-completion-in-pythons-raw-input
     """
-    if not path or path == '.':
-        return _listdir('.')
+    if not path or path == ".":
+        return _listdir(".")
     dirname, rest = os.path.split(path)
-    tmp = dirname if dirname else '.'
+    tmp = dirname if dirname else "."
     res = []
     for p in _listdir(tmp):
         try:
             if p.startswith(rest):
                 res.append(os.path.join(dirname, p))
         except UnicodeDecodeError:
-            pass # directory name does not allow join in Python 2.7
+            pass  # directory name does not allow join in Python 2.7
     # more than one match, or single match which does not exist (typo)
     if len(res) > 1 or not os.path.exists(path):
         return res
@@ -336,4 +340,4 @@ def _complete_path(path=None) -> list:
     if os.path.isdir(path):
         return [os.path.join(path, p) for p in _listdir(path)]
     # exact file match terminates this completion
-    return [path + ' ']
+    return [path + " "]

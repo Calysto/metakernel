@@ -1,14 +1,20 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from IPython.display import FileLinks
-from metakernel import Magic, option
 import os
+
+from IPython.display import FileLinks
+
+from metakernel import Magic, option
+
 
 class LSMagic(Magic):
     @option(
-        "-r", "--recursive", action="store_true", default=False,
-        help='recursively descend into subdirectories'
+        "-r",
+        "--recursive",
+        action="store_true",
+        default=False,
+        help="recursively descend into subdirectories",
     )
     def line_ls(self, path=".", recursive=False) -> None:
         """
@@ -28,4 +34,4 @@ class LSMagic(Magic):
 
 
 def register_magics(kernel) -> None:
-   kernel.register_magics(LSMagic)
+    kernel.register_magics(LSMagic)

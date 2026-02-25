@@ -2,15 +2,19 @@
 # Distributed under the terms of the Modified BSD License.
 
 
-from metakernel import Magic, option
-import os
 import errno
+import os
+
+from metakernel import Magic, option
+
 
 class FileMagic(Magic):
-
     @option(
-        '-a', '--append', action='store_true', default=False,
-        help='append onto an existing file'
+        "-a",
+        "--append",
+        action="store_true",
+        default=False,
+        help="append onto an existing file",
     )
     def cell_file(self, filename, append=False) -> None:
         """
@@ -31,7 +35,7 @@ class FileMagic(Magic):
         path = os.path.dirname(os.path.abspath(filename))
         try:
             os.makedirs(path)
-        except OSError as exc: # Python >2.5
+        except OSError as exc:  # Python >2.5
             if exc.errno == errno.EEXIST and os.path.isdir(path):
                 pass
             else:
@@ -54,6 +58,7 @@ class FileMagic(Magic):
         except Exception as e:
             self.kernel.Error(str(e))
         self.evaluate = False
+
 
 def register_magics(kernel) -> None:
     kernel.register_magics(FileMagic)

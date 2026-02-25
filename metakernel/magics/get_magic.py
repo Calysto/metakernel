@@ -3,6 +3,7 @@
 
 from metakernel import Magic
 
+
 class GetMagic(Magic):
     def line_get(self, variable) -> None:
         """
@@ -11,7 +12,7 @@ class GetMagic(Magic):
         This line magic is used to get a variable.
 
         Examples:
-            %get x 
+            %get x
         """
         self.retval = self.kernel.get_variable(variable)
 
@@ -20,4 +21,4 @@ class GetMagic(Magic):
 
 
 def register_magics(kernel) -> None:
-   kernel.register_magics(GetMagic)
+    kernel.register_magics(GetMagic)

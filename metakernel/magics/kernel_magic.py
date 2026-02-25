@@ -1,18 +1,22 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from metakernel import Magic, option
 import importlib
-import logging
+from typing import Any
 
-from typing import Any, Dict
+from metakernel import Magic, option
+
+
 class KernelMagic(Magic):
-    kernels: Dict[str, Any] = {}
+    kernels: dict[str, Any] = {}
     kernel_name = None
 
     @option(
-        '-k', '--kernel_name', action='store', default="default",
-        help='kernel name given to use for execution'
+        "-k",
+        "--kernel_name",
+        action="store",
+        default="default",
+        help="kernel name given to use for execution",
     )
     def line_kernel(self, module_name, class_name, kernel_name="default") -> None:
         """
@@ -40,8 +44,11 @@ class KernelMagic(Magic):
         self.retval = self.kernels[kernel_name]
 
     @option(
-        '-k', '--kernel_name', action='store', default=None,
-        help='kernel name given to use for execution'
+        "-k",
+        "--kernel_name",
+        action="store",
+        default=None,
+        help="kernel name given to use for execution",
     )
     def cell_kx(self, kernel_name=None) -> None:
         """
@@ -56,7 +63,7 @@ class KernelMagic(Magic):
         Example:
 
             %%kernel bash
-            ls -al 
+            ls -al
 
         Use `%kernel MODULE CLASS [-k NAME]` to create a kernel.
         """
@@ -66,8 +73,11 @@ class KernelMagic(Magic):
         self.evaluate = False
 
     @option(
-        '-k', '--kernel_name', action='store', default=None,
-        help='kernel name given to use for execution'
+        "-k",
+        "--kernel_name",
+        action="store",
+        default=None,
+        help="kernel name given to use for execution",
     )
     def line_kx(self, code, kernel_name=None) -> None:
         """
@@ -80,7 +90,7 @@ class KernelMagic(Magic):
 
         Example:
 
-            %kernel ls -al 
+            %kernel ls -al
 
         Use `%kernel MODULE CLASS [-k NAME]` to create a kernel.
         """
@@ -93,12 +103,16 @@ class KernelMagic(Magic):
     def post_process(self, retval):
         return self.retval
 
+
 def register_magics(kernel) -> None:
     kernel.register_magics(KernelMagic)
 
+
 def register_ipython_magics() -> None:
+    from IPython.core.magic import register_cell_magic, register_line_magic
+
     from metakernel import IPythonKernel
-    from IPython.core.magic import register_line_magic, register_cell_magic
+
     kernel = IPythonKernel()
     magic = KernelMagic(kernel)
 
@@ -109,9 +123,13 @@ def register_ipython_magics() -> None:
         """
         if line.strip().count(" ") == 1:
             kernel_name = "default"
-            module_name, class_name = [item.strip() for item in line.strip().split(" ", 1)]
+            module_name, class_name = [
+                item.strip() for item in line.strip().split(" ", 1)
+            ]
         else:
-            module_name, class_name, kernel_name = [item.strip() for item in line.strip().split(" ", 2)]
+            module_name, class_name, kernel_name = [
+                item.strip() for item in line.strip().split(" ", 2)
+            ]
         magic.line_kernel(module_name, class_name, kernel_name)
 
     @register_cell_magic

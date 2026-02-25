@@ -1,14 +1,17 @@
-
 import os
+
 from tests.utils import get_kernel
 
 
 def test_file_magic() -> None:
     kernel = get_kernel()
-    kernel.do_execute("""%%file TEST.txt
+    kernel.do_execute(
+        """%%file TEST.txt
 LINE1
 LINE2
-LINE3""", False)
+LINE3""",
+        False,
+    )
     assert os.path.exists("TEST.txt")
     with open("TEST.txt") as fp:
         lines = fp.readlines()
@@ -17,11 +20,14 @@ LINE3""", False)
         assert lines[1] == "LINE2\n"
         assert lines[2] == "LINE3"
 
-    kernel.do_execute("""%%file -a TEST.txt
+    kernel.do_execute(
+        """%%file -a TEST.txt
 
 LINE4
 LINE5
-LINE6""", False)
+LINE6""",
+        False,
+    )
     assert os.path.exists("TEST.txt")
     with open("TEST.txt") as fp:
         lines = fp.readlines()
@@ -41,6 +47,8 @@ TEST3""")
         assert lines[1] == "TEST2\n"
         assert lines[2] == "TEST3"
 
+
 def teardown() -> None:
     import shutil
+
     shutil.rmtree("/tmp/tmp", ignore_errors=True)

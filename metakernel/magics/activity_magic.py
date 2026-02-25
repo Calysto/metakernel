@@ -3,28 +3,30 @@
 
 from __future__ import annotations
 
+import datetime
+import getpass
+import os
+from typing import Any
+
 try:
     from ipywidgets import widgets
 except ImportError:
     widgets = None
-from metakernel import Magic, option
-from typing import Any
-import os
-import getpass
-import datetime
+
+from metakernel import Magic
+
 
 def touch(fname, times=None) -> None:
-    with open(fname, 'a'):
+    with open(fname, "a"):
         os.utime(fname, times)
 
-from typing import List, Optional
 
-class Activity(object):
+class Activity:
     def __init__(self) -> None:
-        self.questions: List[Any] = []
-        self.filename: Optional[str] = None
-        self.results_filename: Optional[str] = None
-        self.instructors: List[Any] = []
+        self.questions: list[Any] = []
+        self.filename: str | None = None
+        self.results_filename: str | None = None
+        self.instructors: list[Any] = []
         self.show_initial = True
         self.last_id = None
 
@@ -45,7 +47,9 @@ class Activity(object):
         # Allow use of widgets:
         if widgets is None:
             return
-        json = eval(json_text.strip(), {key: getattr(widgets, key) for key in dir(widgets)})
+        json = eval(
+            json_text.strip(), {key: getattr(widgets, key) for key in dir(widgets)}
+        )
         if json.get("results_filename", None):
             self.results_filename = json["results_filename"]
         if json.get("instructors", []):
@@ -57,17 +61,19 @@ class Activity(object):
                 if item["type"] == "multiple choice":
                     # FIXME: allow widgets; need to rewrite create/show:
                     question = item["question"]
-                    #if isinstance(question, str):
+                    # if isinstance(question, str):
                     #    question = widgets.HTML(question)
                     options = item["options"]
-                    #for pos in range(len(options)):
+                    # for pos in range(len(options)):
                     #    option = options[pos]
                     #    if isinstance(option, str):
                     #        options[pos] = widgets.HTML(option)
                     q = Question(item["id"], question, options)
                     self.questions.append(q)
                 else:
-                    raise Exception("not a valid question 'type': use ['multiple choice']")
+                    raise Exception(
+                        "not a valid question 'type': use ['multiple choice']"
+                    )
             self.create_widget()
             self.use_question(self.index)
         else:
@@ -77,7 +83,9 @@ class Activity(object):
         self.set_question(self.questions[index].question)
         self.set_id(self.questions[index].id)
         self.results_html.layout.visibility = "hidden"
-        self.results_button.layout.visibility = "visible" if (getpass.getuser() in self.instructors) else "hidden"
+        self.results_button.layout.visibility = (
+            "visible" if (getpass.getuser() in self.instructors) else "hidden"
+        )
         self.prev_button.disabled = index == 0
         self.next_button.disabled = index == len(self.questions) - 1
         for i in range(5):
@@ -95,15 +103,23 @@ class Activity(object):
         self.choice_row_list = []
         for count in range(1, 5 + 1):
             self.choice_widgets.append(widgets.HTML(""))
-            self.choice_row_list.append(widgets.HBox([widgets.HTML("<b>%s</b>)&nbsp;&nbsp;" % count),
-                                                      self.choice_widgets[-1]]))
+            self.choice_row_list.append(
+                widgets.HBox(
+                    [
+                        widgets.HTML("<b>%s</b>)&nbsp;&nbsp;" % count),
+                        self.choice_widgets[-1],
+                    ]
+                )
+            )
         self.buttons = []
         for i in range(1, 5 + 1):
-            button = widgets.Button(description = str(i))
+            button = widgets.Button(description=str(i))
             button.on_click(self.handle_submit)
             button.layout.margin = "20px"
             self.buttons.append(button)
-        self.respond_row_widgets = widgets.HBox([widgets.HTML("""<br/><br clear="all"/><b>Respond</b>: """)] + self.buttons)
+        self.respond_row_widgets = widgets.HBox(
+            [widgets.HTML("""<br/><br clear="all"/><b>Respond</b>: """)] + self.buttons
+        )
         self.next_button = widgets.Button(description="Next")
         self.next_button.on_click(self.handle_next)
         self.results_button = widgets.Button(description="Results")
@@ -112,14 +128,20 @@ class Activity(object):
         self.prev_button.on_click(self.handle_prev)
         self.results_html = widgets.HTML("")
         self.top_margin = widgets.HTML("")
-        #self.top_margin.layout.height = "100px"
+        # self.top_margin.layout.height = "100px"
         right_stack = widgets.VBox([self.top_margin, self.results_html])
-        self.stack = widgets.VBox([self.id_widget, self.question_widget] + self.choice_row_list +
-                                  [self.respond_row_widgets,
-                                   widgets.HBox([self.prev_button, self.results_button, self.next_button])])
+        self.stack = widgets.VBox(
+            [self.id_widget, self.question_widget]
+            + self.choice_row_list
+            + [
+                self.respond_row_widgets,
+                widgets.HBox([self.prev_button, self.results_button, self.next_button]),
+            ]
+        )
         self.output = widgets.Output()
-        self.top_level = widgets.VBox([widgets.HBox([self.stack, right_stack]),
-                                       self.output])
+        self.top_level = widgets.VBox(
+            [widgets.HBox([self.stack, right_stack]), self.output]
+        )
 
     def set_question(self, question) -> None:
         self.question_widget.value = "<h1>%s</h1>" % question
@@ -142,36 +164,50 @@ class Activity(object):
             line = fp.readline()
             while line:
                 if "::" in line:
-                    id, user, time, choice = line.split("::")
+                    id, user, _time, choice = line.split("::")
                     if self.questions[self.index].id == id:
                         if choice.strip() != "Results":
                             if self.show_initial:
                                 if user.strip() not in data:
                                     data[user.strip()] = choice.strip()
-                            else: # shows last
+                            else:  # shows last
                                 data[user.strip()] = choice.strip()
                 line = fp.readline()
-        choices = {str(i): 0 for i in range(1, len(self.questions[self.index].options) + 1)}
+        choices = {
+            str(i): 0 for i in range(1, len(self.questions[self.index].options) + 1)
+        }
         for datum in data.values():
             if datum not in choices:
                 choices[datum] = 0
             choices[datum] += 1
-        barvalues = [int(value) for key,value in sorted(choices.items())]
+        barvalues = [int(value) for key, value in sorted(choices.items())]
         self.stack.layout.width = "55%"
         try:
             from calysto.graphics import BarChart
-            barchart = BarChart(size=(300, 400), data=barvalues, labels=sorted(choices.keys()))
+
+            barchart = BarChart(
+                size=(300, 400), data=barvalues, labels=sorted(choices.keys())
+            )
             self.results_html.value = str(barchart)
             self.results_html.layout.visibility = "visible"
-        except:
+        except Exception:
             with self.output:
                 print(sorted(choices.keys()))
                 print(barvalues)
 
     def handle_submit(self, sender) -> None:
         import portalocker
+
         with portalocker.Lock(self.results_filename, "a+") as g:
-            g.write("%s::%s::%s::%s\n" % (self.id, getpass.getuser(), datetime.datetime.today(), sender.description))
+            g.write(
+                "%s::%s::%s::%s\n"
+                % (
+                    self.id,
+                    getpass.getuser(),
+                    datetime.datetime.today(),
+                    sender.description,
+                )
+            )
             g.flush()
             os.fsync(g.fileno())
         self.output.clear_output()
@@ -192,16 +228,18 @@ class Activity(object):
 
     def render(self) -> None:
         from metakernel.display import display
+
         display(self.top_level)
 
-class Question(object):
+
+class Question:
     def __init__(self, id, question, options) -> None:
         self.id = id
         self.question = question
         self.options = options
 
-class ActivityMagic(Magic):
 
+class ActivityMagic(Magic):
     def line_activity(self, filename, mode=None) -> None:
         """
         %activity FILENAME - run a widget-based activity
@@ -215,6 +253,7 @@ class ActivityMagic(Magic):
             %activity /home/teacher/activity1 edit
         """
         from IPython import get_ipython
+
         if mode == "new":
             text = '''
 {"activity": "poll",
@@ -265,7 +304,7 @@ class ActivityMagic(Magic):
             get_ipython().set_next_input(("%%%%activity %s\n\n" % filename) + text)
             return
         elif mode == "edit":
-            text = "".join(open(filename, "r").readlines())
+            text = "".join(open(filename).readlines())
             get_ipython().set_next_input(("%%%%activity %s\n\n" % filename) + text)
         else:
             activity = Activity()
@@ -309,13 +348,17 @@ class ActivityMagic(Magic):
         self.line_activity(filename)
         self.evaluate = False
 
+
 def register_magics(kernel) -> None:
     kernel.register_magics(ActivityMagic)
 
+
 def register_ipython_magics() -> None:
+    from IPython.core.magic import register_cell_magic, register_line_magic
+
     from metakernel import IPythonKernel
     from metakernel.utils import add_docs
-    from IPython.core.magic import register_line_magic, register_cell_magic
+
     kernel = IPythonKernel()
     magic = ActivityMagic(kernel)
     # Make magics callable:
@@ -329,6 +372,6 @@ def register_ipython_magics() -> None:
 
     @register_cell_magic  # type: ignore[no-redef]
     @add_docs(magic.cell_activity.__doc__)
-    def activity(line, cell):
+    def activity(line, cell):  # noqa: F811
         magic.code = cell
         magic.cell_activity(line)

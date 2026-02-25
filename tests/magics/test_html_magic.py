@@ -1,6 +1,5 @@
+from tests.utils import EvalKernel, get_kernel, get_log_text
 
-from tests.utils import (get_kernel, get_log_text, 
-                                    clear_log_text, EvalKernel)
 
 def test_html_magic() -> None:
     kernel = get_kernel(EvalKernel)
@@ -10,4 +9,3 @@ def test_html_magic() -> None:
 """)
     text = get_log_text(kernel)
     assert "Display Data" in text, text
-

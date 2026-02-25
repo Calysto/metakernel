@@ -1,16 +1,19 @@
+# ruff: noqa: F403, F405
 from Graphics import *
 from Myro import show
+
 
 # positive to left
 def dragon(arrow, level=4, size=200, direction=45) -> None:
     if level:
         arrow.rotate(direction)
-        dragon(arrow, level-1, size/1.41421356237, 45)
+        dragon(arrow, level - 1, size / 1.41421356237, 45)
         arrow.rotate(-direction * 2)
-        dragon(arrow, level-1, size/1.41421356237, -45)
+        dragon(arrow, level - 1, size / 1.41421356237, -45)
         arrow.rotate(direction)
     else:
         arrow.forward(size)
+
 
 def draw_dragon4(center, size, counts, colors, angle=0) -> None:
     for color, count in zip(colors, counts):
@@ -24,6 +27,7 @@ def draw_dragon4(center, size, counts, colors, angle=0) -> None:
             arrow.penUp()
             arrow.undraw()
         angle += 90
+
 
 def makePicture(size):
     global win
@@ -45,25 +49,48 @@ def makePicture(size):
     if size > 128:
         scolor = darkblue
         yscolor = darkyellow
-        draw_dragon4((size2 - 0, size2 + 2), size2, [16] * 4, [None, scolor, None, yscolor], angle)
-        draw_dragon4((size2 + 2, size2 - 0), size2, [16] * 4, [None, scolor, None, yscolor], angle)
-        draw_dragon4((size2 - 2, size2 + 0), size2, [16] * 4, [None, scolor, None, yscolor], angle)
-        draw_dragon4((size2 + 0, size2 - 2), size2, [16] * 4, [None, scolor, None, yscolor], angle)
+        draw_dragon4(
+            (size2 - 0, size2 + 2),
+            size2,
+            [16] * 4,
+            [None, scolor, None, yscolor],
+            angle,
+        )
+        draw_dragon4(
+            (size2 + 2, size2 - 0),
+            size2,
+            [16] * 4,
+            [None, scolor, None, yscolor],
+            angle,
+        )
+        draw_dragon4(
+            (size2 - 2, size2 + 0),
+            size2,
+            [16] * 4,
+            [None, scolor, None, yscolor],
+            angle,
+        )
+        draw_dragon4(
+            (size2 + 0, size2 - 2),
+            size2,
+            [16] * 4,
+            [None, scolor, None, yscolor],
+            angle,
+        )
 
     draw_dragon4((size2, size2), size2, [16] * 4, [None, blue, None, None], angle)
     draw_dragon4((size2, size2), size2, [16] * 4, [None, None, None, yellow], angle)
 
     pic = Picture(win)
     pic.setTransparent(Color(bg))
-    #pic.flipHorizontal()
-    #show(pic)
+    # pic.flipHorizontal()
+    # show(pic)
     pic.savePicture("logo-%dx%d.png" % (size, size))
     return pic
 
 
-
-for size in [32, 64]: # 16, 32, 64, 128, 256, 512]:
+for size in [32, 64]:  # 16, 32, 64, 128, 256, 512]:
     pic = makePicture(size)
     show(pic, "%sx%s" % (size, size))
-    #pic.savePicture("metakernel-logo-%sx%s.gif" % (size, size))
-    #pic.savePicture("metakernel-logo-%sx%s.jpg" % (size, size))
+    # pic.savePicture("metakernel-logo-%sx%s.gif" % (size, size))
+    # pic.savePicture("metakernel-logo-%sx%s.jpg" % (size, size))

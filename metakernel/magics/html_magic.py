@@ -2,11 +2,12 @@
 # Distributed under the terms of the Modified BSD License.
 
 
-from metakernel import Magic
 from IPython.display import HTML
 
-class HTMLMagic(Magic):
+from metakernel import Magic
 
+
+class HTMLMagic(Magic):
     def line_html(self, code) -> None:
         """
         %html CODE - display code as HTML
@@ -29,8 +30,8 @@ class HTMLMagic(Magic):
         HTML.
 
         Example:
-            %%html 
-    
+            %%html
+
             <script src="..."></script>
 
             <div>Contents of div tag</div>
@@ -38,6 +39,7 @@ class HTMLMagic(Magic):
         html = HTML(self.code)
         self.kernel.Display(html)
         self.evaluate = False
+
 
 def register_magics(kernel) -> None:
     kernel.register_magics(HTMLMagic)

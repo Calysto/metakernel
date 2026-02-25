@@ -25,4 +25,4 @@ jupyter console --kernel=metakernel_python
 ## Dependencies
 
 1. IPython 3
-2. MetaKernel (installed with pip)
+1. MetaKernel (installed with pip)

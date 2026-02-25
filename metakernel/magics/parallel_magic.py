@@ -2,18 +2,21 @@
 # Distributed under the terms of the Modified BSD License.
 from __future__ import annotations
 
-from metakernel import Magic, option
-from typing import Optional, Any
-import logging
 import time
+from typing import Any
+
+from metakernel import Magic, option
 
 
-class Slice(object):
+class Slice:
     """Utility class for making slice ranges."""
+
     def __getitem__(self, item):
         return item
 
-slicer = Slice() ## instance to parse slices
+
+slicer = Slice()  ## instance to parse slices
+
 
 class ParallelMagic(Magic):
     client: Any = None
@@ -27,15 +30,22 @@ class ParallelMagic(Magic):
     retry = False
 
     @option(
-        '-k', '--kernel_name', action='store', default="default",
-        help='arbitrary name given to reference kernel'
+        "-k",
+        "--kernel_name",
+        action="store",
+        default="default",
+        help="arbitrary name given to reference kernel",
     )
     @option(
-        '-i', '--ids', action='store', default=None,
-        help='the machine ids to use from the cluster'
-
+        "-i",
+        "--ids",
+        action="store",
+        default=None,
+        help="the machine ids to use from the cluster",
     )
-    def line_parallel(self, module_name, class_name, kernel_name="default", ids=None) -> None:
+    def line_parallel(
+        self, module_name, class_name, kernel_name="default", ids=None
+    ) -> None:
         """
         %parallel MODULE CLASS [-k NAME] [-i [...]] - construct an interface to the cluster.
 
@@ -52,12 +62,13 @@ class ParallelMagic(Magic):
         Use %px or %%px to send code to the cluster.
         """
         from ipyparallel import Client
+
         count = 1
         while count <= 5:
             try:
                 self.client = Client()
                 break
-            except:
+            except Exception:
                 print("Waiting on cluster to start...")
                 time.sleep(2)
             count += 1
@@ -69,7 +80,7 @@ class ParallelMagic(Magic):
                 try:
                     self.view = self.client[:]
                     break
-                except:
+                except Exception:
                     print("Waiting for engines...")
                     time.sleep(2)
                 count += 1
@@ -82,8 +93,8 @@ class ParallelMagic(Magic):
             # ids[1, 2, ...] = [1, 2, Ellipsis]
             # ids[1, 2:4, ...] = [1, slice(2, 4, None), Ellipsis]
             try:
-                ids_slice = eval("slicer%s" % ids) # slicer[0,...,7]
-            except:
+                ids_slice = eval("slicer%s" % ids)  # slicer[0,...,7]
+            except Exception:
                 ids_slice = slicer[:]
             if isinstance(ids_slice, (slice, int)):
                 count = 1
@@ -91,13 +102,13 @@ class ParallelMagic(Magic):
                     try:
                         self.view = self.client[ids_slice]
                         break
-                    except:
+                    except Exception:
                         print("Waiting for engines...")
                         time.sleep(2)
                     count += 1
                 if count == 6:
                     raise Exception("Engines were not started.")
-            else: # tuple of indexes/slices
+            else:  # tuple of indexes/slices
                 # FIXME: if so, handle Ellipsis
                 view = None
                 for item in ids_slice:
@@ -111,7 +122,7 @@ class ParallelMagic(Magic):
                             else:
                                 view = client
                             break
-                        except:
+                        except Exception:
                             print("Waiting on cluster to start...")
                             time.sleep(2)
                         count += 1
@@ -122,47 +133,68 @@ class ParallelMagic(Magic):
         self.module_name = module_name
         self.class_name = class_name
         self.kernel_name = kernel_name
-        self.view.execute("""
+        self.view.execute(
+            """
 import os
 for key, value in %(env)s.items():
     os.environ[key] = value
 try:
     kernels
-except:
+except Exception:
     kernels = {}
 from %(module_name)s import %(class_name)s
 kernels['%(kernel_name)s'] = %(class_name)s()
 ## FIXME: kernels['%(kernel_name)s'].kernel = kernel
-""" % {"module_name": module_name,
-       "class_name": class_name,
-       "kernel_name": kernel_name,
-       "env": str(self.kernel.env)},
-                          block=True)
+"""
+            % {
+                "module_name": module_name,
+                "class_name": class_name,
+                "kernel_name": kernel_name,
+                "env": str(self.kernel.env),
+            },
+            block=True,
+        )
 
-        self.view["kernels['%s'].set_variable(\"cluster_size\", %s)" % (
-            kernel_name, len(self.client))]
-        self.client[:].scatter('cluster_rank', self.client.ids, flatten=True)
-        self.view["kernels['%s'].set_variable(\"cluster_rank\", cluster_rank)" % (
-            kernel_name)]
+        self.view[
+            "kernels['%s'].set_variable(\"cluster_size\", %s)"
+            % (kernel_name, len(self.client))
+        ]
+        self.client[:].scatter("cluster_rank", self.client.ids, flatten=True)
+        self.view[
+            "kernels['%s'].set_variable(\"cluster_rank\", cluster_rank)" % (kernel_name)
+        ]
         ## So that these are available in the host kernel:
         self.kernel.set_variable("cluster_size", len(self.client))
         self.kernel.set_variable("cluster_rank", -1)
         self.retval = None
 
     @option(
-        '-k', '--kernel_name', action='store', default=None,
-        help='kernel name given to use for execution'
+        "-k",
+        "--kernel_name",
+        action="store",
+        default=None,
+        help="kernel name given to use for execution",
     )
     @option(
-        '-e', '--evaluate', action='store_true', default=False,
-        help=('evaluate code in the current kernel, too. The current ' +
-              'kernel should be of the same language as the cluster.')
+        "-e",
+        "--evaluate",
+        action="store_true",
+        default=False,
+        help=(
+            "evaluate code in the current kernel, too. The current "
+            + "kernel should be of the same language as the cluster."
+        ),
     )
     @option(
-        '-s', '--set_variable', action='store', default=None,
-        help='set the variable with the parallel results rather than returning them'
+        "-s",
+        "--set_variable",
+        action="store",
+        default=None,
+        help="set the variable with the parallel results rather than returning them",
     )
-    def line_px(self, expression, kernel_name=None, evaluate=False, set_variable=None) -> None:
+    def line_px(
+        self, expression, kernel_name=None, evaluate=False, set_variable=None
+    ) -> None:
         """
         %px EXPRESSION - send EXPRESSION to the cluster.
 
@@ -187,10 +219,12 @@ kernels['%(kernel_name)s'] = %(class_name)s()
             count = 1
             while count <= 5:
                 try:
-                    results = self.view["kernels['%s'].do_execute_direct(\"%s\")" % (
-                        kernel_name, self._clean_code(expression))]
+                    results = self.view[
+                        "kernels['%s'].do_execute_direct(\"%s\")"
+                        % (kernel_name, self._clean_code(expression))
+                    ]
                     break
-                except:
+                except Exception:
                     print("Waiting on cluster clients to start...")
                     time.sleep(2)
                 count += 1
@@ -199,8 +233,10 @@ kernels['%(kernel_name)s'] = %(class_name)s()
             self.retry = False
         else:
             try:
-                results = self.view["kernels['%s'].do_execute_direct(\"%s\")" % (
-                    kernel_name, self._clean_code(expression))]
+                results = self.view[
+                    "kernels['%s'].do_execute_direct(\"%s\")"
+                    % (kernel_name, self._clean_code(expression))
+                ]
             except Exception as e:
                 results = str(e)
         if set_variable is None:
@@ -216,17 +252,28 @@ kernels['%(kernel_name)s'] = %(class_name)s()
 
     ## px --kernel NAME
     @option(
-        '-k', '--kernel_name', action='store', default=None,
-        help='kernel name given to use for execution'
+        "-k",
+        "--kernel_name",
+        action="store",
+        default=None,
+        help="kernel name given to use for execution",
     )
     @option(
-        '-e', '--evaluate', action='store_true', default=False,
-        help=('evaluate code in the current kernel, too. The current ' +
-              'kernel should be of the same language as the cluster.')
+        "-e",
+        "--evaluate",
+        action="store_true",
+        default=False,
+        help=(
+            "evaluate code in the current kernel, too. The current "
+            + "kernel should be of the same language as the cluster."
+        ),
     )
     @option(
-        '-s', '--set_variable', action='store', default=None,
-        help='set the variable with the parallel results rather than returning them'
+        "-s",
+        "--set_variable",
+        action="store",
+        default=None,
+        help="set the variable with the parallel results rather than returning them",
     )
     def cell_px(self, kernel_name=None, evaluate=False, set_variable=None) -> None:
         """
@@ -241,8 +288,10 @@ kernels['%(kernel_name)s'] = %(class_name)s()
         """
         if kernel_name is None:
             kernel_name = self.kernel_name
-        results = self.view["kernels['%s'].do_execute_direct(\"%s\")" % (
-            kernel_name, self._clean_code(self.code))]
+        results = self.view[
+            "kernels['%s'].do_execute_direct(\"%s\")"
+            % (kernel_name, self._clean_code(self.code))
+        ]
         if set_variable is None:
             self.retval = results
         else:
@@ -251,10 +300,15 @@ kernels['%(kernel_name)s'] = %(class_name)s()
         self.evaluate = evaluate
 
     @option(
-        '-s', '--set_variable', action='store', default=None,
-        help='set the variable with the parallel results rather than returning them'
+        "-s",
+        "--set_variable",
+        action="store",
+        default=None,
+        help="set the variable with the parallel results rather than returning them",
     )
-    def line_pmap(self, function_name, args, kernel_name=None, set_variable=None) -> None:
+    def line_pmap(
+        self, function_name, args, kernel_name=None, set_variable=None
+    ) -> None:
         """
         %pmap FUNCTION [ARGS1,ARGS2,...] - ("parallel map") call a FUNCTION on args
 
@@ -300,8 +354,11 @@ kernels['%(kernel_name)s'] = %(class_name)s()
             from ipyparallel.util import interactive
         except ImportError:
             from IPython.parallel.util import interactive
-        f = interactive(lambda arg, kname=kernel_name, fname=function_name: \
-                        kernels[kname].do_function_direct(fname, arg))  # type: ignore[name-defined]
+        f = interactive(
+            lambda arg, kname=kernel_name, fname=function_name: kernels[  # noqa: F821
+                kname
+            ].do_function_direct(fname, arg)
+        )  # type: ignore[name-defined]
         results = self.view_load_balanced.map_async(f, eval(args))
         if set_variable is None:
             self.retval = results
@@ -314,9 +371,10 @@ kernels['%(kernel_name)s'] = %(class_name)s()
             ## any will crash on numpy arrays
             if isinstance(self.retval, list) and not any(self.retval):
                 return None
-        except:
+        except Exception:
             pass
         return self.retval
+
 
 def register_magics(kernel) -> None:
     kernel.register_magics(ParallelMagic)

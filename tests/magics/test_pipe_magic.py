@@ -1,5 +1,4 @@
-from tests.utils import (get_kernel, get_log_text, EvalKernel,
-                                    clear_log_text)
+from tests.utils import EvalKernel, clear_log_text, get_kernel, get_log_text
 
 
 def test_pipe_magic() -> None:
@@ -26,25 +25,23 @@ def piglatin(text):
 this is a test
  """)
     text = get_log_text(kernel)
-    assert "THIS IS A TEST" in text, ("text: " + text)
+    assert "THIS IS A TEST" in text, "text: " + text
 
     kernel.do_execute("""%%pipe upper | piglatin
 this is a test
  """)
     text = get_log_text(kernel)
-    assert "HISTay IS A ESTTay" in text, ("text: " + text)
+    assert "HISTay IS A ESTTay" in text, "text: " + text
 
     kernel.do_execute("""%%pipe piglatin | upper
 this is a test
  """)
     text = get_log_text(kernel)
-    assert "HISTAY IS A ESTTAY" in text, ("text: " + text)
+    assert "HISTAY IS A ESTTAY" in text, "text: " + text
 
     kernel.do_execute("""%%pipe piglatin | upper | lower
 this is a test
  """)
     text = get_log_text(kernel)
-    assert "histay is a esttay" in text, ("text: " + text)
+    assert "histay is a esttay" in text, "text: " + text
     clear_log_text(kernel)
-
-

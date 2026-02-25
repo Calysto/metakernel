@@ -3,8 +3,8 @@
 
 from metakernel import Magic
 
-class ReloadMagicsMagic(Magic):
 
+class ReloadMagicsMagic(Magic):
     def line_reload_magics(self) -> None:
         """
         %reload_magics - reload the magics from the installed files
@@ -20,6 +20,7 @@ class ReloadMagicsMagic(Magic):
         """
         self.kernel.reload_magics()
         self.code = "%lsmagic\n" + self.code
+
 
 def register_magics(kernel) -> None:
     kernel.register_magics(ReloadMagicsMagic)

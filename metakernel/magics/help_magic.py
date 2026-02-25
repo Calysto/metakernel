@@ -6,7 +6,6 @@ from metakernel import Magic
 
 
 class HelpMagic(Magic):
-
     def help_strings(self):
         suffixes = [
             "item{0}{0} - get detailed, technical information on item",
@@ -18,11 +17,9 @@ class HelpMagic(Magic):
         ]
         strings = []
         if self.kernel.help_suffix:
-            strings += [s.format(self.kernel.help_suffix)
-                        for s in suffixes]
-        if 'help' in self.kernel.magic_prefixes:
-            strings += [p.format(self.kernel.magic_prefixes['help'])
-                        for p in prefixes]
+            strings += [s.format(self.kernel.help_suffix) for s in suffixes]
+        if "help" in self.kernel.magic_prefixes:
+            strings += [p.format(self.kernel.magic_prefixes["help"]) for p in prefixes]
         return sorted(strings)
 
     def line_help(self, text):
@@ -74,39 +71,38 @@ class HelpMagic(Magic):
 
         info = self.kernel.parse_code(text, cursor_end=cursor_pos)
 
-        if info['magic']:
+        if info["magic"]:
+            minfo = info["magic"]
+            errmsg = "No such %s magic '%s'" % (minfo["type"], minfo["name"])
 
-            minfo = info['magic']
-            errmsg = "No such %s magic '%s'" % (minfo['type'], minfo['name'])
-
-            if minfo['type'] == 'line':
-                magic = self.kernel.line_magics.get(minfo['name'], None)
-                if minfo['args']:
-                    info = self.kernel.parse_code(minfo['args'])
+            if minfo["type"] == "line":
+                magic = self.kernel.line_magics.get(minfo["name"], None)
+                if minfo["args"]:
+                    info = self.kernel.parse_code(minfo["args"])
                 elif magic:
-                    return magic.get_help(minfo['type'], minfo['name'],
-                                          level)
+                    return magic.get_help(minfo["type"], minfo["name"], level)
 
             else:
-                magic = self.kernel.cell_magics.get(minfo['name'], None)
+                magic = self.kernel.cell_magics.get(minfo["name"], None)
 
-                if minfo['code']:
-                    info = self.kernel.parse_code(minfo['code'])
-                elif minfo['args']:
-                    info = self.kernel.parse_code(minfo['args'])
+                if minfo["code"]:
+                    info = self.kernel.parse_code(minfo["code"])
+                elif minfo["args"]:
+                    info = self.kernel.parse_code(minfo["args"])
                 elif magic:
-                    return magic.get_help(minfo['type'], minfo['name'],
-                                          level)
+                    return magic.get_help(minfo["type"], minfo["name"], level)
                 else:
-                    return ("No such %s magic named '%s', so can't really help with that" %
-                            (minfo["type"], minfo["name"]))
+                    return (
+                        "No such %s magic named '%s', so can't really help with that"
+                        % (minfo["type"], minfo["name"])
+                    )
             if magic:
                 the_help = magic.get_help_on(info, level)
-                self.kernel.log.error('got')
+                self.kernel.log.error("got")
                 self.kernel.log.error(the_help)
                 return the_help
 
-            elif not info['magic']['name']:
+            elif not info["magic"]["name"]:
                 return self.kernel.get_usage()
 
             else:
@@ -118,12 +114,12 @@ class HelpMagic(Magic):
     def _prep_text(self, text):
         text = text.strip()
 
-        magic = self.kernel.magic_prefixes['magic']
-        prefix = self.kernel.magic_prefixes['help']
+        magic = self.kernel.magic_prefixes["magic"]
+        prefix = self.kernel.magic_prefixes["help"]
         suffix = self.kernel.help_suffix
 
-        text = text.replace('{0}{0}help'.format(magic), '')
-        text = text.replace('{0}help'.format(magic), '')
+        text = text.replace(f"{magic}{magic}help", "")
+        text = text.replace(f"{magic}help", "")
 
         if prefix:
             while text.startswith(prefix):

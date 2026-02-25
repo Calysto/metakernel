@@ -1,6 +1,4 @@
-
-import os
-from tests.utils import get_kernel, EvalKernel
+from tests.utils import EvalKernel, get_kernel
 
 
 def test_debug_magic() -> None:
@@ -8,5 +6,3 @@ def test_debug_magic() -> None:
     kernel.do_execute("""%%debug
 print('ok')
 """)
-
-    

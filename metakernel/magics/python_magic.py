@@ -2,35 +2,36 @@
 # Distributed under the terms of the Modified BSD License.
 from __future__ import annotations
 
-from metakernel import Magic, option, ExceptionWrapper
-from typing import Any, Optional
+import ast
 import pydoc
 import sys
-import ast
+from typing import Any
+
 import jedi
 from jedi import Interpreter
 from jedi.api.helpers import get_on_completion_name
 from parso import split_lines
 
-
-from metakernel._metakernel import ExceptionWrapper
+from metakernel import ExceptionWrapper, Magic, option
 
 
 def exec_then_eval(code, env) -> Any:
     import traceback
+
     try:
         block = ast.parse(code, mode="exec")
         last = block.body.pop()
-        if type(last) != ast.Expr:
+        if not isinstance(last, ast.Expr):
             block.body.append(last)
             exec(compile(block, "python cell", mode="exec"), env)
             retval = None
         else:
             exec(compile(block, "python cell", mode="exec"), env)
-            retval = eval(compile(ast.Expression(last.value),
-                                  "python cell", mode="eval"), env)
+            retval = eval(
+                compile(ast.Expression(last.value), "python cell", mode="eval"), env
+            )
         if "retval" in env and env["retval"] is not None:
-            return env['retval']
+            return env["retval"]
         else:
             return retval
 
@@ -39,13 +40,16 @@ def exec_then_eval(code, env) -> Any:
         line1 = ["Traceback (most recent call last):"]
         ex_name = ex_type.__name__ if ex_type is not None else "Exception"
         line2 = ["%s: %s" % (ex_name, str(ex))]
-        tb_format = line1 + [line.rstrip() for line in traceback.format_tb(tb)[1:]] + line2
+        tb_format = (
+            line1 + [line.rstrip() for line in traceback.format_tb(tb)[1:]] + line2
+        )
         return ExceptionWrapper(ex_name, repr(exc.args), tb_format)
-class PythonMagic(Magic):
 
+
+class PythonMagic(Magic):
     def __init__(self, kernel) -> None:
-        super(PythonMagic, self).__init__(kernel)
-        self.env = globals()['__builtins__'].copy()
+        super().__init__(kernel)
+        self.env = globals()["__builtins__"].copy()
         self.retval: Any = None
 
     def line_python(self, *args) -> None:
@@ -69,7 +73,9 @@ class PythonMagic(Magic):
 
     def eval(self, code) -> Any:
         import IPython.display
+
         import metakernel.display
+
         # monkey patch IPython.display.display
         # to redirect notebook display calls to kernel display
         IPython.display.display = metakernel.display.display
@@ -84,8 +90,11 @@ class PythonMagic(Magic):
         return exec_then_eval(code.strip(), self.env)
 
     @option(
-        "-e", "--eval_output", action="store_true", default=False,
-        help="Use the retval value from the Python cell as code in the kernel language."
+        "-e",
+        "--eval_output",
+        action="store_true",
+        default=False,
+        help="Use the retval value from the Python cell as code in the kernel language.",
     )
     def cell_python(self, eval_output=False) -> None:
         """
@@ -122,8 +131,11 @@ class PythonMagic(Magic):
         if self.code.strip():
             if eval_output:
                 retval = self.eval(self.code)
-                self.code = str(self.env["retval"]) if ("retval" in self.env and
-                                                        self.env["retval"] != None) else str(retval)
+                self.code = (
+                    str(self.env["retval"])
+                    if ("retval" in self.env and self.env["retval"] is not None)
+                    else str(retval)
+                )
                 self.retval = None
                 self.env["retval"] = None
                 self.evaluate = True
@@ -139,22 +151,18 @@ class PythonMagic(Magic):
             return self.retval
 
     def get_completions(self, info) -> list:
-        '''Get Python completions'''
+        """Get Python completions"""
         # https://github.com/davidhalter/jedi/blob/master/jedi/utils.py
         if jedi is None:
             return []
 
-        text = info['code']
-        position = (info['line_num'], info['column'])
+        text = info["code"]
+        position = (info["line_num"], info["column"])
         interpreter = Interpreter(text, [self.env])
 
         lines = split_lines(text)
-        name = get_on_completion_name(
-            interpreter._module_node,
-            lines,
-            position
-        )
-        before = text[:len(text) - len(name)]
+        name = get_on_completion_name(interpreter._module_node, lines, position)
+        before = text[: len(text) - len(name)]
 
         try:
             completions = interpreter.complete()
@@ -165,18 +173,18 @@ class PythonMagic(Magic):
 
         self.kernel.log.error(completions)
 
-        return [c[info['start']:] for c in completions]
+        return [c[info["start"] :] for c in completions]
 
     def get_help_on(self, info, level=0, none_on_fail=False) -> str | None:
         """Implement basic help for functions"""
-        if not info['code']:
-            return None if none_on_fail else ''
+        if not info["code"]:
+            return None if none_on_fail else ""
 
-        last = info['obj']
+        last = info["obj"]
 
         default = None if none_on_fail else ('No help available for "%s"' % last)
 
-        parts = last.split('.')
+        parts = last.split(".")
 
         obj = self.env.get(parts[0], None)
 
@@ -184,7 +192,6 @@ class PythonMagic(Magic):
             return default
 
         for p in parts[1:]:
-
             obj = getattr(obj, p, None)
 
             if not obj:
@@ -192,9 +199,10 @@ class PythonMagic(Magic):
 
         strhelp = pydoc.render_doc(obj, "Help on %s")
         if level == 0:
-            return getattr(obj, '__doc__', strhelp)
+            return getattr(obj, "__doc__", strhelp)
         else:
             return strhelp
+
 
 def register_magics(kernel) -> None:
     kernel.register_magics(PythonMagic)

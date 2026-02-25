@@ -1,11 +1,12 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from metakernel import Magic
 from IPython.display import Latex
 
-class LatexMagic(Magic):
+from metakernel import Magic
 
+
+class LatexMagic(Magic):
     def line_latex(self, text) -> None:
         r"""
         %latex TEXT - display text as LaTeX
@@ -26,7 +27,7 @@ class LatexMagic(Magic):
         This cell magic will display the TEXT in the cell as LaTeX.
 
         Example:
-            %%latex 
+            %%latex
             $x_1 = \dfrac{a}{b}$
 
             $x_2 = a^{n - 1}$
@@ -34,6 +35,7 @@ class LatexMagic(Magic):
         latex = Latex(self.code)
         self.kernel.Display(latex)
         self.evaluate = False
+
 
 def register_magics(kernel) -> None:
     kernel.register_magics(LatexMagic)

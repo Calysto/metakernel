@@ -2,21 +2,26 @@
 # Distributed under the terms of the Modified BSD License.
 
 
-from metakernel import Magic, option
+import os
 import urllib.parse as urlparse
 import urllib.request
-import os
+
+from metakernel import Magic, option
+
 
 def download(url, filename):
     g = urllib.request.urlopen(url)
-    with open(filename, 'wb') as f:
+    with open(filename, "wb") as f:
         f.write(g.read())
 
-class DownloadMagic(Magic):
 
+class DownloadMagic(Magic):
     @option(
-        '-f', '--filename', action='store', default=None,
-        help='use the provided name as filename'
+        "-f",
+        "--filename",
+        action="store",
+        default=None,
+        help="use the provided name as filename",
     )
     def line_download(self, url, filename=None) -> None:
         """
@@ -36,13 +41,13 @@ class DownloadMagic(Magic):
                 url, filename = url.split(" ")
             elif url.count(" ") == 0:
                 parts = urlparse.urlsplit(url)
-                #('http', 'example.com', '/somefile.zip', '', '')
+                # ('http', 'example.com', '/somefile.zip', '', '')
                 path = parts[2]
                 filename = os.path.basename(path)
             else:
                 raise Exception("invalid arguments to %%download: '%s'" % url)
-        basename, extname = os.path.splitext(filename)
-        if extname == '':
+        _basename, extname = os.path.splitext(filename)
+        if extname == "":
             filename += ".html"
         filename = filename.replace("~", "")
         filename = filename.replace("%20", "_")
@@ -56,9 +61,12 @@ class DownloadMagic(Magic):
 def register_magics(kernel) -> None:
     kernel.register_magics(DownloadMagic)
 
+
 def register_ipython_magics() -> None:
-    from metakernel import IPythonKernel
     from IPython.core.magic import register_line_magic
+
+    from metakernel import IPythonKernel
+
     kernel = IPythonKernel()
     magic = DownloadMagic(kernel)
     # Make magics callable:

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-'''
+"""
 PEXPECT LICENSE
 
     This license is approved by the OSI and FSF as GPL-compatible.
@@ -17,11 +17,12 @@ PEXPECT LICENSE
     ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
     OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-'''
-import unittest
+"""
+
+import os
 import subprocess
 import sys
-import os
+import unittest
 
 from metakernel import pexpect
 
@@ -30,84 +31,135 @@ from metakernel import pexpect
 # This may not be true, but seems adequate for testing now.
 # I should fix this at some point.
 
-FILTER=''.join([(len(repr(chr(x)))==3) and chr(x) or '.' for x in range(256)])
+FILTER = "".join([((len(repr(chr(x))) == 3) and chr(x)) or "." for x in range(256)])
+
+
 def hex_dump(src, length=16) -> str:
-    result=[]
+    result = []
     for i in range(0, len(src), length):
-       s = src[i:i+length]
-       hexa = ' '.join(["%02X"%ord(x) for x in s])
-       printable = s.translate(FILTER)
-       result.append("%04X   %-*s   %s\n" % (i, length*3, hexa, printable))
-    return ''.join(result)
+        s = src[i : i + length]
+        hexa = " ".join(["%02X" % ord(x) for x in s])
+        printable = s.translate(FILTER)
+        result.append("%04X   %-*s   %s\n" % (i, length * 3, hexa, printable))
+    return "".join(result)
+
 
 def hex_diff(left, right) -> str:
-        diff = ['< %s\n> %s' % (_left, _right,) for _left, _right in zip(
-            hex_dump(left).splitlines(), hex_dump(right).splitlines())
-            if _left != _right]
-        return '\n' + '\n'.join(diff,)
+    diff = [
+        "< %s\n> %s"
+        % (
+            _left,
+            _right,
+        )
+        for _left, _right in zip(
+            hex_dump(left).splitlines(), hex_dump(right).splitlines()
+        )
+        if _left != _right
+    ]
+    return "\n" + "\n".join(
+        diff,
+    )
 
 
-class ExpectTestCase (unittest.TestCase):
-
+class ExpectTestCase(unittest.TestCase):
     def setUp(self) -> None:
         self.PYTHONBIN = sys.executable
         os.chdir(os.path.dirname(__file__))
 
-    def test_expect (self) -> None:
-        the_old_way = subprocess.Popen(args=['ls', '-l', '/bin'],
-                stdout=subprocess.PIPE).communicate()[0].rstrip().decode('utf-8')
-        p = pexpect.spawn('ls -l /bin')
-        the_new_way = ''
+    def test_expect(self) -> None:
+        the_old_way = (
+            subprocess.Popen(args=["ls", "-l", "/bin"], stdout=subprocess.PIPE)
+            .communicate()[0]
+            .rstrip()
+            .decode("utf-8")
+        )
+        p = pexpect.spawn("ls -l /bin")
+        the_new_way = ""
         while 1:
-            i = p.expect ([u'\n', pexpect.EOF])
+            i = p.expect(["\n", pexpect.EOF])
             the_new_way = the_new_way + p.before
             if i == 1:
                 break
         the_new_way = the_new_way.rstrip()
-        the_new_way = the_new_way.replace('\r\n', '\n'
-                ).replace('\r', '\n').replace('\n\n', '\n').rstrip()
-        the_old_way = the_old_way.replace('\r\n', '\n'
-                ).replace('\r', '\n').replace('\n\n', '\n').rstrip()
+        the_new_way = (
+            the_new_way.replace("\r\n", "\n")
+            .replace("\r", "\n")
+            .replace("\n\n", "\n")
+            .rstrip()
+        )
+        the_old_way = (
+            the_old_way.replace("\r\n", "\n")
+            .replace("\r", "\n")
+            .replace("\n\n", "\n")
+            .rstrip()
+        )
         assert the_old_way == the_new_way, hex_diff(the_old_way, the_new_way)
 
-    def test_expect_exact (self) -> None:
-        the_old_way = subprocess.Popen(args=['ls', '-l', '/bin'],
-                stdout=subprocess.PIPE).communicate()[0].rstrip().decode('utf-8')
-        p = pexpect.spawn('ls -l /bin')
-        the_new_way = ''
+    def test_expect_exact(self) -> None:
+        the_old_way = (
+            subprocess.Popen(args=["ls", "-l", "/bin"], stdout=subprocess.PIPE)
+            .communicate()[0]
+            .rstrip()
+            .decode("utf-8")
+        )
+        p = pexpect.spawn("ls -l /bin")
+        the_new_way = ""
         while 1:
-            i = p.expect_exact ([u'\n', pexpect.EOF])
+            i = p.expect_exact(["\n", pexpect.EOF])
             the_new_way = the_new_way + p.before
             if i == 1:
                 break
-        the_new_way = the_new_way.replace('\r\n', '\n'
-                ).replace('\r', '\n').replace('\n\n', '\n').rstrip()
-        the_old_way = the_old_way.replace('\r\n', '\n'
-                ).replace('\r', '\n').replace('\n\n', '\n').rstrip()
+        the_new_way = (
+            the_new_way.replace("\r\n", "\n")
+            .replace("\r", "\n")
+            .replace("\n\n", "\n")
+            .rstrip()
+        )
+        the_old_way = (
+            the_old_way.replace("\r\n", "\n")
+            .replace("\r", "\n")
+            .replace("\n\n", "\n")
+            .rstrip()
+        )
         assert the_old_way == the_new_way, hex_diff(the_old_way, the_new_way)
-        p = pexpect.spawn('echo hello.?world')
-        i = p.expect_exact(u'.?')
-        self.assertEqual(p.before, 'hello')
-        self.assertEqual(p.after, '.?')
+        p = pexpect.spawn("echo hello.?world")
+        i = p.expect_exact(".?")
+        self.assertEqual(p.before, "hello")
+        self.assertEqual(p.after, ".?")
 
-    def test_expect_eof (self) -> None:
-        the_old_way = subprocess.Popen(args=['/bin/ls', '-l', '/bin'],
-                stdout=subprocess.PIPE).communicate()[0].rstrip().decode('utf-8')
-        p = pexpect.spawn('/bin/ls -l /bin')
-        p.expect(pexpect.EOF) # This basically tells it to read everything. Same as pexpect.run() function.
+    def test_expect_eof(self) -> None:
+        the_old_way = (
+            subprocess.Popen(args=["/bin/ls", "-l", "/bin"], stdout=subprocess.PIPE)
+            .communicate()[0]
+            .rstrip()
+            .decode("utf-8")
+        )
+        p = pexpect.spawn("/bin/ls -l /bin")
+        p.expect(
+            pexpect.EOF
+        )  # This basically tells it to read everything. Same as pexpect.run() function.
         the_new_way = p.before
-        the_new_way = the_new_way.replace('\r\n', '\n'
-                ).replace('\r', '\n').replace('\n\n', '\n').rstrip()
-        the_old_way = the_old_way.replace('\r\n', '\n'
-                ).replace('\r', '\n').replace('\n\n', '\n').rstrip()
+        the_new_way = (
+            the_new_way.replace("\r\n", "\n")
+            .replace("\r", "\n")
+            .replace("\n\n", "\n")
+            .rstrip()
+        )
+        the_old_way = (
+            the_old_way.replace("\r\n", "\n")
+            .replace("\r", "\n")
+            .replace("\n\n", "\n")
+            .rstrip()
+        )
         assert the_old_way == the_new_way, hex_diff(the_old_way, the_new_way)
 
-    def test_expect_timeout (self) -> None:
-        p = pexpect.spawn('cat', timeout=5)
-        p.expect(pexpect.TIMEOUT) # This tells it to wait for timeout.
+    def test_expect_timeout(self) -> None:
+        p = pexpect.spawn("cat", timeout=5)
+        p.expect(pexpect.TIMEOUT)  # This tells it to wait for timeout.
         self.assertEqual(p.after, pexpect.TIMEOUT)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
 
 suite = unittest.TestLoader().loadTestsFromTestCase(ExpectTestCase)

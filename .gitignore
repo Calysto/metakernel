@@ -10,3 +10,4 @@ examples/temp.txt
 .*.swp
 *,cover
 .cover*
+metakernel_python/data_kernelspec/
