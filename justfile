@@ -41,7 +41,7 @@ cover:
 
 # Build Sphinx HTML docs
 docs:
-    uv run sphinx-build -W -d docs/_build/doctrees docs docs/_build/html
+    uv run --group docs sphinx-build -W -d docs/_build/doctrees docs docs/_build/html
 
 # Regenerate magics/README.md from magic docstrings
 help:
@@ -53,4 +53,9 @@ typing:
 
 # Run linter
 lint:
-    uv run ruff check metakernel/ tests/
+    just pre-commit ruff-format
+    just pre-commit ruff-check
+
+# Run pre-commit hook
+pre-commit *args="":
+    uv tool run pre-commit run --all-files {{args}}

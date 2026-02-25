@@ -1,6 +1,28 @@
+A Jupyter kernel base class in Python which includes core magic
+functions (including help, command and file path completion, parallel
+and distributed processing, downloads, and much more).
 
-.. include:: ../README.rst
-   :end-before:  Installation
+See Jupyter's docs on `wrapper
+kernels <http://jupyter-client.readthedocs.io/en/stable/wrapperkernels.html>`_.
+
+Additional magics can be installed within the new kernel package under a
+``magics`` subpackage.
+
+Features
+--------
+
+- Basic set of line and cell magics for all kernels.
+
+  - Python magic for accessing python interpreter.
+  - Run kernels in parallel.
+  - Shell magics.
+  - Classroom management magics.
+
+- Tab completion for magics and file paths.
+
+- Help for magics using ? or Shift+Tab.
+
+- Plot magic for setting default plot behavior.
 
 .. toctree::
    :hidden:
