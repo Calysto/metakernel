@@ -35,6 +35,7 @@ parallel = ["ipyparallel"] # parallel magic
 dev = [ { include-group = "test" } ]
 test = [
     "jupyter_kernel_test",
+    "ipywidgets",
     "metakernel_python",
     "pytest",
     "pytest-timeout",
@@ -58,7 +59,7 @@ coverage = [
     "coverage[toml]",
     "pytest-cov",
 ]
-typing = ["pip", "mypy"]
+typing = ["pip", "mypy", "ipywidgets"]
 
 [tool.uv.sources]
 metakernel_python = { path = "./metakernel_python", editable = true }

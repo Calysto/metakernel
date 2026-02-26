@@ -36,8 +36,8 @@ warnings.filterwarnings("ignore", module="IPython.html.widgets")
 PY3 = sys.version_info[0] == 3
 
 try:
-    import ipywidgets as widgets  #  type:ignore[import-not-found]
-    from ipywidgets.widgets.widget import Widget  #  type:ignore[import-not-found]
+    import ipywidgets as widgets  #  type:ignore[import-untyped]
+    from ipywidgets.widgets.widget import Widget  #  type:ignore[import-untyped]
 except ImportError:
     Widget = None
 
