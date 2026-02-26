@@ -89,12 +89,15 @@ def get_log() -> Logger:
 
 
 def get_kernel(kernel_class=MetaKernel) -> MetaKernel:
+    import weakref
+
     context = zmq.Context.instance()
     iopub_socket = context.socket(zmq.PUB)
 
     kernel = kernel_class(
         session=ss.Session(), iopub_socket=iopub_socket, log=get_log()
     )
+    weakref.finalize(kernel, iopub_socket.close)
     return kernel  # type:ignore[no-any-return]
 
 

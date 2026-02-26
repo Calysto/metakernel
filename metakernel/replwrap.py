@@ -3,7 +3,6 @@ from __future__ import annotations
 import atexit
 import errno
 import os
-import re
 import signal
 import sys
 import time
@@ -315,7 +314,7 @@ def python(command: str = "python") -> REPLWrapper:
     )
 
 
-def bash(command: str = "bash", prompt_regex: Any = re.compile("[$#]")) -> REPLWrapper:
+def bash(command: str = "bash", prompt_regex: str = "[$#]") -> REPLWrapper:
     """Start a bash shell and return a :class:`REPLWrapper` object."""
 
     # If the user runs 'env', the value of PS1 will be in the output. To avoid
