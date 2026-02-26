@@ -29,7 +29,7 @@ test-parallel *args="":
 # Run tests with coverage
 cover:
     uv run --with ipyparallel ipcluster start -n=3 &
-    uv run --group coverage pytest --cov=metakernel
+    uv run --group coverage pytest -x --cov=metakernel
     uv run coverage annotate
     uv run --with ipyparallel ipcluster stop
 
