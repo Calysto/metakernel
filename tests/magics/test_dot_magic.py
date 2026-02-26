@@ -1,10 +1,11 @@
+import importlib.util
 import shutil
 
 import pytest
 
 from tests.utils import EvalKernel, get_kernel, get_log_text
 
-NO_DOT = shutil.which("dot") is None
+NO_DOT = shutil.which("dot") is None or importlib.util.find_spec("pydot") is None
 
 
 @pytest.mark.skipif(NO_DOT, reason="Requires dot from graphviz")
