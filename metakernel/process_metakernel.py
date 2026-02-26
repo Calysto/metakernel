@@ -268,8 +268,8 @@ class BashKernel(ProcessMetaKernel):
 
 
 if __name__ == "__main__":
-    from IPython.kernel.zmq.kernelapp import (
-        IPKernelApp,  # type:ignore[import-not-found]
+    from IPython.kernel.zmq.kernelapp import (  # type:ignore[import-not-found]
+        IPKernelApp,
     )
 
     IPKernelApp.launch_instance(kernel_class=BashKernel)
