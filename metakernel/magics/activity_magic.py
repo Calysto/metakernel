@@ -9,7 +9,7 @@ import os
 from typing import Any
 
 try:
-    from ipywidgets import widgets
+    from ipywidgets import widgets  # type:ignore[import-untyped]
 except ImportError:
     widgets = None
 
