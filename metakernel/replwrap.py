@@ -11,8 +11,8 @@ from typing import Any
 from . import pexpect
 
 
-def u(s: str | None) -> str:
-    return str(s)
+def u(s: str | None) -> str | None:
+    return str(s) if s is not None else None
 
 
 basestring = str
