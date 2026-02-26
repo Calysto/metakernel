@@ -502,22 +502,6 @@ Examples:
     %set x 42
     %set x [1, 2, 3]
 
-## `%shell`
-
-%shell COMMAND - run the line as a shell command
-
-This line command will run the COMMAND in the bash shell.
-
-Examples:
-    %shell ls -al
-    %shell cd
-
- Note: this is a persistent connection to a shell.
- The working directory is synchronized to that of the notebook
- before and after each call.
-
-You can also use "!" instead of "%shell".
-
 # Cell Magics
 
 ## `%%activity`
@@ -792,23 +776,6 @@ Examples:
 Options:
 --------
 -e --eval_output Use the retval value from the Scheme cell as code in the kernel language. [default: False]
-
-## `%%shell`
-
- %%shell - run the contents of the cell as shell commands
-
- This shell command will run the cell contents in the bash shell.
-
- Example:
-     %%shell
-        cd ..
-        ls -al
-
-Note: this is a persistent connection to a shell.
-  The working directory is synchronized to that of the notebook
-  before and after each call.
-
- You can also use "!!" instead of "%%shell".
 
 ## `%%show`
 
