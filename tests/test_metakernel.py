@@ -139,7 +139,9 @@ def test_shell_partial_quote() -> None:
     kernel = get_kernel()
     kernel.do_execute('%cd "/home/', False)
     text = get_log_text(kernel)
-    assert """No such file or directory: '"/home/'""" in text, text
+    # POSIX: "No such file or directory: '"/home/'"
+    # Windows: "[WinError 123] ... syntax is incorrect: '"/home/'"
+    assert """'"/home/'""" in text, text
 
 
 def test_other_kernels() -> None:
