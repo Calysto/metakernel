@@ -24,6 +24,12 @@ import subprocess
 import sys
 import unittest
 
+import pytest
+
+pytestmark = pytest.mark.skipif(
+    sys.platform == "win32", reason="pexpect does not support Windows"
+)
+
 from metakernel import pexpect
 
 # Many of these test cases blindly assume that sequential directory

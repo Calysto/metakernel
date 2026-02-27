@@ -1,7 +1,12 @@
 import importlib.util
 import os
+import sys
 
 import pytest
+
+pytestmark = pytest.mark.skipif(
+    sys.platform == "win32", reason="activity magic not supported on Windows"
+)
 
 from metakernel.magics.activity_magic import Activity, touch
 from tests.utils import EvalKernel, get_kernel, get_log_text

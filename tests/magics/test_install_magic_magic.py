@@ -1,7 +1,12 @@
 import os
 import re
+import sys
 
 import pytest
+
+pytestmark = pytest.mark.skipif(
+    sys.platform == "win32", reason="install_magic path assertions use POSIX separators"
+)
 
 from metakernel.config import get_local_magics_dir
 from tests.utils import (

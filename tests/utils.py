@@ -66,7 +66,7 @@ def has_network() -> bool:
     try:
         _ = requests.head("http://google.com", timeout=3)
         return True
-    except requests.ConnectionError:
+    except requests.exceptions.RequestException:
         print("No internet connection available.")
     return False
 
