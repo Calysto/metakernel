@@ -212,7 +212,7 @@ function reset() {
         )  ## add a line so line numbers will be correct
         time.sleep(0.1)
         if data.startswith("highlight: "):
-            self.kernel.Display(Javascript("highlight(cell, %s);" % data[11:]))
+            self.kernel.Display(Javascript(f"highlight(cell, {data[11:]});"))
         time.sleep(0.1)
         self.evaluate = False
 

@@ -46,29 +46,26 @@ class ConnectInfoMagic(Magic):
                 "signature_scheme": "UNKNOWN",
                 "transport": "UNKNOWN",
             }
-        retval = (
-            """{
-  "stdin_port": %(stdin_port)s,
-  "shell_port": %(shell_port)s,
-  "iopub_port": %(iopub_port)s,
-  "hb_port": %(hb_port)s,
-  "ip": "%(ip)s",
-  "key": "%(key)s",
-  "signature_scheme": "%(signature_scheme)s",
-  "transport": "%(transport)s"
-}
+        retval = """{{
+  "stdin_port": {stdin_port},
+  "shell_port": {shell_port},
+  "iopub_port": {iopub_port},
+  "hb_port": {hb_port},
+  "ip": "{ip}",
+  "key": "{key}",
+  "signature_scheme": "{signature_scheme}",
+  "transport": "{transport}"
+}}
 
 Paste the above JSON into a file, and connect with:
     $> ipython <app> --existing <file>
 or, if you are local, you can connect with just:
-    $> ipython <app> --existing %(key)s
+    $> ipython <app> --existing {key}
 
 or even just:
     $> ipython <app> --existing
 if this is the most recent Jupyter session you have started.
-"""
-            % config
-        )
+""".format(**config)
         self.kernel.Print(retval)
 
 

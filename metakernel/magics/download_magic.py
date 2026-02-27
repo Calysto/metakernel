@@ -45,7 +45,7 @@ class DownloadMagic(Magic):
                 path = parts[2]
                 filename = os.path.basename(path)
             else:
-                raise Exception("invalid arguments to %%download: '%s'" % url)
+                raise Exception(f"invalid arguments to %download: '{url}'")
         _basename, extname = os.path.splitext(filename)
         if extname == "":
             filename += ".html"
@@ -53,7 +53,7 @@ class DownloadMagic(Magic):
         filename = filename.replace("%20", "_")
         try:
             download(url, filename)
-            self.kernel.Print("Downloaded '%s'." % filename)
+            self.kernel.Print(f"Downloaded '{filename}'.")
         except Exception as e:
             self.kernel.Error(str(e))
 

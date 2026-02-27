@@ -124,7 +124,7 @@ extend-select = [
   "RUF",    # Ruff-specific
   "UP",     # pyupgrade
 ]
-ignore = ["RUF012", "UP031", "RUF005", "UP045"]
+ignore = ["RUF012", "RUF005"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["UP031", "E402", "RUF012", "F841"]

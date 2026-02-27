@@ -75,7 +75,7 @@ class HelpMagic(Magic):
 
         if info["magic"]:
             minfo = info["magic"]
-            errmsg = "No such %s magic '%s'" % (minfo["type"], minfo["name"])
+            errmsg = "No such {} magic '{}'".format(minfo["type"], minfo["name"])
 
             if minfo["type"] == "line":
                 magic = self.kernel.line_magics.get(minfo["name"], None)
@@ -96,9 +96,8 @@ class HelpMagic(Magic):
                     assert isinstance(magic, Magic)
                     return magic.get_help(minfo["type"], minfo["name"], level)
                 else:
-                    return (
-                        "No such %s magic named '%s', so can't really help with that"
-                        % (minfo["type"], minfo["name"])
+                    return "No such {} magic named '{}', so can't really help with that".format(
+                        minfo["type"], minfo["name"]
                     )
             if magic:
                 assert isinstance(magic, Magic)

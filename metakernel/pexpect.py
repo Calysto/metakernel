@@ -92,7 +92,7 @@ def spawn(
 spawnu = spawn
 
 
-def which(filename: str) -> Optional[str]:
+def which(filename: str) -> str | None:
     """This takes a given filename; tries to find it in the environment path;
     then checks if it is executable. This returns the full path to the filename
     if found and executable. Otherwise this returns None."""

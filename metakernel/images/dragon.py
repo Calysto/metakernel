@@ -88,12 +88,12 @@ def makePicture(size: int) -> Any:
     pic.setTransparent(Color(bg))
     # pic.flipHorizontal()
     # show(pic)
-    pic.savePicture("logo-%dx%d.png" % (size, size))
+    pic.savePicture(f"logo-{size}x{size}.png")
     return pic
 
 
 for size in [32, 64]:  # 16, 32, 64, 128, 256, 512]:
     pic = makePicture(size)
-    show(pic, "%sx%s" % (size, size))
+    show(pic, f"{size}x{size}")
     # pic.savePicture("metakernel-logo-%sx%s.gif" % (size, size))
     # pic.savePicture("metakernel-logo-%sx%s.jpg" % (size, size))

@@ -12,7 +12,7 @@ from ._metakernel import (
 from .magic import Magic, option
 from .parser import Parser
 from .process_metakernel import ProcessMetaKernel
-from .replwrap import REPLWrapper, u
+from .replwrap import REPLWrapper
 
 __all__ = [
     "ExceptionWrapper",
@@ -27,7 +27,6 @@ __all__ = [
     "option",
     "pexpect",
     "register_ipython_magics",
-    "u",
 ]
 
 __version__ = "0.30.4"

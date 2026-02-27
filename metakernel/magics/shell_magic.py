@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 import os
-from typing import Any, Optional
+from typing import Any
 
 from metakernel import Magic, pexpect
 from metakernel.replwrap import REPLWrapper, bash, powershell
@@ -13,8 +13,8 @@ from metakernel.replwrap import REPLWrapper, bash, powershell
 class ShellMagic(Magic):
     def __init__(self, kernel) -> None:
         super().__init__(kernel)
-        self.repl: Optional[REPLWrapper] = None
-        self.cmd: Optional[str] = None
+        self.repl: REPLWrapper | None = None
+        self.cmd: str | None = None
         self.start_process()
 
     def line_shell(self, *args) -> None:
@@ -35,7 +35,7 @@ class ShellMagic(Magic):
 
         """
         # get in sync with the cwd
-        self.eval('cd "%s"' % os.getcwd().replace(os.path.sep, "/"))
+        self.eval('cd "{}"'.format(os.getcwd().replace(os.path.sep, "/")))
 
         command = " ".join(args)
         self.eval(command, True)
@@ -94,22 +94,22 @@ class ShellMagic(Magic):
     def get_completions(self, info) -> list[str]:
         if self.cmd == "cmd":
             return []
-        command = 'compgen -cdfa "%s"' % info["code"]
+        command = 'compgen -cdfa "{}"'.format(info["code"])
         completion_text = self.eval(command)
         return completion_text.split()
 
     def get_help_on(self, info: dict[str, Any], level: int = 0) -> str:
         expr = info["code"].rstrip()
         if self.cmd == "cmd":
-            resp = self.eval("help %s" % expr)
+            resp = self.eval(f"help {expr}")
         elif level == 0:
-            resp = self.eval("%s --help" % expr)
+            resp = self.eval(f"{expr} --help")
         else:
-            resp = self.eval("man %s" % expr)
+            resp = self.eval(f"man {expr}")
         if resp and ": command not found" not in resp:
             return resp
         else:
-            return "Sorry, no help is available on '%s'." % expr
+            return f"Sorry, no help is available on '{expr}'."
 
 
 def register_magics(kernel) -> None:

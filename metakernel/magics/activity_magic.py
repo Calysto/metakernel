@@ -106,7 +106,7 @@ class Activity:
             self.choice_row_list.append(
                 widgets.HBox(
                     [
-                        widgets.HTML("<b>%s</b>)&nbsp;&nbsp;" % count),
+                        widgets.HTML(f"<b>{count}</b>)&nbsp;&nbsp;"),
                         self.choice_widgets[-1],
                     ]
                 )
@@ -144,10 +144,10 @@ class Activity:
         )
 
     def set_question(self, question: str) -> None:
-        self.question_widget.value = "<h1>%s</h1>" % question
+        self.question_widget.value = f"<h1>{question}</h1>"
 
     def set_id(self, id: Any) -> None:
-        self.id_widget.value = "<p><b>Question ID</b>: %s</p>" % id
+        self.id_widget.value = f"<p><b>Question ID</b>: {id}</p>"
         self.id = id
 
     def handle_results(self, sender: Any) -> None:
@@ -200,13 +200,7 @@ class Activity:
 
         with portalocker.Lock(self.results_filename, "a+") as g:
             g.write(
-                "%s::%s::%s::%s\n"
-                % (
-                    self.id,
-                    getpass.getuser(),
-                    datetime.datetime.today(),
-                    sender.description,
-                )
+                f"{self.id}::{getpass.getuser()}::{datetime.datetime.today()}::{sender.description}\n"
             )
             g.flush()
             os.fsync(g.fileno())
@@ -301,11 +295,11 @@ class ActivityMagic(Magic):
       }
    ]
 }'''
-            get_ipython().set_next_input(("%%%%activity %s\n\n" % filename) + text)
+            get_ipython().set_next_input((f"%%activity {filename}\n\n") + text)
             return
         elif mode == "edit":
             text = "".join(open(filename).readlines())
-            get_ipython().set_next_input(("%%%%activity %s\n\n" % filename) + text)
+            get_ipython().set_next_input((f"%%activity {filename}\n\n") + text)
         else:
             activity = Activity()
             activity.load(filename)

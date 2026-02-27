@@ -42,7 +42,7 @@ class InstallMagic(Magic):
             filename = os.path.expanduser(filename)
         filename = os.path.abspath(filename)
         text = open(filename).read()
-        if ('IPython.load_extensions("%s");' % name) in text:
+        if (f'IPython.load_extensions("{name}");') in text:
             return
         if "// INSTALL MAGIC" not in text:
             text += """
@@ -56,7 +56,7 @@ require(["base/js/events"], function (events) {
 """
         text = text.replace(
             "        // INSTALL MAGIC",
-            '        IPython.load_extensions("%s");\n        // INSTALL MAGIC' % name,
+            f'        IPython.load_extensions("{name}");\n        // INSTALL MAGIC',
         )
         with open(filename, "w") as fp:
             fp.write(text)

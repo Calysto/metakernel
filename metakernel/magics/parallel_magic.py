@@ -93,7 +93,7 @@ class ParallelMagic(Magic):
             # ids[1, 2, ...] = [1, 2, Ellipsis]
             # ids[1, 2:4, ...] = [1, slice(2, 4, None), Ellipsis]
             try:
-                ids_slice = eval("slicer%s" % ids)  # slicer[0,...,7]
+                ids_slice = eval(f"slicer{ids}")  # slicer[0,...,7]
             except Exception:
                 ids_slice = slicer[:]
             if isinstance(ids_slice, (slice, int)):
@@ -134,34 +134,27 @@ class ParallelMagic(Magic):
         self.class_name = class_name
         self.kernel_name = kernel_name
         self.view.execute(
-            """
+            f"""
 import os
-for key, value in %(env)s.items():
+for key, value in {self.kernel.env!s}.items():
     os.environ[key] = value
 try:
     kernels
 except Exception:
-    kernels = {}
-from %(module_name)s import %(class_name)s
-kernels['%(kernel_name)s'] = %(class_name)s()
-## FIXME: kernels['%(kernel_name)s'].kernel = kernel
-"""
-            % {
-                "module_name": module_name,
-                "class_name": class_name,
-                "kernel_name": kernel_name,
-                "env": str(self.kernel.env),
-            },
+    kernels = {{}}
+from {module_name} import {class_name}
+kernels['{kernel_name}'] = {class_name}()
+## FIXME: kernels['{kernel_name}'].kernel = kernel
+""",
             block=True,
         )
 
         self.view[
-            "kernels['%s'].set_variable(\"cluster_size\", %s)"
-            % (kernel_name, len(self.client))
+            f"kernels['{kernel_name}'].set_variable(\"cluster_size\", {len(self.client)})"
         ]
         self.client[:].scatter("cluster_rank", self.client.ids, flatten=True)
         self.view[
-            "kernels['%s'].set_variable(\"cluster_rank\", cluster_rank)" % (kernel_name)
+            f"kernels['{kernel_name}'].set_variable(\"cluster_rank\", cluster_rank)"
         ]
         ## So that these are available in the host kernel:
         self.kernel.set_variable("cluster_size", len(self.client))
@@ -220,8 +213,7 @@ kernels['%(kernel_name)s'] = %(class_name)s()
             while count <= 5:
                 try:
                     results = self.view[
-                        "kernels['%s'].do_execute_direct(\"%s\")"
-                        % (kernel_name, self._clean_code(expression))
+                        f"kernels['{kernel_name}'].do_execute_direct(\"{self._clean_code(expression)}\")"
                     ]
                     break
                 except Exception:
@@ -234,8 +226,7 @@ kernels['%(kernel_name)s'] = %(class_name)s()
         else:
             try:
                 results = self.view[
-                    "kernels['%s'].do_execute_direct(\"%s\")"
-                    % (kernel_name, self._clean_code(expression))
+                    f"kernels['{kernel_name}'].do_execute_direct(\"{self._clean_code(expression)}\")"
                 ]
             except Exception as e:
                 results = str(e)
@@ -289,8 +280,7 @@ kernels['%(kernel_name)s'] = %(class_name)s()
         if kernel_name is None:
             kernel_name = self.kernel_name
         results = self.view[
-            "kernels['%s'].do_execute_direct(\"%s\")"
-            % (kernel_name, self._clean_code(self.code))
+            f"kernels['{kernel_name}'].do_execute_direct(\"{self._clean_code(self.code)}\")"
         ]
         if set_variable is None:
             self.retval = results
