@@ -4,6 +4,12 @@ import re
 import sys
 import unittest
 
+import pytest
+
+pytestmark = pytest.mark.skipif(
+    sys.platform == "win32", reason="bash/pexpect not supported on Windows"
+)
+
 from metakernel import pexpect, replwrap
 from tests.utils import get_log, get_log_text
 

@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 import tempfile
 
 import pytest
@@ -33,7 +34,8 @@ def test_magics() -> None:
     with tempfile.NamedTemporaryFile() as ntf:
         kernel.get_magic("%%shell ls %s" % ntf.name)
         log_text = get_log_text(kernel)
-        assert ntf.name in log_text
+        # Windows may give 8.3 short paths (RUNNER~1) vs long paths in shell output
+        assert os.path.basename(ntf.name) in log_text
 
 
 def test_help() -> None:
@@ -75,6 +77,9 @@ def test_inspect() -> None:
     kernel.do_inspect("%lsmagic ", len("%lsmagic") + 1)
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="path completion format differs on Windows"
+)
 def test_path_complete() -> None:
     kernel = get_kernel()
     comp = kernel.do_complete("~/.ipytho", len("~/.ipytho"))
@@ -98,6 +103,9 @@ def test_path_complete() -> None:
             assert path in comp["matches"], (comp["matches"], path)
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="path completion format differs on Windows"
+)
 def test_ls_path_complete() -> None:
     kernel = get_kernel()
     comp = kernel.do_complete("! ls ~/.ipytho", len("! ls ~/.ipytho"))

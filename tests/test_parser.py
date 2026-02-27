@@ -1,4 +1,7 @@
 import os
+import sys
+
+import pytest
 
 from metakernel import Parser
 
@@ -35,14 +38,18 @@ def test_scheme_parser() -> None:
     assert info["help_obj"] == "oct"
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="path completion format differs on Windows"
+)
 def test_path_completions() -> None:
     p = Parser()
 
     if not os.name == "nt":
         code = "/usr/bi"
         assert "bin/" in p.parse_code(code)["path_matches"]
-    code = "~/.bashr"
-    assert "bashrc" in p.parse_code(code)["path_matches"]
+    if not os.name == "nt":
+        code = "~/.bashr"
+        assert "bashrc" in p.parse_code(code)["path_matches"]
 
     for f in os.listdir("."):
         if f.startswith("."):
@@ -58,6 +65,11 @@ def test_complete0() -> None:
     assert info["obj"] == "abcd", info
 
 
+_skip_posix_paths = pytest.mark.skipif(
+    sys.platform == "win32", reason="tests use POSIX /tmp/ paths and POSIX escape_path"
+)
+
+
 def get_parser() -> Parser:
     p = Parser()
     try:
@@ -68,60 +80,70 @@ def get_parser() -> Parser:
     return p
 
 
+@_skip_posix_paths
 def test_complete1() -> None:
     p = get_parser()
     info = p.parse_code("/tmp/")
     assert "Test\\ Dir/" in info["path_matches"], info["path_matches"]
 
 
+@_skip_posix_paths
 def test_complete2() -> None:
     p = get_parser()
     info = p.parse_code('open("/tmp/')
     assert "Test Dir/" in info["path_matches"], info
 
 
+@_skip_posix_paths
 def test_complete3() -> None:
     p = get_parser()
     info = p.parse_code("/tmp/Test Dir/temp.txt", 0, 14)
     assert "test.txt" in info["path_matches"], info
 
 
+@_skip_posix_paths
 def test_complete4() -> None:
     p = get_parser()
     info = p.parse_code("/tmp/Test Dir")
     assert "Dir/test.txt" in info["path_matches"], info
 
 
+@_skip_posix_paths
 def test_complete5() -> None:
     p = get_parser()
     info = p.parse_code("/tmp/Test Dir/")
     assert "test.txt" in info["path_matches"], info
 
 
+@_skip_posix_paths
 def test_complete6() -> None:
     p = get_parser()
     info = p.parse_code("/tmp/Test")
     assert "Test\\ Dir/" in info["path_matches"], info["path_matches"]
 
 
+@_skip_posix_paths
 def test_complete7() -> None:
     p = get_parser()
     info = p.parse_code("/tmp/Test Dir/test.txt")
     assert not info["path_matches"], info
 
 
+@_skip_posix_paths
 def test_complete8() -> None:
     p = get_parser()
     info = p.parse_code("/tmp/Test Dir/", 0, 9)
     assert "Test\\ Dir/" in info["path_matches"], info
 
 
+@_skip_posix_paths
 def test_complete9() -> None:
     p = get_parser()
     info = p.parse_code("fluff\n/tmp/Test ")
     assert "Dir/" in info["path_matches"], info
 
 
+@_skip_posix_paths
 def test_complete10() -> None:
     p = get_parser()
     info = p.parse_code("/tmp/Test\\ Dir")

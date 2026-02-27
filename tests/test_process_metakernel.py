@@ -1,7 +1,15 @@
+import sys
+
+import pytest
 from IPython.display import HTML
 
 from metakernel.process_metakernel import BashKernel
 from tests.utils import get_kernel, get_log_text
+
+pytestmark = pytest.mark.skipif(
+    sys.platform == "win32",
+    reason="BashKernel requires bash/pexpect, not available on Windows",
+)
 
 
 def test_process_metakernel() -> None:
