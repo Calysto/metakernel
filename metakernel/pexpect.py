@@ -6,17 +6,26 @@ import shlex
 import signal
 from typing import Any, Optional
 
-from pexpect import EOF, TIMEOUT, is_executable_file  # type:ignore[attr-defined]
-from pexpect import __file__ as PEXPECT_DIR
-
 try:
-    import pty
+    from pexpect import EOF, TIMEOUT, is_executable_file  # type:ignore[attr-defined]
+    from pexpect import __file__ as PEXPECT_DIR
 
-    from pexpect import spawn as pty_spawn
+    try:
+        import pty
+
+        from pexpect import spawn as pty_spawn
+    except ImportError:
+        from pexpect.popen_spawn import PopenSpawn
+
+        pty = None  # type: ignore[assignment]
+
+    pexpect_available = True
 except ImportError:
-    from pexpect.popen_spawn import PopenSpawn
-
+    EOF = None  # type: ignore[assignment]
+    TIMEOUT = None  # type: ignore[assignment]
+    PEXPECT_DIR = None  # type: ignore[assignment]
     pty = None  # type: ignore[assignment]
+    pexpect_available = False
 
 __all__ = ["EOF", "PEXPECT_DIR", "TIMEOUT", "pty", "spawn", "spawnu", "which"]
 
@@ -35,6 +44,10 @@ def spawn(
     encoding: str = "utf-8",
     **kwargs: Any,
 ) -> Any:
+    if not pexpect_available:
+        raise ImportError(
+            "pexpect is required for spawn. Install it with: pip install pexpect"
+        )
     """This is the main entry point for Pexpect. Use this function to start
     and control child applications.
 

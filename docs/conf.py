@@ -308,3 +308,5 @@ numpydoc_show_class_members = False
 # intersphinx
 # -----------------------------------------------------------------------------
 intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
+
+linkcheck_ignore = [r"http://host\[.*"]

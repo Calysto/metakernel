@@ -5,9 +5,8 @@ import sys
 from subprocess import check_output
 from typing import Any
 
-from pexpect import EOF
-
 from . import MetaKernel
+from .pexpect import EOF
 from .replwrap import REPLWrapper, bash
 
 __version__ = "0.0"

@@ -11,8 +11,6 @@ from ._metakernel import (
 )
 from .magic import Magic, option
 from .parser import Parser
-from .process_metakernel import ProcessMetaKernel
-from .replwrap import REPLWrapper
 
 __all__ = [
     "ExceptionWrapper",
@@ -21,12 +19,18 @@ __all__ = [
     "MetaKernel",
     "MetaKernelApp",
     "Parser",
-    "ProcessMetaKernel",
-    "REPLWrapper",
     "get_metakernel",
     "option",
     "pexpect",
     "register_ipython_magics",
 ]
+
+try:
+    from .process_metakernel import ProcessMetaKernel
+    from .replwrap import REPLWrapper
+
+    __all__ += ["ProcessMetaKernel", "REPLWrapper"]
+except ImportError:
+    pass
 
 __version__ = "0.30.4"
