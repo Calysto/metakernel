@@ -26,7 +26,7 @@ class MatplotlibMagic(Magic):
             plt.plot([3, 8, 2, 5, 1])
             plt.show()
         """
-        import imp
+        import importlib
 
         import IPython.display
 
@@ -37,7 +37,7 @@ class MatplotlibMagic(Magic):
 
         import matplotlib
 
-        imp.reload(matplotlib)
+        importlib.reload(matplotlib)
 
         if backend == "notebook":
             backend = "nbagg"
@@ -46,11 +46,11 @@ class MatplotlibMagic(Magic):
 
         import matplotlib.backends.backend_nbagg
 
-        imp.reload(matplotlib.backends.backend_nbagg)
+        importlib.reload(matplotlib.backends.backend_nbagg)
 
         import matplotlib.backends.backend_webagg_core
 
-        imp.reload(matplotlib.backends.backend_webagg_core)
+        importlib.reload(matplotlib.backends.backend_webagg_core)
 
 
 def register_magics(kernel: MetaKernel) -> None:
