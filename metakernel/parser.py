@@ -48,7 +48,7 @@ class Parser:
         self.unquoted_path = re.compile(
             rf"\A{full_path_regex}| {full_path_regex}", re.UNICODE
         )
-        self.quoted_path = re.compile(r'[\'"]%s' % full_path_regex, re.UNICODE)
+        self.quoted_path = re.compile(rf'[\'"]{full_path_regex}', re.UNICODE)
 
         single_path_regex = r"([\w/\.~][^ ]*)\Z"
         self.single_path = re.compile(single_path_regex, re.UNICODE)
@@ -194,7 +194,7 @@ class Parser:
 
         pre_magics = {}
         for name, prefix in self.magic_prefixes.items():
-            match = re.match(r"(\%s+)" % prefix, code, re.UNICODE)
+            match = re.match(rf"(\{prefix}+)", code, re.UNICODE)
             if match:
                 pre_magics[name] = match.groups()[0]
 
@@ -210,7 +210,7 @@ class Parser:
 
         elif self.help_suffix and code.rstrip().endswith(self.help_suffix):
             info["name"] = "help"
-            regex = r"(\%s+)\Z" % self.help_suffix
+            regex = rf"(\{self.help_suffix}+)\Z"
             match = re.search(regex, code.strip(), re.UNICODE)
             assert match is not None
             suf = match.group()

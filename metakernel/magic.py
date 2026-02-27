@@ -21,7 +21,7 @@ PY3 = sys.version_info[0] == 3
 
 class MagicOptionParser(optparse.OptionParser):
     def error(self, msg: str) -> NoReturn:
-        raise Exception('Magic Parse error: "%s"' % msg)
+        raise Exception(f'Magic Parse error: "{msg}"')
 
     def exit(self, status: int = 0, msg: Any = None) -> NoReturn:
         if msg:
@@ -100,10 +100,7 @@ class Magic:
             except TypeError:
                 func(old_args)
         except Exception as exc:
-            msg = (
-                "Error in calling magic '%s' on %s:\n    %s\n    args: %s\n    kwargs: %s"
-                % (name, mtype, str(exc), args, kwargs)
-            )
+            msg = f"Error in calling magic '{name}' on {mtype}:\n    {exc!s}\n    args: {args}\n    kwargs: {kwargs}"
             self.kernel.Error(msg)
             self.kernel.Error(traceback.format_exc())
             self.kernel.Error(self.get_help(mtype, name))
@@ -118,19 +115,19 @@ class Magic:
                 if func.__doc__:
                     return _trim(func.__doc__)  # type: ignore[return-value]
                 else:
-                    return "No help available for magic '%s' for %ss." % (name, mtype)
+                    return f"No help available for magic '{name}' for {mtype}s."
             else:
                 filename = inspect.getfile(func)
                 if filename and os.path.exists(filename):
                     with open(filename) as f:
                         return f.read()
                 else:
-                    return "No help available for magic '%s' for %ss." % (name, mtype)
+                    return f"No help available for magic '{name}' for {mtype}s."
         else:
-            return "No such magic '%s' for %ss." % (name, mtype)
+            return f"No such magic '{name}' for {mtype}s."
 
     def get_help_on(self, info: dict[str, Any], level: int = 0) -> str | None:
-        return "Sorry, no help is available on '%s'." % info["code"]
+        return "Sorry, no help is available on '{}'.".format(info["code"])
 
     def get_completions(self, info: dict[str, Any]) -> list[str]:
         """
@@ -273,7 +270,7 @@ def _format_option(option: Any) -> str:
     output += " " * (15 - len(output))
     output += option.help + " "
     if not option.default == ("NO", "DEFAULT"):
-        output += "[default: %s]" % option.default
+        output += f"[default: {option.default}]"
     return str(output)
 
 

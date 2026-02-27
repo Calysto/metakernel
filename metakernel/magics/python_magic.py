@@ -39,7 +39,7 @@ def exec_then_eval(code: str, env: dict[str, Any]) -> Any:
         ex_type, ex, tb = sys.exc_info()
         line1 = ["Traceback (most recent call last):"]
         ex_name = ex_type.__name__ if ex_type is not None else "Exception"
-        line2 = ["%s: %s" % (ex_name, str(ex))]
+        line2 = [f"{ex_name}: {ex!s}"]
         tb_format = (
             line1 + [line.rstrip() for line in traceback.format_tb(tb)[1:]] + line2
         )
@@ -184,7 +184,7 @@ class PythonMagic(Magic):
 
         last = info["obj"]
 
-        default = None if none_on_fail else ('No help available for "%s"' % last)
+        default = None if none_on_fail else (f'No help available for "{last}"')
 
         parts = last.split(".")
 

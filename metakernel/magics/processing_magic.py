@@ -33,19 +33,16 @@ class ProcessingMagic(Magic):
             repr_code = repr_code[1:]
 
         env = {"code": repr_code, "id": self.canvas_id}
-        code = (
-            """
-<canvas id="canvas_%(id)s"></canvas>
+        code = """
+<canvas id="canvas_{id}"></canvas>
 <script>
-require([window.location.protocol + "//calysto.github.io/javascripts/processing/processing.js"], function () {
-    var processingCode = %(code)s;
+require([window.location.protocol + "//calysto.github.io/javascripts/processing/processing.js"], function () {{
+    var processingCode = {code};
     var cc = Processing.compile(processingCode);
-    var processingInstance = new Processing("canvas_%(id)s", cc);
-});
+    var processingInstance = new Processing("canvas_{id}", cc);
+}});
 </script>
-"""
-            % env
-        )
+""".format(**env)
         html = HTML(code)
         self.kernel.Display(html)
         self.evaluate = False

@@ -42,11 +42,11 @@ class FileMagic(Magic):
                 raise
         # Create or append to file:
         if not append:
-            message = "Created file '%s'." % filename
+            message = f"Created file '{filename}'."
             if os.path.isfile(self.code):
-                message = "Overwrote file '%s'." % filename
+                message = f"Overwrote file '{filename}'."
         else:
-            message = "Appended on file '%s'." % filename
+            message = f"Appended on file '{filename}'."
         try:
             if append:
                 fp = open(filename, "a")

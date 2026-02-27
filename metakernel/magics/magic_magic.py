@@ -38,7 +38,7 @@ class MagicMagic(Magic):
         self.kernel.Print("")
         self.kernel.Print("Shell shortcut:")
         self.kernel.Print(
-            "    %s COMMAND ... - execute command in shell" % prefixes["shell"]
+            "    {} COMMAND ... - execute command in shell".format(prefixes["shell"])
         )
         self.kernel.Print("")
         self.kernel.Print(
@@ -63,12 +63,12 @@ class MagicMagic(Magic):
             sname = (self.kernel.magic_prefixes["magic"] * 2) + name
             if sname in self.kernel.sticky_magics:
                 del self.kernel.sticky_magics[sname]
-                self.kernel.Print("%s removed from session magics.\n" % sname)
+                self.kernel.Print(f"{sname} removed from session magics.\n")
                 # dummy magic to eat this line and continue:
                 return Magic(self.kernel)
             else:
                 self.kernel.sticky_magics[sname] = minfo["args"]
-                self.kernel.Print("%s added to session magics.\n" % name)
+                self.kernel.Print(f"{name} added to session magics.\n")
 
         cell_magics = self.kernel.cell_magics
         line_magics = self.kernel.line_magics

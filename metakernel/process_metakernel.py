@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 import sys
 from subprocess import check_output
-from typing import Any, Optional
+from typing import Any
 
 from pexpect import EOF
 
@@ -58,7 +58,7 @@ class ProcessMetaKernel(MetaKernel):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         MetaKernel.__init__(self, *args, **kwargs)
-        self.wrapper: Optional[REPLWrapper] = None
+        self.wrapper: REPLWrapper | None = None
 
     def do_execute_direct(self, code: str, silent: bool = False) -> TextOutput | None:
         """Execute the code in the subprocess."""
@@ -232,7 +232,7 @@ class DynamicKernel(ProcessMetaKernel):
     """
     DynamicKernel(executable="bash",
                   orig_prompt=re.compile('[$#]'),
-                  prompt_change=u"PS1='{0}' PS2='{1}' PROMPT_COMMAND=''",
+                  prompt_change="PS1='{0}' PS2='{1}' PROMPT_COMMAND=''",
                   prompt_cmd=None,
                   extra_init_cmd="export PAGER=cat",
                   implementation="bash_kernel",

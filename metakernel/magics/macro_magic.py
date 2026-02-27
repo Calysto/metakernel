@@ -60,7 +60,7 @@ class MacroMagic(Magic):
         if list:
             self._list_macros(name)
         elif show:
-            retval = "%%%%macro %s\n" % name
+            retval = f"%%macro {name}\n"
             if name in self.macros:
                 retval += self.macros[name]
             elif name in self.learned:
@@ -86,7 +86,7 @@ class MacroMagic(Magic):
         elif name == "":
             self._list_macros()
         else:
-            self._list_macros(retval="No such macro: '%s'\n\n" % name, error=True)
+            self._list_macros(retval=f"No such macro: '{name}'\n\n", error=True)
         self.evaluate = True
 
     def _list_macros(self, name="all", retval="", error=False) -> None:
@@ -94,11 +94,11 @@ class MacroMagic(Magic):
         if name in ["all", "system"]:
             retval += "    System:\n"
             for macro in sorted(self.macros.keys()):
-                retval += "        %s\n" % macro
+                retval += f"        {macro}\n"
         if name in ["all", "learned"]:
             retval += "    Learned:\n"
             for macro in sorted(self.learned.keys()):
-                retval += "        %s\n" % macro
+                retval += f"        {macro}\n"
         if error:
             self.kernel.Error(retval)
         else:

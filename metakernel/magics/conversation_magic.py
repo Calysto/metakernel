@@ -13,21 +13,18 @@ class ConversationMagic(Magic):
         %conversation ID - insert conversation by ID
         %%conversation ID - insert conversation by ID
         """
-        html = (
-            """
+        html = f"""
 <div id="disqus_thread"></div>
 <script>
-(function() { // DON'T EDIT BELOW THIS LINE
+(function() {{ // DON'T EDIT BELOW THIS LINE
     var d = document, s = d.createElement('script');
-    s.src = '//%s.disqus.com/embed.js';
+    s.src = '//{id}.disqus.com/embed.js';
     s.setAttribute('data-timestamp', +new Date());
     (d.head || d.body).appendChild(s);
-})();
+}})();
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 """
-            % id
-        )
         self.kernel.Display(HTML(html))
 
     def line_conversation(self, id) -> None:

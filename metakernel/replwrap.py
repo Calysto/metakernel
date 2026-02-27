@@ -10,16 +10,9 @@ from typing import Any
 
 from . import pexpect
 
-
-def u(s: Any) -> Any:
-    return s
-
-
-basestring = str
-
-PEXPECT_PROMPT = u("PEXPECT_PROMPT>")
-PEXPECT_STDIN_PROMPT = u("PEXPECT_PROMPT+")
-PEXPECT_CONTINUATION_PROMPT = u("PEXPECT_PROMPT_")
+PEXPECT_PROMPT = "PEXPECT_PROMPT>"
+PEXPECT_STDIN_PROMPT = "PEXPECT_PROMPT+"
+PEXPECT_CONTINUATION_PROMPT = "PEXPECT_PROMPT_"
 
 
 class REPLWrapper:
@@ -65,7 +58,7 @@ class REPLWrapper:
         force_prompt_on_continuation: bool = False,
         echo: bool = False,
     ) -> None:
-        if isinstance(cmd_or_spawn, basestring):
+        if isinstance(cmd_or_spawn, str):
             self.child = pexpect.spawnu(
                 cmd_or_spawn, echo=echo, codec_errors="ignore", encoding="utf-8"
             )
@@ -78,13 +71,6 @@ class REPLWrapper:
             self.child.setecho(False)
             self.child.waitnoecho()
 
-        # Convert all arguments to unicode.
-        prompt_regex = u(prompt_regex)
-        prompt_change_cmd_str = u(prompt_change_cmd)
-        continuation_prompt_regex = u(continuation_prompt_regex)
-        stdin_prompt_regex = u(stdin_prompt_regex)
-        prompt_emit_cmd = u(prompt_emit_cmd)
-
         self.echo = echo
         self.prompt_emit_cmd = prompt_emit_cmd
         self._force_prompt_on_continuation = force_prompt_on_continuation
@@ -92,16 +78,14 @@ class REPLWrapper:
         self.prompt_regex: str | None = None
 
         if prompt_change_cmd is None:
-            self.prompt_regex = u(prompt_regex)
+            self.prompt_regex = prompt_regex
         else:
             self.set_prompt(
                 prompt_regex,
-                prompt_change_cmd_str.format(
-                    new_prompt_regex, continuation_prompt_regex
-                ),
+                prompt_change_cmd.format(new_prompt_regex, continuation_prompt_regex),
             )
             self.prompt_regex = new_prompt_regex
-            self.prompt_change_cmd = prompt_change_cmd_str
+            self.prompt_change_cmd = prompt_change_cmd
         self.continuation_prompt_regex = continuation_prompt_regex
         self.stdin_prompt_regex = stdin_prompt_regex
 
@@ -117,7 +101,7 @@ class REPLWrapper:
         atexit.register(self.terminate)
 
     def sendline(self, line: str) -> None:
-        self.child.sendline(u(line))
+        self.child.sendline(line)
         if self.echo:
             self.child.readline()
 
@@ -140,7 +124,7 @@ class REPLWrapper:
             return self._expect_prompt_stream(expects, timeout)
 
         if self._line_handler:
-            expects += [u(self.child.crlf)]
+            expects += [self.child.crlf]
 
         while True:
             pos = self.child.expect(expects, timeout=timeout)
@@ -186,7 +170,7 @@ class REPLWrapper:
                 # Process any carriage returns in the stream.
                 while 1:
                     try:
-                        self.child.expect([u("\r")], timeout=0)
+                        self.child.expect(["\r"], timeout=0)
                         if unhandled_cr:
                             stream_handler("\r")
                         stream_handler(self.child.before)
@@ -308,10 +292,8 @@ class REPLWrapper:
 def python(command: str = "python") -> REPLWrapper:
     """Start a Python shell and return a :class:`REPLWrapper` object."""
     if pexpect.pty is None:
-        raise OSError('Not supported on platform "%s"' % sys.platform)
-    return REPLWrapper(
-        command, u(">>> "), u("import sys; sys.ps1={0!r}; sys.ps2={1!r}")
-    )
+        raise OSError(f'Not supported on platform "{sys.platform}"')
+    return REPLWrapper(command, ">>> ", "import sys; sys.ps1={0!r}; sys.ps2={1!r}")
 
 
 def bash(command: str = "bash", prompt_regex: str = "[$#]") -> REPLWrapper:
@@ -326,8 +308,8 @@ def bash(command: str = "bash", prompt_regex: str = "[$#]") -> REPLWrapper:
     prompt_change_cmd: str | None = f"PS1='{ps1}' PS2='{ps2}' PROMPT_COMMAND=''"
 
     if os.name == "nt":
-        prompt_regex = u("__repl_ready__")
-        prompt_emit_cmd = u("echo __repl_ready__")
+        prompt_regex = "__repl_ready__"
+        prompt_emit_cmd = "echo __repl_ready__"
         prompt_change_cmd = None
     else:
         prompt_emit_cmd = None

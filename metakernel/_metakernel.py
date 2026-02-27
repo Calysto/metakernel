@@ -180,11 +180,11 @@ class MetaKernel(Kernel):
             self.redirect_to_log = True
             self.Write("Executing files...")
             for filename in self.parent.extra_args:
-                self.Write("    %s..." % filename)
+                self.Write(f"    {filename}...")
                 try:
                     self.do_execute_file(filename)
                 except Exception as exc:
-                    self.log.info("    %s" % (exc,))
+                    self.log.info(f"    {exc}")
             self.Write("Executing files: done!")
             self.log.setLevel(level)
             self.redirect_to_log = False
@@ -237,7 +237,7 @@ class MetaKernel(Kernel):
         if none_on_fail:
             return None
         else:
-            return "Sorry, no help is available on '%s'." % info["code"]
+            return "Sorry, no help is available on '{}'.".format(info["code"])
 
     def handle_plot_settings(self) -> None:
         """Handle the current plot settings"""
@@ -292,7 +292,7 @@ class MetaKernel(Kernel):
         elif code.startswith("inspect "):
             raise Exception("This kernel does not implement this meta command")
         else:
-            raise Exception("Unknown meta command: '%s'" % code)
+            raise Exception(f"Unknown meta command: '{code}'")
 
     def initialize_debug(self, code: str) -> str:
         """
@@ -676,7 +676,7 @@ class MetaKernel(Kernel):
         message = format_message(*non_widgets, **kwargs)
 
         stream_content = {"name": "stdout", "text": message}
-        self.log.debug("Print: %s" % message.rstrip())
+        self.log.debug(f"Print: {message.rstrip()}")
         if self.redirect_to_log:
             self.log.info(message.rstrip())
         else:
@@ -685,7 +685,7 @@ class MetaKernel(Kernel):
     def Write(self, message: str) -> None:
         """Write message directly to the iopub stdout with no added end character."""
         stream_content = {"name": "stdout", "text": message}
-        self.log.debug("Write: %s" % message)
+        self.log.debug(f"Write: {message}")
         if self.redirect_to_log:
             self.log.info(message)
         else:
@@ -697,7 +697,7 @@ class MetaKernel(Kernel):
         Objects are cast to strings.
         """
         message = format_message(*objects, **kwargs)
-        self.log.debug("Error: %s" % message.rstrip())
+        self.log.debug(f"Error: {message.rstrip()}")
         stream_content = {"name": "stderr", "text": RED + message + NORMAL}
         if self.redirect_to_log:
             self.log.info(message.rstrip())
@@ -728,7 +728,7 @@ class MetaKernel(Kernel):
         message = format_message(" ".join(msg), **kwargs)
         if len(msg_dict.keys()) > 0:
             message = format_message(" ".join(msg), msg_dict)
-        self.log.debug("Error: %s" % message.rstrip())
+        self.log.debug(f"Error: {message.rstrip()}")
         stream_content = {"name": "stderr", "text": RED + message + NORMAL}
         if self.redirect_to_log:
             self.log.info(message.rstrip())
@@ -775,7 +775,7 @@ class MetaKernel(Kernel):
                 importlib.reload(module)
                 module.register_magics(self)
             except Exception as e:
-                self.log.error("Can't load '%s': error: %s" % (magic, e))
+                self.log.error(f"Can't load '{magic}': error: {e}")
 
     def register_magics(self, magic_klass: type[Magic]) -> None:
         """Register magics for a given magic_klass."""
