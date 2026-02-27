@@ -355,10 +355,10 @@ kernels['%(kernel_name)s'] = %(class_name)s()
         except ImportError:
             from IPython.parallel.util import interactive
         f = interactive(
-            lambda arg, kname=kernel_name, fname=function_name: kernels[  # noqa: F821
+            lambda arg, kname=kernel_name, fname=function_name: kernels[  # type:ignore[name-defined]  # noqa: F821
                 kname
             ].do_function_direct(fname, arg)
-        )  # type: ignore[name-defined]
+        )
         results = self.view_load_balanced.map_async(f, eval(args))
         if set_variable is None:
             self.retval = results
@@ -366,7 +366,7 @@ kernels['%(kernel_name)s'] = %(class_name)s()
             self.kernel.set_variable(set_variable, results)
             self.retval = None
 
-    def post_process(self, retval) -> str | None:
+    def post_process(self, retval) -> Any:
         try:
             ## any will crash on numpy arrays
             if isinstance(self.retval, list) and not any(self.retval):

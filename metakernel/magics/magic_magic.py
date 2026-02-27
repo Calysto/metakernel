@@ -2,6 +2,8 @@
 # Distributed under the terms of the Modified BSD License.
 from __future__ import annotations
 
+from typing import Any
+
 from metakernel import Magic
 
 
@@ -50,7 +52,7 @@ class MagicMagic(Magic):
             self.kernel.Print("    " + string)
         self.kernel.Print("")
 
-    def get_magic(self, info, get_args=False) -> Magic | None:
+    def get_magic(self, info, get_args=False) -> Any:
 
         if not info["magic"]:
             return None

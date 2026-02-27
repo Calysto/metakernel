@@ -30,7 +30,7 @@ class SchemeMagic(Magic):
         code = " ".join(args)
         self.retval = self.eval(code)
 
-    def eval(self, code):  # type: ignore[return]
+    def eval(self, code):
         if scheme:
             return scheme.execute_string_rm(code.strip())
         else:

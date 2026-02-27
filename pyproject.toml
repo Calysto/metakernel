@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling >=1.5"]
+requires = ["hatchling >=1.5", "virtualenv<21.0"]
 build-backend = "hatchling.build"
 
 [project]
@@ -32,8 +32,10 @@ activity = ["portalocker"] # activity magic
 parallel = ["ipyparallel"] # parallel magic
 
 [dependency-groups]
+dev = [ { include-group = "test" } ]
 test = [
     "jupyter_kernel_test",
+    "ipywidgets",
     "metakernel_python",
     "pytest",
     "pytest-timeout",
@@ -57,6 +59,7 @@ coverage = [
     "coverage[toml]",
     "pytest-cov",
 ]
+typing = ["pip", "mypy", "ipywidgets"]
 
 [tool.uv.sources]
 metakernel_python = { path = "./metakernel_python", editable = true }
@@ -72,8 +75,11 @@ exclude = [
 artifacts = ["metakernel/py.typed"]
 
 [tool.pytest.ini_options]
+minversion = "9.0"
 addopts= "-raXs  --durations 10 --color=yes --doctest-modules"
 testpaths = ["tests", "tests/magics"]
+strict = true
+log_level = "INFO"
 timeout = 300
 # Restore this setting to debug failures
 # timeout_method = "thread"
@@ -91,13 +97,22 @@ filterwarnings= [
 ]
 
 [tool.mypy]
-python_version = "3.9"
-warn_unused_configs = true
-ignore_missing_imports = true
+python_version = "3.10"
+strict = true
+enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
+warn_unreachable = true
+exclude = [
+    "hatch_build.*\\.py",
+]
 
 [[tool.mypy.overrides]]
-module = "metakernel.images.*"
-ignore_errors = true
+module = "tests.*"
+disallow_untyped_defs = false
+disable_error_code = ["comparison-overlap", "no-untyped-def", "import-not-found", "no-untyped-call"]
+
+[[tool.mypy.overrides]]
+module = "metakernel.magics.*"
+disable_error_code = ["no-untyped-def", "no-untyped-call", "import-not-found"]
 
 [tool.ruff]
 exclude = ["examples/echo_kernel.ipynb"]

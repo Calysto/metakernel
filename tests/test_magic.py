@@ -59,8 +59,8 @@ def test_get_help() -> None:
 def test_option() -> None:
     kernel = get_kernel()
     d = Dummy(kernel)
-    assert "Options:" in d.line_dummy.__doc__
-    assert "--size" in d.line_dummy.__doc__
+    assert "Options:" in d.line_dummy.__doc__  # type:ignore[operator]
+    assert "--size" in d.line_dummy.__doc__  # type:ignore[operator]
 
     ret = d.call_magic("line", "dummy", "", "hey -s400,200")
     assert ret == d

@@ -1,7 +1,7 @@
 Installation
 ************************
 
-You can install metakernel through `pip`:
+You can install metakernel through ``pip``:
 
 
-`pip install metakernel --upgrade`
+``pip install metakernel --upgrade``

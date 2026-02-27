@@ -22,7 +22,7 @@ class TextOutput:
     text.
     """
 
-    def __init__(self, output) -> None:
+    def __init__(self, output: str) -> None:
         self.output = output
 
     def __repr__(self) -> str:
@@ -43,22 +43,24 @@ class ProcessMetaKernel(MetaKernel):
     }
 
     @property
-    def language_version(self):
+    def language_version(self) -> str | None:
         m = version_pat.search(self.banner)
+        if m is None:
+            return None
         return m.group(1)
 
     _banner: str | None = "Process"
 
     @property
-    def banner(self) -> str:
+    def banner(self) -> str:  # type:ignore[override]
         assert self._banner is not None
         return self._banner
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         MetaKernel.__init__(self, *args, **kwargs)
         self.wrapper: Optional[REPLWrapper] = None
 
-    def do_execute_direct(self, code, silent=False) -> TextOutput | None:
+    def do_execute_direct(self, code: str, silent: bool = False) -> TextOutput | None:
         """Execute the code in the subprocess."""
         if not self.wrapper:
             self.wrapper = self.makeWrapper()
@@ -146,7 +148,7 @@ class ProcessMetaKernel(MetaKernel):
         """
         return (0, None)
 
-    def makeWrapper(self):
+    def makeWrapper(self) -> REPLWrapper:
         """
         In this method the REPLWrapper is created and returned.
         REPLWrapper takes the name of the executable, and arguments
@@ -174,7 +176,7 @@ class ProcessMetaKernel(MetaKernel):
         """
         raise NotImplementedError
 
-    def do_shutdown(self, restart) -> dict[str, str]:
+    def do_shutdown(self, restart: bool) -> dict[str, str]:
         """
         Shut down the app gracefully, saving history.
         """
@@ -193,16 +195,16 @@ class ProcessMetaKernel(MetaKernel):
 class DynamicKernel(ProcessMetaKernel):
     def __init__(
         self,
-        executable,
-        language,
-        mimetype="text/plain",
-        implementation="metakernel",
-        file_extension="txt",
-        orig_prompt=None,
-        prompt_change=None,
-        prompt_cmd=None,
-        extra_init_cmd=None,
-        stdin_prompt_regex=None,
+        executable: str,
+        language: str,
+        mimetype: str = "text/plain",
+        implementation: str = "metakernel",
+        file_extension: str = "txt",
+        orig_prompt: str | None = None,
+        prompt_change: str | None = None,
+        prompt_cmd: str | None = None,
+        extra_init_cmd: str | None = None,
+        stdin_prompt_regex: str | None = None,
     ) -> None:
         self.executable = executable
         self.orig_prompt = orig_prompt
@@ -256,16 +258,18 @@ class BashKernel(ProcessMetaKernel):
     _banner: str | None = None
 
     @property
-    def banner(self) -> str:
+    def banner(self) -> str:  # type:ignore[override]
         if self._banner is None:
             self._banner = check_output(["bash", "--version"]).decode("utf-8")
         return self._banner
 
-    def makeWrapper(self):
+    def makeWrapper(self) -> REPLWrapper:
         return bash()
 
 
 if __name__ == "__main__":
-    from IPython.kernel.zmq.kernelapp import IPKernelApp
+    from IPython.kernel.zmq.kernelapp import (  # type:ignore[import-not-found]
+        IPKernelApp,
+    )
 
     IPKernelApp.launch_instance(kernel_class=BashKernel)

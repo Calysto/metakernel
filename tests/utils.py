@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from metakernel import MetaKernel
 
 try:
@@ -12,7 +14,7 @@ from logging import Logger, StreamHandler
 import zmq
 
 try:
-    from StringIO import StringIO  # type: ignore[import]
+    from StringIO import StringIO
 except ImportError:
     from io import StringIO
 
@@ -38,7 +40,7 @@ class EvalKernel(MetaKernel):
         python_magic = self.line_magics["python"]
         return python_magic.env[name]
 
-    def do_execute_direct(self, code):
+    def do_execute_direct(self, code, *args, **kwargs):
         python_magic = self.line_magics["python"]
         return python_magic.eval(code.strip())
 
@@ -59,7 +61,7 @@ class EvalKernel(MetaKernel):
 
 
 def has_network() -> bool:
-    import requests  # type: ignore[import-untyped]
+    import requests
 
     try:
         _ = requests.head("http://google.com", timeout=3)
@@ -87,16 +89,19 @@ def get_log() -> Logger:
 
 
 def get_kernel(kernel_class=MetaKernel) -> MetaKernel:
+    import weakref
+
     context = zmq.Context.instance()
     iopub_socket = context.socket(zmq.PUB)
 
     kernel = kernel_class(
         session=ss.Session(), iopub_socket=iopub_socket, log=get_log()
     )
-    return kernel
+    weakref.finalize(kernel, iopub_socket.close)
+    return kernel  # type:ignore[no-any-return]
 
 
-def clear_log_text(obj) -> None:
+def clear_log_text(obj: Any) -> None:
     """Clear the log text from a kernel or a log object."""
     if isinstance(obj, MetaKernel):
         log = obj.log
@@ -108,7 +113,7 @@ def clear_log_text(obj) -> None:
     handler.stream.seek(0)
 
 
-def get_log_text(obj):
+def get_log_text(obj: Any) -> str:
     """Get the log text from a kernel or a log object."""
     if isinstance(obj, MetaKernel):
         log = obj.log
@@ -116,4 +121,4 @@ def get_log_text(obj):
         log = obj
     handler = log.handlers[0]
     assert isinstance(handler, StreamHandler)
-    return handler.stream.getvalue()
+    return handler.stream.getvalue()  # type:ignore[no-any-return]

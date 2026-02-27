@@ -7,7 +7,7 @@ default:
 
 # Install for development
 install:
-    uv sync --all-groups
+    uv sync
     uv tool run pre-commit install
 
 # Clean build artifacts
@@ -17,25 +17,19 @@ clean:
     find . -name "*.py,cover" -delete
 
 # Run core test suite (no cluster needed)
-test:
-    uv run pytest
-
-# Run a single test file or test function
-# Usage: just test-file tests/test_metakernel.py
-#        just test-file tests/test_metakernel.py::test_magics
-test-file file:
-    uv run pytest {{ file }}
+test *args="":
+    uv run pytest {{args}}
 
 # Run full test suite with ipcluster
-test-parallel:
+test-parallel *args="":
     uv run --with ipyparallel ipcluster start -n=3 &
-    uv run pytest
+    uv run pytest {{args}}
     uv run --with ipyparallel ipcluster stop
 
 # Run tests with coverage
 cover:
     uv run --with ipyparallel ipcluster start -n=3 &
-    uv run pytest --cov=metakernel
+    uv run --group coverage pytest -x --cov=metakernel
     uv run coverage annotate
     uv run --with ipyparallel ipcluster stop
 
@@ -49,7 +43,7 @@ help:
 
 # Run type checking
 typing:
-    uv run mypy metakernel/
+    uv run --group typing mypy . --install-types --non-interactive
 
 # Run linter
 lint:

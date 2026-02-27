@@ -78,7 +78,6 @@ jobs:
     - name: Install
       run: just install
         
-
     - name: Run pre-commit
       run: just pre-commit
     
@@ -88,7 +87,12 @@ jobs:
     - name: Run help generator
       run: just help
 
-  test_miniumum_versions:
+    - name: Test typing
+      run: |
+        uv sync
+        just typing
+
+  test_minimum_versions:
     name: Test Minimum Versions
     timeout-minutes: 20
     runs-on: ubuntu-latest
@@ -166,7 +170,7 @@ jobs:
       - static
       - link_check
       - test_sdist
-      - test_miniumum_versions
+      - test_minimum_versions
       - check_release
     runs-on: ubuntu-latest
     steps:

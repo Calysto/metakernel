@@ -1,10 +1,11 @@
-# ruff: noqa: F403, F405
-from Graphics import *
-from Myro import show
+from typing import Any
+
+from Graphics import Arrow, Color, Picture, Window, win  # type:ignore[import-not-found]
+from Myro import show  # type:ignore[import-not-found]
 
 
 # positive to left
-def dragon(arrow, level=4, size=200, direction=45) -> None:
+def dragon(arrow: Any, level: Any = 4, size: Any = 200, direction: Any = 45) -> None:
     if level:
         arrow.rotate(direction)
         dragon(arrow, level - 1, size / 1.41421356237, 45)
@@ -15,7 +16,9 @@ def dragon(arrow, level=4, size=200, direction=45) -> None:
         arrow.forward(size)
 
 
-def draw_dragon4(center, size, counts, colors, angle=0) -> None:
+def draw_dragon4(
+    center: Any, size: Any, counts: Any, colors: Any, angle: Any = 0
+) -> None:
     for color, count in zip(colors, counts):
         if color is not None:
             arrow = Arrow(center)
@@ -29,7 +32,7 @@ def draw_dragon4(center, size, counts, colors, angle=0) -> None:
         angle += 90
 
 
-def makePicture(size):
+def makePicture(size: int) -> Any:
     global win
     size2 = size / 2
 

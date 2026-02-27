@@ -1,5 +1,7 @@
 """A Echo kernel for Jupyter"""
 
+from typing import Any
+
 from metakernel import MetaKernel
 
 __version__ = "0.19.1"
@@ -25,11 +27,11 @@ class MetaKernelEcho(MetaKernel):
         "help_links": MetaKernel.help_links,
     }
 
-    def get_usage(self):
+    def get_usage(self) -> str:
         return "This is the echo kernel."
 
-    def do_execute_direct(self, code):
+    def do_execute_direct(self, code: str, *args: Any, **kwargs: Any) -> str:
         return code.rstrip()
 
-    def repr(self, data):
+    def repr(self, data: Any) -> str:
         return repr(data)

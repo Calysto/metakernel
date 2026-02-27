@@ -4,10 +4,10 @@ Test the metakernel_python kernel using jupyter_kernel_test with supported capab
 
 import unittest
 
-import jupyter_kernel_test as jkt
+import jupyter_kernel_test as jkt  # type:ignore[import-untyped]
 
 
-class MetaKernelPythonTests(jkt.KernelTests):
+class MetaKernelPythonTests(jkt.KernelTests):  # type:ignore[misc]
     # REQUIRED
 
     # the kernel to be tested
@@ -43,7 +43,7 @@ class MetaKernelPythonTests(jkt.KernelTests):
     ]
 
     # samples for testing code-completeness (used by console only)
-    # these samples should respectively be unambigiously complete statements
+    # these samples should respectively be unambiguously complete statements
     # (which should be executed on <enter>), incomplete statements or code
     # which should be identified as invalid
     complete_code_samples = [
