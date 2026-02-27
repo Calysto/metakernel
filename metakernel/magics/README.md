@@ -12,6 +12,26 @@ Examples:
     %activity /home/teacher/activity1 new
     %activity /home/teacher/activity1 edit
 
+## `%blockly`
+
+%blockly - show visual code
+
+This line magic will allow visual code editing
+If both -o and -l are provided, only -l is used
+
+Examples:
+    %blockly --page_from_origin http://host[:port]/blockly_page.html
+    %blockly --page_from_local blockly_page.html
+    %blockly --page_from_origin http://host[:port]/blockly_template.html --template_data template_data
+    %blockly --height 600
+
+Options:
+--------
+-h --height    set height of iframe  [default: 350]
+-t --template_data generate page based on template and load, must be used with parameters(-o or -l) [default: None]
+-l --page_from_local Load local page about blockly [default: None]
+-o --page_from_origin Load remote page about blockly [default: None]
+
 ## `%cd`
 
 %cd PATH - change current directory of session
