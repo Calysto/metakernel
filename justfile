@@ -26,12 +26,18 @@ test-parallel *args="":
     uv run pytest {{args}}
     uv run --with ipyparallel ipcluster stop
 
+# Run full test suite with all optional magic dependencies
+test-all *args="":
+    uv run --group test-all ipcluster start -n=3 &
+    uv run --group test-all pytest {{args}}
+    uv run --group test-all ipcluster stop
+
 # Run tests with coverage
 cover:
-    uv run --with ipyparallel ipcluster start -n=3 &
+    uv run --group coverage ipcluster start -n=3 &
     uv run --group coverage pytest -x --cov=metakernel
     uv run coverage annotate
-    uv run --with ipyparallel ipcluster stop
+    uv run --group coverage ipcluster stop
 
 # Build Sphinx HTML docs
 docs:

@@ -41,6 +41,15 @@ test = [
     "pytest-timeout",
     "requests",
 ]
+test-all = [
+    { include-group = "test" },
+    "calysto",           # brain magic, activity magic (BarChart)
+    "calysto-scheme",    # scheme magic
+    "ipyparallel",       # parallel magic
+    "matplotlib",        # matplotlib magic
+    "portalocker",       # activity magic
+    "pydot",             # dot magic
+]
 docs = [
     "jupyter-sphinx",
     "myst-parser",
@@ -55,7 +64,7 @@ docs = [
     "sphinxcontrib-napoleon",
 ]
 coverage = [
-    { include-group = "test" },
+    { include-group = "test-all" },
     "coverage[toml]",
     "pytest-cov",
 ]
