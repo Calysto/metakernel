@@ -2,6 +2,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 import os
+import shlex
 
 from metakernel import Magic
 
@@ -22,7 +23,7 @@ class IncludeMagic(Magic):
             %include myprog1.py myprog2.py
         """
         text = ""
-        filenames = filenames.split()
+        filenames = shlex.split(filenames, posix=True)
         prefix = self.kernel.magic_prefixes["magic"]
         for filename in filenames:
             if filename.startswith("~"):
