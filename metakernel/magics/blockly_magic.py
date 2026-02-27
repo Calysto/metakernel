@@ -106,7 +106,7 @@ class BlocklyMagic(Magic):
 
 
 def register_magics(kernel) -> None:
-    kernel.register_magics(Magic)
+    kernel.register_magics(BlocklyMagic)
 
 
 def register_ipython_magics() -> None:
