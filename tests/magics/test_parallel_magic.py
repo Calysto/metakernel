@@ -337,9 +337,9 @@ def test_line_px_exception_stores_error_string() -> None:
 
 
 def test_line_px_retry_true_succeeds_clears_retry_flag(monkeypatch) -> None:
-    import metakernel.magics.parallel_magic as pmod
+    import time
 
-    monkeypatch.setattr(pmod.time, "sleep", lambda _: None)
+    monkeypatch.setattr(time, "sleep", lambda _: None)
     magic = _make_px_magic(view=_PxView(return_value="ok"))
     magic.retry = True
     magic.line_px("x")
@@ -348,9 +348,9 @@ def test_line_px_retry_true_succeeds_clears_retry_flag(monkeypatch) -> None:
 
 
 def test_line_px_retry_true_all_fail_raises(monkeypatch) -> None:
-    import metakernel.magics.parallel_magic as pmod
+    import time
 
-    monkeypatch.setattr(pmod.time, "sleep", lambda _: None)
+    monkeypatch.setattr(time, "sleep", lambda _: None)
     magic = _make_px_magic(view=_PxView(raises=RuntimeError("dead")))
     magic.retry = True
     with pytest.raises(Exception, match="Cluster clients have not started"):

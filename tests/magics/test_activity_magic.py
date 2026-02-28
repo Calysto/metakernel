@@ -352,6 +352,7 @@ def test_handle_submit_writes_choice_to_results_file(tmp_path) -> None:
     a = Activity()
     a.load(str(activity_file))
     a.handle_submit(MockSender("1"))
+    assert a.results_filename is not None
     with open(a.results_filename) as f:
         results = f.read()
     assert "::1\n" in results
@@ -366,6 +367,7 @@ def test_handle_submit_records_question_id(tmp_path) -> None:
     a.load(str(activity_file))
     a.set_id("q1")
     a.handle_submit(MockSender("2"))
+    assert a.results_filename is not None
     with open(a.results_filename) as f:
         results = f.read()
     assert results.startswith("q1::")
@@ -429,6 +431,7 @@ def test_handle_results_runs_without_error(tmp_path) -> None:
     activity_file.write_text(ACTIVITY_TEXT)
     a = Activity()
     a.load(str(activity_file))
+    assert a.results_filename is not None
     with open(a.results_filename, "w") as f:
         f.write("q1::user1::2024-01-01::1\n")
         f.write("q1::user2::2024-01-01::2\n")
