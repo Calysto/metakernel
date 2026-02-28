@@ -66,7 +66,7 @@ class TestRegisterIPythonMagics:
         register_ipython_magics("nonexistent_magic_xyz")
 
     def test_register_all_magics(self) -> None:
-        registered: list = []
+        registered: list[tuple[object, ...]] = []
 
         def capture(*args, **kwargs):
             registered.append(args)
@@ -82,7 +82,7 @@ class TestRegisterIPythonMagics:
 
     def test_register_specific_only(self) -> None:
         """Passing a name should register only that magic, not all of them."""
-        registered: list = []
+        registered: list[tuple[object, ...]] = []
 
         def capture(*args, **kwargs):
             registered.append(args)
