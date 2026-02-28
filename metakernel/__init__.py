@@ -1,5 +1,7 @@
 """A Jupyter kernel base class in Python which includes core magic functions (including help, command and file path completion, parallel and distributed processing, downloads, and much more)."""
 
+from typing import Any
+
 from . import pexpect
 from ._metakernel import (
     ExceptionWrapper,
@@ -14,6 +16,12 @@ from .parser import Parser
 from .process_metakernel import ProcessMetaKernel
 from .replwrap import REPLWrapper
 
+
+def u(s: Any) -> Any:
+    """No-op function retained for backwards compatibility."""
+    return s
+
+
 __all__ = [
     "ExceptionWrapper",
     "IPythonKernel",
@@ -27,6 +35,7 @@ __all__ = [
     "option",
     "pexpect",
     "register_ipython_magics",
+    "u",
 ]
 
 __version__ = "0.30.4"
