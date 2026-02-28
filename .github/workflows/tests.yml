@@ -20,8 +20,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.10",  "3.14"]
+        include:
+          - os: ubuntu-latest
+            python-version: "3.11"
+          - os: ubuntu-latest
+            python-version: "3.12"
+          - os: ubuntu-latest
+            python-version: "3.13"
 
     env:
       OS: ${{ matrix.os }}
@@ -115,28 +122,6 @@ jobs:
       - name: Run the unit tests
         run: just test
 
-  test_windows:
-    name: Test Windows
-    runs-on: windows-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Base Setup
-        uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-
-      - name: Install just
-        uses: extractions/setup-just@v3
-
-      - name: Install dependencies
-        run: just install
-
-      - name: Run the tests
-        run: just test-all
-
   make_sdist:
     name: Make SDist
     runs-on: ubuntu-latest
@@ -189,7 +174,6 @@ jobs:
     if: always()
     needs:
       - test
-      - test_windows
       - static
       - link_check
       - test_sdist
