@@ -4,6 +4,15 @@ from typing import Any, TypeVar, overload
 
 from metakernel import MetaKernel
 
+__all__ = [
+    "EvalKernel",
+    "clear_log_text",
+    "get_kernel",
+    "get_log",
+    "get_log_text",
+    "ss",
+]
+
 _KT = TypeVar("_KT", bound=MetaKernel)
 
 try:
