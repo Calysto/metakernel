@@ -2,12 +2,22 @@ import os
 import re
 import sys
 import tempfile
+import unittest.mock
 from typing import Any
 
 import pytest
+import zmq
+from traitlets.config import LoggingConfigurable
 
-from metakernel import MetaKernel
-from tests.utils import EvalKernel, clear_log_text, get_kernel, get_log_text
+from metakernel import ExceptionWrapper, MetaKernel
+from tests.utils import (
+    EvalKernel,
+    clear_log_text,
+    get_kernel,
+    get_log,
+    get_log_text,
+    ss,
+)
 
 
 def test_magics() -> None:
@@ -360,6 +370,279 @@ def test_get_magic_args_unknown_magic() -> None:
     kernel = get_kernel()
     result = kernel.get_magic_args("%nonexistent_magic_xyz")
     assert result is None
+
+
+class TestMakeSubkernel:
+    def test_no_ipython_copies_session(self) -> None:
+        parent = get_kernel()
+        child = get_kernel()
+        with unittest.mock.patch("IPython.get_ipython", return_value=None):
+            child.makeSubkernel(parent)
+        assert child.session is parent.session
+
+    def test_no_ipython_copies_send_response(self) -> None:
+        parent = get_kernel()
+        child = get_kernel()
+        with unittest.mock.patch("IPython.get_ipython", return_value=None):
+            child.makeSubkernel(parent)
+        assert child.send_response == parent.send_response
+
+    def test_no_ipython_copies_display(self) -> None:
+        parent = get_kernel()
+        child = get_kernel()
+        with unittest.mock.patch("IPython.get_ipython", return_value=None):
+            child.makeSubkernel(parent)
+        assert child.Display == parent.Display
+
+    def test_with_ipython_copies_session_from_shell(self) -> None:
+        parent = get_kernel()
+        child = get_kernel()
+        real_session = ss.Session()
+        mock_shell = unittest.mock.MagicMock()
+        mock_shell.kernel.session = real_session
+        with unittest.mock.patch("IPython.get_ipython", return_value=mock_shell):
+            child.makeSubkernel(parent)
+        assert child.session is real_session
+
+    def test_with_ipython_sets_display_to_ipython_display(self) -> None:
+        parent = get_kernel()
+        child = get_kernel()
+        mock_display = unittest.mock.MagicMock()
+        mock_shell = unittest.mock.MagicMock()
+        mock_shell.kernel.session = ss.Session()
+        with unittest.mock.patch("IPython.get_ipython", return_value=mock_shell):
+            with unittest.mock.patch("IPython.display.display", mock_display):
+                child.makeSubkernel(parent)
+        assert child.Display is mock_display
+
+    def test_with_ipython_sets_send_response_to_shell_response(self) -> None:
+        parent = get_kernel()
+        child = get_kernel()
+        mock_shell = unittest.mock.MagicMock()
+        mock_shell.kernel.session = ss.Session()
+        with unittest.mock.patch("IPython.get_ipython", return_value=mock_shell):
+            child.makeSubkernel(parent)
+        assert child.send_response == child._send_shell_response
+
+
+class _FakeApp(LoggingConfigurable):
+    """Minimal stand-in for an IPKernelApp with extra_args."""
+
+
+def _make_kernel_with_parent(extra_args: list[str]) -> MetaKernel:
+    ctx = zmq.Context.instance()
+    sock = ctx.socket(zmq.PUB)
+    parent = _FakeApp()
+    parent.extra_args = extra_args  # type: ignore[attr-defined]
+    return MetaKernel(
+        session=ss.Session(), iopub_socket=sock, log=get_log(), parent=parent
+    )
+
+
+class TestConstructorWithExtraArgs:
+    def test_executes_each_file(self) -> None:
+        calls: list[str] = []
+        with unittest.mock.patch.object(
+            MetaKernel, "do_execute_file", side_effect=lambda f: calls.append(f)
+        ):
+            _make_kernel_with_parent(["a.py", "b.py"])
+        assert calls == ["a.py", "b.py"]
+
+    def test_exception_from_file_does_not_propagate(self) -> None:
+        with unittest.mock.patch.object(
+            MetaKernel, "do_execute_file", side_effect=RuntimeError("boom")
+        ):
+            _make_kernel_with_parent(["bad.py"])  # must not raise
+
+    def test_redirect_to_log_restored_after_execution(self) -> None:
+        with unittest.mock.patch.object(MetaKernel, "do_execute_file"):
+            kernel = _make_kernel_with_parent(["a.py"])
+        assert kernel.redirect_to_log is False
+
+    def test_no_extra_args_skips_execution(self) -> None:
+        with unittest.mock.patch.object(MetaKernel, "do_execute_file") as mock_exec:
+            _make_kernel_with_parent([])
+        mock_exec.assert_not_called()
+
+
+class TestGetVariable:
+    def test_base_returns_none(self) -> None:
+        kernel = get_kernel()
+        assert kernel.get_variable("x") is None
+
+    def test_subclass_returns_set_variable(self) -> None:
+        kernel = get_kernel(EvalKernel)
+        kernel.set_variable("x", 42)
+        assert kernel.get_variable("x") == 42
+
+    def test_subclass_raises_for_unknown_variable(self) -> None:
+        kernel = get_kernel(EvalKernel)
+        with pytest.raises(KeyError):
+            kernel.get_variable("nonexistent_var")
+
+
+class TestInitializeDebug:
+    def test_base_returns_empty_string(self) -> None:
+        kernel = get_kernel()
+        assert kernel.initialize_debug("some code") == ""
+
+    def test_base_returns_empty_string_for_empty_input(self) -> None:
+        kernel = get_kernel()
+        assert kernel.initialize_debug("") == ""
+
+
+class TestPostExecuteSilent:
+    def test_send_response_not_called_for_normal_retval(self) -> None:
+        kernel = get_kernel(EvalKernel)
+        with unittest.mock.patch.object(kernel, "send_response") as mock_send:
+            kernel.post_execute("result", "code", silent=True)
+        mock_send.assert_not_called()
+
+    def test_send_response_not_called_for_exception_wrapper(self) -> None:
+        kernel = get_kernel(EvalKernel)
+        kernel.kernel_resp = {"status": "ok"}
+        exc = ExceptionWrapper("ValueError", "bad", ["traceback line"])
+        with unittest.mock.patch.object(kernel, "send_response") as mock_send:
+            kernel.post_execute(exc, "code", silent=True)
+        mock_send.assert_not_called()
+
+    def test_send_response_not_called_for_none_retval(self) -> None:
+        kernel = get_kernel(EvalKernel)
+        with unittest.mock.patch.object(kernel, "send_response") as mock_send:
+            kernel.post_execute(None, "code", silent=True)
+        mock_send.assert_not_called()
+
+    def test_history_variables_updated(self) -> None:
+        # post_execute writes back _ii and _iii as Python attrs; _i goes only
+        # through set_variable into the kernel env.
+        kernel = get_kernel(EvalKernel)
+        kernel.post_execute(None, "first", silent=True)
+        kernel.post_execute(None, "second", silent=True)
+        assert kernel._ii == "second"
+        assert kernel._iii == "first"
+
+    def test_out_variables_updated_for_non_none_retval(self) -> None:
+        # post_execute writes back __ as a Python attr; _ goes only through
+        # set_variable into the kernel env.
+        kernel = get_kernel(EvalKernel)
+        kernel.post_execute(42, "code", silent=True)
+        assert kernel.__ == 42
+
+    def test_error_status_set_for_exception_wrapper(self) -> None:
+        kernel = get_kernel(EvalKernel)
+        kernel.kernel_resp = {"status": "ok"}
+        exc = ExceptionWrapper("NameError", "x not defined", [])
+        kernel.post_execute(exc, "code", silent=True)
+        assert kernel.kernel_resp["status"] == "error"
+
+
+class TestDoIsComplete:
+    def test_regular_code_ending_with_newline_is_complete(self) -> None:
+        kernel = get_kernel()
+        assert kernel.do_is_complete("x = 1\n") == {"status": "complete"}
+
+    def test_regular_code_without_newline_is_incomplete(self) -> None:
+        kernel = get_kernel()
+        assert kernel.do_is_complete("x = 1") == {"status": "incomplete"}
+
+    def test_magic_ending_with_newline_is_complete(self) -> None:
+        kernel = get_kernel()
+        assert kernel.do_is_complete("%cd /tmp\n") == {"status": "complete"}
+
+    def test_magic_without_newline_is_incomplete(self) -> None:
+        kernel = get_kernel()
+        assert kernel.do_is_complete("%cd /tmp") == {"status": "incomplete"}
+
+    def test_empty_string_is_incomplete(self) -> None:
+        kernel = get_kernel()
+        assert kernel.do_is_complete("") == {"status": "incomplete"}
+
+    def test_bare_newline_is_complete(self) -> None:
+        kernel = get_kernel()
+        assert kernel.do_is_complete("\n") == {"status": "complete"}
+
+
+class TestPrintWriteErrorRedirectToLog:
+    # --- Print ---
+
+    def test_print_redirect_to_log_calls_log_info(self) -> None:
+        kernel = get_kernel()
+        kernel.redirect_to_log = True
+        clear_log_text(kernel)
+        kernel.Print("hello")
+        assert "hello" in get_log_text(kernel)
+
+    def test_print_redirect_to_log_skips_send_response(self) -> None:
+        kernel = get_kernel()
+        kernel.redirect_to_log = True
+        with unittest.mock.patch.object(kernel, "send_response") as mock_send:
+            kernel.Print("hello")
+        mock_send.assert_not_called()
+
+    def test_print_no_redirect_calls_send_response(self) -> None:
+        kernel = get_kernel()
+        kernel.redirect_to_log = False
+        with unittest.mock.patch.object(kernel, "send_response") as mock_send:
+            kernel.Print("hello")
+        mock_send.assert_called_once()
+        _, msg_type, content = mock_send.call_args[0]
+        assert msg_type == "stream"
+        assert content["name"] == "stdout"
+        assert "hello" in content["text"]
+
+    # --- Write ---
+
+    def test_write_redirect_to_log_calls_log_info(self) -> None:
+        kernel = get_kernel()
+        kernel.redirect_to_log = True
+        clear_log_text(kernel)
+        kernel.Write("writing")
+        assert "writing" in get_log_text(kernel)
+
+    def test_write_redirect_to_log_skips_send_response(self) -> None:
+        kernel = get_kernel()
+        kernel.redirect_to_log = True
+        with unittest.mock.patch.object(kernel, "send_response") as mock_send:
+            kernel.Write("writing")
+        mock_send.assert_not_called()
+
+    def test_write_no_redirect_calls_send_response(self) -> None:
+        kernel = get_kernel()
+        kernel.redirect_to_log = False
+        with unittest.mock.patch.object(kernel, "send_response") as mock_send:
+            kernel.Write("writing")
+        mock_send.assert_called_once()
+        _, msg_type, content = mock_send.call_args[0]
+        assert msg_type == "stream"
+        assert content["name"] == "stdout"
+        assert "writing" in content["text"]
+
+    # --- Error ---
+
+    def test_error_redirect_to_log_calls_log_info(self) -> None:
+        kernel = get_kernel()
+        kernel.redirect_to_log = True
+        clear_log_text(kernel)
+        kernel.Error("oops")
+        assert "oops" in get_log_text(kernel)
+
+    def test_error_redirect_to_log_skips_send_response(self) -> None:
+        kernel = get_kernel()
+        kernel.redirect_to_log = True
+        with unittest.mock.patch.object(kernel, "send_response") as mock_send:
+            kernel.Error("oops")
+        mock_send.assert_not_called()
+
+    def test_error_no_redirect_calls_send_response(self) -> None:
+        kernel = get_kernel()
+        kernel.redirect_to_log = False
+        with unittest.mock.patch.object(kernel, "send_response") as mock_send:
+            kernel.Error("oops")
+        mock_send.assert_called_once()
+        _, msg_type, content = mock_send.call_args[0]
+        assert msg_type == "stream"
+        assert content["name"] == "stderr"
+        assert "oops" in content["text"]
 
 
 def teardown() -> None:

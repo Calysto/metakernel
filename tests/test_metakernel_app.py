@@ -5,7 +5,7 @@ import pytest
 from ipykernel.kernelapp import IPKernelApp
 from jupyter_core.paths import jupyter_config_dir, jupyter_config_path
 
-from metakernel import MetaKernelApp
+from metakernel import MetaKernel, MetaKernelApp
 
 
 class TestMetaKernelAppConfig:
@@ -147,3 +147,46 @@ class TestMetaKernelAppSubcommands:
             with pytest.raises(SystemExit) as exc_info:
                 installer.start()
         assert exc_info.value.code == 1
+
+
+class TestMetaKernelRunAsMain:
+    def test_calls_launch_instance(self) -> None:
+        with patch.object(MetaKernelApp, "launch_instance") as mock_launch:
+            MetaKernel.run_as_main()
+        mock_launch.assert_called_once()
+
+    def test_passes_app_name_from_class(self) -> None:
+        with patch.object(MetaKernelApp, "launch_instance") as mock_launch:
+            MetaKernel.run_as_main()
+        call_kwargs = mock_launch.call_args[1]
+        assert call_kwargs.get("app_name") == MetaKernel.app_name
+
+    def test_subclass_app_name_used(self) -> None:
+        class MyKernel(MetaKernel):
+            app_name = "my_kernel"
+
+        with patch.object(MetaKernelApp, "launch_instance") as mock_launch:
+            MyKernel.run_as_main()
+        call_kwargs = mock_launch.call_args[1]
+        assert call_kwargs.get("app_name") == "my_kernel"
+
+    def test_passes_kernel_class(self) -> None:
+        with patch.object(MetaKernelApp, "launch_instance") as mock_launch:
+            MetaKernel.run_as_main()
+        call_kwargs = mock_launch.call_args[1]
+        assert call_kwargs.get("kernel_class") is MetaKernel
+
+    def test_subclass_kernel_class_passed(self) -> None:
+        class MyKernel(MetaKernel):
+            app_name = "my_kernel"
+
+        with patch.object(MetaKernelApp, "launch_instance") as mock_launch:
+            MyKernel.run_as_main()
+        call_kwargs = mock_launch.call_args[1]
+        assert call_kwargs.get("kernel_class") is MyKernel
+
+    def test_extra_kwargs_forwarded(self) -> None:
+        with patch.object(MetaKernelApp, "launch_instance") as mock_launch:
+            MetaKernel.run_as_main(extra_option="value")
+        call_kwargs = mock_launch.call_args[1]
+        assert call_kwargs.get("extra_option") == "value"
