@@ -21,21 +21,23 @@ def reset_meta_kernel():
 def test_display_with_kernel_calls_kernel_Display() -> None:
     kernel = get_kernel()
     MetaKernel.meta_kernel = kernel
-    kernel.Display = MagicMock()
+    mock_display = MagicMock()
+    kernel.Display = mock_display  # type: ignore[method-assign]
 
     display_module.display("hello")
 
-    kernel.Display.assert_called_once_with("hello")
+    mock_display.assert_called_once_with("hello")
 
 
 def test_display_with_kernel_passes_kwargs() -> None:
     kernel = get_kernel()
     MetaKernel.meta_kernel = kernel
-    kernel.Display = MagicMock()
+    mock_display = MagicMock()
+    kernel.Display = mock_display  # type: ignore[method-assign]
 
     display_module.display("hello", clear_output=True)
 
-    kernel.Display.assert_called_once_with("hello", clear_output=True)
+    mock_display.assert_called_once_with("hello", clear_output=True)
 
 
 def test_display_without_kernel_calls_ipdisplay() -> None:
@@ -68,21 +70,23 @@ def test_display_without_kernel_multiple_args() -> None:
 def test_clear_output_with_kernel_calls_kernel_clear_output() -> None:
     kernel = get_kernel()
     MetaKernel.meta_kernel = kernel
-    kernel.clear_output = MagicMock()
+    mock_clear = MagicMock()
+    kernel.clear_output = mock_clear  # type: ignore[method-assign]
 
     display_module.clear_output()
 
-    kernel.clear_output.assert_called_once_with()
+    mock_clear.assert_called_once_with()
 
 
 def test_clear_output_with_kernel_passes_wait() -> None:
     kernel = get_kernel()
     MetaKernel.meta_kernel = kernel
-    kernel.clear_output = MagicMock()
+    mock_clear = MagicMock()
+    kernel.clear_output = mock_clear  # type: ignore[method-assign]
 
     display_module.clear_output(wait=True)
 
-    kernel.clear_output.assert_called_once_with(wait=True)
+    mock_clear.assert_called_once_with(wait=True)
 
 
 def test_clear_output_without_kernel_calls_ipclear_output() -> None:

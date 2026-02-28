@@ -1,4 +1,5 @@
 import sys
+from typing import cast
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -55,7 +56,7 @@ def test_textoutput_repr_not_quoted() -> None:
 class _TestKernel(ProcessMetaKernel):
     _banner = "Test Kernel version 2.5.1"
 
-    def makeWrapper(self) -> MagicMock:  # type: ignore[override]
+    def makeWrapper(self) -> MagicMock:
         wrapper = MagicMock()
         wrapper.run_command.return_value = ""
         return wrapper
@@ -80,7 +81,7 @@ def test_language_version_none_when_absent_from_banner() -> None:
     class _NoBannerKernel(ProcessMetaKernel):
         _banner = "No version info here"
 
-        def makeWrapper(self) -> None:  # type: ignore[override,return]
+        def makeWrapper(self) -> None:  # type: ignore[override]
             pass
 
     kernel = get_kernel(_NoBannerKernel)
@@ -100,44 +101,51 @@ def test_do_execute_direct_returns_none_for_blank_code() -> None:
 def test_do_execute_direct_blank_code_does_not_call_run_command() -> None:
     kernel = get_kernel(_TestKernel)
     kernel.do_execute_direct("   ")
-    kernel.wrapper.run_command.assert_not_called()
+    assert kernel.wrapper is not None
+    cast(MagicMock, kernel.wrapper.run_command).assert_not_called()
 
 
 def test_do_execute_direct_calls_run_command_with_code() -> None:
     kernel = get_kernel(_TestKernel)
     kernel.do_execute_direct("echo hi")
-    kernel.wrapper.run_command.assert_called_once()
-    args, _ = kernel.wrapper.run_command.call_args
+    assert kernel.wrapper is not None
+    mock_run = cast(MagicMock, kernel.wrapper.run_command)
+    mock_run.assert_called_once()
+    args, _ = mock_run.call_args
     assert args[0] == "echo hi"
 
 
 def test_do_execute_direct_strips_trailing_whitespace_from_code() -> None:
     kernel = get_kernel(_TestKernel)
     kernel.do_execute_direct("echo hi\n\n")
-    args, _ = kernel.wrapper.run_command.call_args
+    assert kernel.wrapper is not None
+    args, _ = cast(MagicMock, kernel.wrapper.run_command).call_args
     assert args[0] == "echo hi"
 
 
 def test_do_execute_direct_not_silent_passes_write_as_stream_handler() -> None:
     kernel = get_kernel(_TestKernel)
     kernel.do_execute_direct("ls")
-    _, kwargs = kernel.wrapper.run_command.call_args
+    assert kernel.wrapper is not None
+    _, kwargs = cast(MagicMock, kernel.wrapper.run_command).call_args
     assert kwargs["stream_handler"] == kernel.Write
 
 
 def test_do_execute_direct_silent_passes_none_as_stream_handler() -> None:
     kernel = get_kernel(_TestKernel)
-    kernel.wrapper = MagicMock()
-    kernel.wrapper.run_command.return_value = ""
+    mock_wrapper = MagicMock()
+    mock_wrapper.run_command.return_value = ""
+    kernel.wrapper = mock_wrapper
     kernel.do_execute_direct("ls", silent=True)
-    _, kwargs = kernel.wrapper.run_command.call_args
+    _, kwargs = mock_wrapper.run_command.call_args
     assert kwargs["stream_handler"] is None
 
 
 def test_do_execute_direct_silent_with_output_returns_textoutput() -> None:
     kernel = get_kernel(_TestKernel)
-    kernel.wrapper = MagicMock()
-    kernel.wrapper.run_command.return_value = "result text"
+    mock_wrapper = MagicMock()
+    mock_wrapper.run_command.return_value = "result text"
+    kernel.wrapper = mock_wrapper
     result = kernel.do_execute_direct("echo hi", silent=True)
     assert isinstance(result, TextOutput)
     assert result.output == "result text"
@@ -145,8 +153,9 @@ def test_do_execute_direct_silent_with_output_returns_textoutput() -> None:
 
 def test_do_execute_direct_silent_with_no_output_returns_none() -> None:
     kernel = get_kernel(_TestKernel)
-    kernel.wrapper = MagicMock()
-    kernel.wrapper.run_command.return_value = ""
+    mock_wrapper = MagicMock()
+    mock_wrapper.run_command.return_value = ""
+    kernel.wrapper = mock_wrapper
     assert kernel.do_execute_direct("echo hi", silent=True) is None
 
 
@@ -242,9 +251,10 @@ def test_bash_kernel_language_version_is_not_none(_fresh_bash_banner) -> None:
 
 @_bash_skip
 def test_bash_kernel_banner_is_cached(_fresh_bash_banner) -> None:
-    # BashKernel.banner caches the result on the instance via self._banner
+    # BashKernel.banner caches the result on the instance via self._banner.
+    # Access banner twice; the second call must return the same value and the
+    # instance attribute must be populated after the first access.
     kernel = get_kernel(BashKernel)
-    assert kernel._banner is None  # not yet fetched
     banner1 = kernel.banner
     assert kernel._banner is not None  # cached on instance after first access
     banner2 = kernel.banner

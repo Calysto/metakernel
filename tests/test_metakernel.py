@@ -2,6 +2,7 @@ import os
 import re
 import sys
 import tempfile
+from typing import Any
 
 import pytest
 
@@ -281,7 +282,7 @@ def test_error_display_string() -> None:
 
 def test_error_display_non_string() -> None:
     kernel = get_kernel()
-    display_calls: list = []
+    display_calls: list[Any] = []
     kernel.Display = lambda *args, **kwargs: display_calls.append(args)  # type: ignore[method-assign]
     kernel.Error_display(42)
     # non-string items are routed to Display, not the error message
@@ -293,7 +294,7 @@ def test_error_display_non_string() -> None:
 
 def test_error_display_mixed() -> None:
     kernel = get_kernel()
-    display_calls: list = []
+    display_calls: list[Any] = []
     kernel.Display = lambda *args, **kwargs: display_calls.append(args)  # type: ignore[method-assign]
     kernel.Error_display("oops", 99, "again")
     text = get_log_text(kernel)
@@ -340,7 +341,7 @@ def test_get_magic_args_no_magic() -> None:
 
 def test_get_magic_args_line_magic() -> None:
     kernel = get_kernel()
-    result = kernel.get_magic_args("%cd /tmp")
+    result: Any = kernel.get_magic_args("%cd /tmp")
     assert result is not None
     args, _kwargs, _old_args = result
     assert "/tmp" in args
@@ -348,7 +349,7 @@ def test_get_magic_args_line_magic() -> None:
 
 def test_get_magic_args_no_args_magic() -> None:
     kernel = get_kernel()
-    result = kernel.get_magic_args("%lsmagic")
+    result: Any = kernel.get_magic_args("%lsmagic")
     assert result is not None
     args, kwargs, _old_args = result
     assert args == []
