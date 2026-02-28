@@ -112,6 +112,7 @@ enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
 warn_unreachable = true
 exclude = [
     "hatch_build.*\\.py",
+    "metakernel_echo/.*"
 ]
 
 [[tool.mypy.overrides]]

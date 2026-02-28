@@ -1,3 +1,4 @@
+from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
@@ -11,15 +12,15 @@ from tests.utils import EvalKernel, clear_log_text, get_kernel, get_log_text
 @pytest.fixture()
 def ipython_magics(monkeypatch):
     """Yield (kernel_fn, kx_fn, mock_magic) with IPython registration stubbed out."""
-    captured: dict = {}
+    captured: dict[str, Any] = {}
 
     monkeypatch.setattr(
         "IPython.core.magic.register_line_magic",
-        lambda f: captured.update(kernel=f) or f,
+        lambda f: captured.update(kernel=f) or f,  # type:ignore[redundant-expr]
     )
     monkeypatch.setattr(
         "IPython.core.magic.register_cell_magic",
-        lambda f: captured.update(kx=f) or f,
+        lambda f: captured.update(kx=f) or f,  # type:ignore[redundant-expr]
     )
 
     mock_magic = MagicMock()
@@ -47,7 +48,7 @@ def test_line_kernel_default_name() -> None:
     assert "default" in mk.kernels
     assert isinstance(mk.kernels["default"], MetaKernelEcho)
     # parent kernel is wired into the sub-kernel
-    assert mk.kernels["default"].kernel is kernel
+    assert mk.kernels["default"].kernel is kernel  # type:ignore[attr-defined]
 
 
 def test_line_kernel_named() -> None:
@@ -61,7 +62,7 @@ def test_line_kernel_named() -> None:
     assert mk.kernel_name == "linetest_named"
     assert "linetest_named" in mk.kernels
     assert isinstance(mk.kernels["linetest_named"], MetaKernelEcho)
-    assert mk.kernels["linetest_named"].kernel is kernel
+    assert mk.kernels["linetest_named"].kernel is kernel  # type:ignore[attr-defined]
 
 
 def test_line_kernel_invalid_module() -> None:

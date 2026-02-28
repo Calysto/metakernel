@@ -51,7 +51,7 @@ def _setup(tmp_path, monkeypatch, initial_content=""):
             }
         return original_do_execute(code, *args, **kwargs)
 
-    kernel.do_execute = capturing_do_execute
+    kernel.do_execute = capturing_do_execute  # type:ignore[method-assign]
     return kernel, custom_js, inner_calls
 
 
