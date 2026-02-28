@@ -1,8 +1,10 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, TypeVar, overload
 
 from metakernel import MetaKernel
+
+_KT = TypeVar("_KT", bound=MetaKernel)
 
 try:
     from jupyter_client import session as ss
@@ -88,7 +90,15 @@ def get_log() -> Logger:
     return log
 
 
-def get_kernel(kernel_class=MetaKernel) -> MetaKernel:
+@overload
+def get_kernel() -> MetaKernel: ...
+
+
+@overload
+def get_kernel(kernel_class: type[_KT]) -> _KT: ...
+
+
+def get_kernel(kernel_class: type[MetaKernel] = MetaKernel) -> MetaKernel:
     import weakref
 
     context = zmq.Context.instance()
@@ -98,7 +108,7 @@ def get_kernel(kernel_class=MetaKernel) -> MetaKernel:
         session=ss.Session(), iopub_socket=iopub_socket, log=get_log()
     )
     weakref.finalize(kernel, iopub_socket.close)
-    return kernel  # type:ignore[no-any-return]
+    return kernel
 
 
 def clear_log_text(obj: Any) -> None:

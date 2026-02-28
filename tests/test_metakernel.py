@@ -2,6 +2,7 @@ import os
 import re
 import sys
 import tempfile
+from typing import Any
 
 import pytest
 
@@ -270,6 +271,95 @@ def test_misc() -> None:
     assert ret == {"status": "complete"}
 
     assert kernel.do_inspect("hello", 10) is None
+
+
+def test_error_display_string() -> None:
+    kernel = get_kernel()
+    kernel.Error_display("something went wrong")
+    text = get_log_text(kernel)
+    assert "Error: something went wrong" in text
+
+
+def test_error_display_non_string() -> None:
+    kernel = get_kernel()
+    display_calls: list[Any] = []
+    kernel.Display = lambda *args, **kwargs: display_calls.append(args)  # type: ignore[method-assign]
+    kernel.Error_display(42)
+    # non-string items are routed to Display, not the error message
+    assert display_calls == [(42,)]
+    text = get_log_text(kernel)
+    # the error message is empty (just a newline)
+    assert "Error: \n" in text
+
+
+def test_error_display_mixed() -> None:
+    kernel = get_kernel()
+    display_calls: list[Any] = []
+    kernel.Display = lambda *args, **kwargs: display_calls.append(args)  # type: ignore[method-assign]
+    kernel.Error_display("oops", 99, "again")
+    text = get_log_text(kernel)
+    # string items join into the error message
+    assert "Error: oops again" in text
+    # non-string item goes to Display
+    assert display_calls == [(99,)]
+
+
+def test_error_display_redirect_to_log() -> None:
+    kernel = get_kernel()
+    kernel.redirect_to_log = True
+    kernel.Error_display("logged error message")
+    text = get_log_text(kernel)
+    # info-level log contains the message when redirect_to_log is True
+    assert "logged error message" in text
+    kernel.redirect_to_log = False
+
+
+def test_do_execute_meta_direct() -> None:
+    kernel = get_kernel(EvalKernel)
+    assert kernel.do_execute_meta("reset") == "RESET"
+    assert kernel.do_execute_meta("stop") == "STOP"
+    assert kernel.do_execute_meta("step") == "STEP"
+    assert kernel.do_execute_meta("inspect something") == "INSPECT"
+    with pytest.raises(Exception, match="Unknown meta command"):
+        kernel.do_execute_meta("bogus")
+
+
+def test_do_execute_meta_base_direct() -> None:
+    kernel = get_kernel()
+    for code in ["reset", "stop", "step", "inspect foo"]:
+        with pytest.raises(Exception, match="does not implement this meta command"):
+            kernel.do_execute_meta(code)
+    with pytest.raises(Exception, match="Unknown meta command"):
+        kernel.do_execute_meta("garbage")
+
+
+def test_get_magic_args_no_magic() -> None:
+    kernel = get_kernel()
+    result = kernel.get_magic_args("just plain text")
+    assert result is None
+
+
+def test_get_magic_args_line_magic() -> None:
+    kernel = get_kernel()
+    result: Any = kernel.get_magic_args("%cd /tmp")
+    assert result is not None
+    args, _kwargs, _old_args = result
+    assert "/tmp" in args
+
+
+def test_get_magic_args_no_args_magic() -> None:
+    kernel = get_kernel()
+    result: Any = kernel.get_magic_args("%lsmagic")
+    assert result is not None
+    args, kwargs, _old_args = result
+    assert args == []
+    assert kwargs == {}
+
+
+def test_get_magic_args_unknown_magic() -> None:
+    kernel = get_kernel()
+    result = kernel.get_magic_args("%nonexistent_magic_xyz")
+    assert result is None
 
 
 def teardown() -> None:
