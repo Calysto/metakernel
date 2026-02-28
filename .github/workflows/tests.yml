@@ -29,6 +29,8 @@ jobs:
             python-version: "3.12"
           - os: ubuntu-latest
             python-version: "3.13"
+          - os: ubuntu-latest
+            python-version: "3.14t"
 
     env:
       OS: ${{ matrix.os }}
