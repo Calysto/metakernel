@@ -33,8 +33,6 @@ if TYPE_CHECKING:
 
 warnings.filterwarnings("ignore", module="IPython.html.widgets")
 
-PY3 = sys.version_info[0] == 3
-
 try:
     import ipywidgets as widgets  #  type:ignore[import-untyped]
     from ipywidgets.widgets.widget import Widget  #  type:ignore[import-untyped]
@@ -146,8 +144,6 @@ class MetaKernel(Kernel):
         self.max_hist_cache = 1000
         self.hist_cache: list[str] = []
         kwargs = {"parent": self, "kernel": self}
-        if not PY3:
-            kwargs["shell"] = None
         self.comm_manager = comm.get_comm_manager()
         # widgets have changed target name in 8.x, keeping for compatibility
         self.comm_manager.register_target(

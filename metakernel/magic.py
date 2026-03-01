@@ -16,8 +16,6 @@ _F = TypeVar("_F", bound=Callable[..., Any])
 
 _maxsize = sys.maxsize
 
-PY3 = sys.version_info[0] == 3
-
 
 class MagicOptionParser(optparse.OptionParser):
     def error(self, msg: str) -> NoReturn:
@@ -60,7 +58,7 @@ class Magic:
         except Exception as e:
             self.kernel.Error(str(e))
             return self
-        arg_spec = inspect.getfullargspec(func) if PY3 else inspect.getargspec(func)
+        arg_spec = inspect.getfullargspec(func)
         fargs = arg_spec.args
         if fargs[0] == "self":
             fargs = fargs[1:]
@@ -84,7 +82,7 @@ class Magic:
             self.kernel.Error(str(e))
             return self
 
-        arg_spec = inspect.getfullargspec(func) if PY3 else inspect.getargspec(func)
+        arg_spec = inspect.getfullargspec(func)
         fargs = arg_spec.args
         if fargs[0] == "self":
             fargs = fargs[1:]
