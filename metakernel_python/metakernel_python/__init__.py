@@ -64,7 +64,7 @@ class MetaKernelPython(MetaKernel):
         python_magic = self.line_magics["python"]
         return python_magic.get_help_on(info, level, none_on_fail)  # type:ignore[no-any-return]
 
-    def do_is_complete(self, code: str) -> dict[str, Any]:
+    async def do_is_complete(self, code: str) -> dict[str, Any]:
         status, indent_spaces = self.transformer_manager.check_complete(code)
         r = {"status": status}
         if status == "incomplete":

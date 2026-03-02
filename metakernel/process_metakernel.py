@@ -94,7 +94,13 @@ class ProcessMetaKernel(MetaKernel):
             output = wrapper.interrupt()
         except EOF:
             self.Print(child.before)
-            self.do_shutdown(True)
+            if self.wrapper is not None:
+                try:
+                    self.wrapper.terminate()
+                except Exception:
+                    pass
+            self.restart_kernel()
+            self.reload_magics()
             error = RuntimeError("End of File")
             tb = "End of File"
         except Exception as e:

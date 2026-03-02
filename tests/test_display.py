@@ -1,3 +1,4 @@
+import unittest.mock
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -67,26 +68,24 @@ def test_display_without_kernel_multiple_args() -> None:
 # --- clear_output() ---
 
 
-def test_clear_output_with_kernel_calls_kernel_clear_output() -> None:
+def test_clear_output_with_kernel_calls_send_response() -> None:
     kernel = get_kernel()
     MetaKernel.meta_kernel = kernel
-    mock_clear = MagicMock()
-    kernel.clear_output = mock_clear  # type: ignore[method-assign]
-
-    display_module.clear_output()
-
-    mock_clear.assert_called_once_with()
+    with unittest.mock.patch.object(kernel, "send_response") as mock_send:
+        display_module.clear_output()
+    mock_send.assert_called_once_with(
+        kernel.iopub_socket, "clear_output", {"wait": False}
+    )
 
 
 def test_clear_output_with_kernel_passes_wait() -> None:
     kernel = get_kernel()
     MetaKernel.meta_kernel = kernel
-    mock_clear = MagicMock()
-    kernel.clear_output = mock_clear  # type: ignore[method-assign]
-
-    display_module.clear_output(wait=True)
-
-    mock_clear.assert_called_once_with(wait=True)
+    with unittest.mock.patch.object(kernel, "send_response") as mock_send:
+        display_module.clear_output(wait=True)
+    mock_send.assert_called_once_with(
+        kernel.iopub_socket, "clear_output", {"wait": True}
+    )
 
 
 def test_clear_output_without_kernel_calls_ipclear_output() -> None:

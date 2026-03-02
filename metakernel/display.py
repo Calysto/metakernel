@@ -19,6 +19,7 @@ def clear_output(*args: Any, **kwargs: Any) -> None:
 
     kernel = get_metakernel()
     if kernel:
-        kernel.clear_output(*args, **kwargs)
+        wait = kwargs.get("wait", False)
+        kernel.send_response(kernel.iopub_socket, "clear_output", {"wait": wait})
     else:
         ipclear_output(*args, **kwargs)  # type:ignore[no-untyped-call]
