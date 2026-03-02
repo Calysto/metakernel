@@ -1,6 +1,8 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+import json
+
 from metakernel import Magic
 
 
@@ -17,7 +19,14 @@ class RestartMagic(Magic):
 
         Note that you will lose all computed values.
         """
-        self.kernel.do_shutdown(True)
+        kernel = self.kernel
+        if kernel.hist_file:
+            with open(kernel.hist_file, "w") as fid:
+                json.dump(kernel.hist_cache[-kernel.max_hist_cache :], fid)
+        kernel.Print("Restarting kernel...")
+        kernel.restart_kernel()
+        kernel.reload_magics()
+        kernel.Print("Done!")
 
 
 def register_magics(kernel) -> None:

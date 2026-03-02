@@ -69,24 +69,24 @@ def test_help() -> None:
 
 def test_complete() -> None:
     kernel = get_kernel()
-    comp = kernel.do_complete("%connect_", len("%connect_"))
+    comp = asyncio.run(kernel.do_complete("%connect_", len("%connect_")))
     assert comp["matches"] == ["%connect_info"], str(comp["matches"])
 
-    comp = kernel.do_complete("%%fil", len("%%fil"))
+    comp = asyncio.run(kernel.do_complete("%%fil", len("%%fil")))
     assert comp["matches"] == ["%%file"], str(comp["matches"])
 
-    comp = kernel.do_complete("%%", len("%%"))
+    comp = asyncio.run(kernel.do_complete("%%", len("%%")))
     assert "%%file" in comp["matches"]
     assert "%%html" in comp["matches"]
 
 
 def test_inspect() -> None:
     kernel = get_kernel()
-    kernel.do_inspect("%lsmagic", len("%lsmagic"))
+    asyncio.run(kernel.do_inspect("%lsmagic", len("%lsmagic")))
     log_text = get_log_text(kernel)
     assert "list the current line and cell magics" in log_text
 
-    kernel.do_inspect("%lsmagic ", len("%lsmagic") + 1)
+    asyncio.run(kernel.do_inspect("%lsmagic ", len("%lsmagic") + 1))
 
 
 @pytest.mark.skipif(
@@ -94,7 +94,7 @@ def test_inspect() -> None:
 )
 def test_path_complete() -> None:
     kernel = get_kernel()
-    comp = kernel.do_complete("~/.ipytho", len("~/.ipytho"))
+    comp = asyncio.run(kernel.do_complete("~/.ipytho", len("~/.ipytho")))
     assert comp["matches"] == ["ipython/"]
 
     paths = [
@@ -102,7 +102,7 @@ def test_path_complete() -> None:
     ]
 
     for path in paths:
-        comp = kernel.do_complete(path, len(path) - 1)
+        comp = asyncio.run(kernel.do_complete(path, len(path) - 1))
 
         if os.path.isdir(path):
             path = path.split()[-1]
@@ -120,7 +120,7 @@ def test_path_complete() -> None:
 )
 def test_ls_path_complete() -> None:
     kernel = get_kernel()
-    comp = kernel.do_complete("! ls ~/.ipytho", len("! ls ~/.ipytho"))
+    comp = asyncio.run(kernel.do_complete("! ls ~/.ipytho", len("! ls ~/.ipytho")))
     assert comp["matches"] == ["ipython/"], comp
 
 
@@ -128,7 +128,7 @@ def test_history() -> None:
     kernel = get_kernel()
     asyncio.run(kernel.do_execute("!ls", False))
     asyncio.run(kernel.do_execute("%cd ~", False))
-    kernel.do_shutdown(False)
+    asyncio.run(kernel.do_shutdown(False))
 
     with open(kernel.hist_file, "rb") as fid:
         text = fid.read().decode("utf-8", "replace")
@@ -137,7 +137,7 @@ def test_history() -> None:
     assert "%cd" in text
 
     kernel = get_kernel()
-    kernel.do_history(None, None, None)
+    asyncio.run(kernel.do_history(None, None, None))
     assert "!ls" in "".join(kernel.hist_cache)
     assert "%cd ~"
 
@@ -179,19 +179,19 @@ def test_other_kernels() -> None:
     message = resp["payload"][0]["data"]["text/plain"]
     assert "Sorry, no help is available on 'dir?'." == message, message
 
-    content = kernel.do_inspect("dir", len("dir"))
+    content = asyncio.run(kernel.do_inspect("dir", len("dir")))
     assert content is not None
     assert content["status"] == "aborted" and not content["found"], (
         "do_inspect should abort, and be not found"
     )
 
-    content = kernel.do_inspect("len(dir", len("len(dir"))
+    content = asyncio.run(kernel.do_inspect("len(dir", len("len(dir")))
     assert content is not None
     assert content["status"] == "aborted" and not content["found"], (
         "do_inspect should abort, and be not found"
     )
 
-    content = kernel.do_inspect("(dir", len("(dir"))
+    content = asyncio.run(kernel.do_inspect("(dir", len("(dir")))
     assert content is not None
     assert content["status"] == "aborted" and not content["found"], (
         "do_inspect should abort, and be not found"
@@ -203,21 +203,21 @@ def test_other_kernels() -> None:
             "Help is available on '%s'." % info["obj"]
         )
     )
-    content = kernel.do_inspect("dir", len("dir"))
+    content = asyncio.run(kernel.do_inspect("dir", len("dir")))
     assert content is not None
     message = content["data"]["text/plain"]
     match = re.match("Help is available on '(.*)'", message)
     assert match is not None
     assert match.groups()[0] == "dir", message + " for 'dir'"
 
-    content = kernel.do_inspect("len(dir", len("len(dir"))
+    content = asyncio.run(kernel.do_inspect("len(dir", len("len(dir")))
     assert content is not None
     message = content["data"]["text/plain"]
     match = re.match("Help is available on '(.*)'", message)
     assert match is not None
     assert match.groups()[0] == "dir", message + " for 'dir'"
 
-    content = kernel.do_inspect("(dir", len("(dir"))
+    content = asyncio.run(kernel.do_inspect("(dir", len("(dir")))
     assert content is not None
     message = content["data"]["text/plain"]
     match = re.match("Help is available on '(.*)'", message)
@@ -292,10 +292,10 @@ def test_misc() -> None:
     assert "hello(XXX)" in text, text
     kernel.restart_kernel()
 
-    ret = kernel.do_is_complete("hello\n")
+    ret = asyncio.run(kernel.do_is_complete("hello\n"))
     assert ret == {"status": "complete"}
 
-    assert kernel.do_inspect("hello", 10) is None
+    assert asyncio.run(kernel.do_inspect("hello", 10)) is None
 
 
 def test_error_display_string() -> None:
@@ -510,7 +510,7 @@ class TestPostExecuteSilent:
     def test_send_response_not_called_for_normal_retval(self) -> None:
         kernel = get_kernel(EvalKernel)
         with unittest.mock.patch.object(kernel, "send_response") as mock_send:
-            kernel.post_execute("result", "code", silent=True)
+            asyncio.run(kernel.post_execute("result", "code", silent=True))
         mock_send.assert_not_called()
 
     def test_send_response_not_called_for_exception_wrapper(self) -> None:
@@ -518,21 +518,21 @@ class TestPostExecuteSilent:
         kernel.kernel_resp = {"status": "ok"}
         exc = ExceptionWrapper("ValueError", "bad", ["traceback line"])
         with unittest.mock.patch.object(kernel, "send_response") as mock_send:
-            kernel.post_execute(exc, "code", silent=True)
+            asyncio.run(kernel.post_execute(exc, "code", silent=True))
         mock_send.assert_not_called()
 
     def test_send_response_not_called_for_none_retval(self) -> None:
         kernel = get_kernel(EvalKernel)
         with unittest.mock.patch.object(kernel, "send_response") as mock_send:
-            kernel.post_execute(None, "code", silent=True)
+            asyncio.run(kernel.post_execute(None, "code", silent=True))
         mock_send.assert_not_called()
 
     def test_history_variables_updated(self) -> None:
         # post_execute writes back _ii and _iii as Python attrs; _i goes only
         # through set_variable into the kernel env.
         kernel = get_kernel(EvalKernel)
-        kernel.post_execute(None, "first", silent=True)
-        kernel.post_execute(None, "second", silent=True)
+        asyncio.run(kernel.post_execute(None, "first", silent=True))
+        asyncio.run(kernel.post_execute(None, "second", silent=True))
         assert kernel._ii == "second"
         assert kernel._iii == "first"
 
@@ -540,41 +540,45 @@ class TestPostExecuteSilent:
         # post_execute writes back __ as a Python attr; _ goes only through
         # set_variable into the kernel env.
         kernel = get_kernel(EvalKernel)
-        kernel.post_execute(42, "code", silent=True)
+        asyncio.run(kernel.post_execute(42, "code", silent=True))
         assert kernel.__ == 42
 
     def test_error_status_set_for_exception_wrapper(self) -> None:
         kernel = get_kernel(EvalKernel)
         kernel.kernel_resp = {"status": "ok"}
         exc = ExceptionWrapper("NameError", "x not defined", [])
-        kernel.post_execute(exc, "code", silent=True)
+        asyncio.run(kernel.post_execute(exc, "code", silent=True))
         assert kernel.kernel_resp["status"] == "error"
 
 
 class TestDoIsComplete:
     def test_regular_code_ending_with_newline_is_complete(self) -> None:
         kernel = get_kernel()
-        assert kernel.do_is_complete("x = 1\n") == {"status": "complete"}
+        assert asyncio.run(kernel.do_is_complete("x = 1\n")) == {"status": "complete"}
 
     def test_regular_code_without_newline_is_incomplete(self) -> None:
         kernel = get_kernel()
-        assert kernel.do_is_complete("x = 1") == {"status": "incomplete"}
+        assert asyncio.run(kernel.do_is_complete("x = 1")) == {"status": "incomplete"}
 
     def test_magic_ending_with_newline_is_complete(self) -> None:
         kernel = get_kernel()
-        assert kernel.do_is_complete("%cd /tmp\n") == {"status": "complete"}
+        assert asyncio.run(kernel.do_is_complete("%cd /tmp\n")) == {
+            "status": "complete"
+        }
 
     def test_magic_without_newline_is_incomplete(self) -> None:
         kernel = get_kernel()
-        assert kernel.do_is_complete("%cd /tmp") == {"status": "incomplete"}
+        assert asyncio.run(kernel.do_is_complete("%cd /tmp")) == {
+            "status": "incomplete"
+        }
 
     def test_empty_string_is_incomplete(self) -> None:
         kernel = get_kernel()
-        assert kernel.do_is_complete("") == {"status": "incomplete"}
+        assert asyncio.run(kernel.do_is_complete("")) == {"status": "incomplete"}
 
     def test_bare_newline_is_complete(self) -> None:
         kernel = get_kernel()
-        assert kernel.do_is_complete("\n") == {"status": "complete"}
+        assert asyncio.run(kernel.do_is_complete("\n")) == {"status": "complete"}
 
 
 class TestPrintWriteErrorRedirectToLog:
