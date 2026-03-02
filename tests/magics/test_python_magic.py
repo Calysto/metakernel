@@ -1,3 +1,4 @@
+import asyncio
 import textwrap
 
 from tests.utils import clear_log_text, get_kernel, get_log_text
@@ -17,70 +18,74 @@ def test_python_magic() -> None:
 
 def test_python_magic2() -> None:
     kernel = get_kernel()
-    kernel.do_execute("%python retval = 1", None)
+    asyncio.run(kernel.do_execute("%python retval = 1", None))
     assert "1" in get_log_text(kernel)
 
-    kernel.do_execute(
-        textwrap.dedent("""\
+    asyncio.run(
+        kernel.do_execute(
+            textwrap.dedent("""\
     %%python
     def test(a):
         return a + 1
     retval = test(2)"""),
-        None,
+            None,
+        )
     )
     assert "3" in get_log_text(kernel)
 
-    kernel.do_execute(
-        textwrap.dedent("""\
+    asyncio.run(
+        kernel.do_execute(
+            textwrap.dedent("""\
     %%python
     def test(a):
         return a + 1
     test(2)"""),
-        None,
+            None,
+        )
     )
     assert "3" in get_log_text(kernel)
 
 
 def test_python_magic3() -> None:
     kernel = get_kernel()
-    kernel.do_execute("%%python -e\n1 + 2", None)
+    asyncio.run(kernel.do_execute("%%python -e\n1 + 2", None))
     magic = kernel.get_magic("%%python")
     assert magic.retval is None  # type:ignore[attr-defined]
 
     kernel = get_kernel()
-    kernel.do_execute("%%python\n1 + 2", None)
+    asyncio.run(kernel.do_execute("%%python\n1 + 2", None))
     magic = kernel.get_magic("%%python")
     assert magic.retval == 3  # type:ignore[attr-defined]
 
     kernel = get_kernel()
-    kernel.do_execute("%%python\n1 + 2\n2 + 3", None)
+    asyncio.run(kernel.do_execute("%%python\n1 + 2\n2 + 3", None))
     magic = kernel.get_magic("%%python")
     assert magic.retval == 5  # type:ignore[attr-defined]
 
     kernel = get_kernel()
-    kernel.do_execute("%%python\nretval = 1 + 2\n2 + 3", None)
+    asyncio.run(kernel.do_execute("%%python\nretval = 1 + 2\n2 + 3", None))
     magic = kernel.get_magic("%%python")
     assert magic.retval == 3  # type:ignore[attr-defined]
 
     kernel = get_kernel()
-    kernel.do_execute("%%python\nimport math", None)
+    asyncio.run(kernel.do_execute("%%python\nimport math", None))
     magic = kernel.get_magic("%%python")
     assert magic.retval is None  # type:ignore[attr-defined]
 
 
 def test_python_magic4() -> None:
     kernel = get_kernel()
-    kernel.do_execute("?%python", None)
+    asyncio.run(kernel.do_execute("?%python", None))
     assert "%python CODE" in get_log_text(kernel)
 
     clear_log_text(kernel)
 
-    ret = kernel.do_execute("?%python a", None)
+    ret = asyncio.run(kernel.do_execute("?%python a", None))
     assert ret["payload"][0]["data"]["text/plain"] == 'No help available for "a"'
-    ret = kernel.do_execute("?%%python a.b", None)
+    ret = asyncio.run(kernel.do_execute("?%%python a.b", None))
     assert ret["payload"][0]["data"]["text/plain"] == 'No help available for "a.b"'
 
-    ret = kernel.do_execute("??%%python oct", None)
+    ret = asyncio.run(kernel.do_execute("??%%python oct", None))
     assert (
         "Return the octal representation of an integer"
         in ret["payload"][0]["data"]["text/plain"]
@@ -89,6 +94,6 @@ def test_python_magic4() -> None:
 
 def test_python_magic5() -> None:
     kernel = get_kernel()
-    kernel.do_execute("%python print('hello')")
+    asyncio.run(kernel.do_execute("%python print('hello')"))
 
     assert "hello" in get_log_text(kernel)

@@ -1,3 +1,4 @@
+import asyncio
 import sys
 
 import pytest
@@ -17,9 +18,11 @@ NO_IPYPARALLEL = ipyparallel is None
 def test_parallel_magic() -> None:
     kernel = get_kernel(EvalKernel)
     # start up an EvalKernel on each node:
-    kernel.do_execute("%parallel metakernel_python MetaKernelPython", False)
+    asyncio.run(
+        kernel.do_execute("%parallel metakernel_python MetaKernelPython", False)
+    )
     # Now, execute something on each one:
-    kernel.do_execute("%px cluster_rank", False)
+    asyncio.run(kernel.do_execute("%px cluster_rank", False))
     results = get_log_text(kernel)
     assert "[0, 1, 2]" in results, results
 

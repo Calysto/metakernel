@@ -1,3 +1,4 @@
+import asyncio
 import os
 
 from tests.utils import get_kernel, get_log_text
@@ -17,17 +18,17 @@ def test_include_magic() -> None:
     FILE = __file__
     if FILE.endswith(".pyc"):
         FILE = FILE[:-1]
-    kernel.do_execute("%%include %s" % FILE)
+    asyncio.run(kernel.do_execute("%%include %s" % FILE))
     assert "metakernel" in EXECUTION
     assert ("AND " + "THIS") not in EXECUTION
 
     EXECUTION = ""
-    kernel.do_execute(("%%include %s\nAND" + " THIS") % FILE)
+    asyncio.run(kernel.do_execute(("%%include %s\nAND" + " THIS") % FILE))
     assert "metakernel" in EXECUTION
     assert ("AND " + "THIS") in EXECUTION
 
     EXECUTION = ""
-    kernel.do_execute("%%include '%s' '%s'" % (FILE, FILE))
+    asyncio.run(kernel.do_execute("%%include '%s' '%s'" % (FILE, FILE)))
     assert "metakernel" in EXECUTION
     assert ("AND " + "THIS") not in EXECUTION
 
@@ -45,7 +46,7 @@ def test_line_include_single_file(tmp_path) -> None:
     f = tmp_path / "snippet.py"
     f.write_text("x = 42\n")
 
-    kernel.do_execute(f"%include {f}")
+    asyncio.run(kernel.do_execute(f"%include {f}"))
     assert executed, "do_execute_direct was never called"
     assert "x = 42" in executed[-1]
 
@@ -63,7 +64,7 @@ def test_line_include_with_trailing_code(tmp_path) -> None:
     f = tmp_path / "snippet.py"
     f.write_text("y = 10\n")
 
-    kernel.do_execute(f"%include {f}\nz = 20")
+    asyncio.run(kernel.do_execute(f"%include {f}\nz = 20"))
     assert executed
     result = executed[-1]
     assert "y = 10" in result
@@ -85,7 +86,7 @@ def test_line_include_multiple_files(tmp_path) -> None:
     f2 = tmp_path / "b.py"
     f2.write_text("b = 2\n")
 
-    kernel.do_execute(f"%include {f1} {f2}")
+    asyncio.run(kernel.do_execute(f"%include {f1} {f2}"))
     assert executed
     result = executed[-1]
     assert "a = 1" in result
@@ -112,7 +113,7 @@ def test_line_include_tilde_expansion(tmp_path, monkeypatch) -> None:
         lambda p: str(f) if p == "~/home_snippet.py" else original_expanduser(p),
     )
 
-    kernel.do_execute("%include ~/home_snippet.py")
+    asyncio.run(kernel.do_execute("%include ~/home_snippet.py"))
     assert executed
     assert "home_var = True" in executed[-1]
 
@@ -120,6 +121,6 @@ def test_line_include_tilde_expansion(tmp_path, monkeypatch) -> None:
 def test_line_include_file_not_found() -> None:
     """Test that including a nonexistent file logs an error."""
     kernel = get_kernel()
-    kernel.do_execute("%include /nonexistent_path_xyz_abc/file.py")
+    asyncio.run(kernel.do_execute("%include /nonexistent_path_xyz_abc/file.py"))
     log_text = get_log_text(kernel)
     assert "Error" in log_text

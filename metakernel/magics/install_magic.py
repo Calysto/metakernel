@@ -15,21 +15,22 @@ class InstallMagic(Magic):
             %install calico-spell-check
         """
         ## FIXME: get list of known extension names and locations from wiki
-        if package == "calico-publish":
-            self.kernel.do_execute(
-                "!ipython install-nbextension https://bitbucket.org/ipre/calico/raw/master/notebooks/nbextensions/calico-publish.js"
+        shell = self.kernel.line_magics.get("shell")
+        if package == "calico-publish" and shell is not None:
+            shell.line_shell(
+                "ipython install-nbextension https://bitbucket.org/ipre/calico/raw/master/notebooks/nbextensions/calico-publish.js"
             )
-        elif package == "calico-spell-check":
-            self.kernel.do_execute(
-                "!ipython install-nbextension https://bitbucket.org/ipre/calico/downloads/calico-spell-check-1.0.zip"
+        elif package == "calico-spell-check" and shell is not None:
+            shell.line_shell(
+                "ipython install-nbextension https://bitbucket.org/ipre/calico/downloads/calico-spell-check-1.0.zip"
             )
-        elif package == "calico-cell-tools":
-            self.kernel.do_execute(
-                "!ipython install-nbextension https://bitbucket.org/ipre/calico/downloads/calico-cell-tools-1.0.zip"
+        elif package == "calico-cell-tools" and shell is not None:
+            shell.line_shell(
+                "ipython install-nbextension https://bitbucket.org/ipre/calico/downloads/calico-cell-tools-1.0.zip"
             )
-        elif package == "calico-document-tools":
-            self.kernel.do_execute(
-                "!ipython install-nbextension https://bitbucket.org/ipre/calico/downloads/calico-document-tools-1.0.zip"
+        elif package == "calico-document-tools" and shell is not None:
+            shell.line_shell(
+                "ipython install-nbextension https://bitbucket.org/ipre/calico/downloads/calico-document-tools-1.0.zip"
             )
         self.enable_extension(package)
         # FIXME: related %config:

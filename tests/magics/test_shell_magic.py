@@ -1,4 +1,5 @@
 # force locale to C to get consistent error messages
+import asyncio
 import os
 import sys
 
@@ -37,11 +38,11 @@ def test_shell_magic() -> None:
 )
 def test_shell_magic2() -> None:
     kernel = get_kernel()
-    kernel.do_execute('!cat "%s"' % __file__, False)
+    asyncio.run(kernel.do_execute('!cat "%s"' % __file__, False))
     log_text = get_log_text(kernel)
     assert "metakernel.py" in log_text
 
-    kernel.do_execute('!!\necho "hello"\necho "goodbye"', None)
+    asyncio.run(kernel.do_execute('!!\necho "hello"\necho "goodbye"', None))
     log_text = get_log_text(kernel)
     assert '"hello"' in log_text
     assert '"goodbye"' in log_text
@@ -49,7 +50,7 @@ def test_shell_magic2() -> None:
 
 def test_shell_magic3() -> None:
     kernel = get_kernel()
-    kernel.do_execute("!lalkjds")
+    asyncio.run(kernel.do_execute("!lalkjds"))
     text = get_log_text(kernel)
     # POSIX: ": command not found", Windows: "is not recognized as the name of a cmdlet"
     assert ": command not found" in text or "is not recognized" in text, text

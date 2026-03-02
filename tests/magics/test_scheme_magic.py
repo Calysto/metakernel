@@ -1,3 +1,4 @@
+import asyncio
 import importlib.util
 
 import pytest
@@ -13,14 +14,14 @@ pytestmark = pytest.mark.skipif(
 
 def test_scheme_line_magic_expression() -> None:
     kernel = get_kernel()
-    kernel.do_execute("%scheme (+ 1 2)", None)
+    asyncio.run(kernel.do_execute("%scheme (+ 1 2)", None))
     magic = kernel.line_magics["scheme"]
     assert magic.retval == 3
 
 
 def test_scheme_line_magic_define() -> None:
     kernel = get_kernel()
-    kernel.do_execute("%scheme (define x 42)", None)
+    asyncio.run(kernel.do_execute("%scheme (define x 42)", None))
     magic = kernel.line_magics["scheme"]
     # define statements return a void Symbol in calysto_scheme, not None
     from calysto_scheme import scheme as cs
@@ -30,7 +31,7 @@ def test_scheme_line_magic_define() -> None:
 
 def test_scheme_cell_magic() -> None:
     kernel = get_kernel()
-    kernel.do_execute("%%scheme\n(+ 10 32)", None)
+    asyncio.run(kernel.do_execute("%%scheme\n(+ 10 32)", None))
     magic = kernel.cell_magics["scheme"]
     assert magic.retval == 42
     assert not magic.evaluate
@@ -38,7 +39,7 @@ def test_scheme_cell_magic() -> None:
 
 def test_scheme_cell_magic_multiline() -> None:
     kernel = get_kernel()
-    kernel.do_execute("%%scheme\n(define x 10)\n(+ x 5)", None)
+    asyncio.run(kernel.do_execute("%%scheme\n(define x 10)\n(+ x 5)", None))
     magic = kernel.cell_magics["scheme"]
     assert magic.retval == 15
 
@@ -46,14 +47,14 @@ def test_scheme_cell_magic_multiline() -> None:
 def test_scheme_cell_magic_eval_output() -> None:
     kernel = get_kernel()
     # -e flag: Scheme result is used as code for the host kernel
-    kernel.do_execute('%%scheme -e\n"1 + 2"', None)
+    asyncio.run(kernel.do_execute('%%scheme -e\n"1 + 2"', None))
     magic = kernel.cell_magics["scheme"]
     assert magic.evaluate
 
 
 def test_scheme_cell_magic_empty() -> None:
     kernel = get_kernel()
-    kernel.do_execute("%%scheme\n  ", None)
+    asyncio.run(kernel.do_execute("%%scheme\n  ", None))
     magic = kernel.cell_magics["scheme"]
     # Whitespace-only cell: nothing is evaluated, retval stays None
     assert magic.retval is None

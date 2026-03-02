@@ -314,7 +314,7 @@ class MetaKernel(Kernel):
     ############################################
     # Implement base class methods
 
-    def do_execute(
+    async def do_execute(
         self,
         code: Any,
         silent: Any = False,
@@ -399,6 +399,8 @@ class MetaKernel(Kernel):
                     retval = self.do_execute_meta(code[9:].strip())
                 else:
                     retval = self.do_execute_direct(code)
+                    if inspect.isawaitable(retval):
+                        retval = await retval
             # Post-process magics:
             for magic in reversed(stack):
                 retval = magic.post_process(retval)
@@ -407,6 +409,8 @@ class MetaKernel(Kernel):
                 retval = self.do_execute_meta(code[9:].strip())
             else:
                 retval = self.do_execute_direct(code)
+                if inspect.isawaitable(retval):
+                    retval = await retval
 
         self.post_execute(retval, code, silent)
 

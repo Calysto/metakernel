@@ -1,9 +1,11 @@
+import asyncio
+
 from tests.utils import get_kernel, get_log_text
 
 
 def test_connect_info_magic() -> None:
     kernel = get_kernel()
-    kernel.do_execute("%connect_info")
+    asyncio.run(kernel.do_execute("%connect_info"))
     text = get_log_text(kernel)
     assert (
         """{

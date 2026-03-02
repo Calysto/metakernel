@@ -1,27 +1,31 @@
+import asyncio
+
 from metakernel.magics.macro_magic import MacroMagic
 from tests.utils import EvalKernel, clear_log_text, get_kernel, get_log_text
 
 
 def test_macro_magic() -> None:
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute(
-        """%%macro testme
+    asyncio.run(
+        kernel.do_execute(
+            """%%macro testme
 print("ok")
     """,
-        False,
+            False,
+        )
     )
-    kernel.do_execute("%macro testme", False)
+    asyncio.run(kernel.do_execute("%macro testme", False))
     text = get_log_text(kernel)
     assert "ok" in text, text
     clear_log_text(kernel)
 
-    kernel.do_execute("%macro -l learned", False)
+    asyncio.run(kernel.do_execute("%macro -l learned", False))
     text = get_log_text(kernel)
     assert "testme" in text, text
     clear_log_text(kernel)
 
-    kernel.do_execute("%macro -d testme", False)
-    kernel.do_execute("%macro -l learned", False)
+    asyncio.run(kernel.do_execute("%macro -d testme", False))
+    asyncio.run(kernel.do_execute("%macro -l learned", False))
     text = get_log_text(kernel)
     assert "testme" not in text, text
     clear_log_text(kernel)
@@ -35,7 +39,7 @@ print("ok")
 def test_list_system_macros() -> None:
     """'-l system' prints the system macros and omits the Learned section."""
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute("%macro -l system", False)
+    asyncio.run(kernel.do_execute("%macro -l system", False))
     text = get_log_text(kernel)
     assert "renumber-cells" in text
     assert "Learned" not in text
@@ -47,7 +51,7 @@ def test_list_all_macros() -> None:
     mm = kernel.line_magics["macro"]
     mm.learned["list-all-probe"] = "pass\n"
 
-    kernel.do_execute("%macro -l all", False)
+    asyncio.run(kernel.do_execute("%macro -l all", False))
     text = get_log_text(kernel)
     assert "renumber-cells" in text
     assert "list-all-probe" in text
@@ -59,7 +63,7 @@ def test_list_all_shows_both_section_headers() -> None:
     mm = kernel.line_magics["macro"]
     mm.learned["section-header-probe"] = "pass\n"
 
-    kernel.do_execute("%macro -l all", False)
+    asyncio.run(kernel.do_execute("%macro -l all", False))
     text = get_log_text(kernel)
     assert "System:" in text
     assert "Learned:" in text
@@ -75,7 +79,7 @@ def test_list_all_shows_both_section_headers() -> None:
 def test_show_system_macro() -> None:
     """'-s NAME' for a system macro prints the header and the macro body."""
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute("%macro -s renumber-cells", False)
+    asyncio.run(kernel.do_execute("%macro -s renumber-cells", False))
     text = get_log_text(kernel)
     assert "%%macro renumber-cells" in text
     assert "renumber-cells" in MacroMagic.macros
@@ -88,7 +92,7 @@ def test_show_learned_macro() -> None:
     mm = kernel.line_magics["macro"]
     mm.learned["show-probe"] = "x = 1\n"
 
-    kernel.do_execute("%macro -s show-probe", False)
+    asyncio.run(kernel.do_execute("%macro -s show-probe", False))
     text = get_log_text(kernel)
     assert "%%macro show-probe" in text
     assert "x = 1" in text
@@ -97,7 +101,7 @@ def test_show_learned_macro() -> None:
 def test_show_unknown_macro_prints_only_header() -> None:
     """'-s NAME' for an unknown macro prints just the header with no body."""
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute("%macro -s no-such-macro-xyz", False)
+    asyncio.run(kernel.do_execute("%macro -s no-such-macro-xyz", False))
     text = get_log_text(kernel)
     assert "%%macro no-such-macro-xyz" in text
     # no body was appended - only the header line should be present
@@ -116,7 +120,7 @@ def test_execute_learned_macro_with_prior_code() -> None:
     mm.learned["add-y"] = "y = 2\n"
 
     # The body after the magic line becomes self.code = "x = 1"
-    kernel.do_execute("%macro add-y\nx = 1", False)
+    asyncio.run(kernel.do_execute("%macro add-y\nx = 1", False))
 
     assert kernel.get_variable("x") == 1
     assert kernel.get_variable("y") == 2
@@ -133,7 +137,7 @@ def test_execute_system_macro(monkeypatch) -> None:
     mm = kernel.line_magics["macro"]
     monkeypatch.setitem(mm.macros, "test-sys-exec", "z = 42\n")
 
-    kernel.do_execute("%macro test-sys-exec", False)
+    asyncio.run(kernel.do_execute("%macro test-sys-exec", False))
 
     assert kernel.get_variable("z") == 42
 
@@ -144,7 +148,7 @@ def test_execute_system_macro_with_prior_code(monkeypatch) -> None:
     mm = kernel.line_magics["macro"]
     monkeypatch.setitem(mm.macros, "test-sys-prior", "b = 2\n")
 
-    kernel.do_execute("%macro test-sys-prior\na = 1", False)
+    asyncio.run(kernel.do_execute("%macro test-sys-prior\na = 1", False))
 
     assert kernel.get_variable("a") == 1
     assert kernel.get_variable("b") == 2
@@ -158,7 +162,7 @@ def test_execute_system_macro_with_prior_code(monkeypatch) -> None:
 def test_delete_system_macro_raises_error() -> None:
     """'-d NAME' on a system macro logs an error (raises Exception internally)."""
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute("%macro -d renumber-cells", False)
+    asyncio.run(kernel.do_execute("%macro -d renumber-cells", False))
     assert "Error" in get_log_text(kernel)
 
 
@@ -170,7 +174,7 @@ def test_delete_system_macro_raises_error() -> None:
 def test_empty_name_lists_all_macros() -> None:
     """%macro with no name falls through to _list_macros() showing everything."""
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute("%macro", False)
+    asyncio.run(kernel.do_execute("%macro", False))
     text = get_log_text(kernel)
     assert "Available macros" in text
     assert "renumber-cells" in text
@@ -184,7 +188,7 @@ def test_empty_name_lists_all_macros() -> None:
 def test_unknown_name_logs_error() -> None:
     """%macro with an unrecognised name logs 'No such macro' as an error."""
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute("%macro totally-unknown-macro-xyz", False)
+    asyncio.run(kernel.do_execute("%macro totally-unknown-macro-xyz", False))
     text = get_log_text(kernel)
     assert "No such macro" in text
     assert "totally-unknown-macro-xyz" in text
