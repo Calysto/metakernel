@@ -46,7 +46,7 @@ def _setup(tmp_path, monkeypatch, initial_content=""):
         inner_calls.append("!" + command)
         return None
 
-    shell_magic.line_shell = capturing_line_shell  # type:ignore[method-assign]
+    shell_magic.line_shell = capturing_line_shell
     return kernel, custom_js, inner_calls
 
 
