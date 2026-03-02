@@ -1,3 +1,4 @@
+import asyncio
 import sys
 from typing import cast
 from unittest.mock import MagicMock, patch
@@ -194,14 +195,14 @@ def test_do_shutdown_calls_terminate_on_wrapper() -> None:
     kernel = get_kernel(_TestKernel)
     mock_wrapper = MagicMock()
     kernel.wrapper = mock_wrapper
-    kernel.do_shutdown(False)
+    asyncio.run(kernel.do_shutdown(False))
     mock_wrapper.terminate.assert_called_once()
 
 
 def test_do_shutdown_with_no_wrapper_does_not_raise() -> None:
     kernel = get_kernel(_TestKernel)
     kernel.wrapper = None
-    kernel.do_shutdown(False)  # should not raise
+    asyncio.run(kernel.do_shutdown(False))  # should not raise
 
 
 def test_restart_kernel_replaces_wrapper() -> None:

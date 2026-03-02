@@ -8,7 +8,7 @@ def test_python_magic() -> None:
     kernel = get_kernel()
 
     text = "%python imp"
-    comp = kernel.do_complete(text, len(text))
+    comp = asyncio.run(kernel.do_complete(text, len(text)))
 
     assert "import" in comp["matches"]
 

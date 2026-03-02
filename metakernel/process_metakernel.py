@@ -176,7 +176,7 @@ class ProcessMetaKernel(MetaKernel):
         """
         raise NotImplementedError
 
-    def do_shutdown(self, restart: bool) -> dict[str, str]:
+    async def do_shutdown(self, restart: bool) -> dict[str, str]:
         """
         Shut down the app gracefully, saving history.
         """
@@ -185,7 +185,7 @@ class ProcessMetaKernel(MetaKernel):
                 self.wrapper.terminate()
             except Exception as e:
                 self.Error(str(e))
-        return super().do_shutdown(restart)
+        return await super().do_shutdown(restart)
 
     def restart_kernel(self) -> None:
         """Restart the kernel"""

@@ -412,14 +412,14 @@ class MetaKernel(Kernel):
                 if inspect.isawaitable(retval):
                     retval = await retval
 
-        self.post_execute(retval, code, silent)
+        await self.post_execute(retval, code, silent)
 
         if "payload" in self.kernel_resp:
             self.kernel_resp["payload"] = self.payload
 
         return self.kernel_resp
 
-    def post_execute(self, retval: Any, code: str, silent: bool) -> None:
+    async def post_execute(self, retval: Any, code: str, silent: bool) -> None:
         """Post-execution actions
 
         Handle special kernel variables and display response if not silent.
@@ -468,7 +468,7 @@ class MetaKernel(Kernel):
                         return
                     self.send_response(self.iopub_socket, "execute_result", content)
 
-    def do_history(
+    async def do_history(
         self,
         hist_access_type: str | None,
         output: str | None,
@@ -489,7 +489,7 @@ class MetaKernel(Kernel):
             self.hist_cache = json.loads(fid.read() or "[]")
         return {"status": "ok", "history": [(None, None, h) for h in self.hist_cache]}
 
-    def do_shutdown(self, restart: bool) -> dict[str, Any]:
+    async def do_shutdown(self, restart: bool) -> dict[str, Any]:
         """
         Shut down the app gracefully, saving history.
 
@@ -505,7 +505,7 @@ class MetaKernel(Kernel):
             self.Print("Done!")
         return {"status": "ok", "restart": restart}
 
-    def do_is_complete(self, code: str) -> dict[str, str]:
+    async def do_is_complete(self, code: str) -> dict[str, str]:
         """
         Given code as string, returns dictionary with 'status' representing
         whether code is ready to evaluate. Possible values for status are:
@@ -537,7 +537,7 @@ class MetaKernel(Kernel):
         else:
             return {"status": "incomplete"}
 
-    def do_complete(self, code: str, cursor_pos: int) -> dict[str, Any]:
+    async def do_complete(self, code: str, cursor_pos: int) -> dict[str, Any]:
         """Handle code completion for the kernel.
 
         https://jupyter-client.readthedocs.io/en/stable/messaging.html#completion
@@ -599,7 +599,7 @@ class MetaKernel(Kernel):
 
         return content
 
-    def do_inspect(
+    async def do_inspect(
         self, code: str, cursor_pos: int, detail_level: int = 0, omit_sections: Any = ()
     ) -> dict[str, Any] | None:
         """Object introspection.
@@ -626,7 +626,7 @@ class MetaKernel(Kernel):
 
         return content
 
-    def clear_output(self, wait: bool = False) -> None:
+    async def clear_output(self, wait: bool = False) -> None:
         """Clear the output of the kernel."""
         self.send_response(self.iopub_socket, "clear_output", {"wait": wait})
 
@@ -638,7 +638,7 @@ class MetaKernel(Kernel):
         See https://ipython.readthedocs.io/en/stable/config/integrating.html?highlight=display#rich-display
         """
         if kwargs.get("clear_output"):
-            self.clear_output(wait=True)
+            self.send_response(self.iopub_socket, "clear_output", {"wait": True})
 
         for item in objects:
             if Widget and isinstance(item, Widget):

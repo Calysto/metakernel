@@ -19,7 +19,7 @@ def test_shell_magic() -> None:
     kernel = get_kernel()
 
     text = "%shell ech"
-    comp = kernel.do_complete(text, len(text))
+    comp = asyncio.run(kernel.do_complete(text, len(text)))
 
     assert "echo" in comp["matches"]
 
