@@ -1,3 +1,4 @@
+import asyncio
 from typing import Any
 from unittest.mock import MagicMock
 
@@ -33,7 +34,7 @@ def ipython_magics(monkeypatch):
 
 def test_kernel_magic() -> None:
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute("%kx 42", False)
+    asyncio.run(kernel.do_execute("%kx 42", False))
     results = get_log_text(kernel)
     assert "42" in results, results
 
@@ -41,7 +42,9 @@ def test_kernel_magic() -> None:
 def test_line_kernel_default_name() -> None:
     """line_kernel stores the sub-kernel under 'default' when no -k flag is given."""
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute("%kernel metakernel_echo.metakernel_echo MetaKernelEcho")
+    asyncio.run(
+        kernel.do_execute("%kernel metakernel_echo.metakernel_echo MetaKernelEcho")
+    )
 
     mk = kernel.line_magics["kernel"]
     assert mk.kernel_name == "default"
@@ -54,8 +57,10 @@ def test_line_kernel_default_name() -> None:
 def test_line_kernel_named() -> None:
     """line_kernel stores the sub-kernel under the name given by -k."""
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute(
-        "%kernel metakernel_echo.metakernel_echo MetaKernelEcho -k linetest_named"
+    asyncio.run(
+        kernel.do_execute(
+            "%kernel metakernel_echo.metakernel_echo MetaKernelEcho -k linetest_named"
+        )
     )
 
     mk = kernel.line_magics["kernel"]
@@ -68,7 +73,7 @@ def test_line_kernel_named() -> None:
 def test_line_kernel_invalid_module() -> None:
     """line_kernel logs an error when the module cannot be imported."""
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute("%kernel nonexistent_module_xyz SomeClass")
+    asyncio.run(kernel.do_execute("%kernel nonexistent_module_xyz SomeClass"))
 
     assert "Error" in get_log_text(kernel)
 
@@ -76,7 +81,9 @@ def test_line_kernel_invalid_module() -> None:
 def test_line_kernel_invalid_class() -> None:
     """line_kernel logs an error when the class does not exist in the module."""
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute("%kernel metakernel_echo.metakernel_echo NoSuchClass")
+    asyncio.run(
+        kernel.do_execute("%kernel metakernel_echo.metakernel_echo NoSuchClass")
+    )
 
     assert "Error" in get_log_text(kernel)
 
@@ -84,12 +91,14 @@ def test_line_kernel_invalid_class() -> None:
 def test_cell_kx_uses_current_kernel_name() -> None:
     """%%kx with no -k flag routes execution to the kernel set by the last %kernel call."""
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute(
-        "%kernel metakernel_echo.metakernel_echo MetaKernelEcho -k ctkx_default"
+    asyncio.run(
+        kernel.do_execute(
+            "%kernel metakernel_echo.metakernel_echo MetaKernelEcho -k ctkx_default"
+        )
     )
     clear_log_text(kernel)
 
-    kernel.do_execute("%%kx\nhello world")
+    asyncio.run(kernel.do_execute("%%kx\nhello world"))
 
     assert "hello world" in get_log_text(kernel)
 
@@ -97,15 +106,19 @@ def test_cell_kx_uses_current_kernel_name() -> None:
 def test_cell_kx_explicit_kernel_name() -> None:
     """%%kx -k NAME routes execution to the named sub-kernel."""
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute(
-        "%kernel metakernel_echo.metakernel_echo MetaKernelEcho -k ctkx_a"
+    asyncio.run(
+        kernel.do_execute(
+            "%kernel metakernel_echo.metakernel_echo MetaKernelEcho -k ctkx_a"
+        )
     )
-    kernel.do_execute(
-        "%kernel metakernel_echo.metakernel_echo MetaKernelEcho -k ctkx_b"
+    asyncio.run(
+        kernel.do_execute(
+            "%kernel metakernel_echo.metakernel_echo MetaKernelEcho -k ctkx_b"
+        )
     )
     clear_log_text(kernel)
 
-    kernel.do_execute("%%kx -k ctkx_b\nrouted to b")
+    asyncio.run(kernel.do_execute("%%kx -k ctkx_b\nrouted to b"))
 
     assert "routed to b" in get_log_text(kernel)
 

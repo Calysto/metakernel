@@ -1,3 +1,4 @@
+import asyncio
 import os
 import re
 import sys
@@ -54,7 +55,7 @@ def test_help() -> None:
     resp = kernel.get_help_on("%shell", 0)
     assert "run the line as a shell command" in resp
 
-    resp = kernel.do_execute("%cd?", False)
+    resp = asyncio.run(kernel.do_execute("%cd?", False))
     assert (
         "change current directory of session"
         in resp["payload"][0]["data"]["text/plain"]
@@ -125,8 +126,8 @@ def test_ls_path_complete() -> None:
 
 def test_history() -> None:
     kernel = get_kernel()
-    kernel.do_execute("!ls", False)
-    kernel.do_execute("%cd ~", False)
+    asyncio.run(kernel.do_execute("!ls", False))
+    asyncio.run(kernel.do_execute("%cd ~", False))
     kernel.do_shutdown(False)
 
     with open(kernel.hist_file, "rb") as fid:
@@ -143,12 +144,12 @@ def test_history() -> None:
 
 def test_sticky_magics() -> None:
     kernel = get_kernel()
-    kernel.do_execute("%%%html\nhello", None)
+    asyncio.run(kernel.do_execute("%%%html\nhello", None))
     text = get_log_text(kernel)
 
     assert "html added to session magics" in text
-    kernel.do_execute("<b>hello</b>", None)
-    kernel.do_execute("%%%html", None)
+    asyncio.run(kernel.do_execute("<b>hello</b>", None))
+    asyncio.run(kernel.do_execute("%%%html", None))
     text = get_log_text(kernel)
     assert text.count("Display Data") == 2
     assert "html removed from session magics" in text
@@ -156,7 +157,7 @@ def test_sticky_magics() -> None:
 
 def test_shell_partial_quote() -> None:
     kernel = get_kernel()
-    kernel.do_execute('%cd "/home/', False)
+    asyncio.run(kernel.do_execute('%cd "/home/', False))
     text = get_log_text(kernel)
     # POSIX: "No such file or directory: '"/home/'"
     # Windows: "[WinError 123] ... syntax is incorrect: '"/home/'"
@@ -171,9 +172,9 @@ def test_other_kernels() -> None:
             return "OK"
 
     kernel = get_kernel(SchemeKernel)
-    resp = kernel.do_execute("dir?", None)
+    resp = asyncio.run(kernel.do_execute("dir?", None))
     assert len(resp["payload"]) == 0, "should handle this, rather than using help"
-    resp = kernel.do_execute("?dir?", None)
+    resp = asyncio.run(kernel.do_execute("?dir?", None))
     assert len(resp["payload"]) == 1, "should use help"
     message = resp["payload"][0]["data"]["text/plain"]
     assert "Sorry, no help is available on 'dir?'." == message, message
@@ -226,22 +227,22 @@ def test_other_kernels() -> None:
 
 def test_do_execute_meta() -> None:
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute("~~META~~: reset")
+    asyncio.run(kernel.do_execute("~~META~~: reset"))
     text = get_log_text(kernel)
     assert "RESET" in text, text
     clear_log_text(kernel)
 
-    kernel.do_execute("~~META~~: stop")
+    asyncio.run(kernel.do_execute("~~META~~: stop"))
     text = get_log_text(kernel)
     assert "STOP" in text, text
     clear_log_text(kernel)
 
-    kernel.do_execute("~~META~~: step")
+    asyncio.run(kernel.do_execute("~~META~~: step"))
     text = get_log_text(kernel)
     assert "STEP" in text, text
     clear_log_text(kernel)
 
-    kernel.do_execute("~~META~~: inspect something")
+    asyncio.run(kernel.do_execute("~~META~~: inspect something"))
     text = get_log_text(kernel)
     assert "INSPECT" in text, text
     clear_log_text(kernel)
@@ -251,7 +252,21 @@ def test_do_execute_meta2() -> None:
     kernel = get_kernel()
     for code in ["reset, stop", "step", "inspect ", "garbage"]:
         with pytest.raises(Exception):  # noqa: B017
-            kernel.do_execute("~~META~~: %s" % code)
+            asyncio.run(kernel.do_execute("~~META~~: %s" % code))
+
+
+def test_async_do_execute_direct() -> None:
+    """async do_execute_direct is awaited and its return value is handled."""
+
+    class AsyncKernel(MetaKernel):
+        async def do_execute_direct(self, code, *args, **kwargs):
+            return code.upper()
+
+    kernel = get_kernel(AsyncKernel)
+    resp = asyncio.run(kernel.do_execute("hello", False))
+    assert resp["status"] == "ok"
+    # The return value should have been stored in the kernel's _ variable
+    assert kernel.__ == "HELLO"
 
 
 def test_misc() -> None:

@@ -1,3 +1,4 @@
+import asyncio
 import importlib.util
 
 import pytest
@@ -24,7 +25,7 @@ def test_matplotlib_magic_sets_backend() -> None:
     import matplotlib
 
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute("%matplotlib agg", False)
+    asyncio.run(kernel.do_execute("%matplotlib agg", False))
 
     assert matplotlib.get_backend().lower() == "agg"
 
@@ -34,7 +35,7 @@ def test_matplotlib_magic_notebook_alias() -> None:
     import matplotlib
 
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute("%matplotlib notebook", False)
+    asyncio.run(kernel.do_execute("%matplotlib notebook", False))
 
     assert matplotlib.get_backend().lower() == "nbagg"
 
@@ -46,6 +47,6 @@ def test_matplotlib_magic_patches_ipython_display() -> None:
     import metakernel.display
 
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute("%matplotlib agg", False)
+    asyncio.run(kernel.do_execute("%matplotlib agg", False))
 
     assert IPython.display.display is metakernel.display.display

@@ -1,16 +1,22 @@
+import asyncio
+
 from tests.utils import EvalKernel, clear_log_text, get_kernel, get_log_text
 
 
 def test_run_magic() -> None:
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute("%%run %s" % __file__.replace(".pyc", ".py"))
-    kernel.do_execute("TEST")
+    asyncio.run(kernel.do_execute("%%run %s" % __file__.replace(".pyc", ".py")))
+    asyncio.run(kernel.do_execute("TEST"))
     text = get_log_text(kernel)
     assert "42" in text, "Didn't run this file"
 
     clear_log_text(kernel)
-    kernel.do_execute("%%run --language python %s" % __file__.replace(".pyc", ".py"))
-    kernel.do_execute("TEST")
+    asyncio.run(
+        kernel.do_execute(
+            "%%run --language python %s" % __file__.replace(".pyc", ".py")
+        )
+    )
+    asyncio.run(kernel.do_execute("TEST"))
     text = get_log_text(kernel)
     assert "42" in text, "Didn't run this file"
 

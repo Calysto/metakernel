@@ -1,3 +1,4 @@
+import asyncio
 import importlib.util
 import shutil
 
@@ -11,10 +12,12 @@ NO_DOT = shutil.which("dot") is None or importlib.util.find_spec("pydot") is Non
 @pytest.mark.skipif(NO_DOT, reason="Requires dot from graphviz")
 def test_dot_magic_cell() -> None:
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute("""%%dot
+    asyncio.run(
+        kernel.do_execute("""%%dot
 
 graph A { a->b };
 """)
+    )
 
     text = get_log_text(kernel)
     assert "Display Data" in text, text
@@ -23,7 +26,7 @@ graph A { a->b };
 @pytest.mark.skipif(NO_DOT, reason="Requires dot from graphviz")
 def test_dot_magic_line() -> None:
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute("%dot graph A { a->b };")
+    asyncio.run(kernel.do_execute("%dot graph A { a->b };"))
 
     text = get_log_text(kernel)
     assert "Display Data" in text, text

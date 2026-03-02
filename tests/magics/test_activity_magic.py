@@ -1,3 +1,4 @@
+import asyncio
 import importlib.util
 import os
 import sys
@@ -193,7 +194,9 @@ def test_cell_activity_magic_writes_file(tmp_path) -> None:
     """%%activity writes the cell body to the named file and creates a results file."""
     activity_file = tmp_path / "test_activity"
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute(f"%%activity {activity_file}\n{ACTIVITY_TEXT}", False)
+    asyncio.run(
+        kernel.do_execute(f"%%activity {activity_file}\n{ACTIVITY_TEXT}", False)
+    )
 
     assert activity_file.exists()
     assert "poll" in activity_file.read_text()
@@ -205,7 +208,9 @@ def test_cell_activity_magic_displays_widget(tmp_path) -> None:
     """%%activity renders a widget when ipywidgets is available."""
     activity_file = tmp_path / "test_activity"
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute(f"%%activity {activity_file}\n{ACTIVITY_TEXT}", False)
+    asyncio.run(
+        kernel.do_execute(f"%%activity {activity_file}\n{ACTIVITY_TEXT}", False)
+    )
 
     assert "Display Widget" in get_log_text(kernel)
 
@@ -222,7 +227,7 @@ def test_line_activity_magic_renders_widget(tmp_path) -> None:
     activity_file.write_text(ACTIVITY_TEXT)
 
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute(f"%activity {activity_file}", False)
+    asyncio.run(kernel.do_execute(f"%activity {activity_file}", False))
 
     assert "Display Widget" in get_log_text(kernel)
     assert os.path.exists(str(activity_file) + ".results")

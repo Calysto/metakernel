@@ -1,3 +1,4 @@
+import asyncio
 import importlib.util
 
 import pytest
@@ -58,6 +59,6 @@ def test_brain_help() -> None:
 def test_brain_cell_magic_executes() -> None:
     """%%brain executes without error when calysto is available."""
     kernel = get_kernel()
-    kernel.do_execute("%%brain\nrobot.forward(1)", None)
+    asyncio.run(kernel.do_execute("%%brain\nrobot.forward(1)", None))
     magic = kernel.cell_magics["brain"]
     assert magic.code is not None

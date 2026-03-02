@@ -1,9 +1,11 @@
+import asyncio
+
 from tests.utils import get_kernel
 
 
 def test_plot_magic_backend() -> None:
     kernel = get_kernel()
-    kernel.do_execute("%plot qt -f svg -s400,200", None)
+    asyncio.run(kernel.do_execute("%plot qt -f svg -s400,200", None))
     assert kernel.plot_settings["width"] == 400
     assert kernel.plot_settings["height"] == 200
     assert kernel.plot_settings["format"] == "svg"
@@ -12,7 +14,7 @@ def test_plot_magic_backend() -> None:
 
 def test_plot_magic_format() -> None:
     kernel = get_kernel()
-    kernel.do_execute("%plot qt -f svg -w 500 -h 400 -r 200")
+    asyncio.run(kernel.do_execute("%plot qt -f svg -w 500 -h 400 -r 200"))
     assert kernel.plot_settings["backend"] == "qt", kernel.plot_settings
     assert kernel.plot_settings["format"] == "svg", kernel.plot_settings
     assert kernel.plot_settings["width"] == 500, kernel.plot_settings
@@ -22,7 +24,7 @@ def test_plot_magic_format() -> None:
 
 def test_plot_magic_size() -> None:
     kernel = get_kernel()
-    kernel.do_execute("%plot qt4 -s 400,200")
+    asyncio.run(kernel.do_execute("%plot qt4 -s 400,200"))
     assert kernel.plot_settings["width"] == 400
     assert kernel.plot_settings["height"] == 200
     assert kernel.plot_settings["backend"] == "qt4", kernel.plot_settings
@@ -30,7 +32,7 @@ def test_plot_magic_size() -> None:
 
 def test_plot_magic_all() -> None:
     kernel = get_kernel()
-    kernel.do_execute("%plot -b qt5 -f svg -s 400,200")
+    asyncio.run(kernel.do_execute("%plot -b qt5 -f svg -s 400,200"))
     assert kernel.plot_settings["width"] == 400
     assert kernel.plot_settings["height"] == 200
     assert kernel.plot_settings["format"] == "svg", kernel.plot_settings

@@ -1,3 +1,4 @@
+import asyncio
 from unittest.mock import patch
 
 from tests.utils import EvalKernel, get_kernel, get_log_text
@@ -5,7 +6,7 @@ from tests.utils import EvalKernel, get_kernel, get_log_text
 
 def test_conversation_line_magic() -> None:
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute("%conversation mysite")
+    asyncio.run(kernel.do_execute("%conversation mysite"))
     text = get_log_text(kernel)
     assert "Display Data" in text, text
 
@@ -28,7 +29,7 @@ def test_conversation_line_magic_sets_evaluate_false() -> None:
 
 def test_conversation_cell_magic() -> None:
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute("%%conversation mysite\n")
+    asyncio.run(kernel.do_execute("%%conversation mysite\n"))
     text = get_log_text(kernel)
     assert "Display Data" in text, text
 

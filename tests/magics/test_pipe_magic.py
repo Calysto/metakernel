@@ -1,9 +1,12 @@
+import asyncio
+
 from tests.utils import EvalKernel, clear_log_text, get_kernel, get_log_text
 
 
 def test_pipe_magic() -> None:
     kernel = get_kernel(EvalKernel)
-    kernel.do_execute("""
+    asyncio.run(
+        kernel.do_execute("""
 
 def upper(text):
     return text.upper()
@@ -21,27 +24,36 @@ def piglatin(text):
     return " ".join([pl_word(word) for word in text.split(" ")])
 
 """)
-    kernel.do_execute("""%%pipe upper
+    )
+    asyncio.run(
+        kernel.do_execute("""%%pipe upper
 this is a test
  """)
+    )
     text = get_log_text(kernel)
     assert "THIS IS A TEST" in text, "text: " + text
 
-    kernel.do_execute("""%%pipe upper | piglatin
+    asyncio.run(
+        kernel.do_execute("""%%pipe upper | piglatin
 this is a test
  """)
+    )
     text = get_log_text(kernel)
     assert "HISTay IS A ESTTay" in text, "text: " + text
 
-    kernel.do_execute("""%%pipe piglatin | upper
+    asyncio.run(
+        kernel.do_execute("""%%pipe piglatin | upper
 this is a test
  """)
+    )
     text = get_log_text(kernel)
     assert "HISTAY IS A ESTTAY" in text, "text: " + text
 
-    kernel.do_execute("""%%pipe piglatin | upper | lower
+    asyncio.run(
+        kernel.do_execute("""%%pipe piglatin | upper | lower
 this is a test
  """)
+    )
     text = get_log_text(kernel)
     assert "histay is a esttay" in text, "text: " + text
     clear_log_text(kernel)

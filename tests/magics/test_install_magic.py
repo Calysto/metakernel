@@ -1,3 +1,4 @@
+import asyncio
 import os
 import sys
 
@@ -22,9 +23,9 @@ _CUSTOM_JS_TILDE = "~/.ipython/profile_default/static/custom/custom.js"
 def _setup(tmp_path, monkeypatch, initial_content=""):
     """Return (kernel, custom_js_path, inner_calls).
 
-    The kernel's do_execute is wrapped so that any !-prefixed (shell) call is
-    captured in *inner_calls* rather than actually executed.  expanduser is
-    patched to redirect the custom.js path to a temp file.
+    The shell magic's line_shell is wrapped so that calls are captured in
+    *inner_calls* rather than actually executed.  expanduser is patched to
+    redirect the custom.js path to a temp file.
     """
     custom_js = tmp_path / "custom.js"
     custom_js.write_text(initial_content)
@@ -38,20 +39,14 @@ def _setup(tmp_path, monkeypatch, initial_content=""):
 
     kernel = get_kernel()
     inner_calls: list[str] = []
-    original_do_execute = kernel.do_execute
+    shell_magic = kernel.line_magics["shell"]
+    original_line_shell = shell_magic.line_shell
 
-    def capturing_do_execute(code, *args, **kwargs):
-        if code.startswith("!"):
-            inner_calls.append(code)
-            return {
-                "status": "ok",
-                "execution_count": 0,
-                "payload": [],
-                "user_expressions": {},
-            }
-        return original_do_execute(code, *args, **kwargs)
+    def capturing_line_shell(command, *args, **kwargs):
+        inner_calls.append("!" + command)
+        return None
 
-    kernel.do_execute = capturing_do_execute  # type:ignore[method-assign]
+    shell_magic.line_shell = capturing_line_shell  # type:ignore[method-assign]
     return kernel, custom_js, inner_calls
 
 
@@ -64,7 +59,7 @@ def test_line_install_calico_publish(tmp_path, monkeypatch) -> None:
     """calico-publish dispatches the correct ipython install-nbextension URL."""
     kernel, _, inner_calls = _setup(tmp_path, monkeypatch)
 
-    kernel.do_execute("%install calico-publish")
+    asyncio.run(kernel.do_execute("%install calico-publish"))
 
     assert len(inner_calls) == 1
     assert "ipython install-nbextension" in inner_calls[0]
@@ -75,7 +70,7 @@ def test_line_install_calico_spell_check(tmp_path, monkeypatch) -> None:
     """calico-spell-check dispatches the correct ipython install-nbextension URL."""
     kernel, _, inner_calls = _setup(tmp_path, monkeypatch)
 
-    kernel.do_execute("%install calico-spell-check")
+    asyncio.run(kernel.do_execute("%install calico-spell-check"))
 
     assert len(inner_calls) == 1
     assert "ipython install-nbextension" in inner_calls[0]
@@ -86,7 +81,7 @@ def test_line_install_calico_cell_tools(tmp_path, monkeypatch) -> None:
     """calico-cell-tools dispatches the correct ipython install-nbextension URL."""
     kernel, _, inner_calls = _setup(tmp_path, monkeypatch)
 
-    kernel.do_execute("%install calico-cell-tools")
+    asyncio.run(kernel.do_execute("%install calico-cell-tools"))
 
     assert len(inner_calls) == 1
     assert "ipython install-nbextension" in inner_calls[0]
@@ -97,7 +92,7 @@ def test_line_install_calico_document_tools(tmp_path, monkeypatch) -> None:
     """calico-document-tools dispatches the correct ipython install-nbextension URL."""
     kernel, _, inner_calls = _setup(tmp_path, monkeypatch)
 
-    kernel.do_execute("%install calico-document-tools")
+    asyncio.run(kernel.do_execute("%install calico-document-tools"))
 
     assert len(inner_calls) == 1
     assert "ipython install-nbextension" in inner_calls[0]
@@ -108,7 +103,7 @@ def test_line_install_unknown_package_no_shell_dispatch(tmp_path, monkeypatch) -
     """An unrecognised package name dispatches no shell command."""
     kernel, custom_js, inner_calls = _setup(tmp_path, monkeypatch)
 
-    kernel.do_execute("%install my-custom-package")
+    asyncio.run(kernel.do_execute("%install my-custom-package"))
 
     assert inner_calls == [], "unexpected shell command dispatched for unknown package"
     # enable_extension still runs and registers the extension
@@ -125,7 +120,7 @@ def test_enable_extension_already_installed(tmp_path, monkeypatch) -> None:
     initial = 'IPython.load_extensions("my-ext");\n'
     kernel, custom_js, _ = _setup(tmp_path, monkeypatch, initial_content=initial)
 
-    kernel.do_execute("%install my-ext")
+    asyncio.run(kernel.do_execute("%install my-ext"))
 
     assert custom_js.read_text() == initial
 
@@ -134,7 +129,7 @@ def test_enable_extension_no_install_magic_marker(tmp_path, monkeypatch) -> None
     """enable_extension appends the boilerplate block when // INSTALL MAGIC is absent."""
     kernel, custom_js, _ = _setup(tmp_path, monkeypatch, initial_content="")
 
-    kernel.do_execute("%install fresh-ext")
+    asyncio.run(kernel.do_execute("%install fresh-ext"))
 
     content = custom_js.read_text()
     assert "// INSTALL MAGIC" in content
@@ -156,7 +151,7 @@ def test_enable_extension_existing_install_magic_marker(tmp_path, monkeypatch) -
     )
     kernel, custom_js, _ = _setup(tmp_path, monkeypatch, initial_content=existing)
 
-    kernel.do_execute("%install another-ext")
+    asyncio.run(kernel.do_execute("%install another-ext"))
 
     content = custom_js.read_text()
     assert 'IPython.load_extensions("another-ext");' in content
