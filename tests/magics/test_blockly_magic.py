@@ -70,5 +70,5 @@ def test_blockly_template_data_from_local(tmp_path) -> None:
 
 def test_blockly_help() -> None:
     kernel = get_kernel()
-    helpstr = kernel.get_help_on("%blockly")
+    helpstr = asyncio.run(kernel.get_help_on("%blockly"))
     assert "blockly" in helpstr.lower(), helpstr

@@ -51,7 +51,7 @@ def test_brain_code_transform_structure() -> None:
 
 def test_brain_help() -> None:
     kernel = get_kernel()
-    helpstr = kernel.get_help_on("%%brain")
+    helpstr = asyncio.run(kernel.get_help_on("%%brain"))
     assert "brain" in helpstr.lower(), helpstr
 
 

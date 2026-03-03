@@ -1,6 +1,7 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+import inspect
 import os
 
 from metakernel import Magic, option
@@ -14,7 +15,7 @@ class RunMagic(Magic):
         default=None,
         help="use the provided language name as kernel",
     )
-    def line_run(self, filename, language=None) -> None:
+    async def line_run(self, filename, language=None) -> None:
         """
         %run [--language LANG] FILENAME - run code in filename by
            kernel
@@ -41,7 +42,9 @@ class RunMagic(Magic):
             filename = os.path.expanduser(filename)
         filename = os.path.abspath(filename)
         if language is None:
-            self.kernel.do_execute_file(filename)
+            retval = self.kernel.do_execute_file(filename)
+            if inspect.isawaitable(retval):
+                await retval
         else:
             self.code = "%%" + language + "\n" + self.code
             with open(filename) as f:

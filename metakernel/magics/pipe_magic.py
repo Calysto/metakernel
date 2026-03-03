@@ -1,6 +1,8 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+import inspect
+
 from metakernel import Magic
 
 
@@ -8,7 +10,7 @@ class PipeMagic(Magic):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-    def cell_pipe(self, pipe_str) -> None:
+    async def cell_pipe(self, pipe_str) -> None:
         """
         %%pipe FUNCTION1 | FUNCTION2 ...
 
@@ -29,7 +31,10 @@ class PipeMagic(Magic):
         functions = [function.strip() for function in pipe_str.split("|")]
         self.retval = self.code
         for function in functions:
-            self.retval = self.kernel.do_function_direct(function, self.retval)
+            result = self.kernel.do_function_direct(function, self.retval)
+            if inspect.isawaitable(result):
+                result = await result
+            self.retval = result
         self.evaluate = False
 
     def post_process(self, retval) -> str:

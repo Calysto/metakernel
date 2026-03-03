@@ -1,3 +1,4 @@
+import asyncio
 from unittest.mock import patch
 
 import pytest
@@ -90,5 +91,5 @@ def test_tutor_unsupported_language_raises() -> None:
 
 def test_tutor_help() -> None:
     kernel = get_kernel()
-    helpstr = kernel.get_help_on("%%tutor")
+    helpstr = asyncio.run(kernel.get_help_on("%%tutor"))
     assert "tutor" in helpstr.lower(), helpstr

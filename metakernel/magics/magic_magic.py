@@ -52,7 +52,7 @@ class MagicMagic(Magic):
             self.kernel.Print("    " + string)
         self.kernel.Print("")
 
-    def get_magic(self, info, get_args=False) -> Any:
+    async def get_magic(self, info, get_args=False) -> Any:
 
         if not info["magic"]:
             return None
@@ -85,7 +85,7 @@ class MagicMagic(Magic):
                 minfo["type"], minfo["name"], minfo["code"], minfo["args"]
             )
         else:
-            return magic.call_magic(
+            return await magic.call_magic(
                 minfo["type"], minfo["name"], minfo["code"], minfo["args"]
             )
 

@@ -44,7 +44,7 @@ def test_magics() -> None:
         assert magic in kernel.cell_magics
 
     with tempfile.NamedTemporaryFile() as ntf:
-        kernel.get_magic("%%shell ls %s" % ntf.name)
+        asyncio.run(kernel.get_magic("%%shell ls %s" % ntf.name))
         log_text = get_log_text(kernel)
         # Windows may give 8.3 short paths (RUNNER~1) vs long paths in shell output
         assert os.path.basename(ntf.name) in log_text
@@ -52,7 +52,7 @@ def test_magics() -> None:
 
 def test_help() -> None:
     kernel = get_kernel()
-    resp = kernel.get_help_on("%shell", 0)
+    resp = asyncio.run(kernel.get_help_on("%shell", 0))
     assert "run the line as a shell command" in resp
 
     resp = asyncio.run(kernel.do_execute("%cd?", False))
@@ -61,7 +61,7 @@ def test_help() -> None:
         in resp["payload"][0]["data"]["text/plain"]
     )
 
-    resp = kernel.get_help_on("what", 0)
+    resp = asyncio.run(kernel.get_help_on("what", 0))
     assert resp == "Sorry, no help is available on 'what'.", (
         "response was actually %s" % resp
     )
@@ -360,13 +360,13 @@ def test_do_execute_meta_base_direct() -> None:
 
 def test_get_magic_args_no_magic() -> None:
     kernel = get_kernel()
-    result = kernel.get_magic_args("just plain text")
+    result = asyncio.run(kernel.get_magic_args("just plain text"))
     assert result is None
 
 
 def test_get_magic_args_line_magic() -> None:
     kernel = get_kernel()
-    result: Any = kernel.get_magic_args("%cd /tmp")
+    result: Any = asyncio.run(kernel.get_magic_args("%cd /tmp"))
     assert result is not None
     args, _kwargs, _old_args = result
     assert "/tmp" in args
@@ -374,7 +374,7 @@ def test_get_magic_args_line_magic() -> None:
 
 def test_get_magic_args_no_args_magic() -> None:
     kernel = get_kernel()
-    result: Any = kernel.get_magic_args("%lsmagic")
+    result: Any = asyncio.run(kernel.get_magic_args("%lsmagic"))
     assert result is not None
     args, kwargs, _old_args = result
     assert args == []
@@ -383,7 +383,7 @@ def test_get_magic_args_no_args_magic() -> None:
 
 def test_get_magic_args_unknown_magic() -> None:
     kernel = get_kernel()
-    result = kernel.get_magic_args("%nonexistent_magic_xyz")
+    result = asyncio.run(kernel.get_magic_args("%nonexistent_magic_xyz"))
     assert result is None
 
 

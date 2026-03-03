@@ -2,13 +2,15 @@
 # Distributed under the terms of the Modified BSD License.
 
 
+import inspect
+
 from IPython.display import HTML, Javascript
 
 from metakernel import Magic
 
 
 class DebugMagic(Magic):
-    def cell_debug(self, dummy) -> None:
+    async def cell_debug(self, dummy) -> None:
         """
         %%debug - step through the code expression by expression
 
@@ -210,6 +212,8 @@ function reset() {
         data = self.kernel.initialize_debug(
             "\n" + self.code
         )  ## add a line so line numbers will be correct
+        if inspect.isawaitable(data):
+            data = await data
         time.sleep(0.1)
         if data.startswith("highlight: "):
             self.kernel.Display(Javascript(f"highlight(cell, {data[11:]});"))

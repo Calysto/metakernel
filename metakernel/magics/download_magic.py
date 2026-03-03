@@ -73,5 +73,5 @@ def register_ipython_magics() -> None:
     kernel.line_magics["download"] = magic
 
     @register_line_magic
-    def download(line):
-        kernel.call_magic("%download " + line)
+    async def download(line):
+        await kernel.call_magic("%download " + line)

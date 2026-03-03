@@ -26,8 +26,15 @@ class MacroMagic(Magic):
     }
 
     def __init__(self, *args, **kwargs) -> None:
+        import asyncio
+
         super().__init__(*args, **kwargs)
-        self._load_macros()
+        coro = self._load_macros()
+        try:
+            loop = asyncio.get_running_loop()
+            self._load_macros_task = loop.create_task(coro)
+        except RuntimeError:
+            asyncio.run(coro)
 
     @option(
         "-d",
@@ -38,7 +45,7 @@ class MacroMagic(Magic):
     )
     @option("-l", "--list", action="store_true", default=False, help="list macros")
     @option("-s", "--show", action="store_true", default=False, help="show macro")
-    def line_macro(self, name, delete=False, list=False, show=False) -> None:
+    async def line_macro(self, name, delete=False, list=False, show=False) -> None:
         """
         %macro NAME - execute a macro
         %macro -l [all|learned|system] - list macros
@@ -69,7 +76,7 @@ class MacroMagic(Magic):
         elif name in self.learned:
             if delete:
                 del self.learned[name]
-                self._save_macros()
+                await self._save_macros()
             else:
                 self.code = self.code.strip()
                 if self.code:
@@ -104,9 +111,11 @@ class MacroMagic(Magic):
         else:
             self.kernel.Print(retval)
 
-    def _load_macros(self) -> None:
+    async def _load_macros(self) -> None:
         self.learned = {}
         local_macros_dir = self.kernel.get_local_magics_dir()
+        if inspect.isawaitable(local_macros_dir):
+            local_macros_dir = await local_macros_dir
         # Search all of the places there could be macros:
         files = [
             os.path.join(os.path.dirname(os.path.abspath(__file__)), "macros.json"),
@@ -124,13 +133,15 @@ class MacroMagic(Magic):
                 continue
             self.learned.update(data)
 
-    def _save_macros(self) -> None:
+    async def _save_macros(self) -> None:
         local_macros_dir = self.kernel.get_local_magics_dir()
+        if inspect.isawaitable(local_macros_dir):
+            local_macros_dir = await local_macros_dir
         filename = os.path.join(local_macros_dir, "macros.json")
         with open(filename, "w") as macros:
             macros.write(str(self.learned))
 
-    def cell_macro(self, name) -> None:
+    async def cell_macro(self, name) -> None:
         """
         %%macro NAME - learn a new macro
 
@@ -146,7 +157,7 @@ class MacroMagic(Magic):
             Ok!
         """
         self.learned[name] = self.code
-        self._save_macros()
+        await self._save_macros()
         self.evaluate = False
 
 

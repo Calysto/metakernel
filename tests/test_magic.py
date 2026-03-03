@@ -1,3 +1,5 @@
+import asyncio
+
 from metakernel import Magic, option
 from tests.utils import get_kernel
 
@@ -62,26 +64,26 @@ def test_option() -> None:
     assert "Options:" in d.line_dummy.__doc__  # type:ignore[operator]
     assert "--size" in d.line_dummy.__doc__  # type:ignore[operator]
 
-    ret = d.call_magic("line", "dummy", "", "hey -s400,200")
+    ret = asyncio.run(d.call_magic("line", "dummy", "", "hey -s400,200"))
     assert ret == d
     assert d.foo == "hey", d.foo
     assert d.size == (400, 200)
 
-    ret = d.call_magic("line", "dummy", "", "hey there")
+    asyncio.run(d.call_magic("line", "dummy", "", "hey there"))
     assert d.foo == "hey there"
 
-    ret = d.call_magic("line", "dummy", "", "range(1, 10)")
+    asyncio.run(d.call_magic("line", "dummy", "", "range(1, 10)"))
     # arg eval no longer evals Python raw code:
     assert d.foo == "range(1, 10)"
 
-    ret = d.call_magic("line", "dummy", "", "[1, 2, 3]")
+    asyncio.run(d.call_magic("line", "dummy", "", "[1, 2, 3]"))
     # arg eval does eval Python data structures:
     assert d.foo == [1, 2, 3]
 
-    ret = d.call_magic("line", "dummy", "", "hey -l -s400,200")
+    asyncio.run(d.call_magic("line", "dummy", "", "hey -l -s400,200"))
     assert d.size == (400, 200)
     assert d.foo == "hey -l"
 
-    ret = d.call_magic("line", "dummy", "", "hey -s -- -s400,200")
+    asyncio.run(d.call_magic("line", "dummy", "", "hey -s -- -s400,200"))
     assert d.size == (400, 200)
     assert d.foo == "hey -s"

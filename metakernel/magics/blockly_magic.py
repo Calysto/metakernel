@@ -120,8 +120,8 @@ def register_ipython_magics() -> None:
     kernel.line_magics["blockly"] = magic
 
     @register_line_magic
-    def blockly(line):
+    async def blockly(line):
         """
         Use the blockly code visualizer and generator.
         """
-        kernel.call_magic("%blockly " + line)
+        await kernel.call_magic("%blockly " + line)

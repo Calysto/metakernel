@@ -23,13 +23,13 @@ def test_shell_magic() -> None:
 
     assert "echo" in comp["matches"]
 
-    helpstr = kernel.get_help_on("!cat")
+    helpstr = asyncio.run(kernel.get_help_on("!cat"))
     assert "Sorry, no help" not in helpstr, helpstr
 
-    helpstr = kernel.get_help_on("%%shell cat", level=1)
+    helpstr = asyncio.run(kernel.get_help_on("%%shell cat", level=1))
     assert "Sorry, no help" not in helpstr
 
-    helpstr = kernel.get_help_on("!lkjalskdfj")
+    helpstr = asyncio.run(kernel.get_help_on("!lkjalskdfj"))
     assert "Sorry, no help" in helpstr
 
 

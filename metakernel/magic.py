@@ -70,7 +70,7 @@ class Magic:
 
         return (args, kwargs, old_args)
 
-    def call_magic(self, mtype: str, name: str, code: str, args: Any) -> Magic:
+    async def call_magic(self, mtype: str, name: str, code: str, args: Any) -> Magic:
         self.code = code
         old_args = args
         mtype = mtype.replace("sticky", "cell")
@@ -94,9 +94,13 @@ class Magic:
 
         try:
             try:
-                func(*args, **kwargs)
+                retval = func(*args, **kwargs)
+                if inspect.isawaitable(retval):
+                    await retval
             except TypeError:
-                func(old_args)
+                retval = func(old_args)
+                if inspect.isawaitable(retval):
+                    await retval
         except Exception as exc:
             msg = f"Error in calling magic '{name}' on {mtype}:\n    {exc!s}\n    args: {args}\n    kwargs: {kwargs}"
             self.kernel.Error(msg)

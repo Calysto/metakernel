@@ -45,5 +45,5 @@ def test_conversation_cell_magic_embeds_id() -> None:
 
 def test_conversation_help() -> None:
     kernel = get_kernel()
-    helpstr = kernel.get_help_on("%conversation")
+    helpstr = asyncio.run(kernel.get_help_on("%conversation"))
     assert "conversation" in helpstr.lower(), helpstr

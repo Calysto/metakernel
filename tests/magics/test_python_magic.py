@@ -12,7 +12,7 @@ def test_python_magic() -> None:
 
     assert "import" in comp["matches"]
 
-    helpstr = kernel.get_help_on("%python bin")
+    helpstr = asyncio.run(kernel.get_help_on("%python bin"))
     assert "Return the binary representation of an integer" in helpstr, helpstr
 
 
@@ -49,27 +49,27 @@ def test_python_magic2() -> None:
 def test_python_magic3() -> None:
     kernel = get_kernel()
     asyncio.run(kernel.do_execute("%%python -e\n1 + 2", None))
-    magic = kernel.get_magic("%%python")
+    magic = asyncio.run(kernel.get_magic("%%python"))
     assert magic.retval is None  # type:ignore[attr-defined]
 
     kernel = get_kernel()
     asyncio.run(kernel.do_execute("%%python\n1 + 2", None))
-    magic = kernel.get_magic("%%python")
+    magic = asyncio.run(kernel.get_magic("%%python"))
     assert magic.retval == 3  # type:ignore[attr-defined]
 
     kernel = get_kernel()
     asyncio.run(kernel.do_execute("%%python\n1 + 2\n2 + 3", None))
-    magic = kernel.get_magic("%%python")
+    magic = asyncio.run(kernel.get_magic("%%python"))
     assert magic.retval == 5  # type:ignore[attr-defined]
 
     kernel = get_kernel()
     asyncio.run(kernel.do_execute("%%python\nretval = 1 + 2\n2 + 3", None))
-    magic = kernel.get_magic("%%python")
+    magic = asyncio.run(kernel.get_magic("%%python"))
     assert magic.retval == 3  # type:ignore[attr-defined]
 
     kernel = get_kernel()
     asyncio.run(kernel.do_execute("%%python\nimport math", None))
-    magic = kernel.get_magic("%%python")
+    magic = asyncio.run(kernel.get_magic("%%python"))
     assert magic.retval is None  # type:ignore[attr-defined]
 
 

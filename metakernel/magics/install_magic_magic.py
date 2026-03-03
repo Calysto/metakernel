@@ -1,6 +1,7 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+import inspect
 import os
 import urllib.parse as urlparse
 import urllib.request
@@ -15,7 +16,7 @@ def download(url, filename):
 
 
 class InstallMagicMagic(Magic):
-    def line_install_magic(self, url) -> None:
+    async def line_install_magic(self, url) -> None:
         """
         %install_magic URL - download and install magic from URL
 
@@ -30,7 +31,10 @@ class InstallMagicMagic(Magic):
         # ('http', 'example.com', '/somefile.zip', '', '')
         path = parts[2]
         filename = os.path.basename(path)
-        magic_filename = os.path.join(self.kernel.get_local_magics_dir(), filename)
+        local_magics_dir = self.kernel.get_local_magics_dir()
+        if inspect.isawaitable(local_magics_dir):
+            local_magics_dir = await local_magics_dir
+        magic_filename = os.path.join(local_magics_dir, filename)
         try:
             download(url, magic_filename)
             self.kernel.Print(f"Downloaded '{magic_filename}'.")

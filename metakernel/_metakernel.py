@@ -360,7 +360,7 @@ class MetaKernel(Kernel):
                 level = 0
             else:
                 level = 1
-            text = self.get_help_on(code, level)
+            text = await self.get_help_on(code, level)
             if text:
                 content = {
                     "start_line_number": 0,
@@ -384,7 +384,7 @@ class MetaKernel(Kernel):
             magic = None
             prefixes = (self.magic_prefixes["shell"], self.magic_prefixes["magic"])
             while code.startswith(prefixes):
-                magic = self.get_magic(code)
+                magic = await self.get_magic(code)
                 if magic is not None:
                     stack.append(magic)
                     code = str(magic.get_code())
@@ -397,6 +397,8 @@ class MetaKernel(Kernel):
             if (magic is None or magic.evaluate) and code.strip() != "":
                 if code.startswith("~~META~~:"):
                     retval = self.do_execute_meta(code[9:].strip())
+                    if inspect.isawaitable(retval):
+                        retval = await retval
                 else:
                     retval = self.do_execute_direct(code)
                     if inspect.isawaitable(retval):
@@ -407,6 +409,8 @@ class MetaKernel(Kernel):
         else:
             if code.startswith("~~META~~:"):
                 retval = self.do_execute_meta(code[9:].strip())
+                if inspect.isawaitable(retval):
+                    retval = await retval
             else:
                 retval = self.do_execute_direct(code)
                 if inspect.isawaitable(retval):
@@ -424,20 +428,26 @@ class MetaKernel(Kernel):
 
         Handle special kernel variables and display response if not silent.
         """
+
+        async def _sv(name: str, value: Any) -> None:
+            r = self.set_variable(name, value)
+            if inspect.isawaitable(r):
+                await r
+
         # Handle in's
-        self.set_variable("_iii", self._iii)
-        self.set_variable("_ii", self._ii)
-        self.set_variable("_i", code)
-        self.set_variable("_i" + str(self.execution_count), code)
+        await _sv("_iii", self._iii)
+        await _sv("_ii", self._ii)
+        await _sv("_i", code)
+        await _sv("_i" + str(self.execution_count), code)
         self._iii = self._ii
         self._ii = code
         if retval is not None:
             # --------------------------------------
             # Handle out's (only when non-null)
-            self.set_variable("___", self.___)
-            self.set_variable("__", self.__)
-            self.set_variable("_", retval)
-            self.set_variable("_" + str(self.execution_count), retval)
+            await _sv("___", self.___)
+            await _sv("__", self.__)
+            await _sv("_", retval)
+            await _sv("_" + str(self.execution_count), retval)
             self.___ = self.__
             self.__ = retval
             self.log.debug(retval)
@@ -500,7 +510,9 @@ class MetaKernel(Kernel):
                 json.dump(self.hist_cache[-self.max_hist_cache :], fid)
         if restart:
             self.Print("Restarting kernel...")
-            self.restart_kernel()
+            retval = self.restart_kernel()
+            if inspect.isawaitable(retval):
+                await retval
             self.reload_magics()
             self.Print("Done!")
         return {"status": "ok", "restart": restart}
@@ -585,7 +597,10 @@ class MetaKernel(Kernel):
                         info["obj"] = pre + info["obj"]
 
         else:
-            matches.extend(self.get_completions(info))
+            completions = self.get_completions(info)
+            if inspect.isawaitable(completions):
+                completions = await completions
+            matches.extend(completions)
 
         if info["full_obj"] and len(info["full_obj"]) > len(info["obj"]):
             new_list = [m for m in matches if m.startswith(info["full_obj"])]
@@ -610,7 +625,7 @@ class MetaKernel(Kernel):
             return None
 
         content = {"status": "aborted", "data": {}, "found": False, "metadata": {}}
-        docstring = self.get_help_on(
+        docstring = await self.get_help_on(
             code, detail_level, none_on_fail=True, cursor_pos=cursor_pos
         )
 
@@ -793,29 +808,29 @@ class MetaKernel(Kernel):
         if self.session:
             super().send_response(*args, **kwargs)  # type:ignore[no-untyped-call]
 
-    def call_magic(self, line: str) -> Magic:
+    async def call_magic(self, line: str) -> Magic:
         """
         Given an line, such as "%download http://example.com/", parse
         and execute magic.
         """
-        return self.get_magic(line)
+        return await self.get_magic(line)
 
-    def get_magic(self, text: str) -> Magic:
+    async def get_magic(self, text: str) -> Magic:
         ## FIXME: Bad name, use call_magic instead.
         # if first line matches a magic,
         # call magic.call_magic() and return magic object
         info = self.parse_code(text)
         magic = self.line_magics["magic"]
-        return magic.get_magic(info)  # type:ignore[no-any-return]
+        return await magic.get_magic(info)  # type:ignore[no-any-return]
 
-    def get_magic_args(self, text: str) -> Magic:
+    async def get_magic_args(self, text: str) -> Magic:
         # if first line matches a magic,
         # call magic.call_magic() and return magic args
         info = self.parse_code(text)
         magic = self.line_magics["magic"]
-        return magic.get_magic(info, get_args=True)  # type:ignore[no-any-return]
+        return await magic.get_magic(info, get_args=True)  # type:ignore[no-any-return]
 
-    def get_help_on(
+    async def get_help_on(
         self,
         expr: str,
         level: int = 0,
@@ -824,7 +839,7 @@ class MetaKernel(Kernel):
     ) -> Any:
         """Get help for an expression using the help magic."""
         help_magic = self.line_magics["help"]
-        return help_magic.get_text_help_on(expr, level, none_on_fail, cursor_pos)
+        return await help_magic.get_text_help_on(expr, level, none_on_fail, cursor_pos)
 
     def parse_code(
         self, code: str, cursor_start: int = 0, cursor_end: int = -1

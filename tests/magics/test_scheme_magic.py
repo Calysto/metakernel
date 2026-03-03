@@ -62,7 +62,7 @@ def test_scheme_cell_magic_empty() -> None:
 
 def test_scheme_help() -> None:
     kernel = get_kernel()
-    helpstr = kernel.get_help_on("%scheme")
+    helpstr = asyncio.run(kernel.get_help_on("%scheme"))
     assert "Scheme" in helpstr or "scheme" in helpstr, helpstr
 
 

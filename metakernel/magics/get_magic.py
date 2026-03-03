@@ -1,11 +1,13 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+import inspect
+
 from metakernel import Magic
 
 
 class GetMagic(Magic):
-    def line_get(self, variable) -> None:
+    async def line_get(self, variable) -> None:
         """
         %get VARIABLE - get a variable from the kernel in a Python-type.
 
@@ -14,7 +16,10 @@ class GetMagic(Magic):
         Examples:
             %get x
         """
-        self.retval = self.kernel.get_variable(variable)
+        result = self.kernel.get_variable(variable)
+        if inspect.isawaitable(result):
+            result = await result
+        self.retval = result
 
     def post_process(self, retval):
         return self.retval

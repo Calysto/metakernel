@@ -1,6 +1,7 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+import inspect
 
 from metakernel import Magic
 
@@ -22,7 +23,7 @@ class HelpMagic(Magic):
             strings += [p.format(self.kernel.magic_prefixes["help"]) for p in prefixes]
         return sorted(strings)
 
-    def line_help(self, text: str) -> str | None:
+    async def line_help(self, text: str) -> str | None:
         """
         %help TEXT - get help on the given text
 
@@ -33,9 +34,9 @@ class HelpMagic(Magic):
             %help dir
 
         """
-        return self.get_text_help_on(text, 0, False)
+        return await self.get_text_help_on(text, 0, False)
 
-    def cell_help(self, text: str) -> str | None:
+    async def cell_help(self, text: str) -> str | None:
         """
         %%help TEXT - get detailed help on the given text
 
@@ -47,9 +48,9 @@ class HelpMagic(Magic):
            %%help dir
 
         """
-        return self.get_text_help_on(text, 1, False)
+        return await self.get_text_help_on(text, 1, False)
 
-    def get_text_help_on(
+    async def get_text_help_on(
         self, text: str, level: int, none_on_fail: bool = False, cursor_pos: int = -1
     ) -> str | None:
         """
@@ -69,7 +70,10 @@ class HelpMagic(Magic):
         """
         text = self._prep_text(text)
         if not text:
-            return self.kernel.get_usage()
+            usage = self.kernel.get_usage()
+            if inspect.isawaitable(usage):
+                usage = await usage
+            return usage
 
         info = self.kernel.parse_code(text, cursor_end=cursor_pos)
 
@@ -107,13 +111,19 @@ class HelpMagic(Magic):
                 return the_help
 
             elif not info["magic"]["name"]:
-                return self.kernel.get_usage()
+                usage = self.kernel.get_usage()
+                if inspect.isawaitable(usage):
+                    usage = await usage
+                return usage
 
             else:
                 return errmsg
 
         else:
-            return self.kernel.get_kernel_help_on(info, level, none_on_fail)
+            result = self.kernel.get_kernel_help_on(info, level, none_on_fail)
+            if inspect.isawaitable(result):
+                result = await result
+            return result
 
     def _prep_text(self, text: str) -> str:
         text = text.strip()

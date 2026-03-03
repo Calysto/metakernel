@@ -361,8 +361,8 @@ def register_ipython_magics() -> None:
 
     @register_line_magic
     @add_docs(magic.line_activity.__doc__)
-    def activity(line):
-        kernel.call_magic("%activity " + line)
+    async def activity(line):
+        await kernel.call_magic("%activity " + line)
 
     @register_cell_magic  # type: ignore[no-redef]
     @add_docs(magic.cell_activity.__doc__)
