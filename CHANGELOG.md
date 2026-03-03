@@ -2,6 +2,72 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.31.0
+
+([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.30.4...29bf8af248a61276d8ff3c4903e32ce274c16d47))
+
+### Enhancements made
+
+- Convert top-level kernel methods to async [#338](https://github.com/Calysto/metakernel/pull/338) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Support async do_execute_direct [#337](https://github.com/Calysto/metakernel/pull/337) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Use hatch build hook to bundle kernelspecs in wheels [#302](https://github.com/Calysto/metakernel/pull/302) ([@blink1073](https://github.com/blink1073))
+- Add type annotations and mypy support [#300](https://github.com/Calysto/metakernel/pull/300) ([@blink1073](https://github.com/blink1073))
+
+### Bugs fixed
+
+- Use IPython DisplayFormatter directly for missing _repr_mimebundle_ [#299](https://github.com/Calysto/metakernel/pull/299) ([@blink1073](https://github.com/blink1073), [@morlic](https://github.com/morlic))
+
+### Maintenance and upkeep improvements
+
+- Update dependabot config [#335](https://github.com/Calysto/metakernel/pull/335) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Remove PY3 compatibility shim [#334](https://github.com/Calysto/metakernel/pull/334) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Add no-op u() function for backwards compatibility [#333](https://github.com/Calysto/metakernel/pull/333) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Add Python 3.14t free-threading CI on Ubuntu [#332](https://github.com/Calysto/metakernel/pull/332) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Add tests for core MetaKernel methods [#331](https://github.com/Calysto/metakernel/pull/331) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Add tests for include, install, kernel, and macro magics [#330](https://github.com/Calysto/metakernel/pull/330) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Add tests for Activity class methods and ParallelMagic methods [#329](https://github.com/Calysto/metakernel/pull/329) ([@blink1073](https://github.com/blink1073), [@claude](https://github.com/claude), [@codecov-commenter](https://github.com/codecov-commenter))
+- Consolidate Windows CI into main test matrix [#328](https://github.com/Calysto/metakernel/pull/328) ([@blink1073](https://github.com/blink1073), [@claude](https://github.com/claude), [@codecov-commenter](https://github.com/codecov-commenter))
+- Add tests for Error_display, do_execute_meta, get_magic_args, display, and process_metakernel classes [#327](https://github.com/Calysto/metakernel/pull/327) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Add tests for IPythonKernel, register_ipython_magics, and MetaKernelApp [#326](https://github.com/Calysto/metakernel/pull/326) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Add test module for tutor magic [#324](https://github.com/Calysto/metakernel/pull/324) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Add test module for conversation magic [#323](https://github.com/Calysto/metakernel/pull/323) ([@blink1073](https://github.com/blink1073), [@claude](https://github.com/claude), [@codecov-commenter](https://github.com/codecov-commenter))
+- Add test module for brain magic [#322](https://github.com/Calysto/metakernel/pull/322) ([@blink1073](https://github.com/blink1073), [@claude](https://github.com/claude), [@codecov-commenter](https://github.com/codecov-commenter))
+- Add test module for blockly magic and fix register_magics bug [#321](https://github.com/Calysto/metakernel/pull/321) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Add test module for scheme magic [#320](https://github.com/Calysto/metakernel/pull/320) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Bump cairosvg from 1.0.22 to 2.7.0 [#319](https://github.com/Calysto/metakernel/pull/319) ([@blink1073](https://github.com/blink1073))
+- Add Windows CI job running just test-all [#318](https://github.com/Calysto/metakernel/pull/318) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Bump pillow from 11.3.0 to 12.1.1 [#317](https://github.com/Calysto/metakernel/pull/317) ([@blink1073](https://github.com/blink1073))
+- Add test-all dependency group, activity and matplotlib magic tests [#316](https://github.com/Calysto/metakernel/pull/316) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Remove Python 2 compatibility shims and modernize string formatting [#315](https://github.com/Calysto/metakernel/pull/315) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Bump the actions group with 3 updates [#314](https://github.com/Calysto/metakernel/pull/314) ([@blink1073](https://github.com/blink1073))
+- Add more pre-commit hooks and stricter typing [#312](https://github.com/Calysto/metakernel/pull/312) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Add rtd config [#311](https://github.com/Calysto/metakernel/pull/311) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Add documentation for creating a new MetaKernel-based kernel [#310](https://github.com/Calysto/metakernel/pull/310) ([@blink1073](https://github.com/blink1073))
+- Add CodeQL analysis workflow configuration [#309](https://github.com/Calysto/metakernel/pull/309) ([@blink1073](https://github.com/blink1073))
+- Add Codecov coverage upload [#308](https://github.com/Calysto/metakernel/pull/308) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Refactor test jobs [#307](https://github.com/Calysto/metakernel/pull/307) ([@blink1073](https://github.com/blink1073))
+- Covert top level RST files to Markdown [#306](https://github.com/Calysto/metakernel/pull/306) ([@blink1073](https://github.com/blink1073))
+- Switch to just and uv for development tooling [#305](https://github.com/Calysto/metakernel/pull/305) ([@blink1073](https://github.com/blink1073))
+- Add pre-commit hooks with ruff, actionlint, and mdformat [#304](https://github.com/Calysto/metakernel/pull/304) ([@blink1073](https://github.com/blink1073))
+- Move tests to top-level tests/ directory [#303](https://github.com/Calysto/metakernel/pull/303) ([@blink1073](https://github.com/blink1073))
+- Fix deprecation warning pyparsing [#298](https://github.com/Calysto/metakernel/pull/298) ([@blink1073](https://github.com/blink1073))
+- Bump actions/checkout from 4 to 6 [#297](https://github.com/Calysto/metakernel/pull/297) ([@blink1073](https://github.com/blink1073))
+
+### Other merged PRs
+
+- Added mit-scheme-kernel [#293](https://github.com/Calysto/metakernel/pull/293) ([@twaclaw](https://github.com/twaclaw), [@blink1073](https://github.com/blink1073))
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2025-11-05&to=2026-03-03&type=c))
+
+@blink1073 ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2025-11-05..2026-03-03&type=Issues)) | @claude ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aclaude+updated%3A2025-11-05..2026-03-03&type=Issues)) | @codecov-commenter ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Acodecov-commenter+updated%3A2025-11-05..2026-03-03&type=Issues)) | @morlic ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Amorlic+updated%3A2025-11-05..2026-03-03&type=Issues)) | @twaclaw ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Atwaclaw+updated%3A2025-11-05..2026-03-03&type=Issues))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.30.4
 
 ([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.30.3...2fca1dcee729103a986e9a12c3cfc9dd9d00c73e))
@@ -17,8 +83,6 @@
 ([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2025-04-02&to=2025-11-05&type=c))
 
 [@blink1073](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2025-04-02..2025-11-05&type=Issues) | [@dependabot](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Adependabot+updated%3A2025-04-02..2025-11-05&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.30.3
 
