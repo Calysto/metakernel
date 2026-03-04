@@ -61,7 +61,7 @@ class ParallelMagic(Magic):
 
         Use %px or %%px to send code to the cluster.
         """
-        from ipyparallel import Client
+        from ipyparallel import Client  # type: ignore[import-untyped]
 
         count = 1
         while count <= 5:
@@ -238,7 +238,7 @@ kernels['{kernel_name}'] = {class_name}()
         if evaluate:
             self.code = expression
 
-    def _clean_code(self, expr):
+    def _clean_code(self, expr: str) -> str:
         return expr.strip().replace('"', '\\"').replace("\n", "\\n")
 
     ## px --kernel NAME
@@ -341,9 +341,11 @@ kernels['{kernel_name}'] = {class_name}()
 
         # To make sure we can find `kernels`:
         try:
-            from ipyparallel.util import interactive
+            from ipyparallel.util import interactive  # type: ignore[import-untyped]
         except ImportError:
-            from IPython.parallel.util import interactive
+            from IPython.parallel.util import (  # type: ignore[import-not-found]
+                interactive,
+            )
         f = interactive(
             lambda arg, kname=kernel_name, fname=function_name: kernels[  # type:ignore[name-defined]  # noqa: F821
                 kname

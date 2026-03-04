@@ -24,12 +24,12 @@ class DotMagic(Magic):
         except ImportError:
             raise Exception("You need to install pydot") from None
         graph = pydot.graph_from_dot_data(str(code))
-        if isinstance(graph, list):
-            graph = graph[0]
-        svg = graph.create_svg()
+        if not graph:
+            return
+        svg = graph[0].create_svg()  # type: ignore[attr-defined, unused-ignore]
         if hasattr(svg, "decode"):
             svg = svg.decode("utf-8")
-        html = HTML(svg)
+        html = HTML(svg)  # type: ignore[no-untyped-call]
         self.kernel.Display(html)
 
     def cell_dot(self) -> None:
@@ -49,12 +49,12 @@ class DotMagic(Magic):
         except ImportError:
             raise Exception("You need to install pydot") from None
         graph = pydot.graph_from_dot_data(str(self.code))
-        if isinstance(graph, list):
-            graph = graph[0]
-        svg = graph.create_svg()
+        if not graph:
+            return
+        svg = graph[0].create_svg()  # type: ignore[attr-defined, unused-ignore]
         if hasattr(svg, "decode"):
             svg = svg.decode("utf-8")
-        html = HTML(svg)
+        html = HTML(svg)  # type: ignore[no-untyped-call]
         self.kernel.Display(html)
         self.evaluate = False
 

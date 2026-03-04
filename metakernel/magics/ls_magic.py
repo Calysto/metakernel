@@ -27,7 +27,7 @@ class LSMagic(Magic):
             %ls ..
         """
         path = os.path.expanduser(path)
-        self.retval = FileLinks(path, recursive=recursive)
+        self.retval = FileLinks(path, recursive=recursive)  # type: ignore[no-untyped-call]
 
     def post_process(self, retval):
         return self.retval

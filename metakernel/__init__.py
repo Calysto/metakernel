@@ -11,7 +11,7 @@ from ._metakernel import (
     get_metakernel,
     register_ipython_magics,
 )
-from .magic import Magic, option
+from .magic import Magic, get_ipython, option
 from .parser import Parser
 from .process_metakernel import ProcessMetaKernel
 from .replwrap import REPLWrapper
@@ -31,6 +31,7 @@ __all__ = [
     "Parser",
     "ProcessMetaKernel",
     "REPLWrapper",
+    "get_ipython",
     "get_metakernel",
     "option",
     "pexpect",

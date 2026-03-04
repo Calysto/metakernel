@@ -1,10 +1,12 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+from typing import Any
+
 from metakernel import Magic, option
 
 try:
-    from calysto_scheme import scheme
+    from calysto_scheme import scheme  # type: ignore[import-untyped]
 except ImportError:
     scheme = None
 
@@ -30,7 +32,7 @@ class SchemeMagic(Magic):
         code = " ".join(args)
         self.retval = self.eval(code)
 
-    def eval(self, code):
+    def eval(self, code: str) -> Any:
         if scheme:
             return scheme.execute_string_rm(code.strip())
         else:

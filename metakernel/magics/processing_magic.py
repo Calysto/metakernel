@@ -43,7 +43,7 @@ require([window.location.protocol + "//calysto.github.io/javascripts/processing/
 }});
 </script>
 """.format(**env)
-        html = HTML(code)
+        html = HTML(code)  # type: ignore[no-untyped-call]
         self.kernel.Display(html)
         self.evaluate = False
 

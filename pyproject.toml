@@ -68,7 +68,7 @@ coverage = [
     "coverage[toml]",
     "pytest-cov",
 ]
-typing = ["pip", "mypy", "ipywidgets"]
+typing = [{ include-group = "test-all" }, "pip", "mypy", "ipywidgets"]
 
 [tool.uv.sources]
 metakernel_python = { path = "./metakernel_python", editable = true }
@@ -122,7 +122,7 @@ disable_error_code = ["comparison-overlap", "no-untyped-def", "import-not-found"
 
 [[tool.mypy.overrides]]
 module = "metakernel.magics.*"
-disable_error_code = ["no-untyped-def", "no-untyped-call", "import-not-found"]
+disable_error_code = ["no-untyped-def"]
 
 [tool.ruff]
 exclude = ["examples/echo_kernel.ipynb"]

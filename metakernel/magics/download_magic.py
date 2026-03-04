@@ -52,7 +52,7 @@ class DownloadMagic(Magic):
         filename = filename.replace("~", "")
         filename = filename.replace("%20", "_")
         try:
-            download(url, filename)
+            download(url, filename)  # type: ignore[no-untyped-call]
             self.kernel.Print(f"Downloaded '{filename}'.")
         except Exception as e:
             self.kernel.Error(str(e))

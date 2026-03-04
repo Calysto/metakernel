@@ -24,7 +24,7 @@ def test_scheme_line_magic_define() -> None:
     asyncio.run(kernel.do_execute("%scheme (define x 42)", None))
     magic = kernel.line_magics["scheme"]
     # define statements return a void Symbol in calysto_scheme, not None
-    from calysto_scheme import scheme as cs
+    from calysto_scheme import scheme as cs  # type: ignore[import-untyped]
 
     assert magic.retval == cs.void_value
 

@@ -32,7 +32,7 @@ class InstallMagicMagic(Magic):
         filename = os.path.basename(path)
         magic_filename = os.path.join(self.kernel.get_local_magics_dir(), filename)
         try:
-            download(url, magic_filename)
+            download(url, magic_filename)  # type: ignore[no-untyped-call]
             self.kernel.Print(f"Downloaded '{magic_filename}'.")
             self.code = "%reload_magics\n" + self.code
         except Exception as e:

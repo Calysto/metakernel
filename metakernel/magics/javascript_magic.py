@@ -18,7 +18,7 @@ class JavascriptMagic(Magic):
             %javascript console.log("Print in the browser console")
 
         """
-        jscode = Javascript(code)
+        jscode = Javascript(code)  # type: ignore[no-untyped-call]
         self.kernel.Display(jscode)
 
     def cell_javascript(self) -> None:
@@ -35,7 +35,7 @@ class JavascriptMagic(Magic):
 
         """
         if self.code.strip():
-            jscode = Javascript(self.code)
+            jscode = Javascript(self.code)  # type: ignore[no-untyped-call]
             self.kernel.Display(jscode)
             self.evaluate = False
 

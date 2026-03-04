@@ -1,4 +1,4 @@
-from metakernel import Magic
+from metakernel import Magic, get_ipython
 
 
 class BrainMagic(Magic):
@@ -38,9 +38,9 @@ def register_ipython_magics() -> None:
 
     @register_cell_magic
     def brain(line, cell):
-        from IPython import get_ipython  # type:ignore[attr-defined]
-
         ipkernel = get_ipython()
+        if ipkernel is None:
+            return
         magic.code = cell
         magic.cell_brain()
-        ipkernel.kernel.do_execute(magic.code, silent=True)
+        ipkernel.kernel.do_execute(magic.code, silent=True)  # type: ignore[attr-defined]

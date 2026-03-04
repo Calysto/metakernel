@@ -25,7 +25,7 @@ class ConversationMagic(Magic):
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 """
-        self.kernel.Display(HTML(html))
+        self.kernel.Display(HTML(html))  # type: ignore[no-untyped-call]
 
     def line_conversation(self, id) -> None:
         """
