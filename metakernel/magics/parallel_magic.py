@@ -343,8 +343,8 @@ kernels['{kernel_name}'] = {class_name}()
         try:
             from ipyparallel.util import interactive  # type: ignore[import-untyped]
         except ImportError:
-            from IPython.parallel.util import (
-                interactive,  # type: ignore[import-not-found]
+            from IPython.parallel.util import (  # type: ignore[import-not-found]
+                interactive,
             )
         f = interactive(
             lambda arg, kname=kernel_name, fname=function_name: kernels[  # type:ignore[name-defined]  # noqa: F821
