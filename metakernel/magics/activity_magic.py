@@ -13,7 +13,7 @@ try:
 except ImportError:
     widgets = None
 
-from metakernel import Magic, MetaKernel
+from metakernel import Magic, MetaKernel, get_ipython
 
 
 def touch(fname: str, times: Any = None) -> None:
@@ -183,7 +183,7 @@ class Activity:
         barvalues = [int(value) for key, value in sorted(choices.items())]
         self.stack.layout.width = "55%"
         try:
-            from calysto.graphics import BarChart
+            from calysto.graphics import BarChart  # type: ignore[import-untyped]
 
             barchart = BarChart(
                 size=(300, 400), data=barvalues, labels=sorted(choices.keys())
@@ -198,6 +198,7 @@ class Activity:
     def handle_submit(self, sender: Any) -> None:
         import portalocker
 
+        assert self.results_filename is not None
         with portalocker.Lock(self.results_filename, "a+") as g:
             g.write(
                 f"{self.id}::{getpass.getuser()}::{datetime.datetime.today()}::{sender.description}\n"
@@ -246,8 +247,6 @@ class ActivityMagic(Magic):
             %activity /home/teacher/activity1 new
             %activity /home/teacher/activity1 edit
         """
-        from IPython import get_ipython  # type:ignore[attr-defined]
-
         if mode == "new":
             text = '''
 {"activity": "poll",
@@ -295,11 +294,15 @@ class ActivityMagic(Magic):
       }
    ]
 }'''
-            get_ipython().set_next_input((f"%%activity {filename}\n\n") + text)
+            ip = get_ipython()
+            if ip is not None:
+                ip.set_next_input((f"%%activity {filename}\n\n") + text)
             return
         elif mode == "edit":
             text = "".join(open(filename).readlines())
-            get_ipython().set_next_input((f"%%activity {filename}\n\n") + text)
+            ip = get_ipython()
+            if ip is not None:
+                ip.set_next_input((f"%%activity {filename}\n\n") + text)
         else:
             activity = Activity()
             activity.load(filename)

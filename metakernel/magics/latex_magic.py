@@ -17,7 +17,7 @@ class LatexMagic(Magic):
             %latex $x_1 = \dfrac{a}{b}$
 
         """
-        latex = Latex(text)
+        latex = Latex(text)  # type: ignore[no-untyped-call]
         self.kernel.Display(latex)
 
     def cell_latex(self) -> None:
@@ -32,7 +32,7 @@ class LatexMagic(Magic):
 
             $x_2 = a^{n - 1}$
         """
-        latex = Latex(self.code)
+        latex = Latex(self.code)  # type: ignore[no-untyped-call]
         self.kernel.Display(latex)
         self.evaluate = False
 

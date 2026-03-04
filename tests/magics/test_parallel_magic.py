@@ -6,7 +6,7 @@ import pytest
 from tests.utils import EvalKernel, get_kernel, get_log_text
 
 try:
-    import ipyparallel
+    import ipyparallel  # type: ignore[import-untyped]
 except ImportError:
     ipyparallel = None
 

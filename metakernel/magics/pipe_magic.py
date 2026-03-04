@@ -1,7 +1,7 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from metakernel import Magic
+from metakernel import Magic, get_ipython
 
 
 class PipeMagic(Magic):
@@ -41,13 +41,14 @@ def register_magics(kernel) -> None:
 
 
 def register_ipython_magics() -> None:
-    from IPython import get_ipython  # type:ignore[attr-defined]
     from IPython.core.magic import register_cell_magic
 
     @register_cell_magic
     def pipe(line, cell):
         """ """
         ip = get_ipython()
+        if ip is None:
+            return
         functions = [function.strip() for function in line.split("|")]
         retval = cell
         for function in functions:

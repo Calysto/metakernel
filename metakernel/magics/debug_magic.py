@@ -204,7 +204,7 @@ function reset() {
 """
         import time
 
-        html = HTML(html_code)
+        html = HTML(html_code)  # type: ignore[no-untyped-call]
         self.kernel.Display(html)
         time.sleep(0.1)
         data = self.kernel.initialize_debug(
@@ -212,7 +212,7 @@ function reset() {
         )  ## add a line so line numbers will be correct
         time.sleep(0.1)
         if data.startswith("highlight: "):
-            self.kernel.Display(Javascript(f"highlight(cell, {data[11:]});"))
+            self.kernel.Display(Javascript(f"highlight(cell, {data[11:]});"))  # type: ignore[no-untyped-call]
         time.sleep(0.1)
         self.evaluate = False
 

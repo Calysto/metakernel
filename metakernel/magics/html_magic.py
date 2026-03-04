@@ -19,7 +19,7 @@ class HTMLMagic(Magic):
             %html <u>This is underlined!</u>
 
         """
-        html = HTML(code)
+        html = HTML(code)  # type: ignore[no-untyped-call]
         self.kernel.Display(html)
 
     def cell_html(self) -> None:
@@ -36,7 +36,7 @@ class HTMLMagic(Magic):
 
             <div>Contents of div tag</div>
         """
-        html = HTML(self.code)
+        html = HTML(self.code)  # type: ignore[no-untyped-call]
         self.kernel.Display(html)
         self.evaluate = False
 

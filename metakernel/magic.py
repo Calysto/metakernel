@@ -7,9 +7,11 @@ import shlex
 import sys
 import traceback
 from ast import literal_eval as safe_eval
-from typing import TYPE_CHECKING, Any, Callable, NoReturn, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, NoReturn, TypeVar, cast
 
 if TYPE_CHECKING:
+    from IPython.core.interactiveshell import InteractiveShell
+
     from . import MetaKernel
 
 _F = TypeVar("_F", bound=Callable[..., Any])
@@ -145,6 +147,13 @@ class Magic:
 
     def post_process(self, retval: Any) -> Any:
         return retval
+
+
+def get_ipython() -> InteractiveShell | None:
+    """Return the running IPython shell instance, or None if not in IPython."""
+    from IPython import get_ipython as _get_ipython  # type: ignore[attr-defined]
+
+    return cast("InteractiveShell | None", _get_ipython())  # type: ignore[no-untyped-call]
 
 
 def option(*args: Any, **kwargs: Any) -> Callable[[_F], _F]:

@@ -47,7 +47,7 @@ class JigsawMagic(Magic):
                 )
             )
         workspace_filename = workspace + ".xml"
-        html_text = download("https://calysto.github.io/jigsaw/" + language + ".html")
+        html_text = download("https://calysto.github.io/jigsaw/" + language + ".html")  # type: ignore[no-untyped-call]
         html_filename = workspace + ".html"
         html_text = html_text.replace("MYWORKSPACENAME", workspace_filename)
         with open(html_filename, "w") as fp:
@@ -191,7 +191,7 @@ class JigsawMagic(Magic):
     }
 """
         script = script.replace("MYWORKSPACENAME", workspace_filename)
-        self.kernel.Display(Javascript(script))
+        self.kernel.Display(Javascript(script))  # type: ignore[no-untyped-call]
         self.kernel.Display(IFrame(html_filename, width="100%", height=height))
 
 

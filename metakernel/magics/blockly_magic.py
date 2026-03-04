@@ -59,7 +59,7 @@ class BlocklyMagic(Magic):
         }
         """
         # print(script)
-        self.kernel.Display(Javascript(script))
+        self.kernel.Display(Javascript(script))  # type: ignore[no-untyped-call]
 
         if height is None:
             height = 350

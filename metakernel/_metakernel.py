@@ -26,6 +26,7 @@ from traitlets import Dict, Unicode
 from traitlets.config import Application
 
 from .config import get_history_file, get_local_magics_dir
+from .magic import get_ipython
 from .parser import Parser
 
 if TYPE_CHECKING:
@@ -190,12 +191,11 @@ class MetaKernel(Kernel):
         Run this method in an IPython kernel to set
         this kernel's input/output settings.
         """
-        from IPython import get_ipython  # type:ignore[attr-defined]
         from IPython.display import display
 
-        shell = get_ipython()  # type:ignore[no-untyped-call]
+        shell = get_ipython()
         if shell:  # we are running under an IPython kernel
-            self.session = shell.kernel.session
+            self.session = shell.kernel.session  # type: ignore[attr-defined]
             self.Display = display  # type: ignore[method-assign]
             self.send_response = self._send_shell_response  # type: ignore[method-assign]
         else:
