@@ -26,7 +26,7 @@ class DotMagic(Magic):
         graph = pydot.graph_from_dot_data(str(code))
         if not graph:
             return
-        svg = graph[0].create_svg()  # type: ignore[attr-defined]
+        svg = graph[0].create_svg()  # type: ignore[attr-defined, unused-ignore]
         if hasattr(svg, "decode"):
             svg = svg.decode("utf-8")
         html = HTML(svg)  # type: ignore[no-untyped-call]
@@ -51,7 +51,7 @@ class DotMagic(Magic):
         graph = pydot.graph_from_dot_data(str(self.code))
         if not graph:
             return
-        svg = graph[0].create_svg()  # type: ignore[attr-defined]
+        svg = graph[0].create_svg()  # type: ignore[attr-defined, unused-ignore]
         if hasattr(svg, "decode"):
             svg = svg.decode("utf-8")
         html = HTML(svg)  # type: ignore[no-untyped-call]

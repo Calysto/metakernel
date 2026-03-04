@@ -68,7 +68,7 @@ coverage = [
     "coverage[toml]",
     "pytest-cov",
 ]
-typing = ["pip", "mypy", "ipywidgets"]
+typing = [{ include-group = "test-all" }, "pip", "mypy", "ipywidgets"]
 
 [tool.uv.sources]
 metakernel_python = { path = "./metakernel_python", editable = true }
