@@ -1,14 +1,15 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
-
+from __future__ import annotations
 
 import os
+from typing import Any
 
 from metakernel import Magic
 
 
 class CDMagic(Magic):
-    def line_cd(self, path=".") -> None:
+    def line_cd(self, path: str = ".") -> None:
         """
         %cd PATH - change current directory of session
 
@@ -32,5 +33,5 @@ class CDMagic(Magic):
             self.kernel.Print(retval)
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: Any) -> None:
     kernel.register_magics(CDMagic)

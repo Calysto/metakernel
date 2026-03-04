@@ -1,6 +1,8 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
 
+from typing import Any
 
 from IPython.display import HTML
 
@@ -8,7 +10,7 @@ from metakernel import Magic
 
 
 class DotMagic(Magic):
-    def line_dot(self, code) -> None:
+    def line_dot(self, code: str) -> None:
         """
         %dot CODE - render code as Graphviz image
 
@@ -23,13 +25,13 @@ class DotMagic(Magic):
             import pydot
         except ImportError:
             raise Exception("You need to install pydot") from None
-        graph = pydot.graph_from_dot_data(str(code))
-        if isinstance(graph, list):
-            graph = graph[0]
-        svg = graph.create_svg()
+        graph_result: Any = pydot.graph_from_dot_data(str(code))
+        if isinstance(graph_result, list):
+            graph_result = graph_result[0]
+        svg = graph_result.create_svg()
         if hasattr(svg, "decode"):
             svg = svg.decode("utf-8")
-        html = HTML(svg)
+        html = HTML(svg)  # type: ignore[no-untyped-call]
         self.kernel.Display(html)
 
     def cell_dot(self) -> None:
@@ -48,18 +50,18 @@ class DotMagic(Magic):
             import pydot
         except ImportError:
             raise Exception("You need to install pydot") from None
-        graph = pydot.graph_from_dot_data(str(self.code))
-        if isinstance(graph, list):
-            graph = graph[0]
-        svg = graph.create_svg()
+        graph_result: Any = pydot.graph_from_dot_data(str(self.code))
+        if isinstance(graph_result, list):
+            graph_result = graph_result[0]
+        svg = graph_result.create_svg()
         if hasattr(svg, "decode"):
             svg = svg.decode("utf-8")
-        html = HTML(svg)
+        html = HTML(svg)  # type: ignore[no-untyped-call]
         self.kernel.Display(html)
         self.evaluate = False
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: Any) -> None:
     kernel.register_magics(DotMagic)
 
 
@@ -71,8 +73,8 @@ def register_ipython_magics() -> None:
     kernel = IPythonKernel()
     magic = DotMagic(kernel)
 
-    @register_cell_magic
-    def dot(line, cell):
+    @register_cell_magic  # type: ignore[untyped-decorator]
+    def dot(line: str, cell: str) -> None:
         """
         %%dot - evaluate cell contents as a dot diagram.
         """

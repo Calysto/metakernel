@@ -1,5 +1,8 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
+
+from typing import Any
 
 from IPython.display import Latex
 
@@ -7,7 +10,7 @@ from metakernel import Magic
 
 
 class LatexMagic(Magic):
-    def line_latex(self, text) -> None:
+    def line_latex(self, text: str) -> None:
         r"""
         %latex TEXT - display text as LaTeX
 
@@ -17,7 +20,7 @@ class LatexMagic(Magic):
             %latex $x_1 = \dfrac{a}{b}$
 
         """
-        latex = Latex(text)
+        latex = Latex(text)  # type: ignore[no-untyped-call]
         self.kernel.Display(latex)
 
     def cell_latex(self) -> None:
@@ -32,10 +35,10 @@ class LatexMagic(Magic):
 
             $x_2 = a^{n - 1}$
         """
-        latex = Latex(self.code)
+        latex = Latex(self.code)  # type: ignore[no-untyped-call]
         self.kernel.Display(latex)
         self.evaluate = False
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: Any) -> None:
     kernel.register_magics(LatexMagic)

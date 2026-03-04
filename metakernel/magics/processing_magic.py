@@ -1,5 +1,8 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
+
+from typing import Any
 
 from IPython.display import HTML
 
@@ -9,7 +12,7 @@ from metakernel import Magic
 class ProcessingMagic(Magic):
     canvas_id = 0
 
-    def cell_processing(self, dummy=None) -> None:
+    def cell_processing(self, dummy: str | None = None) -> None:
         """
         %%processing - run the cell in the language Processing
 
@@ -43,12 +46,12 @@ require([window.location.protocol + "//calysto.github.io/javascripts/processing/
 }});
 </script>
 """.format(**env)
-        html = HTML(code)
+        html = HTML(code)  # type: ignore[no-untyped-call]
         self.kernel.Display(html)
         self.evaluate = False
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: Any) -> None:
     kernel.register_magics(ProcessingMagic)
 
 
@@ -60,8 +63,8 @@ def register_ipython_magics() -> None:
     kernel = IPythonKernel()
     magic = ProcessingMagic(kernel)
 
-    @register_cell_magic
-    def processing(line, cell):
+    @register_cell_magic  # type: ignore[untyped-decorator]
+    def processing(line: str, cell: str) -> None:
         """ """
         magic.code = cell
         magic.cell_processing()

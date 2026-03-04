@@ -1,9 +1,10 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
-
+from __future__ import annotations
 
 import errno
 import os
+from typing import Any
 
 from metakernel import Magic, option
 
@@ -16,7 +17,7 @@ class FileMagic(Magic):
         default=False,
         help="append onto an existing file",
     )
-    def cell_file(self, filename, append=False) -> None:
+    def cell_file(self, filename: str, append: bool = False) -> None:
         """
         %%file [--append|-a] FILENAME - write contents of cell to file
 
@@ -60,5 +61,5 @@ class FileMagic(Magic):
         self.evaluate = False
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: Any) -> None:
     kernel.register_magics(FileMagic)

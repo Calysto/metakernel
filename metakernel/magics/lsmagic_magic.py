@@ -1,5 +1,8 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
+
+from typing import Any
 
 from metakernel import Magic
 
@@ -30,5 +33,5 @@ class LSMagicMagic(Magic):
         self.kernel.Print("\n".join(out))
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: Any) -> None:
     kernel.register_magics(LSMagicMagic)

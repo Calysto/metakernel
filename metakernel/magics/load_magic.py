@@ -1,13 +1,15 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
 
 import os
+from typing import Any
 
 from metakernel import Magic
 
 
 class LoadMagic(Magic):
-    def line_load(self, filename) -> None:
+    def line_load(self, filename: str) -> None:
         """
         %load FILENAME - load code from filename into next cell
 
@@ -24,5 +26,5 @@ class LoadMagic(Magic):
             self.kernel.payload.append({"source": "set_next_input", "text": f.read()})
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: Any) -> None:
     kernel.register_magics(LoadMagic)

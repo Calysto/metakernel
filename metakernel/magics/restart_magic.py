@@ -1,7 +1,9 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
 
 import json
+from typing import Any
 
 from metakernel import Magic
 
@@ -29,5 +31,5 @@ class RestartMagic(Magic):
         kernel.Print("Done!")
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: Any) -> None:
     kernel.register_magics(RestartMagic)

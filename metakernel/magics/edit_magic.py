@@ -1,14 +1,15 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
-
+from __future__ import annotations
 
 import os
+from typing import Any
 
 from metakernel import Magic
 
 
 class EditMagic(Magic):
-    def line_edit(self, filename) -> None:
+    def line_edit(self, filename: str) -> None:
         """
         %edit FILENAME - load code from filename into next cell for editing
 
@@ -35,5 +36,5 @@ class EditMagic(Magic):
         )
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: Any) -> None:
     kernel.register_magics(EditMagic)

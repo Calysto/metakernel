@@ -2168,9 +2168,22 @@ test-all = [
     { name = "requests" },
 ]
 typing = [
+    { name = "calysto" },
+    { name = "calysto-scheme" },
+    { name = "ipyparallel" },
     { name = "ipywidgets" },
+    { name = "jupyter-kernel-test" },
+    { name = "matplotlib", version = "3.2.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
+    { name = "matplotlib", version = "3.10.8", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
+    { name = "metakernel-python" },
     { name = "mypy" },
     { name = "pip" },
+    { name = "portalocker" },
+    { name = "pydot" },
+    { name = "pytest", version = "8.4.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
+    { name = "pytest", version = "9.0.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
+    { name = "pytest-timeout" },
+    { name = "requests" },
 ]
 
 [package.metadata]
@@ -2246,9 +2259,20 @@ test-all = [
     { name = "requests" },
 ]
 typing = [
+    { name = "calysto" },
+    { name = "calysto-scheme" },
+    { name = "ipyparallel" },
     { name = "ipywidgets" },
+    { name = "jupyter-kernel-test" },
+    { name = "matplotlib" },
+    { name = "metakernel-python", editable = "metakernel_python" },
     { name = "mypy" },
     { name = "pip" },
+    { name = "portalocker" },
+    { name = "pydot" },
+    { name = "pytest" },
+    { name = "pytest-timeout" },
+    { name = "requests" },
 ]
 
 [[package]]

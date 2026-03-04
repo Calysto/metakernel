@@ -11,13 +11,13 @@ from metakernel.replwrap import REPLWrapper, bash, powershell
 
 
 class ShellMagic(Magic):
-    def __init__(self, kernel) -> None:
+    def __init__(self, kernel: Any) -> None:
         super().__init__(kernel)
         self.repl: REPLWrapper | None = None
         self.cmd: str | None = None
         self.start_process()
 
-    def line_shell(self, *args) -> None:
+    def line_shell(self, *args: str) -> None:
         """
         %shell COMMAND - run the line as a shell command
 
@@ -48,7 +48,7 @@ class ShellMagic(Magic):
         if os.path.exists(cwd):
             os.chdir(cwd)
 
-    def eval(self, cmd, incremental=False) -> str:
+    def eval(self, cmd: str, incremental: bool = False) -> str:
         assert self.repl is not None
         stream_handler = self.kernel.Print if incremental else None
         return self.repl.run_command(cmd, timeout=None, stream_handler=stream_handler)
@@ -91,7 +91,7 @@ class ShellMagic(Magic):
         self.line_shell(self.code)
         self.evaluate = False
 
-    def get_completions(self, info) -> list[str]:
+    def get_completions(self, info: dict[str, Any]) -> list[str]:
         if self.cmd == "cmd":
             return []
         command = 'compgen -cdfa "{}"'.format(info["code"])
@@ -112,5 +112,5 @@ class ShellMagic(Magic):
             return f"Sorry, no help is available on '{expr}'."
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: Any) -> None:
     kernel.register_magics(ShellMagic)

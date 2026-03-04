@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import Any
+
 from metakernel import Magic
 
 
@@ -24,7 +28,7 @@ def brain():
         self.code = pre_code + new_code + post_code
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: Any) -> None:
     kernel.register_magics(BrainMagic)
 
 
@@ -36,11 +40,11 @@ def register_ipython_magics() -> None:
     kernel = IPythonKernel()
     magic = BrainMagic(kernel)
 
-    @register_cell_magic
-    def brain(line, cell):
+    @register_cell_magic  # type: ignore[untyped-decorator]
+    def brain(line: str, cell: str) -> None:
         from IPython import get_ipython  # type:ignore[attr-defined]
 
-        ipkernel = get_ipython()
+        ipkernel = get_ipython()  # type: ignore[no-untyped-call]
         magic.code = cell
         magic.cell_brain()
         ipkernel.kernel.do_execute(magic.code, silent=True)

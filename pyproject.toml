@@ -68,7 +68,7 @@ coverage = [
     "coverage[toml]",
     "pytest-cov",
 ]
-typing = ["pip", "mypy", "ipywidgets"]
+typing = [{ include-group = "test-all" }, "pip", "mypy"]
 
 [tool.uv.sources]
 metakernel_python = { path = "./metakernel_python", editable = true }
@@ -117,12 +117,17 @@ exclude = [
 
 [[tool.mypy.overrides]]
 module = "tests.*"
-disallow_untyped_defs = false
-disable_error_code = ["comparison-overlap", "no-untyped-def", "import-not-found", "no-untyped-call"]
+disable_error_code = ["comparison-overlap", "no-untyped-def", "no-untyped-call"]
 
 [[tool.mypy.overrides]]
-module = "metakernel.magics.*"
-disable_error_code = ["no-untyped-def", "no-untyped-call", "import-not-found"]
+module = [
+    "calysto_scheme",
+    "calysto.*",
+    "ipyparallel",
+    "ipyparallel.*",
+    "IPython.parallel.*",
+]
+ignore_missing_imports = true
 
 [tool.ruff]
 exclude = ["examples/echo_kernel.ipynb"]

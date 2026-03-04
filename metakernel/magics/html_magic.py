@@ -1,6 +1,8 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
 
+from typing import Any
 
 from IPython.display import HTML
 
@@ -8,7 +10,7 @@ from metakernel import Magic
 
 
 class HTMLMagic(Magic):
-    def line_html(self, code) -> None:
+    def line_html(self, code: str) -> None:
         """
         %html CODE - display code as HTML
 
@@ -19,7 +21,7 @@ class HTMLMagic(Magic):
             %html <u>This is underlined!</u>
 
         """
-        html = HTML(code)
+        html = HTML(code)  # type: ignore[no-untyped-call]
         self.kernel.Display(html)
 
     def cell_html(self) -> None:
@@ -36,10 +38,10 @@ class HTMLMagic(Magic):
 
             <div>Contents of div tag</div>
         """
-        html = HTML(self.code)
+        html = HTML(self.code)  # type: ignore[no-untyped-call]
         self.kernel.Display(html)
         self.evaluate = False
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: Any) -> None:
     kernel.register_magics(HTMLMagic)

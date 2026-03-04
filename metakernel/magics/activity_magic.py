@@ -198,6 +198,7 @@ class Activity:
     def handle_submit(self, sender: Any) -> None:
         import portalocker
 
+        assert self.results_filename is not None
         with portalocker.Lock(self.results_filename, "a+") as g:
             g.write(
                 f"{self.id}::{getpass.getuser()}::{datetime.datetime.today()}::{sender.description}\n"
@@ -295,11 +296,11 @@ class ActivityMagic(Magic):
       }
    ]
 }'''
-            get_ipython().set_next_input((f"%%activity {filename}\n\n") + text)
+            get_ipython().set_next_input((f"%%activity {filename}\n\n") + text)  # type: ignore[no-untyped-call]
             return
         elif mode == "edit":
             text = "".join(open(filename).readlines())
-            get_ipython().set_next_input((f"%%activity {filename}\n\n") + text)
+            get_ipython().set_next_input((f"%%activity {filename}\n\n") + text)  # type: ignore[no-untyped-call]
         else:
             activity = Activity()
             activity.load(filename)

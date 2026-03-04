@@ -1,5 +1,8 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
+
+from typing import Any
 
 from metakernel import Magic, option
 
@@ -13,7 +16,7 @@ class PlotMagic(Magic):
     @option("-r", "--resolution", action="store", help="Resolution in pixels per inch")
     @option("-w", "--width", action="store", help="Plot width in pixels")
     @option("-h", "--height", action="store", help="Plot height in pixels")
-    def line_plot(self, *args, **kwargs) -> None:
+    def line_plot(self, *args: Any, **kwargs: Any) -> None:
         """
         %plot [options] backend - configure plotting for the session.
 
@@ -41,5 +44,5 @@ class PlotMagic(Magic):
         self.kernel.handle_plot_settings()
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: Any) -> None:
     kernel.register_magics(PlotMagic)

@@ -1,6 +1,9 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 # @author ChrisJaunes
+from __future__ import annotations
+
+from typing import Any
 
 from IPython.display import IFrame, Javascript
 
@@ -32,10 +35,10 @@ class BlocklyMagic(Magic):
     @option("-h", "--height", action="store", default=350, help="set height of iframe ")
     def line_blockly(
         self,
-        page_from_origin=None,
-        page_from_local=None,
-        template_data=None,
-        height=350,
+        page_from_origin: str | None = None,
+        page_from_local: str | None = None,
+        template_data: str | None = None,
+        height: Any = 350,
     ) -> None:
         """
         %blockly - show visual code
@@ -59,7 +62,7 @@ class BlocklyMagic(Magic):
         }
         """
         # print(script)
-        self.kernel.Display(Javascript(script))
+        self.kernel.Display(Javascript(script))  # type: ignore[no-untyped-call]
 
         if height is None:
             height = 350
@@ -105,7 +108,7 @@ class BlocklyMagic(Magic):
             )
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: Any) -> None:
     kernel.register_magics(BlocklyMagic)
 
 
@@ -119,8 +122,8 @@ def register_ipython_magics() -> None:
     # Make magics callable:
     kernel.line_magics["blockly"] = magic
 
-    @register_line_magic
-    def blockly(line):
+    @register_line_magic  # type: ignore[untyped-decorator]
+    def blockly(line: str) -> None:
         """
         Use the blockly code visualizer and generator.
         """

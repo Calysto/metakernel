@@ -1,9 +1,11 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
 
 import random
 import string
 import urllib.request
+from typing import Any, cast
 
 from IPython.display import IFrame, Javascript
 
@@ -12,9 +14,9 @@ from metakernel import Magic, option
 urlopen = urllib.request.urlopen
 
 
-def download(url):
+def download(url: str) -> str:
     g = urlopen(url)
-    return g.read().decode("utf-8")
+    return cast(str, g.read().decode("utf-8"))
 
 
 class JigsawMagic(Magic):
@@ -26,7 +28,9 @@ class JigsawMagic(Magic):
         help="use the provided name as workspace filename",
     )
     @option("-h", "--height", action="store", default=350, help="set height of iframe ")
-    def line_jigsaw(self, language, workspace=None, height=350) -> None:
+    def line_jigsaw(
+        self, language: str, workspace: str | None = None, height: Any = 350
+    ) -> None:
         """
         %jigsaw LANGUAGE - show visual code editor/generator
 
@@ -191,11 +195,11 @@ class JigsawMagic(Magic):
     }
 """
         script = script.replace("MYWORKSPACENAME", workspace_filename)
-        self.kernel.Display(Javascript(script))
+        self.kernel.Display(Javascript(script))  # type: ignore[no-untyped-call]
         self.kernel.Display(IFrame(html_filename, width="100%", height=height))
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: Any) -> None:
     kernel.register_magics(JigsawMagic)
 
 
@@ -209,8 +213,8 @@ def register_ipython_magics() -> None:
     # Make magics callable:
     kernel.line_magics["jigsaw"] = magic
 
-    @register_line_magic
-    def jigsaw(line):
+    @register_line_magic  # type: ignore[untyped-decorator]
+    def jigsaw(line: str) -> None:
         """
         Use the Jigsaw code visualizer and generator.
         """

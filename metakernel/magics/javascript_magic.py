@@ -1,5 +1,8 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
+
+from typing import Any
 
 from IPython.display import Javascript
 
@@ -7,7 +10,7 @@ from metakernel import Magic
 
 
 class JavascriptMagic(Magic):
-    def line_javascript(self, code) -> None:
+    def line_javascript(self, code: str) -> None:
         """
         %javascript CODE - send code as JavaScript
 
@@ -18,7 +21,7 @@ class JavascriptMagic(Magic):
             %javascript console.log("Print in the browser console")
 
         """
-        jscode = Javascript(code)
+        jscode = Javascript(code)  # type: ignore[no-untyped-call]
         self.kernel.Display(jscode)
 
     def cell_javascript(self) -> None:
@@ -35,10 +38,10 @@ class JavascriptMagic(Magic):
 
         """
         if self.code.strip():
-            jscode = Javascript(self.code)
+            jscode = Javascript(self.code)  # type: ignore[no-untyped-call]
             self.kernel.Display(jscode)
             self.evaluate = False
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: Any) -> None:
     kernel.register_magics(JavascriptMagic)

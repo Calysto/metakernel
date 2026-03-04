@@ -1,14 +1,17 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
+
+from typing import Any
 
 from metakernel import Magic
 
 
 class PipeMagic(Magic):
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
-    def cell_pipe(self, pipe_str) -> None:
+    def cell_pipe(self, pipe_str: str) -> None:
         """
         %%pipe FUNCTION1 | FUNCTION2 ...
 
@@ -32,11 +35,11 @@ class PipeMagic(Magic):
             self.retval = self.kernel.do_function_direct(function, self.retval)
         self.evaluate = False
 
-    def post_process(self, retval) -> str:
+    def post_process(self, retval: Any) -> Any:
         return self.retval
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: Any) -> None:
     kernel.register_magics(PipeMagic)
 
 
@@ -44,10 +47,10 @@ def register_ipython_magics() -> None:
     from IPython import get_ipython  # type:ignore[attr-defined]
     from IPython.core.magic import register_cell_magic
 
-    @register_cell_magic
-    def pipe(line, cell):
+    @register_cell_magic  # type: ignore[untyped-decorator]
+    def pipe(line: str, cell: str) -> Any:
         """ """
-        ip = get_ipython()
+        ip = get_ipython()  # type: ignore[no-untyped-call]
         functions = [function.strip() for function in line.split("|")]
         retval = cell
         for function in functions:

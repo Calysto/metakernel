@@ -1,14 +1,16 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
 
 import os
 import shlex
+from typing import Any
 
 from metakernel import Magic
 
 
 class IncludeMagic(Magic):
-    def line_include(self, filenames) -> None:
+    def line_include(self, filenames: str) -> None:
         """
         %include FILENAME ... - include code from filename into this code
 
@@ -29,12 +31,12 @@ class IncludeMagic(Magic):
             parts = shlex.split(filenames, posix=False)
         except ValueError:
             parts = filenames.split()
-        filenames = [
+        filename_list = [
             p[1:-1] if len(p) >= 2 and p[0] == p[-1] and p[0] in ("'", '"') else p
             for p in parts
         ]
         prefix = self.kernel.magic_prefixes["magic"]
-        for filename in filenames:
+        for filename in filename_list:
             if filename.startswith("~"):
                 filename = os.path.expanduser(filename)
             filename = os.path.abspath(filename)
@@ -56,5 +58,5 @@ class IncludeMagic(Magic):
             self.code = text + self.code
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: Any) -> None:
     kernel.register_magics(IncludeMagic)

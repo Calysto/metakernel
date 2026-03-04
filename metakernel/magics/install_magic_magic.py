@@ -1,21 +1,23 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
 
 import os
 import urllib.parse as urlparse
 import urllib.request
+from typing import Any
 
 from metakernel import Magic
 
 
-def download(url, filename):
+def download(url: str, filename: str) -> None:
     g = urllib.request.urlopen(url)
     with open(filename, "wb") as f:
         f.write(g.read())
 
 
 class InstallMagicMagic(Magic):
-    def line_install_magic(self, url) -> None:
+    def line_install_magic(self, url: str) -> None:
         """
         %install_magic URL - download and install magic from URL
 
@@ -39,5 +41,5 @@ class InstallMagicMagic(Magic):
             self.kernel.Error(str(e))
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: Any) -> None:
     kernel.register_magics(InstallMagicMagic)

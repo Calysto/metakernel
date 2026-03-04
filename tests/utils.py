@@ -1,6 +1,12 @@
 from __future__ import annotations
 
+import logging
+from io import StringIO
+from logging import Logger, StreamHandler
 from typing import Any, TypeVar, overload
+
+import zmq
+from jupyter_client import session as ss
 
 from metakernel import MetaKernel
 
@@ -14,20 +20,6 @@ __all__ = [
 ]
 
 _KT = TypeVar("_KT", bound=MetaKernel)
-
-try:
-    from jupyter_client import session as ss
-except ImportError:
-    from IPython.kernel.zmq import session as ss  # type: ignore[no-redef]
-import logging
-from logging import Logger, StreamHandler
-
-import zmq
-
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
 
 
 class EvalKernel(MetaKernel):

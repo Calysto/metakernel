@@ -20,6 +20,9 @@ Magics to display pythontutor.com in the notebook.
 #   kikocorreoso
 # -----------------------------------------------------------------------------
 
+from __future__ import annotations
+
+from typing import Any
 from urllib.parse import quote
 
 from IPython.display import IFrame
@@ -38,7 +41,7 @@ class TutorMagic(Magic):
             + "Possible values are: python, python2, python3, java, javascript"
         ),
     )
-    def cell_tutor(self, language=None) -> None:
+    def cell_tutor(self, language: str | None = None) -> None:
         """
         %%tutor [--language=LANGUAGE] - show cell with
         Online Python Tutor.
@@ -92,7 +95,7 @@ class TutorMagic(Magic):
         self.evaluate = False
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: Any) -> None:
     kernel.register_magics(TutorMagic)
 
 
@@ -104,7 +107,7 @@ def register_ipython_magics() -> None:
     kernel = IPythonKernel()
     magic = TutorMagic(kernel)
 
-    @register_cell_magic
-    def tutor(line, cell):
+    @register_cell_magic  # type: ignore[untyped-decorator]
+    def tutor(line: str, cell: str) -> None:
         magic.code = cell
         magic.cell_tutor(language="python3")
