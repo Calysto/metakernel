@@ -28,7 +28,7 @@ def test_process_metakernel() -> None:
     text = get_log_text(kernel)
     assert ": command not found" in text, text
 
-    html = HTML("some html")
+    html = HTML("some html")  # type:ignore[no-untyped-call]
     kernel.Display(html)
 
     asyncio.run(
