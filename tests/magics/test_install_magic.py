@@ -1,6 +1,7 @@
 import asyncio
 import os
 import sys
+from pathlib import Path
 
 import pytest
 
@@ -15,12 +16,17 @@ pytestmark = [
     pytest.mark.filterwarnings("ignore::ResourceWarning"),
 ]
 
+from metakernel import MetaKernel
 from tests.utils import get_kernel
 
 _CUSTOM_JS_TILDE = "~/.ipython/profile_default/static/custom/custom.js"
 
 
-def _setup(tmp_path, monkeypatch, initial_content=""):
+def _setup(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    initial_content: str = "",
+) -> tuple[MetaKernel, Path, list[str]]:
     """Return (kernel, custom_js_path, inner_calls).
 
     The shell magic's line_shell is wrapped so that calls are captured in
@@ -40,11 +46,9 @@ def _setup(tmp_path, monkeypatch, initial_content=""):
     kernel = get_kernel()
     inner_calls: list[str] = []
     shell_magic = kernel.line_magics["shell"]
-    original_line_shell = shell_magic.line_shell
 
-    def capturing_line_shell(command, *args, **kwargs):
+    def capturing_line_shell(command: str, *args: str) -> None:
         inner_calls.append("!" + command)
-        return None
 
     shell_magic.line_shell = capturing_line_shell
     return kernel, custom_js, inner_calls

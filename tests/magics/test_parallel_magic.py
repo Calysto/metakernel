@@ -1,8 +1,10 @@
 import asyncio
 import sys
+from typing import Any
 
 import pytest
 
+from metakernel.magics.parallel_magic import ParallelMagic
 from tests.utils import EvalKernel, get_kernel, get_log_text
 
 try:
@@ -47,40 +49,40 @@ def test_parallel_magic() -> None:
 class MockView:
     """Minimal stand-in for an ipyparallel view."""
 
-    def __init__(self):
-        self.executed = []
+    def __init__(self) -> None:
+        self.executed: list[str] = []
 
-    def execute(self, code, block=False):
+    def execute(self, code: str, block: bool = False) -> None:
         self.executed.append(code)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: Any) -> None:
         return None
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: Any, value: Any) -> None:
         pass
 
-    def scatter(self, name, values, flatten=False):
+    def scatter(self, name: str, values: Any, flatten: bool = False) -> None:
         pass
 
-    def append(self, other):
+    def append(self, other: Any) -> None:
         pass
 
 
 class MockClient:
     """Stand-in for ipyparallel.Client that records how views were requested."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.ids = [0, 1, 2]
-        self.accessed_with = []
+        self.accessed_with: list[Any] = []
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: Any) -> MockView:
         self.accessed_with.append(item)
         return MockView()
 
-    def load_balanced_view(self):
+    def load_balanced_view(self) -> MockView:
         return MockView()
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.ids)
 
 
@@ -220,14 +222,19 @@ def test_line_parallel_ids_sets_cluster_variables_on_kernel(monkeypatch) -> None
 class _PxView:
     """MockView whose __getitem__ can return a value or raise an exception."""
 
-    def __init__(self, return_value=None, raises=None, fail_times=0):
-        self.called_with = []
+    def __init__(
+        self,
+        return_value: Any = None,
+        raises: BaseException | None = None,
+        fail_times: int = 0,
+    ) -> None:
+        self.called_with: list[Any] = []
         self._return_value = return_value
         self._raises = raises
         self._fail_times = fail_times  # raise on first N calls, then succeed
         self._call_count = 0
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: Any) -> Any:
         self._call_count += 1
         self.called_with.append(key)
         if self._raises is not None:
@@ -235,19 +242,19 @@ class _PxView:
                 raise self._raises
         return self._return_value
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: Any, value: Any) -> None:
         pass
 
-    def execute(self, code, block=False):
+    def execute(self, code: str, block: bool = False) -> None:
         pass
 
-    def scatter(self, name, values, flatten=False):
+    def scatter(self, name: str, values: Any, flatten: bool = False) -> None:
         pass
 
 
-def _make_px_magic(view=None, kernel_name="default"):
-    from metakernel.magics.parallel_magic import ParallelMagic
-
+def _make_px_magic(
+    view: _PxView | None = None, kernel_name: str = "default"
+) -> ParallelMagic:
     kernel = get_kernel(EvalKernel)
     magic = ParallelMagic(kernel)
     magic.view = view if view is not None else _PxView()
@@ -428,18 +435,18 @@ def test_cell_px_evaluate_false_sets_evaluate_flag() -> None:
 class _LoadBalancedView:
     """Mock for an ipyparallel load-balanced view."""
 
-    def __init__(self, return_value=None):
-        self.map_async_calls = []
+    def __init__(self, return_value: Any = None) -> None:
+        self.map_async_calls: list[tuple[Any, list[Any]]] = []
         self._return_value = return_value
 
-    def map_async(self, f, args):
+    def map_async(self, f: Any, args: Any) -> Any:
         self.map_async_calls.append((f, list(args)))
         return self._return_value
 
 
-def _make_pmap_magic(lb_view=None, kernel_name="default"):
-    from metakernel.magics.parallel_magic import ParallelMagic
-
+def _make_pmap_magic(
+    lb_view: _LoadBalancedView | None = None, kernel_name: str = "default"
+) -> ParallelMagic:
     kernel = get_kernel(EvalKernel)
     magic = ParallelMagic(kernel)
     magic.view_load_balanced = lb_view if lb_view is not None else _LoadBalancedView()

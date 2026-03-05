@@ -271,13 +271,13 @@ def test_async_do_execute_direct() -> None:
 
 def test_misc() -> None:
     class TestKernel(MetaKernel):
-        def do_execute_file(self, filename):
+        def do_execute_file(self, filename: str) -> None:
             self.Print("This language does not support running files")
 
-        def do_function_direct(self, f, arg):
+        def do_function_direct(self, f: str, arg: Any) -> None:
             self.Print("%s(%s)" % (f, self.repr(arg)))
 
-        def repr(self, arg):
+        def repr(self, arg: Any) -> str:
             return "XXX"
 
     kernel = get_kernel(TestKernel)
