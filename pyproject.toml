@@ -118,7 +118,7 @@ exclude = [
 [[tool.mypy.overrides]]
 module = "tests.*"
 disallow_untyped_defs = false
-disable_error_code = ["comparison-overlap", "no-untyped-def", "import-not-found", "no-untyped-call"]
+disable_error_code = ["no-untyped-def"]
 
 [tool.ruff]
 exclude = ["examples/echo_kernel.ipynb"]
