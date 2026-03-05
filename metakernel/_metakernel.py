@@ -101,7 +101,7 @@ class MetaKernel(Kernel):
         # 'file_extension': '.py',
         "help_links": help_links,
     }
-    plot_settings = Dict(dict(backend="inline")).tag(config=True)
+    plot_settings: dict[str, Any] = Dict(dict(backend="inline")).tag(config=True)  # type: ignore[assignment]
 
     meta_kernel = None
 
@@ -139,9 +139,9 @@ class MetaKernel(Kernel):
         self._i: str | None = None
         self._ii: str | None = None
         self._iii: str | None = None
-        self._: str | None = None
-        self.__: str | None = None
-        self.___: str | None = None
+        self._: Any = None
+        self.__: Any = None
+        self.___: Any = None
         self.max_hist_cache = 1000
         self.hist_cache: list[str] = []
         kwargs = {"parent": self, "kernel": self}
@@ -844,6 +844,9 @@ class MetaKernel(Kernel):
 
 class MetaKernelApp(IPKernelApp):
     """The MetaKernel launcher application."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)  # type:ignore[no-untyped-call]
 
     config_dir = Unicode()
 

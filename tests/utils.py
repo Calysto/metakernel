@@ -1,6 +1,12 @@
 from __future__ import annotations
 
+import logging
+from io import StringIO
+from logging import Logger, StreamHandler
 from typing import Any, TypeVar, overload
+
+import zmq
+from jupyter_client import session as ss
 
 from metakernel import MetaKernel
 
@@ -15,20 +21,6 @@ __all__ = [
 
 _KT = TypeVar("_KT", bound=MetaKernel)
 
-try:
-    from jupyter_client import session as ss
-except ImportError:
-    from IPython.kernel.zmq import session as ss  # type: ignore[no-redef]
-import logging
-from logging import Logger, StreamHandler
-
-import zmq
-
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
-
 
 class EvalKernel(MetaKernel):
     implementation = "Eval"
@@ -37,25 +29,25 @@ class EvalKernel(MetaKernel):
     language_version = "0.1"
     banner = "Eval kernel - evaluates simple Python statements and expressions"
 
-    def set_variable(self, name, value) -> None:
+    def set_variable(self, name: str, value: Any) -> None:
         """
         Set a variable in the kernel language.
         """
         python_magic = self.line_magics["python"]
         python_magic.env[name] = value
 
-    def get_variable(self, name):
+    def get_variable(self, name: str) -> Any:
         """
         Get a variable from the kernel language.
         """
         python_magic = self.line_magics["python"]
         return python_magic.env[name]
 
-    def do_execute_direct(self, code, *args, **kwargs):
+    def do_execute_direct(self, code: str, silent: bool = False) -> Any:
         python_magic = self.line_magics["python"]
         return python_magic.eval(code.strip())
 
-    def do_execute_meta(self, code) -> str | None:
+    def do_execute_meta(self, code: str) -> str | None:
         if code == "reset":
             return "RESET"
         elif code == "stop":
@@ -67,7 +59,7 @@ class EvalKernel(MetaKernel):
         else:
             raise Exception("Unknown meta command: '%s'" % code)
 
-    def initialize_debug(self, code) -> str:
+    def initialize_debug(self, code: str) -> str:
         return "highlight: [%s, %s, %s, %s]" % (0, 0, 1, 0)
 
 
@@ -80,9 +72,6 @@ def has_network() -> bool:
     except requests.exceptions.RequestException:
         print("No internet connection available.")
     return False
-
-
-from metakernel._metakernel import MetaKernel
 
 
 def get_log() -> Logger:
