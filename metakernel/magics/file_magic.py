@@ -5,7 +5,7 @@
 import errno
 import os
 
-from metakernel import Magic, option
+from metakernel import Magic, MetaKernel, option
 
 
 class FileMagic(Magic):
@@ -16,7 +16,7 @@ class FileMagic(Magic):
         default=False,
         help="append onto an existing file",
     )
-    def cell_file(self, filename, append=False) -> None:
+    def cell_file(self, filename: str, append: bool = False) -> None:
         """
         %%file [--append|-a] FILENAME - write contents of cell to file
 
@@ -60,5 +60,5 @@ class FileMagic(Magic):
         self.evaluate = False
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(FileMagic)

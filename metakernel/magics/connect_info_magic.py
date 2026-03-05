@@ -1,13 +1,15 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+from __future__ import annotations
+
 import json
 
-from metakernel import Magic
+from metakernel import Magic, MetaKernel
 
 
 class ConnectInfoMagic(Magic):
-    def line_connect_info(self, dummy=None) -> None:
+    def line_connect_info(self, dummy: str | None = None) -> None:
         """
         %connect_info - show connection information
 
@@ -69,5 +71,5 @@ if this is the most recent Jupyter session you have started.
         self.kernel.Print(retval)
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(ConnectInfoMagic)

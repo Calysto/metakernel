@@ -1,10 +1,11 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
 
 import importlib
 from typing import Any
 
-from metakernel import Magic, option
+from metakernel import Magic, MetaKernel, option
 
 
 class KernelMagic(Magic):
@@ -18,7 +19,9 @@ class KernelMagic(Magic):
         default="default",
         help="kernel name given to use for execution",
     )
-    def line_kernel(self, module_name, class_name, kernel_name="default") -> None:
+    def line_kernel(
+        self, module_name: str, class_name: str, kernel_name: str = "default"
+    ) -> None:
         """
         %kernel MODULE CLASS [-k NAME] - construct a kernel for sending code.
 
@@ -50,7 +53,7 @@ class KernelMagic(Magic):
         default=None,
         help="kernel name given to use for execution",
     )
-    def cell_kx(self, kernel_name=None) -> None:
+    def cell_kx(self, kernel_name: str | None = None) -> None:
         """
         %%kx [-k NAME] - send the cell code to the kernel.
 
@@ -69,7 +72,7 @@ class KernelMagic(Magic):
         """
         if kernel_name is None:
             kernel_name = self.kernel_name
-        self.retval = self.kernels[kernel_name].do_execute_direct(self.code)
+        self.retval = self.kernels[kernel_name].do_execute_direct(self.code)  # type: ignore[index]
         self.evaluate = False
 
     @option(
@@ -79,7 +82,7 @@ class KernelMagic(Magic):
         default=None,
         help="kernel name given to use for execution",
     )
-    def line_kx(self, code, kernel_name=None) -> None:
+    def line_kx(self, code: str, kernel_name: str | None = None) -> None:
         """
         %kx CODE [-k NAME] - send the code to the kernel.
 
@@ -98,26 +101,25 @@ class KernelMagic(Magic):
             kernel_name = self.kernel_name
         # make sure the code is sent as a string for execution
         code = str(code)
-        self.retval = self.kernels[kernel_name].do_execute_direct(code)
+        self.retval = self.kernels[kernel_name].do_execute_direct(code)  # type: ignore[index]
 
-    def post_process(self, retval):
+    def post_process(self, retval: Any) -> Any:
         return self.retval
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(KernelMagic)
 
 
 def register_ipython_magics() -> None:
-    from IPython.core.magic import register_cell_magic, register_line_magic
-
     from metakernel import IPythonKernel
+    from metakernel.magic import register_cell_magic, register_line_magic
 
     kernel = IPythonKernel()
     magic = KernelMagic(kernel)
 
     @register_line_magic  # type: ignore[no-redef]
-    def kernel(line):
+    def kernel(line: str) -> None:
         """
         line is module_name, class_name[, kernel_name]
         """
@@ -133,7 +135,7 @@ def register_ipython_magics() -> None:
         magic.line_kernel(module_name, class_name, kernel_name)
 
     @register_cell_magic
-    def kx(line, cell):
+    def kx(line: str, cell: str) -> None:
         """
         line is kernel_name, or "default"
         """

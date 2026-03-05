@@ -1,5 +1,6 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
 
 import random
 import string
@@ -7,14 +8,14 @@ import urllib.request
 
 from IPython.display import IFrame, Javascript
 
-from metakernel import Magic, option
+from metakernel import Magic, MetaKernel, option
 
 urlopen = urllib.request.urlopen
 
 
-def download(url):
+def download(url: str) -> str:
     g = urlopen(url)
-    return g.read().decode("utf-8")
+    return g.read().decode("utf-8")  # type: ignore[no-any-return]
 
 
 class JigsawMagic(Magic):
@@ -26,7 +27,9 @@ class JigsawMagic(Magic):
         help="use the provided name as workspace filename",
     )
     @option("-h", "--height", action="store", default=350, help="set height of iframe ")
-    def line_jigsaw(self, language, workspace=None, height=350) -> None:
+    def line_jigsaw(
+        self, language: str, workspace: str | None = None, height: int = 350
+    ) -> None:
         """
         %jigsaw LANGUAGE - show visual code editor/generator
 
@@ -47,7 +50,7 @@ class JigsawMagic(Magic):
                 )
             )
         workspace_filename = workspace + ".xml"
-        html_text = download("https://calysto.github.io/jigsaw/" + language + ".html")  # type: ignore[no-untyped-call]
+        html_text = download("https://calysto.github.io/jigsaw/" + language + ".html")
         html_filename = workspace + ".html"
         html_text = html_text.replace("MYWORKSPACENAME", workspace_filename)
         with open(html_filename, "w") as fp:
@@ -195,14 +198,13 @@ class JigsawMagic(Magic):
         self.kernel.Display(IFrame(html_filename, width="100%", height=height))
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(JigsawMagic)
 
 
 def register_ipython_magics() -> None:
-    from IPython.core.magic import register_line_magic
-
     from metakernel import IPythonKernel
+    from metakernel.magic import register_line_magic
 
     kernel = IPythonKernel()
     magic = JigsawMagic(kernel)
@@ -210,7 +212,7 @@ def register_ipython_magics() -> None:
     kernel.line_magics["jigsaw"] = magic
 
     @register_line_magic
-    def jigsaw(line):
+    def jigsaw(line: str) -> None:
         """
         Use the Jigsaw code visualizer and generator.
         """

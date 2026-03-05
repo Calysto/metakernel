@@ -4,8 +4,9 @@
 import ast
 import inspect
 import os
+from typing import Any
 
-from metakernel import Magic, option
+from metakernel import Magic, MetaKernel, option
 
 
 class MacroMagic(Magic):
@@ -25,7 +26,7 @@ class MacroMagic(Magic):
 """
     }
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self._load_macros()
 
@@ -38,7 +39,9 @@ class MacroMagic(Magic):
     )
     @option("-l", "--list", action="store_true", default=False, help="list macros")
     @option("-s", "--show", action="store_true", default=False, help="show macro")
-    def line_macro(self, name, delete=False, list=False, show=False) -> None:
+    def line_macro(
+        self, name: str, delete: bool = False, list: bool = False, show: bool = False
+    ) -> None:
         """
         %macro NAME - execute a macro
         %macro -l [all|learned|system] - list macros
@@ -89,7 +92,9 @@ class MacroMagic(Magic):
             self._list_macros(retval=f"No such macro: '{name}'\n\n", error=True)
         self.evaluate = True
 
-    def _list_macros(self, name="all", retval="", error=False) -> None:
+    def _list_macros(
+        self, name: str = "all", retval: str = "", error: bool = False
+    ) -> None:
         retval += "Available macros:\n"
         if name in ["all", "system"]:
             retval += "    System:\n"
@@ -130,7 +135,7 @@ class MacroMagic(Magic):
         with open(filename, "w") as macros:
             macros.write(str(self.learned))
 
-    def cell_macro(self, name) -> None:
+    def cell_macro(self, name: str) -> None:
         """
         %%macro NAME - learn a new macro
 
@@ -150,5 +155,5 @@ class MacroMagic(Magic):
         self.evaluate = False
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(MacroMagic)

@@ -351,9 +351,8 @@ def register_magics(kernel: MetaKernel) -> None:
 
 
 def register_ipython_magics() -> None:
-    from IPython.core.magic import register_cell_magic, register_line_magic
-
     from metakernel import IPythonKernel
+    from metakernel.magic import register_cell_magic, register_line_magic
     from metakernel.utils import add_docs
 
     kernel = IPythonKernel()

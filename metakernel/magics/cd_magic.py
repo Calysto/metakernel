@@ -4,11 +4,11 @@
 
 import os
 
-from metakernel import Magic
+from metakernel import Magic, MetaKernel
 
 
 class CDMagic(Magic):
-    def line_cd(self, path=".") -> None:
+    def line_cd(self, path: str = ".") -> None:
         """
         %cd PATH - change current directory of session
 
@@ -32,5 +32,5 @@ class CDMagic(Magic):
             self.kernel.Print(retval)
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(CDMagic)

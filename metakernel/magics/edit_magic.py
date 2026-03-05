@@ -4,11 +4,11 @@
 
 import os
 
-from metakernel import Magic
+from metakernel import Magic, MetaKernel
 
 
 class EditMagic(Magic):
-    def line_edit(self, filename) -> None:
+    def line_edit(self, filename: str) -> None:
         """
         %edit FILENAME - load code from filename into next cell for editing
 
@@ -35,5 +35,5 @@ class EditMagic(Magic):
         )
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(EditMagic)

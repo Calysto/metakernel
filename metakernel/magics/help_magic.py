@@ -2,11 +2,13 @@
 # Distributed under the terms of the Modified BSD License.
 
 
-from metakernel import Magic
+from __future__ import annotations
+
+from metakernel import Magic, MetaKernel
 
 
 class HelpMagic(Magic):
-    def help_strings(self):
+    def help_strings(self) -> list[str]:
         suffixes = [
             "item{0}{0} - get detailed, technical information on item",
             "item{0}  - get help on item",
@@ -136,5 +138,5 @@ class HelpMagic(Magic):
         return text
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(HelpMagic)

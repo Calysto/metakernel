@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
-from metakernel import Magic
+from metakernel import Magic, MetaKernel
 
 
 class MagicMagic(Magic):
-    def line_magic(self, line) -> None:
+    def line_magic(self, line: str) -> None:
         """
         %magic - show installed magics
 
@@ -52,7 +52,7 @@ class MagicMagic(Magic):
             self.kernel.Print("    " + string)
         self.kernel.Print("")
 
-    def get_magic(self, info, get_args=False) -> Any:
+    def get_magic(self, info: dict[str, Any], get_args: bool = False) -> Any:
 
         if not info["magic"]:
             return None
@@ -90,5 +90,5 @@ class MagicMagic(Magic):
             )
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(MagicMagic)

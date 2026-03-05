@@ -1,9 +1,10 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
+from __future__ import annotations
 
 import os
 
-from metakernel import Magic, option
+from metakernel import Magic, MetaKernel, option
 
 
 class RunMagic(Magic):
@@ -14,7 +15,7 @@ class RunMagic(Magic):
         default=None,
         help="use the provided language name as kernel",
     )
-    def line_run(self, filename, language=None) -> None:
+    def line_run(self, filename: str, language: str | None = None) -> None:
         """
         %run [--language LANG] FILENAME - run code in filename by
            kernel
@@ -48,5 +49,5 @@ class RunMagic(Magic):
                 self.code += "".join(f.readlines())
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(RunMagic)

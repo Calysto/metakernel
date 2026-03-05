@@ -181,6 +181,22 @@ def option(*args: Any, **kwargs: Any) -> Callable[[_F], _F]:
     return decorator
 
 
+def register_line_magic(func: _F) -> _F:
+    """Register a function as an IPython line magic, preserving its type."""
+    from IPython.core.magic import register_line_magic as _rlm
+
+    _rlm(func)
+    return func
+
+
+def register_cell_magic(func: _F) -> _F:
+    """Register a function as an IPython cell magic, preserving its type."""
+    from IPython.core.magic import register_cell_magic as _rcm
+
+    _rcm(func)
+    return func
+
+
 def _parse_args(
     func: Any, args: Any, usage: Any = None
 ) -> tuple[list[Any], dict[str, Any]]:

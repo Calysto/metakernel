@@ -2,8 +2,9 @@
 # Distributed under the terms of the Modified BSD License.
 
 import time
+from typing import Any
 
-from metakernel import Magic
+from metakernel import Magic, MetaKernel
 
 
 class TimeMagic(Magic):
@@ -23,12 +24,12 @@ class TimeMagic(Magic):
         """
         self.start = time.time()
 
-    def post_process(self, retval):
+    def post_process(self, retval: Any) -> Any:
         if self.code.strip():
             result = "Time: %s seconds.\n" % (time.time() - self.start)
             self.kernel.Print(result)
         return retval
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(TimeMagic)
