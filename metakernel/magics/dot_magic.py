@@ -4,11 +4,11 @@
 
 from IPython.display import HTML
 
-from metakernel import Magic
+from metakernel import Magic, MetaKernel
 
 
 class DotMagic(Magic):
-    def line_dot(self, code) -> None:
+    def line_dot(self, code: str) -> None:
         """
         %dot CODE - render code as Graphviz image
 
@@ -59,20 +59,19 @@ class DotMagic(Magic):
         self.evaluate = False
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(DotMagic)
 
 
 def register_ipython_magics() -> None:
-    from IPython.core.magic import register_cell_magic
-
     from metakernel import IPythonKernel
+    from metakernel.magic import register_cell_magic
 
     kernel = IPythonKernel()
     magic = DotMagic(kernel)
 
     @register_cell_magic
-    def dot(line, cell):
+    def dot(line: str, cell: str) -> None:
         """
         %%dot - evaluate cell contents as a dot diagram.
         """

@@ -3,7 +3,7 @@
 
 import json
 
-from metakernel import Magic
+from metakernel import Magic, MetaKernel
 
 
 class RestartMagic(Magic):
@@ -29,5 +29,5 @@ class RestartMagic(Magic):
         kernel.Print("Done!")
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(RestartMagic)

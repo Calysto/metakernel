@@ -4,11 +4,11 @@
 
 from IPython.display import HTML, Javascript
 
-from metakernel import Magic
+from metakernel import Magic, MetaKernel
 
 
 class DebugMagic(Magic):
-    def cell_debug(self, dummy) -> None:
+    def cell_debug(self, dummy: str) -> None:
         """
         %%debug - step through the code expression by expression
 
@@ -217,5 +217,5 @@ function reset() {
         self.evaluate = False
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(DebugMagic)

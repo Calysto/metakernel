@@ -3,11 +3,11 @@
 
 import os
 
-from metakernel import Magic
+from metakernel import Magic, MetaKernel
 
 
 class InstallMagic(Magic):
-    def line_install(self, package) -> None:
+    def line_install(self, package: str) -> None:
         """
         %install PACKAGE - install package
 
@@ -37,7 +37,7 @@ class InstallMagic(Magic):
         ## // To turn off automatically creating closing parenthesis and bracket:
         ## IPython.CodeCell.options_default.cm_config["autoCloseBrackets"] = "";
 
-    def enable_extension(self, name) -> None:
+    def enable_extension(self, name: str) -> None:
         filename = "~/.ipython/profile_default/static/custom/custom.js"
         if filename.startswith("~"):
             filename = os.path.expanduser(filename)
@@ -63,5 +63,5 @@ require(["base/js/events"], function (events) {
             fp.write(text)
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(InstallMagic)

@@ -1,7 +1,9 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from metakernel import Magic, option
+from typing import Any
+
+from metakernel import Magic, MetaKernel, option
 
 
 class ShowMagic(Magic):
@@ -12,7 +14,7 @@ class ShowMagic(Magic):
         default=False,
         help="rather than showing the contents, show the results",
     )
-    def cell_show(self, output=False) -> None:
+    def cell_show(self, output: bool = False) -> None:
         """
         %%show [-o]- show cell contents or results in system pager
 
@@ -39,7 +41,7 @@ class ShowMagic(Magic):
         else:
             self.evaluate = True
 
-    def post_process(self, results) -> None:
+    def post_process(self, results: Any) -> None:
         if self.show_output:
             self.kernel.payload = [
                 {
@@ -51,5 +53,5 @@ class ShowMagic(Magic):
         return None
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(ShowMagic)

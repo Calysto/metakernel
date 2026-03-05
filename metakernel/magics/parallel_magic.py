@@ -5,13 +5,13 @@ from __future__ import annotations
 import time
 from typing import Any
 
-from metakernel import Magic, option
+from metakernel import Magic, MetaKernel, option
 
 
 class Slice:
     """Utility class for making slice ranges."""
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: Any) -> Any:
         return item
 
 
@@ -44,7 +44,11 @@ class ParallelMagic(Magic):
         help="the machine ids to use from the cluster",
     )
     def line_parallel(
-        self, module_name, class_name, kernel_name="default", ids=None
+        self,
+        module_name: str,
+        class_name: str,
+        kernel_name: str = "default",
+        ids: str | None = None,
     ) -> None:
         """
         %parallel MODULE CLASS [-k NAME] [-i [...]] - construct an interface to the cluster.
@@ -186,7 +190,11 @@ kernels['{kernel_name}'] = {class_name}()
         help="set the variable with the parallel results rather than returning them",
     )
     def line_px(
-        self, expression, kernel_name=None, evaluate=False, set_variable=None
+        self,
+        expression: str,
+        kernel_name: str | None = None,
+        evaluate: bool = False,
+        set_variable: str | None = None,
     ) -> None:
         """
         %px EXPRESSION - send EXPRESSION to the cluster.
@@ -266,7 +274,12 @@ kernels['{kernel_name}'] = {class_name}()
         default=None,
         help="set the variable with the parallel results rather than returning them",
     )
-    def cell_px(self, kernel_name=None, evaluate=False, set_variable=None) -> None:
+    def cell_px(
+        self,
+        kernel_name: str | None = None,
+        evaluate: bool = False,
+        set_variable: str | None = None,
+    ) -> None:
         """
         %%px - send cell to the cluster.
 
@@ -297,7 +310,11 @@ kernels['{kernel_name}'] = {class_name}()
         help="set the variable with the parallel results rather than returning them",
     )
     def line_pmap(
-        self, function_name, args, kernel_name=None, set_variable=None
+        self,
+        function_name: str,
+        args: str,
+        kernel_name: str | None = None,
+        set_variable: str | None = None,
     ) -> None:
         """
         %pmap FUNCTION [ARGS1,ARGS2,...] - ("parallel map") call a FUNCTION on args
@@ -358,7 +375,7 @@ kernels['{kernel_name}'] = {class_name}()
             self.kernel.set_variable(set_variable, results)
             self.retval = None
 
-    def post_process(self, retval) -> Any:
+    def post_process(self, retval: Any) -> Any:
         try:
             ## any will crash on numpy arrays
             if isinstance(self.retval, list) and not any(self.retval):
@@ -368,5 +385,5 @@ kernels['{kernel_name}'] = {class_name}()
         return self.retval
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(ParallelMagic)

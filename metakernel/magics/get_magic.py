@@ -1,11 +1,13 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from metakernel import Magic
+from typing import Any
+
+from metakernel import Magic, MetaKernel
 
 
 class GetMagic(Magic):
-    def line_get(self, variable) -> None:
+    def line_get(self, variable: str) -> None:
         """
         %get VARIABLE - get a variable from the kernel in a Python-type.
 
@@ -16,9 +18,9 @@ class GetMagic(Magic):
         """
         self.retval = self.kernel.get_variable(variable)
 
-    def post_process(self, retval):
+    def post_process(self, retval: Any) -> Any:
         return self.retval
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(GetMagic)

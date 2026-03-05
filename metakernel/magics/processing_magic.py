@@ -1,15 +1,17 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
+from __future__ import annotations
+
 from IPython.display import HTML
 
-from metakernel import Magic
+from metakernel import Magic, MetaKernel
 
 
 class ProcessingMagic(Magic):
     canvas_id = 0
 
-    def cell_processing(self, dummy=None) -> None:
+    def cell_processing(self, dummy: str | None = None) -> None:
         """
         %%processing - run the cell in the language Processing
 
@@ -48,20 +50,19 @@ require([window.location.protocol + "//calysto.github.io/javascripts/processing/
         self.evaluate = False
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(ProcessingMagic)
 
 
 def register_ipython_magics() -> None:
-    from IPython.core.magic import register_cell_magic
-
     from metakernel import IPythonKernel
+    from metakernel.magic import register_cell_magic
 
     kernel = IPythonKernel()
     magic = ProcessingMagic(kernel)
 
     @register_cell_magic
-    def processing(line, cell):
+    def processing(line: str, cell: str) -> None:
         """ """
         magic.code = cell
         magic.cell_processing()

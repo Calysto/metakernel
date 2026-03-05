@@ -3,7 +3,7 @@
 
 from typing import Any
 
-from metakernel import Magic, option
+from metakernel import Magic, MetaKernel, option
 
 try:
     from calysto_scheme import scheme  # type: ignore[import-untyped]
@@ -12,11 +12,11 @@ except ImportError:
 
 
 class SchemeMagic(Magic):
-    def __init__(self, kernel) -> None:
+    def __init__(self, kernel: MetaKernel) -> None:
         super().__init__(kernel)
         self.retval = None
 
-    def line_scheme(self, *args) -> None:
+    def line_scheme(self, *args: str) -> None:
         """
         %scheme CODE - evaluate code as Scheme
 
@@ -45,7 +45,7 @@ class SchemeMagic(Magic):
         default=False,
         help="Use the retval value from the Scheme cell as code in the kernel language.",
     )
-    def cell_scheme(self, eval_output=False) -> None:
+    def cell_scheme(self, eval_output: bool = False) -> None:
         """
         %%scheme - evaluate contents of cell as Scheme
 
@@ -78,32 +78,31 @@ class SchemeMagic(Magic):
                 self.retval = self.eval(self.code)
                 self.evaluate = False
 
-    def post_process(self, retval):
+    def post_process(self, retval: Any) -> Any:
         if retval is not None:
             return retval
         else:
             return self.retval
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(SchemeMagic)
 
 
 def register_ipython_magics() -> None:
-    from IPython.core.magic import register_cell_magic, register_line_magic
-
     from metakernel import IPythonKernel
+    from metakernel.magic import register_cell_magic, register_line_magic
 
     kernel = IPythonKernel()
     magic = SchemeMagic(kernel)
 
     @register_line_magic
-    def scheme(line):
+    def scheme(line: str) -> Any:
         magic.line_scheme(line)
         return magic.retval
 
     @register_cell_magic  # type: ignore[no-redef]
-    def scheme(line, cell):  # noqa: F811
+    def scheme(line: str, cell: str) -> Any:  # noqa: F811
         magic.code = cell
         magic.cell_scheme()
         return magic.retval

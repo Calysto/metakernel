@@ -1,14 +1,16 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from metakernel import Magic, get_ipython
+from typing import Any
+
+from metakernel import Magic, MetaKernel, get_ipython
 
 
 class PipeMagic(Magic):
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
-    def cell_pipe(self, pipe_str) -> None:
+    def cell_pipe(self, pipe_str: str) -> None:
         """
         %%pipe FUNCTION1 | FUNCTION2 ...
 
@@ -32,19 +34,19 @@ class PipeMagic(Magic):
             self.retval = self.kernel.do_function_direct(function, self.retval)
         self.evaluate = False
 
-    def post_process(self, retval) -> str:
+    def post_process(self, retval: Any) -> Any:
         return self.retval
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(PipeMagic)
 
 
 def register_ipython_magics() -> None:
-    from IPython.core.magic import register_cell_magic
+    from metakernel.magic import register_cell_magic
 
     @register_cell_magic
-    def pipe(line, cell):
+    def pipe(line: str, cell: str) -> Any:
         """ """
         ip = get_ipython()
         if ip is None:

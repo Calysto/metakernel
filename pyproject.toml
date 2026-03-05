@@ -120,10 +120,6 @@ module = "tests.*"
 disallow_untyped_defs = false
 disable_error_code = ["comparison-overlap", "no-untyped-def", "import-not-found", "no-untyped-call"]
 
-[[tool.mypy.overrides]]
-module = "metakernel.magics.*"
-disable_error_code = ["no-untyped-def"]
-
 [tool.ruff]
 exclude = ["examples/echo_kernel.ipynb"]
 

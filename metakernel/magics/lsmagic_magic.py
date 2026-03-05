@@ -1,7 +1,7 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from metakernel import Magic
+from metakernel import Magic, MetaKernel
 
 
 class LSMagicMagic(Magic):
@@ -30,5 +30,5 @@ class LSMagicMagic(Magic):
         self.kernel.Print("\n".join(out))
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(LSMagicMagic)

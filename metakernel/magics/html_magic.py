@@ -4,11 +4,11 @@
 
 from IPython.display import HTML
 
-from metakernel import Magic
+from metakernel import Magic, MetaKernel
 
 
 class HTMLMagic(Magic):
-    def line_html(self, code) -> None:
+    def line_html(self, code: str) -> None:
         """
         %html CODE - display code as HTML
 
@@ -41,5 +41,5 @@ class HTMLMagic(Magic):
         self.evaluate = False
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(HTMLMagic)

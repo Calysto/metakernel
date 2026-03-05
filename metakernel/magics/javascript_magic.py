@@ -3,11 +3,11 @@
 
 from IPython.display import Javascript
 
-from metakernel import Magic
+from metakernel import Magic, MetaKernel
 
 
 class JavascriptMagic(Magic):
-    def line_javascript(self, code) -> None:
+    def line_javascript(self, code: str) -> None:
         """
         %javascript CODE - send code as JavaScript
 
@@ -40,5 +40,5 @@ class JavascriptMagic(Magic):
             self.evaluate = False
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(JavascriptMagic)

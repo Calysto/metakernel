@@ -1,15 +1,15 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
-
+from __future__ import annotations
 
 import os
 import urllib.parse as urlparse
 import urllib.request
 
-from metakernel import Magic, option
+from metakernel import Magic, MetaKernel, option
 
 
-def download(url, filename):
+def download(url: str, filename: str) -> None:
     g = urllib.request.urlopen(url)
     with open(filename, "wb") as f:
         f.write(g.read())
@@ -23,7 +23,7 @@ class DownloadMagic(Magic):
         default=None,
         help="use the provided name as filename",
     )
-    def line_download(self, url, filename=None) -> None:
+    def line_download(self, url: str, filename: str | None = None) -> None:
         """
         %download URL [-f FILENAME] - download file from URL
 
@@ -52,20 +52,19 @@ class DownloadMagic(Magic):
         filename = filename.replace("~", "")
         filename = filename.replace("%20", "_")
         try:
-            download(url, filename)  # type: ignore[no-untyped-call]
+            download(url, filename)
             self.kernel.Print(f"Downloaded '{filename}'.")
         except Exception as e:
             self.kernel.Error(str(e))
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(DownloadMagic)
 
 
 def register_ipython_magics() -> None:
-    from IPython.core.magic import register_line_magic
-
     from metakernel import IPythonKernel
+    from metakernel.magic import register_line_magic
 
     kernel = IPythonKernel()
     magic = DownloadMagic(kernel)
@@ -73,5 +72,5 @@ def register_ipython_magics() -> None:
     kernel.line_magics["download"] = magic
 
     @register_line_magic
-    def download(line):
+    def download(line: str) -> None:
         kernel.call_magic("%download " + line)

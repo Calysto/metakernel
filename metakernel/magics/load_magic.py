@@ -3,11 +3,11 @@
 
 import os
 
-from metakernel import Magic
+from metakernel import Magic, MetaKernel
 
 
 class LoadMagic(Magic):
-    def line_load(self, filename) -> None:
+    def line_load(self, filename: str) -> None:
         """
         %load FILENAME - load code from filename into next cell
 
@@ -24,5 +24,5 @@ class LoadMagic(Magic):
             self.kernel.payload.append({"source": "set_next_input", "text": f.read()})
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(LoadMagic)

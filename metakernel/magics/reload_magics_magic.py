@@ -1,7 +1,7 @@
 # Copyright (c) Metakernel Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-from metakernel import Magic
+from metakernel import Magic, MetaKernel
 
 
 class ReloadMagicsMagic(Magic):
@@ -22,5 +22,5 @@ class ReloadMagicsMagic(Magic):
         self.code = "%lsmagic\n" + self.code
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(ReloadMagicsMagic)

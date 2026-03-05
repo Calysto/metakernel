@@ -3,11 +3,11 @@
 
 from IPython.display import Latex
 
-from metakernel import Magic
+from metakernel import Magic, MetaKernel
 
 
 class LatexMagic(Magic):
-    def line_latex(self, text) -> None:
+    def line_latex(self, text: str) -> None:
         r"""
         %latex TEXT - display text as LaTeX
 
@@ -37,5 +37,5 @@ class LatexMagic(Magic):
         self.evaluate = False
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(LatexMagic)

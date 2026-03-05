@@ -2,10 +2,11 @@
 # Distributed under the terms of the Modified BSD License.
 
 import os
+from typing import Any
 
 from IPython.display import FileLinks
 
-from metakernel import Magic, option
+from metakernel import Magic, MetaKernel, option
 
 
 class LSMagic(Magic):
@@ -16,7 +17,7 @@ class LSMagic(Magic):
         default=False,
         help="recursively descend into subdirectories",
     )
-    def line_ls(self, path=".", recursive=False) -> None:
+    def line_ls(self, path: str = ".", recursive: bool = False) -> None:
         """
         %ls PATH - list files and directories under PATH
 
@@ -29,9 +30,9 @@ class LSMagic(Magic):
         path = os.path.expanduser(path)
         self.retval = FileLinks(path, recursive=recursive)  # type: ignore[no-untyped-call]
 
-    def post_process(self, retval):
+    def post_process(self, retval: Any) -> Any:
         return self.retval
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(LSMagic)

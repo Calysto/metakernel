@@ -1,4 +1,4 @@
-from metakernel import Magic, get_ipython
+from metakernel import Magic, MetaKernel, get_ipython
 
 
 class BrainMagic(Magic):
@@ -24,20 +24,19 @@ def brain():
         self.code = pre_code + new_code + post_code
 
 
-def register_magics(kernel) -> None:
+def register_magics(kernel: MetaKernel) -> None:
     kernel.register_magics(BrainMagic)
 
 
 def register_ipython_magics() -> None:
-    from IPython.core.magic import register_cell_magic
-
     from metakernel import IPythonKernel
+    from metakernel.magic import register_cell_magic
 
     kernel = IPythonKernel()
     magic = BrainMagic(kernel)
 
     @register_cell_magic
-    def brain(line, cell):
+    def brain(line: str, cell: str) -> None:
         ipkernel = get_ipython()
         if ipkernel is None:
             return
