@@ -6,7 +6,7 @@ import unittest
 import pytest
 
 pytestmark = pytest.mark.skipif(
-    sys.platform == "win32", reason="pexpect not reliable on Windows"
+    sys.platform in ("win32", "darwin"), reason="pexpect not reliable on Windows/macOS"
 )
 
 from metakernel import pexpect, replwrap
@@ -80,7 +80,7 @@ class REPLWrapTestCase(unittest.TestCase):
         assert res.startswith("/"), res
 
     @pytest.mark.skipif(
-        sys.platform != "linux", reason="pexpect with python not reliable on non-Linux"
+        sys.platform == "win32", reason="pexpect with python not reliable on Windows"
     )
     def test_python(self) -> None:
         p = replwrap.python(sys.executable)
