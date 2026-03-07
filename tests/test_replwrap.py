@@ -26,9 +26,6 @@ class REPLWrapTestCase(unittest.TestCase):
         os.putenv("PS1", self.save_ps1)
         os.putenv("PS2", self.save_ps2)
 
-    @pytest.mark.skipif(
-        sys.platform == "darwin", reason="pexpect not reliable on macOS"
-    )
     def test_bash(self) -> None:
         bash = replwrap.bash()
         res = bash.run_command("time")
@@ -54,9 +51,6 @@ class REPLWrapTestCase(unittest.TestCase):
         text = get_log_text(logger)
         assert "1\n2\n3" in text
 
-    @pytest.mark.skipif(
-        sys.platform == "darwin", reason="pexpect not reliable on macOS"
-    )
     def test_multiline(self) -> None:
         bash = replwrap.bash()
         res = bash.run_command("echo '1 2\n3 4'")
