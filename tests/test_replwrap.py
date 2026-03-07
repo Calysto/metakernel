@@ -79,7 +79,7 @@ class REPLWrapTestCase(unittest.TestCase):
         res = repl.run_command("echo $HOME")
         assert res.startswith("/"), res
 
-    def test_python2(self) -> None:
+    def test_python(self) -> None:
         p = replwrap.python(sys.executable)
         res = p.run_command("4+7")
         assert res.strip() == "11"
