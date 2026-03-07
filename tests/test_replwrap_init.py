@@ -26,6 +26,9 @@ def _make_child(echo: bool = False) -> MagicMock:
 
 
 class TestREPLWrapperInit:
+    @pytest.mark.skipif(
+        sys.platform == "win32", reason="pexpect not reliable on Windows"
+    )
     def test_str_command_spawns_child(self) -> None:
         """When cmd_or_spawn is a str, pexpect.spawnu is called to create the child."""
         mock_child = _make_child(echo=False)
