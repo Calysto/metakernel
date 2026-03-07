@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import errno
 import signal
+import sys
 from typing import Any
 from unittest.mock import MagicMock, patch
 
@@ -331,6 +332,9 @@ class TestRunCommand:
 
 
 class TestInterrupt:
+    @pytest.mark.skipif(
+        sys.platform == "win32", reason="pexpect.pty not available on Windows"
+    )
     def test_pty_not_none_calls_sendintr(self) -> None:
         """When pexpect.pty is available, child.sendintr() is used to interrupt."""
         wrapper = _make_wrapper()
@@ -405,6 +409,9 @@ class TestInterrupt:
 
 
 class TestTerminate:
+    @pytest.mark.skipif(
+        sys.platform == "win32", reason="pexpect.pty not available on Windows"
+    )
     def test_pty_not_none_calls_close_and_terminate(self) -> None:
         """When pexpect.pty is available, child.close() then child.terminate() are called."""
         wrapper = _make_wrapper()
