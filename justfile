@@ -33,9 +33,9 @@ test-all *args="":
     uv run --group test-all ipcluster stop
 
 # Run tests with coverage
-cover:
+cover *args="":
     uv run --group coverage ipcluster start -n=3 &
-    uv run --group coverage pytest -x --cov=metakernel
+    uv run --group coverage pytest --cov=metakernel {{args}}
     uv run coverage annotate
     uv run --group coverage ipcluster stop
 

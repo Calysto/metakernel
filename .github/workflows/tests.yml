@@ -57,7 +57,7 @@ jobs:
         run: just install
 
       - name: Run the tests with coverage
-        run: just cover
+        run: just cover -v
 
       - name: Generate coverage report
         run: uv tool run coverage xml
@@ -122,7 +122,7 @@ jobs:
         run: just install
 
       - name: Run the unit tests
-        run: just test
+        run: just test -v
 
   make_sdist:
     name: Make SDist

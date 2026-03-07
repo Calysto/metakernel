@@ -105,6 +105,12 @@ filterwarnings= [
   "module:'setParseAction' deprecated - use 'set_parse_action':DeprecationWarning",
 ]
 
+[tool.coverage.report]
+exclude_also = [
+    "if TYPE_CHECKING:",
+    "def __repr__",
+]
+
 [tool.mypy]
 python_version = "3.10"
 strict = true
