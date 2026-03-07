@@ -43,6 +43,7 @@ class REPLWrapper:
     we need to interrupt a continuation prompt.
     :param bool echo: Whether the child should echo, or in the case
     of Windows, whether the child does echo.
+    :param dict extr_env: Extra env variables to send to the child.
     """
 
     def __init__(
@@ -57,10 +58,20 @@ class REPLWrapper:
         prompt_emit_cmd: str | None = None,
         force_prompt_on_continuation: bool = False,
         echo: bool = False,
+        extra_env: dict[str, Any] | None = None,
     ) -> None:
         if isinstance(cmd_or_spawn, str):
+            if extra_env:
+                env = os.environ.copy()
+                env.update(extra_env or {})
+            else:
+                env = None
             self.child = pexpect.spawnu(
-                cmd_or_spawn, echo=echo, codec_errors="ignore", encoding="utf-8"
+                cmd_or_spawn,
+                echo=echo,
+                codec_errors="ignore",
+                encoding="utf-8",
+                env=env,
             )
         else:
             self.child = cmd_or_spawn
@@ -293,7 +304,12 @@ def python(command: str = "python") -> REPLWrapper:
     """Start a Python shell and return a :class:`REPLWrapper` object."""
     if pexpect.pty is None:
         raise OSError(f'Not supported on platform "{sys.platform}"')
-    return REPLWrapper(command, ">>> ", "import sys; sys.ps1={0!r}; sys.ps2={1!r}")
+    return REPLWrapper(
+        command,
+        ">>> ",
+        "import sys; sys.ps1={0!r}; sys.ps2={1!r}",
+        extra_env=dict(TERM="dumb"),
+    )
 
 
 def bash(command: str = "bash", prompt_regex: str = "[$#]") -> REPLWrapper:

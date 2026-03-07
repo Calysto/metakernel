@@ -34,7 +34,7 @@ class TestREPLWrapperInit:
                 with patch("atexit.register"):
                     wrapper = REPLWrapper("bash", r"[$#]", None)
         mock_spawn.assert_called_once_with(
-            "bash", echo=False, codec_errors="ignore", encoding="utf-8"
+            "bash", echo=False, codec_errors="ignore", encoding="utf-8", env=None
         )
         assert wrapper.child is mock_child
 
