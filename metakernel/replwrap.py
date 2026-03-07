@@ -61,8 +61,11 @@ class REPLWrapper:
         extra_env: dict[str, Any] | None = None,
     ) -> None:
         if isinstance(cmd_or_spawn, str):
-            env = os.environ.copy()
-            env.update(extra_env or {})
+            if extra_env:
+                env = os.environ.copy()
+                env.update(extra_env or {})
+            else:
+                env = None
             self.child = pexpect.spawnu(
                 cmd_or_spawn,
                 echo=echo,
