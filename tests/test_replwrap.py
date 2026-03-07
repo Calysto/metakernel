@@ -7,7 +7,7 @@ import unittest
 import pytest
 
 pytestmark = pytest.mark.skipif(
-    sys.platform == "win32", reason="bash/pexpect not supported on Windows"
+    sys.platform != "linux", reason="bash/pexpect only reliable on Linux"
 )
 
 from metakernel import pexpect, replwrap
