@@ -57,12 +57,7 @@ jobs:
         run: just install
 
       - name: Run the tests with coverage
-        if: ${{ !startsWith(matrix.os, 'macos') }}
         run: just cover -v
-
-      - name: Run the tests with coverage (macOS)
-        if: ${{ startsWith(matrix.os, 'macos') }}
-        run: ulimit -n 4096 && just cover -v
 
       - name: Generate coverage report
         run: uv tool run coverage xml

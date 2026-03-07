@@ -72,6 +72,7 @@ class REPLWrapper:
                 codec_errors="ignore",
                 encoding="utf-8",
                 env=env,
+                use_poll=True,
             )
         else:
             self.child = cmd_or_spawn
