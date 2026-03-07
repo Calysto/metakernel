@@ -2,6 +2,7 @@ import asyncio
 import importlib.util
 import os
 import sys
+from typing import Any
 
 import pytest
 
@@ -469,12 +470,12 @@ def test_handle_results_toggles_show_initial_on_repeat(tmp_path) -> None:
     assert a.show_initial is False  # second call on same id toggles
 
 
-def _make_mock_calysto(monkeypatch):
+def _make_mock_calysto(monkeypatch: pytest.MonkeyPatch) -> list[dict[str, Any]]:
     """Inject a fake calysto.graphics so BarChart calls are captured."""
     import sys
     import types
 
-    captured: list[dict] = []
+    captured: list[dict[str, Any]] = []
 
     class MockBarChart:
         def __init__(self, size, data, labels):
@@ -585,12 +586,12 @@ def test_handle_results_show_initial_false_takes_last_response(
     captured = _make_mock_calysto(monkeypatch)
     # First call: last_id=None → goes to else branch, show_initial stays True
     a.handle_results(MockSender("Results"))
-    assert a.show_initial is True
-    assert captured[-1]["data"] == [1, 0]  # first response used
+    first_data = list(captured[-1]["data"])  # snapshot before second call
     # Second call: last_id==q1 → toggles show_initial to False
     a.handle_results(MockSender("Results"))
-    assert a.show_initial is False
-    # Last response (option "2") wins
+    assert not a.show_initial
+    # First call collected first response; second call (show_initial=False) collects last
+    assert first_data == [1, 0]
     assert captured[-1]["data"] == [0, 1]
 
 

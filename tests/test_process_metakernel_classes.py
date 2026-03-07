@@ -299,7 +299,7 @@ def test_do_execute_direct_generic_exception_sets_error_kernel_resp() -> None:
     kernel.wrapper = mock_wrapper
     kernel.do_execute_direct("bad command")
     assert kernel.kernel_resp["status"] == "error"
-    assert "boom" in kernel.kernel_resp["evalue"]
+    assert "boom" in cast(str, kernel.kernel_resp["evalue"])
 
 
 def test_do_execute_direct_nonzero_exitcode_sets_error_kernel_resp() -> None:
