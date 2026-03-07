@@ -1,5 +1,4 @@
 import os
-import platform
 import re
 import sys
 import unittest
@@ -7,7 +6,7 @@ import unittest
 import pytest
 
 pytestmark = pytest.mark.skipif(
-    sys.platform != "linux", reason="bash/pexpect only reliable on Linux"
+    sys.platform == "win32", reason="pexpect not reliable on Windows"
 )
 
 from metakernel import pexpect, replwrap
@@ -80,17 +79,7 @@ class REPLWrapTestCase(unittest.TestCase):
         res = repl.run_command("echo $HOME")
         assert res.startswith("/"), res
 
-    def test_python(self) -> None:
-        if platform.python_implementation() == "PyPy":
-            raise unittest.SkipTest(
-                "This test fails on PyPy because of REPL differences"
-            )
-
-        if platform.system() == "Darwin":
-            raise unittest.SkipTest(
-                "This test fails on macOS because of REPL differences"
-            )
-
+    def test_python2(self) -> None:
         p = replwrap.python(sys.executable)
         res = p.run_command("4+7")
         assert res.strip() == "11"
