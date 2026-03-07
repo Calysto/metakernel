@@ -26,9 +26,6 @@ def _make_child(echo: bool = False) -> MagicMock:
 
 
 class TestREPLWrapperInit:
-    @pytest.mark.skipif(
-        sys.platform == "win32", reason="pexpect not reliable on Windows"
-    )
     def test_str_command_spawns_child(self) -> None:
         """When cmd_or_spawn is a str, pexpect.spawnu is called to create the child."""
         mock_child = _make_child(echo=False)
@@ -37,7 +34,7 @@ class TestREPLWrapperInit:
                 with patch("atexit.register"):
                     wrapper = REPLWrapper("bash", r"[$#]", None)
         mock_spawn.assert_called_once_with(
-            "bash", echo=False, codec_errors="ignore", encoding="utf-8"
+            "bash", echo=False, codec_errors="ignore", encoding="utf-8", env=None
         )
         assert wrapper.child is mock_child
 
