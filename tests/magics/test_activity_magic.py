@@ -469,6 +469,175 @@ def test_handle_results_toggles_show_initial_on_repeat(tmp_path) -> None:
     assert a.show_initial is False  # second call on same id toggles
 
 
+def _make_mock_calysto(monkeypatch):
+    """Inject a fake calysto.graphics so BarChart calls are captured."""
+    import sys
+    import types
+
+    captured: list[dict] = []
+
+    class MockBarChart:
+        def __init__(self, size, data, labels):
+            captured.append({"data": data, "labels": labels})
+
+        def __str__(self) -> str:
+            return f"<BarChart data={captured[-1]['data']}>"
+
+    mock_graphics = types.ModuleType("calysto.graphics")
+    mock_graphics.BarChart = MockBarChart  # type: ignore[attr-defined]
+    mock_calysto = types.ModuleType("calysto")
+    monkeypatch.setitem(sys.modules, "calysto", mock_calysto)
+    monkeypatch.setitem(sys.modules, "calysto.graphics", mock_graphics)
+    return captured
+
+
+@pytest.mark.skipif(NO_WIDGETS, reason="Requires ipywidgets")
+@pytest.mark.skipif(NO_PORTALOCKER, reason="Requires portalocker")
+def test_handle_results_skips_lines_without_separator(tmp_path, monkeypatch) -> None:
+    """Lines that do not contain '::' are ignored without error."""
+    activity_file = tmp_path / "activity.poll"
+    activity_file.write_text(ACTIVITY_TEXT)
+    a = Activity()
+    a.load(str(activity_file))
+    assert a.results_filename is not None
+    with open(a.results_filename, "w") as f:
+        f.write("malformed line with no separator\n")
+        f.write("q1::user1::2024-01-01::1\n")
+    captured = _make_mock_calysto(monkeypatch)
+    a.handle_results(MockSender("Results"))
+    # Only user1's response should be counted; malformed line ignored
+    assert captured[-1]["data"] == [1, 0]
+
+
+@pytest.mark.skipif(NO_WIDGETS, reason="Requires ipywidgets")
+@pytest.mark.skipif(NO_PORTALOCKER, reason="Requires portalocker")
+def test_handle_results_skips_different_question_id(tmp_path, monkeypatch) -> None:
+    """Entries for a different question id are not counted."""
+    activity_file = tmp_path / "activity.poll"
+    activity_file.write_text(ACTIVITY_TEXT)
+    a = Activity()
+    a.load(str(activity_file))
+    assert a.results_filename is not None
+    with open(a.results_filename, "w") as f:
+        f.write("q99::user1::2024-01-01::1\n")  # wrong id
+        f.write("q1::user2::2024-01-01::2\n")
+    captured = _make_mock_calysto(monkeypatch)
+    a.handle_results(MockSender("Results"))
+    # Only user2's choice for q1 is counted
+    assert captured[-1]["data"] == [0, 1]
+
+
+@pytest.mark.skipif(NO_WIDGETS, reason="Requires ipywidgets")
+@pytest.mark.skipif(NO_PORTALOCKER, reason="Requires portalocker")
+def test_handle_results_skips_results_choice_entries(tmp_path, monkeypatch) -> None:
+    """Entries whose choice is 'Results' are excluded from the tally."""
+    activity_file = tmp_path / "activity.poll"
+    activity_file.write_text(ACTIVITY_TEXT)
+    a = Activity()
+    a.load(str(activity_file))
+    assert a.results_filename is not None
+    with open(a.results_filename, "w") as f:
+        f.write("q1::user1::2024-01-01::Results\n")
+        f.write("q1::user2::2024-01-01::1\n")
+    captured = _make_mock_calysto(monkeypatch)
+    a.handle_results(MockSender("Results"))
+    # user1's "Results" entry must not be counted
+    assert captured[-1]["data"] == [1, 0]
+
+
+@pytest.mark.skipif(NO_WIDGETS, reason="Requires ipywidgets")
+@pytest.mark.skipif(NO_PORTALOCKER, reason="Requires portalocker")
+def test_handle_results_show_initial_true_takes_first_response(
+    tmp_path, monkeypatch
+) -> None:
+    """With show_initial=True, only the first response per user is counted."""
+    activity_file = tmp_path / "activity.poll"
+    activity_file.write_text(ACTIVITY_TEXT)
+    a = Activity()
+    a.load(str(activity_file))
+    assert a.results_filename is not None
+    # user1 first answered 1, then changed to 2
+    with open(a.results_filename, "w") as f:
+        f.write("q1::user1::2024-01-01::1\n")
+        f.write("q1::user1::2024-01-01::2\n")
+    captured = _make_mock_calysto(monkeypatch)
+    assert a.show_initial is True
+    a.handle_results(MockSender("Results"))
+    # First response (option "1") wins
+    assert captured[-1]["data"] == [1, 0]
+
+
+@pytest.mark.skipif(NO_WIDGETS, reason="Requires ipywidgets")
+@pytest.mark.skipif(NO_PORTALOCKER, reason="Requires portalocker")
+def test_handle_results_show_initial_false_takes_last_response(
+    tmp_path, monkeypatch
+) -> None:
+    """With show_initial=False, the last response per user is counted."""
+    activity_file = tmp_path / "activity.poll"
+    activity_file.write_text(ACTIVITY_TEXT)
+    a = Activity()
+    a.load(str(activity_file))
+    assert a.results_filename is not None
+    # user1 first answered 1, then changed to 2
+    with open(a.results_filename, "w") as f:
+        f.write("q1::user1::2024-01-01::1\n")
+        f.write("q1::user1::2024-01-01::2\n")
+    captured = _make_mock_calysto(monkeypatch)
+    # First call: last_id=None → goes to else branch, show_initial stays True
+    a.handle_results(MockSender("Results"))
+    assert a.show_initial is True
+    assert captured[-1]["data"] == [1, 0]  # first response used
+    # Second call: last_id==q1 → toggles show_initial to False
+    a.handle_results(MockSender("Results"))
+    assert a.show_initial is False
+    # Last response (option "2") wins
+    assert captured[-1]["data"] == [0, 1]
+
+
+@pytest.mark.skipif(NO_WIDGETS, reason="Requires ipywidgets")
+@pytest.mark.skipif(NO_PORTALOCKER, reason="Requires portalocker")
+def test_handle_results_unknown_choice_added_to_tally(tmp_path, monkeypatch) -> None:
+    """A choice value outside the defined options is still counted."""
+    activity_file = tmp_path / "activity.poll"
+    activity_file.write_text(ACTIVITY_TEXT)
+    a = Activity()
+    a.load(str(activity_file))
+    assert a.results_filename is not None
+    with open(a.results_filename, "w") as f:
+        f.write("q1::user1::2024-01-01::99\n")  # not a valid option number
+    captured = _make_mock_calysto(monkeypatch)
+    a.handle_results(MockSender("Results"))
+    labels = captured[-1]["labels"]
+    data = captured[-1]["data"]
+    assert "99" in labels
+    idx = sorted(labels).index("99")
+    assert data[idx] == 1
+
+
+@pytest.mark.skipif(NO_WIDGETS, reason="Requires ipywidgets")
+@pytest.mark.skipif(NO_PORTALOCKER, reason="Requires portalocker")
+def test_handle_results_fallback_when_calysto_unavailable(
+    tmp_path, monkeypatch
+) -> None:
+    """When calysto.graphics is not installed, the except branch runs silently."""
+    import sys
+
+    activity_file = tmp_path / "activity.poll"
+    activity_file.write_text(ACTIVITY_TEXT)
+    a = Activity()
+    a.load(str(activity_file))
+    assert a.results_filename is not None
+    with open(a.results_filename, "w") as f:
+        f.write("q1::user1::2024-01-01::1\n")
+    # Block calysto so the try block raises ImportError
+    monkeypatch.setitem(sys.modules, "calysto", None)
+    monkeypatch.setitem(sys.modules, "calysto.graphics", None)
+    # Should not raise; falls back to printing inside self.output
+    a.handle_results(MockSender("Results"))
+    # results_html.value is never set in the fallback path
+    assert a.results_html.value == ""
+
+
 # ---------------------------------------------------------------------------
 # Activity.render()
 # ---------------------------------------------------------------------------
