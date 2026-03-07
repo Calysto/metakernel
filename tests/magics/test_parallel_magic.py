@@ -1,5 +1,6 @@
 import asyncio
 import sys
+import time
 from typing import Any
 
 import pytest
@@ -212,6 +213,84 @@ def test_line_parallel_ids_sets_cluster_variables_on_kernel(monkeypatch) -> None
 
     assert kernel.get_variable("cluster_size") == len(client.ids)
     assert kernel.get_variable("cluster_rank") == -1
+
+
+@pytest.mark.skipif(NO_IPYPARALLEL, reason="Requires ipyparallel")
+def test_line_parallel_client_fails_all_retries_raises(monkeypatch) -> None:
+    """If Client() raises on every attempt, raise 'Cluster was not started.'"""
+    monkeypatch.setattr(time, "sleep", lambda _: None)
+
+    def _failing_client() -> None:
+        raise RuntimeError("no cluster")
+
+    monkeypatch.setattr(ipyparallel, "Client", _failing_client)
+
+    magic = ParallelMagic(get_kernel(EvalKernel))
+    with pytest.raises(Exception, match="Cluster was not started"):
+        magic.line_parallel("mymod", "MyClass")
+
+
+@pytest.mark.skipif(NO_IPYPARALLEL, reason="Requires ipyparallel")
+def test_line_parallel_no_ids_engines_fail_raises(monkeypatch) -> None:
+    """ids=None: if client[:] raises on every attempt, raise 'Engines were not started.'"""
+    monkeypatch.setattr(time, "sleep", lambda _: None)
+
+    class _FailingEnginesClient:
+        ids = [0, 1]
+
+        def __getitem__(self, item: Any) -> None:
+            raise RuntimeError("no engines")
+
+        def __len__(self) -> int:
+            return len(self.ids)
+
+    monkeypatch.setattr(ipyparallel, "Client", _FailingEnginesClient)
+
+    magic = ParallelMagic(get_kernel(EvalKernel))
+    with pytest.raises(Exception, match="Engines were not started"):
+        magic.line_parallel("mymod", "MyClass")
+
+
+@pytest.mark.skipif(NO_IPYPARALLEL, reason="Requires ipyparallel")
+def test_line_parallel_ids_slice_engines_fail_raises(monkeypatch) -> None:
+    """ids=[0:2] (slice): if client[slice] raises on every attempt, raise 'Engines were not started.'"""
+    monkeypatch.setattr(time, "sleep", lambda _: None)
+
+    class _FailingEnginesClient:
+        ids = [0, 1]
+
+        def __getitem__(self, item: Any) -> None:
+            raise RuntimeError("no engines")
+
+        def __len__(self) -> int:
+            return len(self.ids)
+
+    monkeypatch.setattr(ipyparallel, "Client", _FailingEnginesClient)
+
+    magic = ParallelMagic(get_kernel(EvalKernel))
+    with pytest.raises(Exception, match="Engines were not started"):
+        magic.line_parallel("mymod", "MyClass", ids="[0:2]")
+
+
+@pytest.mark.skipif(NO_IPYPARALLEL, reason="Requires ipyparallel")
+def test_line_parallel_ids_tuple_engines_fail_raises(monkeypatch) -> None:
+    """ids=[0,1] (tuple): if client[item] raises on every attempt, raise 'Cluster was not started.'"""
+    monkeypatch.setattr(time, "sleep", lambda _: None)
+
+    class _FailingEnginesClient:
+        ids = [0, 1]
+
+        def __getitem__(self, item: Any) -> None:
+            raise RuntimeError("no engines")
+
+        def __len__(self) -> int:
+            return len(self.ids)
+
+    monkeypatch.setattr(ipyparallel, "Client", _FailingEnginesClient)
+
+    magic = ParallelMagic(get_kernel(EvalKernel))
+    with pytest.raises(Exception, match="Cluster was not started"):
+        magic.line_parallel("mymod", "MyClass", ids="[0,1]")
 
 
 # ---------------------------------------------------------------------------

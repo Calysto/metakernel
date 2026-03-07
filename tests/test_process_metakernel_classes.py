@@ -4,6 +4,7 @@ from typing import cast
 from unittest.mock import MagicMock, patch
 
 import pytest
+from pexpect import EOF
 
 from metakernel import MetaKernel
 from metakernel.process_metakernel import (
@@ -158,6 +159,159 @@ def test_do_execute_direct_silent_with_no_output_returns_none() -> None:
     mock_wrapper.run_command.return_value = ""
     kernel.wrapper = mock_wrapper
     assert kernel.do_execute_direct("echo hi", silent=True) is None
+
+
+def test_do_execute_direct_initializes_wrapper_when_none() -> None:
+    """wrapper starts as None; do_execute_direct must call makeWrapper()."""
+    kernel = get_kernel(_TestKernel)
+    assert kernel.wrapper is None
+    kernel.do_execute_direct("echo hi")
+    assert kernel.wrapper is not None
+
+
+def test_do_execute_direct_blank_code_sets_ok_kernel_resp() -> None:
+    kernel = get_kernel(_TestKernel)
+    kernel.do_execute_direct("   ")
+    assert kernel.kernel_resp["status"] == "ok"
+    assert kernel.kernel_resp["payload"] == []
+    assert kernel.kernel_resp["user_expressions"] == {}
+
+
+def test_do_execute_direct_not_silent_with_output_calls_stream_handler() -> None:
+    """When not silent and run_command returns output, Write is called with it."""
+    kernel = get_kernel(_TestKernel)
+    mock_wrapper = MagicMock()
+    mock_wrapper.run_command.return_value = "hello output"
+    kernel.wrapper = mock_wrapper
+    with patch.object(kernel, "Write") as mock_write:
+        result = kernel.do_execute_direct("echo hi")
+    mock_write.assert_called_with("hello output")
+    assert result is None
+
+
+def test_do_execute_direct_not_silent_with_output_returns_none() -> None:
+    """When not silent and there is output, None is returned (not TextOutput)."""
+    kernel = get_kernel(_TestKernel)
+    mock_wrapper = MagicMock()
+    mock_wrapper.run_command.return_value = "some output"
+    kernel.wrapper = mock_wrapper
+    assert kernel.do_execute_direct("echo hi") is None
+
+
+def test_do_execute_direct_normal_sets_ok_kernel_resp() -> None:
+    kernel = get_kernel(_TestKernel)
+    kernel.do_execute_direct("echo hi")
+    assert kernel.kernel_resp["status"] == "ok"
+    assert kernel.kernel_resp["payload"] == []
+    assert kernel.kernel_resp["user_expressions"] == {}
+
+
+def test_do_execute_direct_keyboard_interrupt_calls_wrapper_interrupt() -> None:
+    kernel = get_kernel(_TestKernel)
+    mock_wrapper = MagicMock()
+    mock_wrapper.run_command.side_effect = KeyboardInterrupt()
+    mock_wrapper.interrupt.return_value = ""
+    kernel.wrapper = mock_wrapper
+    kernel.do_execute_direct("sleep 100")
+    mock_wrapper.interrupt.assert_called_once()
+
+
+def test_do_execute_direct_eof_calls_print_with_child_before() -> None:
+    kernel = get_kernel(_TestKernel)
+    mock_wrapper = MagicMock()
+    mock_wrapper.child.before = "output before eof"
+    mock_wrapper.run_command.side_effect = EOF("eof")
+    kernel.wrapper = mock_wrapper
+    with patch.object(kernel, "Print") as mock_print:
+        kernel.do_execute_direct("bad command")
+    mock_print.assert_called_once_with("output before eof")
+
+
+def test_do_execute_direct_eof_calls_terminate() -> None:
+    kernel = get_kernel(_TestKernel)
+    mock_wrapper = MagicMock()
+    mock_wrapper.child.before = ""
+    mock_wrapper.run_command.side_effect = EOF("eof")
+    kernel.wrapper = mock_wrapper
+    kernel.do_execute_direct("bad command")
+    mock_wrapper.terminate.assert_called_once()
+
+
+def test_do_execute_direct_eof_terminate_exception_is_swallowed() -> None:
+    """If wrapper.terminate() raises, the exception must be silently caught."""
+    kernel = get_kernel(_TestKernel)
+    mock_wrapper = MagicMock()
+    mock_wrapper.child.before = ""
+    mock_wrapper.run_command.side_effect = EOF("eof")
+    mock_wrapper.terminate.side_effect = RuntimeError("terminate failed")
+    kernel.wrapper = mock_wrapper
+    kernel.do_execute_direct("bad command")  # must not raise
+
+
+def test_do_execute_direct_eof_calls_restart_kernel() -> None:
+    kernel = get_kernel(_TestKernel)
+    mock_wrapper = MagicMock()
+    mock_wrapper.child.before = ""
+    mock_wrapper.run_command.side_effect = EOF("eof")
+    kernel.wrapper = mock_wrapper
+    with patch.object(kernel, "restart_kernel") as mock_restart:
+        kernel.do_execute_direct("bad command")
+    mock_restart.assert_called_once()
+
+
+def test_do_execute_direct_eof_calls_reload_magics() -> None:
+    kernel = get_kernel(_TestKernel)
+    mock_wrapper = MagicMock()
+    mock_wrapper.child.before = ""
+    mock_wrapper.run_command.side_effect = EOF("eof")
+    kernel.wrapper = mock_wrapper
+    with patch.object(kernel, "reload_magics") as mock_reload:
+        kernel.do_execute_direct("bad command")
+    mock_reload.assert_called_once()
+
+
+def test_do_execute_direct_eof_sets_error_kernel_resp() -> None:
+    kernel = get_kernel(_TestKernel)
+    mock_wrapper = MagicMock()
+    mock_wrapper.child.before = ""
+    mock_wrapper.run_command.side_effect = EOF("eof")
+    kernel.wrapper = mock_wrapper
+    kernel.do_execute_direct("bad command")
+    assert kernel.kernel_resp["status"] == "error"
+    assert kernel.kernel_resp["evalue"] == "End of File"
+    assert kernel.kernel_resp["traceback"] == "End of File"
+
+
+def test_do_execute_direct_generic_exception_calls_error_method() -> None:
+    kernel = get_kernel(_TestKernel)
+    mock_wrapper = MagicMock()
+    mock_wrapper.run_command.side_effect = ValueError("something went wrong")
+    kernel.wrapper = mock_wrapper
+    with patch.object(kernel, "Error") as mock_error:
+        kernel.do_execute_direct("bad command")
+    mock_error.assert_called_once_with("something went wrong")
+
+
+def test_do_execute_direct_generic_exception_sets_error_kernel_resp() -> None:
+    kernel = get_kernel(_TestKernel)
+    mock_wrapper = MagicMock()
+    mock_wrapper.run_command.side_effect = ValueError("boom")
+    kernel.wrapper = mock_wrapper
+    kernel.do_execute_direct("bad command")
+    assert kernel.kernel_resp["status"] == "error"
+    assert "boom" in kernel.kernel_resp["evalue"]
+
+
+def test_do_execute_direct_nonzero_exitcode_sets_error_kernel_resp() -> None:
+    kernel = get_kernel(_TestKernel)
+    mock_wrapper = MagicMock()
+    mock_wrapper.run_command.return_value = ""
+    kernel.wrapper = mock_wrapper
+    with patch.object(kernel, "check_exitcode", return_value=(1, ["traceback line"])):
+        kernel.do_execute_direct("bad command")
+    assert kernel.kernel_resp["status"] == "error"
+    assert kernel.kernel_resp["evalue"] == "1"
+    assert kernel.kernel_resp["traceback"] == ["traceback line"]
 
 
 # ---------------------------------------------------------------------------

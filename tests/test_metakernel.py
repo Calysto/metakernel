@@ -339,6 +339,27 @@ def test_error_display_redirect_to_log() -> None:
     kernel.redirect_to_log = False
 
 
+class TestErrorDisplayKwargs:
+    def test_kwarg_non_string_value_routes_to_display(self) -> None:
+        """A non-string kwarg value is passed directly to Display as (key, value)."""
+        kernel = get_kernel()
+        display_calls: list[Any] = []
+        kernel.Display = lambda *args, **kwargs: display_calls.append(args)  # type: ignore[method-assign]
+        kernel.Error_display(item=99)
+        assert display_calls == [("item", 99)]
+
+    def test_kwarg_string_value_populates_msg_dict(self) -> None:
+        """A string kwarg value is collected into msg_dict and forwarded to format_message."""
+        kernel = get_kernel()
+        kernel.redirect_to_log = True
+        clear_log_text(kernel)
+        kernel.Error_display("prefix", label="world")
+        text = get_log_text(kernel)
+        # msg_dict is passed as a positional arg to format_message, so its repr appears
+        assert "{'label': 'world'}" in text
+        kernel.redirect_to_log = False
+
+
 def test_do_execute_meta_direct() -> None:
     kernel = get_kernel(EvalKernel)
     assert kernel.do_execute_meta("reset") == "RESET"
@@ -551,6 +572,101 @@ class TestPostExecuteSilent:
         assert kernel.kernel_resp["status"] == "error"
 
 
+class TestDoExecute:
+    def test_page_guiref_early_return(self) -> None:
+        """Code containing _usage.page_guiref returns immediately without executing."""
+        kernel = get_kernel(EvalKernel)
+        resp = asyncio.run(kernel.do_execute("_usage.page_guiref()", False))
+        assert resp["status"] == "ok"
+        assert "_usage.page_guiref()" not in kernel.hist_cache
+
+    def test_empty_code_early_return(self) -> None:
+        """Whitespace-only code returns early without calling do_execute_direct."""
+        kernel = get_kernel(EvalKernel)
+        with unittest.mock.patch.object(kernel, "do_execute_direct") as mock_exec:
+            resp = asyncio.run(kernel.do_execute("   \n  ", False))
+        assert resp["status"] == "ok"
+        mock_exec.assert_not_called()
+
+    def test_store_history_false_skips_hist_cache(self) -> None:
+        """Code executed with store_history=False is not appended to hist_cache."""
+        kernel = get_kernel(EvalKernel)
+        asyncio.run(kernel.do_execute("1 + 1", silent=False, store_history=False))
+        assert "1 + 1" not in kernel.hist_cache
+
+    def test_store_history_true_appends_to_hist_cache(self) -> None:
+        """Code executed with store_history=True is appended to hist_cache."""
+        kernel = get_kernel(EvalKernel)
+        asyncio.run(kernel.do_execute("1 + 1", silent=False, store_history=True))
+        assert "1 + 1" in kernel.hist_cache
+
+    def test_cell_help_magic_uses_level_1(self) -> None:
+        """Cell-level help (cd??) passes level=1 to get_help_on."""
+        kernel = get_kernel(EvalKernel)
+        with unittest.mock.patch.object(
+            kernel, "get_help_on", return_value="cell help text"
+        ) as mock_help:
+            asyncio.run(kernel.do_execute("cd??", False))
+        mock_help.assert_called_once_with("cd??", 1)
+
+    def test_help_magic_dict_result_stored_directly_in_payload(self) -> None:
+        """When get_help_on returns a dict, payload data contains the dict directly."""
+        kernel = get_kernel(EvalKernel)
+        help_dict = {"text/plain": "plain help", "text/html": "<b>help</b>"}
+        with unittest.mock.patch.object(kernel, "get_help_on", return_value=help_dict):
+            resp = asyncio.run(kernel.do_execute("cd?", False))
+        assert resp["payload"][0]["data"] == help_dict
+
+    def test_help_magic_falsy_result_leaves_payload_empty(self) -> None:
+        """When get_help_on returns a falsy value, the payload list stays empty."""
+        kernel = get_kernel(EvalKernel)
+        with unittest.mock.patch.object(kernel, "get_help_on", return_value=""):
+            resp = asyncio.run(kernel.do_execute("cd?", False))
+        assert resp["payload"] == []
+
+    def test_magic_evaluate_false_skips_do_execute_direct(self) -> None:
+        """When a magic sets evaluate=False, do_execute_direct is not called."""
+        kernel = get_kernel(EvalKernel)
+        with unittest.mock.patch.object(kernel, "do_execute_direct") as mock_exec:
+            with tempfile.NamedTemporaryFile(suffix=".txt", delete=False) as f:
+                fname = f.name
+            try:
+                asyncio.run(kernel.do_execute(f"%%file {fname}\nsome_code", False))
+            finally:
+                if os.path.exists(fname):
+                    os.remove(fname)
+        mock_exec.assert_not_called()
+
+
+class TestDoShutdown:
+    def test_no_hist_file_skips_file_write(self) -> None:
+        """When hist_file is falsy, do_shutdown does not attempt to write a file."""
+        kernel = get_kernel(EvalKernel)
+        kernel.hist_file = ""
+        # open("") would raise OSError, so a successful return proves the branch was skipped
+        resp = asyncio.run(kernel.do_shutdown(False))
+        assert resp == {"status": "ok", "restart": False}
+
+    def test_restart_true_calls_restart_kernel_and_reload_magics(self) -> None:
+        """With restart=True, restart_kernel() and reload_magics() are both called."""
+        kernel = get_kernel(EvalKernel)
+        kernel.hist_file = ""
+        with unittest.mock.patch.object(kernel, "restart_kernel") as mock_restart:
+            with unittest.mock.patch.object(kernel, "reload_magics") as mock_reload:
+                resp = asyncio.run(kernel.do_shutdown(True))
+        mock_restart.assert_called_once()
+        mock_reload.assert_called_once()
+        assert resp == {"status": "ok", "restart": True}
+
+    def test_restart_false_skips_restart_kernel(self) -> None:
+        """With restart=False, restart_kernel() is not called."""
+        kernel = get_kernel(EvalKernel)
+        kernel.hist_file = ""
+        with unittest.mock.patch.object(kernel, "restart_kernel") as mock_restart:
+            asyncio.run(kernel.do_shutdown(False))
+        mock_restart.assert_not_called()
+
+
 class TestDoIsComplete:
     def test_regular_code_ending_with_newline_is_complete(self) -> None:
         kernel = get_kernel()
@@ -662,6 +778,50 @@ class TestPrintWriteErrorRedirectToLog:
         assert msg_type == "stream"
         assert content["name"] == "stderr"
         assert "oops" in content["text"]
+
+
+class TestCallMagic:
+    def test_delegates_to_get_magic(self) -> None:
+        """call_magic delegates to get_magic and returns its result."""
+        kernel = get_kernel()
+        sentinel = object()
+        with unittest.mock.patch.object(
+            kernel, "get_magic", return_value=sentinel
+        ) as mock_get:
+            result = kernel.call_magic("%lsmagic")
+        mock_get.assert_called_once_with("%lsmagic")
+        assert result is sentinel
+
+
+class TestSendShellResponse:
+    def test_publishes_text_as_plain_display_data(self) -> None:
+        """_send_shell_response calls publish_display_data with the text/plain content."""
+        kernel = get_kernel()
+        with unittest.mock.patch(
+            "metakernel._metakernel.publish_display_data"
+        ) as mock_pub:
+            kernel._send_shell_response(None, "stdout", {"text": "hello"})
+        mock_pub.assert_called_once_with({"text/plain": "hello"})
+
+
+class TestClearOutput:
+    def test_default_sends_wait_false(self) -> None:
+        """clear_output() sends wait=False by default."""
+        kernel = get_kernel()
+        with unittest.mock.patch.object(kernel, "send_response") as mock_send:
+            asyncio.run(kernel.clear_output())
+        mock_send.assert_called_once_with(
+            kernel.iopub_socket, "clear_output", {"wait": False}
+        )
+
+    def test_wait_true_sends_wait_true(self) -> None:
+        """clear_output(wait=True) sends wait=True."""
+        kernel = get_kernel()
+        with unittest.mock.patch.object(kernel, "send_response") as mock_send:
+            asyncio.run(kernel.clear_output(wait=True))
+        mock_send.assert_called_once_with(
+            kernel.iopub_socket, "clear_output", {"wait": True}
+        )
 
 
 def teardown() -> None:
