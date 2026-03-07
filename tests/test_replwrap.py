@@ -79,6 +79,9 @@ class REPLWrapTestCase(unittest.TestCase):
         res = repl.run_command("echo $HOME")
         assert res.startswith("/"), res
 
+    @pytest.mark.skipif(
+        sys.platform != "linux", reason="pexpect with python not reliable on non-Linux"
+    )
     def test_python(self) -> None:
         p = replwrap.python(sys.executable)
         res = p.run_command("4+7")

@@ -79,10 +79,6 @@ class REPLWrapper:
             self.child.setecho(False)
             self.child.waitnoecho()
 
-            # If the child refuses to disable echo, then we honor it.
-            if self.child.echo:
-                echo = True
-
         self.echo = echo
         self.prompt_emit_cmd = prompt_emit_cmd
         self._force_prompt_on_continuation = force_prompt_on_continuation
