@@ -246,11 +246,17 @@ class REPLWrapper:
 
         # Command was fully submitted, now wait for the next prompt
         if self._expect_prompt(timeout=timeout) == 1:
-            # We got the continuation prompt - command was incomplete
-            self.interrupt(continuation=True)
-            raise ValueError(
-                "Continuation prompt found - input was incomplete:\n" + command
-            )
+            # Got a continuation prompt - could be a soft continuation (complete block
+            # awaiting execution, e.g. `if True:\n    print('hi')`) or a hard
+            # continuation (genuinely incomplete input, e.g. `if True:`).
+            # Send an empty line to resolve soft continuations and check again.
+            self.sendline("")
+            if self._expect_prompt(timeout=timeout) == 1:
+                # Still a continuation prompt - input was genuinely incomplete
+                self.interrupt(continuation=True)
+                raise ValueError(
+                    "Continuation prompt found - input was incomplete:\n" + command
+                )
 
         if self._stream_handler or self._line_handler:
             return ""

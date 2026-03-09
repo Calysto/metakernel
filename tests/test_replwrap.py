@@ -98,6 +98,40 @@ class REPLWrapTestCase(unittest.TestCase):
         res = p.run_command("for a in range(3): print(a)\n")
         assert res.strip().splitlines() == ["0", "1", "2"]
 
+    def test_soft_continuation(self) -> None:
+        """Regression test for https://github.com/Calysto/metakernel/issues/283.
+
+        A complete multi-line block (soft continuation) should not raise ValueError.
+        Only a truly incomplete command (hard continuation) should raise ValueError.
+        """
+        if platform.python_implementation() == "PyPy":
+            raise unittest.SkipTest(
+                "This test fails on PyPy because of REPL differences"
+            )
+
+        if platform.system() == "Darwin":
+            raise unittest.SkipTest(
+                "This test fails on macOS because of REPL differences"
+            )
+
+        p = replwrap.python(sys.executable)
+
+        # Soft continuation: complete block without trailing newline should succeed
+        res = p.run_command("if True:\n    print('hi')")
+        assert res.strip() == "hi", f"Expected 'hi', got {res!r}"
+
+        # Hard continuation: truly incomplete command should still raise ValueError
+        try:
+            p.run_command("if True:")
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("Didn't raise ValueError for incomplete input")
+
+        # REPL should still work after the incomplete input
+        res = p.run_command("1 + 1")
+        assert res.strip() == "2"
+
     def test_bracketed_paste(self) -> None:
         # Readline paste bracketing is easily toggled in bash, but can be harder elsewhere
         # This tests that run_command() still works with it enabled (the default for readline,
