@@ -120,9 +120,10 @@ class REPLWrapTestCase(unittest.TestCase):
         res = p.run_command("if True:\n    print('hi')")
         assert res.strip() == "hi", f"Expected 'hi', got {res!r}"
 
-        # Hard continuation: truly incomplete command should still raise ValueError
+        # Hard continuation: unclosed parenthesis keeps continuation prompt even after
+        # an empty line, so it should still raise ValueError
         try:
-            p.run_command("if True:")
+            p.run_command("(1 +")
         except ValueError:
             pass
         else:
