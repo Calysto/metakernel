@@ -21,6 +21,35 @@ from tests.utils import (
 )
 
 
+def test_local_magics_dir_loaded() -> None:
+    """Magics placed in ~/.ipython/metakernel/magics/ are discovered at startup."""
+    magic_src = """
+from metakernel import Magic, MetaKernel
+
+class LocalTestMagic(Magic):
+    def line_local_test_magic(self, arg=""):
+        '''
+        %local_test_magic - a magic installed from the local magics directory
+        '''
+        self.kernel.Print("local_test_magic ran")
+
+def register_magics(kernel: MetaKernel) -> None:
+    kernel.register_magics(LocalTestMagic)
+"""
+    with tempfile.TemporaryDirectory() as local_magics_dir:
+        magic_path = os.path.join(local_magics_dir, "local_test_magic_magic.py")
+        with open(magic_path, "w") as f:
+            f.write(magic_src)
+
+        with unittest.mock.patch(
+            "metakernel._metakernel.get_local_magics_dir",
+            return_value=local_magics_dir,
+        ):
+            kernel = get_kernel()
+
+        assert "local_test_magic" in kernel.line_magics
+
+
 def test_magics() -> None:
     kernel = get_kernel()
     for magic in [

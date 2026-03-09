@@ -30,6 +30,7 @@ Features
 
    source/installation
    source/new_kernel
+   source/new_magic
    source/api
    source/info
 
@@ -48,6 +49,12 @@ How to install Jupyter Kernel.
 --------------------------------------------------
 
 How to build and package a new Jupyter kernel using MetaKernel.
+
+
+`Creating a New Magic <source/new_magic.html>`_
+------------------------------------------------
+
+How to write, install, and distribute custom magics for MetaKernel kernels.
 
 
 `Information <source/info.html>`_
