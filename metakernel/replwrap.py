@@ -327,7 +327,7 @@ def bash(command: str = "bash", prompt_regex: str = "[$#]") -> REPLWrapper:
     # environment variable, but not when bash displays the prompt.
     ps1 = PEXPECT_PROMPT[:5] + r"\[\]" + PEXPECT_PROMPT[5:]
     ps2 = PEXPECT_CONTINUATION_PROMPT[:5] + r"\[\]" + PEXPECT_CONTINUATION_PROMPT[5:]
-    prompt_change_cmd: str | None = f"PS1='{ps1}' PS2='{ps2}' PROMPT_COMMAND=''"
+    prompt_change_cmd: str | None = f"PS0='' PS1='{ps1}' PS2='{ps2}' PROMPT_COMMAND=''"
 
     if os.name == "nt":
         prompt_regex = "__repl_ready__"

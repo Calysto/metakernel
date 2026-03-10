@@ -74,7 +74,7 @@ class REPLWrapTestCase(unittest.TestCase):
         repl = replwrap.REPLWrapper(
             child,
             re.compile("[$#]"),
-            "PS1='{0}' PS2='{1}' PROMPT_COMMAND='' TERM='dumb'",
+            "PS0='' PS1='{0}' PS2='{1}' PROMPT_COMMAND='' TERM='dumb'",
         )
 
         res = repl.run_command("echo $HOME")
