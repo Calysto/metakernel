@@ -308,7 +308,7 @@ def python(command: str = "python") -> REPLWrapper:
         command,
         ">>> ",
         "import sys; sys.ps1={0!r}; sys.ps2={1!r}",
-        extra_env=dict(TERM="dumb"),
+        extra_env=dict(PYTHON_BASIC_REPL="1"),
     )
 
 
