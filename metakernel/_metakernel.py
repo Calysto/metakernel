@@ -873,12 +873,27 @@ class MetaKernelApp(IPKernelApp):
 
         class KernelInstallerApp(Application):
             kernel_class = self.kernel_class
+            display_name: str | None = None
 
             def initialize(self, argv: Any = None) -> None:
-                self.argv = argv
+                filtered: list[str] = []
+                args = list(argv or [])
+                i = 0
+                while i < len(args):
+                    if args[i].startswith("--display-name="):
+                        self.display_name = args[i].split("=", 1)[1]
+                    elif args[i] == "--display-name" and i + 1 < len(args):
+                        self.display_name = args[i + 1]
+                        i += 1
+                    else:
+                        filtered.append(args[i])
+                    i += 1
+                self.argv = filtered
 
             def start(self) -> None:
                 kernel_spec = self.kernel_class().kernel_json
+                if self.display_name is not None:
+                    kernel_spec["display_name"] = self.display_name
                 with TemporaryDirectory() as td:
                     dirname = os.path.join(td, kernel_spec["name"])
                     os.mkdir(dirname)
