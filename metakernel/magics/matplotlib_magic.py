@@ -39,8 +39,10 @@ class MatplotlibMagic(Magic):
 
         importlib.reload(matplotlib)
 
-        if backend == "notebook":
+        if backend in ("notebook", "nbagg"):
             backend = "nbagg"
+        elif backend == "inline":
+            backend = "agg"
 
         matplotlib.use(backend)
 

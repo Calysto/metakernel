@@ -40,6 +40,16 @@ def test_matplotlib_magic_notebook_alias() -> None:
     assert matplotlib.get_backend().lower() == "nbagg"
 
 
+def test_matplotlib_magic_inline_alias() -> None:
+    """'inline' is an alias for the 'agg' backend (issue #227)."""
+    import matplotlib
+
+    kernel = get_kernel(EvalKernel)
+    asyncio.run(kernel.do_execute("%matplotlib inline", False))
+
+    assert matplotlib.get_backend().lower() == "agg"
+
+
 def test_matplotlib_magic_patches_ipython_display() -> None:
     """%matplotlib monkeypatches IPython.display.display with metakernel's."""
     import IPython.display
