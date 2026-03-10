@@ -117,7 +117,7 @@ class REPLWrapper:
             self.child.readline()
 
     def set_prompt(self, prompt_regex: str, prompt_change_cmd: str) -> None:
-        self.child.expect(prompt_regex)
+        self.child.expect([r"[\s\S]+"])
         self.sendline(prompt_change_cmd)
         self.prompt_change_cmd = prompt_change_cmd
 
