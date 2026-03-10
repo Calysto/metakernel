@@ -2,6 +2,46 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.32.0
+
+([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.31.0...88ea17cb2c596d745713cea0f875346abca468c0))
+
+### Enhancements made
+
+- Add --display-name option to kernel install subcommand [#353](https://github.com/Calysto/metakernel/pull/353) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+
+### Bugs fixed
+
+- Fix %matplotlib inline raising ValueError [#352](https://github.com/Calysto/metakernel/pull/352) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Fix soft continuation in REPLWrapper.run_command() [#350](https://github.com/Calysto/metakernel/pull/350) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Fix python helper function [#349](https://github.com/Calysto/metakernel/pull/349) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter), [@ellert](https://github.com/ellert))
+
+### Maintenance and upkeep improvements
+
+- Remove virtualenv pin [#354](https://github.com/Calysto/metakernel/pull/354) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Add branch-coverage tests for Activity.handle_results() and REPLWrapper [#348](https://github.com/Calysto/metakernel/pull/348) ([@blink1073](https://github.com/blink1073), [@claude](https://github.com/claude), [@codecov-commenter](https://github.com/codecov-commenter))
+- Finish typing for tests [#347](https://github.com/Calysto/metakernel/pull/347) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Add type annotations to test helpers and resolve mypy errors [#346](https://github.com/Calysto/metakernel/pull/346) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Add typed wrappers for register_line/cell_magic and annotate all magics [#345](https://github.com/Calysto/metakernel/pull/345) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Adopt zizmor for GitHub Actions static analysis [#344](https://github.com/Calysto/metakernel/pull/344) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Fix testpaths for newer pytest versions [#343](https://github.com/Calysto/metakernel/pull/343) ([@ellert](https://github.com/ellert), [@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Add typed get_ipython() helper and resolve all mypy errors in magics [#341](https://github.com/Calysto/metakernel/pull/341) ([@blink1073](https://github.com/blink1073), [@claude](https://github.com/claude), [@codecov-commenter](https://github.com/codecov-commenter))
+
+### Documentation improvements
+
+- Add new_magic.rst: guide for creating custom magics [#351](https://github.com/Calysto/metakernel/pull/351) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2026-03-03&to=2026-03-10&type=c))
+
+@blink1073 ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2026-03-03..2026-03-10&type=Issues)) | @claude ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aclaude+updated%3A2026-03-03..2026-03-10&type=Issues)) | @codecov-commenter ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Acodecov-commenter+updated%3A2026-03-03..2026-03-10&type=Issues)) | @ellert ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aellert+updated%3A2026-03-03..2026-03-10&type=Issues))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.31.0
 
 ([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.30.4...29bf8af248a61276d8ff3c4903e32ce274c16d47))
@@ -65,8 +105,6 @@ See [our definition of contributors](https://github-activity.readthedocs.io/en/l
 ([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2025-11-05&to=2026-03-03&type=c))
 
 @blink1073 ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2025-11-05..2026-03-03&type=Issues)) | @claude ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aclaude+updated%3A2025-11-05..2026-03-03&type=Issues)) | @codecov-commenter ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Acodecov-commenter+updated%3A2025-11-05..2026-03-03&type=Issues)) | @morlic ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Amorlic+updated%3A2025-11-05..2026-03-03&type=Issues)) | @twaclaw ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Atwaclaw+updated%3A2025-11-05..2026-03-03&type=Issues))
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.30.4
 
