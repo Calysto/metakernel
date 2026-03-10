@@ -91,6 +91,57 @@ class TestMetaKernelAppSubcommands:
         installer.initialize(["--user"])
         assert installer.argv == ["--user"]
 
+    def test_install_app_initialize_extracts_display_name_space(self) -> None:
+        app = MetaKernelApp()
+        KernelInstallerApp, _ = app.subcommands["install"]
+        installer = KernelInstallerApp()
+        installer.initialize(["--user", "--display-name", "My Kernel"])
+        assert installer.display_name == "My Kernel"
+        assert installer.argv == ["--user"]
+
+    def test_install_app_initialize_extracts_display_name_equals(self) -> None:
+        app = MetaKernelApp()
+        KernelInstallerApp, _ = app.subcommands["install"]
+        installer = KernelInstallerApp()
+        installer.initialize(["--display-name=My Kernel", "--user"])
+        assert installer.display_name == "My Kernel"
+        assert installer.argv == ["--user"]
+
+    def test_install_start_applies_display_name(self) -> None:
+        kernel_json = {
+            "argv": ["python", "-m", "test_kernel"],
+            "display_name": "Test Kernel",
+            "language": "test",
+            "name": "test-kernel",
+        }
+        mock_kernel_class = MagicMock()
+        mock_kernel_class.return_value.kernel_json = kernel_json
+        mock_kernel_class.__module__ = "metakernel"
+
+        app = MetaKernelApp()
+        KernelInstallerApp, _ = app.subcommands["install"]
+        KernelInstallerApp.kernel_class = mock_kernel_class
+
+        installer = KernelInstallerApp()
+        installer.initialize(["--user", "--display-name", "Custom Name"])
+
+        written_spec: dict[str, object] | None = None
+        original_dump = __import__("json").dump
+
+        def capture_dump(obj: object, f: object, **kwargs: object) -> None:
+            nonlocal written_spec
+            written_spec = obj  # type: ignore[assignment]
+            original_dump(obj, f, **kwargs)
+
+        with (
+            patch("subprocess.check_call"),
+            patch("json.dump", side_effect=capture_dump),
+        ):
+            installer.start()
+
+        assert written_spec is not None
+        assert written_spec["display_name"] == "Custom Name"
+
     def test_install_start_calls_kernelspec_install(self) -> None:
         kernel_json = {
             "argv": ["python", "-m", "test_kernel"],
