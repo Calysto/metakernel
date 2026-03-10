@@ -51,17 +51,10 @@ test-all = [
     "pydot",             # dot magic
 ]
 docs = [
-    "jupyter-sphinx",
-    "myst-parser",
-    "nbsphinx",
-    "numpydoc",
-    "pydot",
-    "pypandoc",
-    "recommonmark",
-    "sphinx",
-    "sphinx-bootstrap-theme",
-    "sphinx-rtd-theme",
-    "sphinxcontrib-napoleon",
+    "mkdocs>=1.5",
+    "mkdocs-material>=9.0",
+    "mkdocs-jupyter>=0.24",
+    "mkdocstrings[python]>=0.24",
 ]
 coverage = [
     { include-group = "test-all" },
@@ -118,7 +111,8 @@ enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
 warn_unreachable = true
 exclude = [
     "hatch_build.*\\.py",
-    "metakernel_echo/.*"
+    "metakernel_echo/.*",
+    "site/.*",
 ]
 
 [[tool.mypy.overrides]]

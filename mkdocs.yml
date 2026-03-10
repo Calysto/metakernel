@@ -1,0 +1,45 @@
+site_name: MetaKernel
+site_description: A Jupyter kernel base class in Python
+repo_url: https://github.com/Calysto/metakernel
+repo_name: Calysto/metakernel
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.top
+    - content.code.copy
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+
+plugins:
+  - search
+  - mkdocs-jupyter:
+      include: ["*.ipynb"]
+      execute: false
+      ignore_h1_titles: true
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: numpy
+            show_source: true
+            members_order: source
+            show_root_heading: true
+            show_category_heading: true
+            show_signature_annotations: true
+
+markdown_extensions:
+  - pymdownx.snippets:
+      base_path: ["."]
+  - def_list
+
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Example Notebook: echo_kernel.ipynb
+  - Creating a Kernel: new_kernel.md
+  - Creating a Magic: new_magic.md
+  - API Reference: api.md
