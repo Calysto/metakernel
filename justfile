@@ -39,9 +39,13 @@ cover *args="":
     uv run coverage annotate
     -uv run --group coverage ipcluster stop
 
-# Build Sphinx HTML docs
+# Build MkDocs HTML docs
 docs:
-    uv run --group docs sphinx-build -W -d docs/_build/doctrees docs docs/_build/html
+    uv run --group docs mkdocs build
+
+# Serve MkDocs docs locally
+docs-serve:
+    uv run --group docs mkdocs serve
 
 # Regenerate magics/README.md from magic docstrings
 help:
