@@ -125,12 +125,12 @@ class TestMetaKernelAppSubcommands:
         installer = KernelInstallerApp()
         installer.initialize(["--user", "--display-name", "Custom Name"])
 
-        written_spec = None
+        written_spec: dict[str, object] | None = None
         original_dump = __import__("json").dump
 
         def capture_dump(obj: object, f: object, **kwargs: object) -> None:
             nonlocal written_spec
-            written_spec = obj
+            written_spec = obj  # type: ignore[assignment]
             original_dump(obj, f, **kwargs)
 
         with (
