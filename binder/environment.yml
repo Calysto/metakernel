@@ -8,5 +8,4 @@ dependencies:
   - jupyter
   - jupyterlab
   - pip:
-    - calysto_processing
     - calysto_scheme

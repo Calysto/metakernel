@@ -4,19 +4,9 @@ set -e
 # Install metakernel with all extras and local kernels
 pip install ".[activity,parallel]" ./metakernel_python ./metakernel_echo
 
-# Install Processing 3 (calysto_processing requires the Processing 3 CLI)
-PROCESSING_DIR="${HOME}/processing"
-curl -fsSL "https://github.com/processing/processing/releases/download/processing-0270-3.5.4/processing-3.5.4-linux64.tgz" -o /tmp/processing.tgz
-tar -xzf /tmp/processing.tgz -C "${HOME}"
-mv "${HOME}/processing-3.5.4" "${PROCESSING_DIR}"
-rm /tmp/processing.tgz
-ln -s "${PROCESSING_DIR}/processing-java" "$(dirname $(which python))/processing-java"
-
-# Install calysto_processing kernel spec
-python -m calysto_processing install --user
-
-# Remove SAS example notebook
+# Remove notebooks for kernels not available in this environment
 rm -f examples/SAS_metakernel_example.ipynb
+rm -f "examples/Calysto Processing.ipynb"
 
 # Clean up pip cache
 pip cache purge
