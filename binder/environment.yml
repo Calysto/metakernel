@@ -1,0 +1,13 @@
+name: metakernel-binder
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - jupyter
+  - jupyterlab
+  - pip:
+    - calysto_processing
+    - calysto_scheme
+    - sas_kernel

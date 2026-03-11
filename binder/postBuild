@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+
+# Install metakernel with all extras and local kernels
+pip install ".[activity,parallel]" ./metakernel_python ./metakernel_echo
+
+# Clean up pip cache
+pip cache purge
+
+# Clean up conda cache
+conda clean --all --yes
