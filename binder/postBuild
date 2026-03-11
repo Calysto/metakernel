@@ -4,6 +4,9 @@ set -e
 # Install metakernel with all extras and local kernels
 pip install ".[activity,parallel]" ./metakernel_python ./metakernel_echo
 
+# Install calysto_processing kernel spec
+python -m calysto_processing install --user
+
 # Clean up pip cache
 pip cache purge
 

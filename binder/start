@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Start ipcluster in the background before launching the notebook server
+ipcluster start -n 10 --ip=10.0.0.190 &
+
+exec "$@"
