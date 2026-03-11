@@ -17,6 +17,9 @@ export PATH="${PROCESSING_DIR}:${PATH}"
 # Install calysto_processing kernel spec
 python -m calysto_processing install --user
 
+# Remove SAS example notebook
+rm -f examples/SAS_metakernel_example.ipynb
+
 # Clean up pip cache
 pip cache purge
 

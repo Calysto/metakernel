@@ -10,4 +10,3 @@ dependencies:
   - pip:
     - calysto_processing
     - calysto_scheme
-    - sas_kernel
