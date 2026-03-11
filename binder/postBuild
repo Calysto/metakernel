@@ -9,7 +9,7 @@ PROCESSING_VERSION="4.5.2"
 PROCESSING_DIR="${HOME}/processing"
 curl -fsSL "https://github.com/processing/processing4/releases/download/processing-1313-${PROCESSING_VERSION}/processing-${PROCESSING_VERSION}-linux-x64-portable.zip" -o /tmp/processing.zip
 unzip -q /tmp/processing.zip -d "${HOME}"
-mv "${HOME}/processing-${PROCESSING_VERSION}" "${PROCESSING_DIR}"
+mv "${HOME}/Processing" "${PROCESSING_DIR}"
 rm /tmp/processing.zip
 echo "export PATH=\"${PROCESSING_DIR}:\$PATH\"" >> "${HOME}/.bashrc"
 export PATH="${PROCESSING_DIR}:${PATH}"
