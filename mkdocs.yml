@@ -39,7 +39,7 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Installation: installation.md
-  - Example Notebook: echo_kernel.ipynb
+  - Example Notebook: MetaKernel Echo Demo.ipynb
   - Creating a Kernel: new_kernel.md
   - Creating a Magic: new_magic.md
   - API Reference: api.md
