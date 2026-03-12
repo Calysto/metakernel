@@ -6,7 +6,6 @@ MANIFEST
 docs/_build/
 site/
 examples/.ipynb_checkpoints
-demo/
 examples/temp.txt
 *~
 .*.swp

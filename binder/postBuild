@@ -4,12 +4,8 @@ set -e
 # Install metakernel with all extras and local kernels
 pip install --no-deps . ./metakernel_python ./metakernel_echo
 
-# Create demo directory with selected notebooks
-mkdir -p demo
-cp "examples/MetaKernel Echo Demo.ipynb" demo/
-cp "examples/Jigsaw in IPython.ipynb" demo/
-cp "examples/MetaKernel Python Demo.ipynb" demo/
-cp examples/*.png demo/
+# Enable ipyparallel server extension
+jupyter server extension enable ipyparallel --sys-prefix
 
 # Clean up pip cache
 pip cache purge
