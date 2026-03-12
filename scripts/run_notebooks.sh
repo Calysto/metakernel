@@ -27,8 +27,9 @@ run_notebook() {
     local notebook="$1"
     local kernel="$2"
     local with_pkg="$3"
+    shift 3
     echo "Running: $notebook (kernel: $kernel)"
-    uv run --with nbconvert --with "$with_pkg" jupyter nbconvert \
+    uv run --with nbconvert --with "$with_pkg" "$@" jupyter nbconvert \
         --to notebook \
         --execute \
         --inplace \
@@ -38,7 +39,7 @@ run_notebook() {
 }
 
 run_notebook "Jigsaw in IPython.ipynb"          "python3"          "jupyter"
-run_notebook "Mandelbrot.ipynb"                  "calysto_scheme"   "calysto-scheme"
+run_notebook "Mandelbrot.ipynb"                  "calysto_scheme"   "calysto-scheme"   --extra parallel
 uv run --with nbconvert jupyter nbconvert --to notebook --inplace \
     --ClearOutputPreprocessor.enabled=True \
     "$EXAMPLES_DIR/Mandelbrot.ipynb"
