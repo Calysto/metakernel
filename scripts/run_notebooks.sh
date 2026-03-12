@@ -6,9 +6,9 @@ EXAMPLES_DIR="$REPO_DIR/examples"
 
 # Start ipcluster
 echo "Starting ipcluster..."
-uv run --with ipyparallel ipcluster start --daemonize --n=5
+uv run --extra parallel ipcluster start --daemonize --n=5
 echo "Waiting for ipcluster to be ready..."
-uv run --with ipyparallel python - <<'EOF'
+uv run --extra parallel python - <<'EOF'
 import ipyparallel as ipp, time, sys
 for _ in range(60):
     try:
@@ -48,6 +48,6 @@ run_notebook "Processing Magic in IPython.ipynb" "python3"          "jupyter"
 run_notebook "Tutor Magic in IPython.ipynb"      "python3"          "jupyter"
 
 echo "Stopping ipcluster..."
-uv run --with ipyparallel ipcluster stop
+uv run --extra parallel ipcluster stop
 
 echo "Done."
