@@ -24,16 +24,17 @@ virtual environment with `metakernel` in editable mode along with `metakernel_py
 Run `just` to list all recipes. The most common ones are:
 
 ```bash
-just install          # install for development
-just test             # core test suite (no cluster needed)
-just test-file <path> # run a single test file or test function
-just test-parallel    # full suite with ipcluster
-just cover            # run with coverage
-just docs             # build Sphinx HTML docs
-just help             # regenerate magics/README.md from docstrings
-just typing           # run mypy type checks
-just lint             # run ruff linter
-just clean            # remove build artifacts
+just install           # install for development
+just test              # core test suite (no cluster needed)
+just test-file <path>  # run a single test file or test function
+just test-parallel     # full suite with ipcluster
+just cover             # run with coverage
+just run-notebooks     # execute example notebooks
+just docs              # build MkDocs HTML docs
+just help              # regenerate magics/README.md from docstrings
+just typing            # run mypy type checks
+just lint              # run ruff linter
+just clean             # remove build artifacts
 ```
 
 ### Examples
@@ -81,6 +82,29 @@ just test-parallel
 ```
 
 This starts an ipcluster with 3 engines, runs all tests, and stops the cluster on exit.
+
+## Example notebooks
+
+The `examples/` directory contains demonstration notebooks for various MetaKernel-based kernels. All notebooks except `Calysto Processing.ipynb` and `SAS_metakernel_example.ipynb` are executed as part of CI.
+
+To run them locally:
+
+```bash
+just run-notebooks
+```
+
+This script (`scripts/run_notebooks.sh`) starts an ipcluster with 5 engines (required by `Mandelbrot.ipynb` for parallel execution), runs each notebook via `jupyter nbconvert --execute`, and then stops the cluster. Each notebook is run with its appropriate kernel installed via `uv run --with`:
+
+| Notebook | Kernel | Package |
+| --- | --- | --- |
+| `Jigsaw in IPython.ipynb` | `python3` | `jupyter` |
+| `Mandelbrot.ipynb` | `calysto_scheme` | `calysto-scheme` |
+| `MetaKernel Echo Demo.ipynb` | `metakernel_echo` | `./metakernel_echo` |
+| `MetaKernel Python Demo.ipynb` | `metakernel_python` | `./metakernel_python` |
+| `Processing Magic in IPython.ipynb` | `python3` | `jupyter` |
+| `Tutor Magic in IPython.ipynb` | `python3` | `jupyter` |
+
+> **Note:** `Mandelbrot.ipynb` uses `n=30` rows and distributes work across cluster engines. The engine count must divide evenly into 30 — the script uses 5 engines (6 rows each).
 
 ## Building docs
 
