@@ -6,7 +6,7 @@ pip install --no-deps . ./metakernel_python ./metakernel_echo
 
 # Create demo directory with selected notebooks
 mkdir -p demo
-cp examples/echo_kernel.ipynb demo/
+cp "examples/MetaKernel Echo Demo.ipynb" demo/
 cp "examples/Jigsaw in IPython.ipynb" demo/
 cp "examples/MetaKernel Python Demo.ipynb" demo/
 cp examples/*.png demo/
