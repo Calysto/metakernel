@@ -9,6 +9,7 @@ mkdir -p demo
 cp examples/echo_kernel.ipynb demo/
 cp "examples/Jigsaw in IPython.ipynb" demo/
 cp "examples/Tutor Magic in IPython.ipynb" demo/
+cp examples/metakernel_python_demo.ipynb demo/
 
 # Clean up pip cache
 pip cache purge
