@@ -10,6 +10,7 @@ jupyter server extension enable ipyparallel --sys-prefix
 # Remove notebooks for kernels not available in this environment
 rm -f examples/SAS_metakernel_example.ipynb
 rm -f "examples/Calysto Processing.ipynb"
+rm -f examples/Mandelbrot.ipynb
 
 # Clean up pip cache
 pip cache purge

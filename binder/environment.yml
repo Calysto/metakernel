@@ -8,5 +8,4 @@ dependencies:
   - jupyterlab
   - ipyparallel
   - portalocker
-  - pip:
-    - calysto_scheme
+
