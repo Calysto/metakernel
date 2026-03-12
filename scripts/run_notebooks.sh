@@ -5,12 +5,13 @@ REPO_DIR="$(dirname "$0")/.."
 EXAMPLES_DIR="$REPO_DIR/examples"
 
 echo "Starting ipcluster..."
-# Install calysto_scheme kernel and start ipcluster in the same env
-# so engine processes can import calysto_scheme
+# Install calysto_scheme kernel and start ipcluster in the same env so
+# engine processes can import calysto_scheme. Run in background (no
+# --daemonize) so the uv overlay stays alive for the engine processes.
 uv run --extra parallel --with calysto-scheme bash -c "
     python -m calysto_scheme install --user &&
-    ipcluster start --daemonize --n=5
-"
+    ipcluster start --n=5
+" &
 echo "Waiting for ipcluster to be ready..."
 uv run --extra parallel python - <<'EOF'
 import ipyparallel as ipp, time, sys
