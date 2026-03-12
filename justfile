@@ -62,7 +62,7 @@ lint:
 
 # Run example notebooks (excludes Calysto Processing and SAS)
 run-notebooks:
-    bash run_notebooks.sh
+    bash scripts/run_notebooks.sh
 
 # Run pre-commit hook
 pre-commit *args="":

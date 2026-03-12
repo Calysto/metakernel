@@ -93,7 +93,7 @@ To run them locally:
 just run-notebooks
 ```
 
-This script (`run_notebooks.sh`) starts an ipcluster with 5 engines (required by `Mandelbrot.ipynb` for parallel execution), runs each notebook via `jupyter nbconvert --execute`, and then stops the cluster. Each notebook is run with its appropriate kernel installed via `uv run --with`:
+This script (`scripts/run_notebooks.sh`) starts an ipcluster with 5 engines (required by `Mandelbrot.ipynb` for parallel execution), runs each notebook via `jupyter nbconvert --execute`, and then stops the cluster. Each notebook is run with its appropriate kernel installed via `uv run --with`:
 
 | Notebook | Kernel | Package |
 | --- | --- | --- |
