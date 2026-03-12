@@ -5,7 +5,8 @@ channels:
 dependencies:
   - python=3.11
   - pip
-  - jupyter
   - jupyterlab
+  - ipyparallel
+  - portalocker
   - pip:
     - calysto_scheme

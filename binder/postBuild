@@ -2,7 +2,7 @@
 set -e
 
 # Install metakernel with all extras and local kernels
-pip install ".[activity,parallel]" ./metakernel_python ./metakernel_echo
+pip install --no-deps . ./metakernel_python ./metakernel_echo
 
 # Remove notebooks for kernels not available in this environment
 rm -f examples/SAS_metakernel_example.ipynb
