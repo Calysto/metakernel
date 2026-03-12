@@ -4,9 +4,13 @@ set -euo pipefail
 REPO_DIR="$(dirname "$0")/.."
 EXAMPLES_DIR="$REPO_DIR/examples"
 
-# Start ipcluster
 echo "Starting ipcluster..."
-uv run --extra parallel ipcluster start --daemonize --n=5
+# Install calysto_scheme kernel and start ipcluster in the same env
+# so engine processes can import calysto_scheme
+uv run --extra parallel --with calysto-scheme bash -c "
+    python -m calysto_scheme install --user &&
+    ipcluster start --daemonize --n=5
+"
 echo "Waiting for ipcluster to be ready..."
 uv run --extra parallel python - <<'EOF'
 import ipyparallel as ipp, time, sys
