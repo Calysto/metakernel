@@ -60,6 +60,10 @@ lint:
     just pre-commit ruff-format
     just pre-commit ruff-check
 
+# Run example notebooks (excludes Calysto Processing and SAS)
+run-notebooks:
+    bash run_notebooks.sh
+
 # Run pre-commit hook
 pre-commit *args="":
     uv tool run pre-commit run --all-files {{args}}
