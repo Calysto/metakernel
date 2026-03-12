@@ -8,7 +8,7 @@ pip install --no-deps . ./metakernel_python ./metakernel_echo
 mkdir -p demo
 cp examples/echo_kernel.ipynb demo/
 cp "examples/Jigsaw in IPython.ipynb" demo/
-cp examples/metakernel_python_demo.ipynb demo/
+cp "examples/MetaKernel Python Demo.ipynb" demo/
 cp examples/*.png demo/
 
 # Clean up pip cache
