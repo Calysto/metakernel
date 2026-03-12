@@ -10,6 +10,8 @@ and distributed processing, downloads, and much more).
 
 [![image](https://anaconda.org/conda-forge/metakernel/badges/downloads.svg)](https://anaconda.org/conda-forge/metakernel)
 
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Calysto/metakernel/HEAD?urlpath=notebooks/examples/MetaKernel%20Python%20Demo.ipynb)
+
 See Jupyter's docs on [wrapper
 kernels](http://jupyter-client.readthedocs.io/en/stable/wrapperkernels.html).
 
