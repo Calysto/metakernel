@@ -5,7 +5,7 @@ EXAMPLES_DIR="$(dirname "$0")/examples"
 
 # Start ipcluster
 echo "Starting ipcluster..."
-uv run ipcluster start --daemonize --n=5
+uv run --with ipyparallel ipcluster start --daemonize --n=5
 echo "Waiting for ipcluster to be ready..."
 sleep 10
 
@@ -33,6 +33,6 @@ run_notebook "Processing Magic in IPython.ipynb" "python3"          "jupyter"
 run_notebook "Tutor Magic in IPython.ipynb"      "python3"          "jupyter"
 
 echo "Stopping ipcluster..."
-uv run ipcluster stop
+uv run --with ipyparallel ipcluster stop
 
 echo "Done."
