@@ -235,3 +235,13 @@ if __name__ == "__main__":
 - inspection replies (`code_inspect_sample`)
 
 The `metakernel_python` kernel in this repository uses this approach; see `metakernel_python/test_metakernel_python.py` for a complete working example.
+
+## Debugging
+
+To see the full kernel log output while interacting with your kernel, launch it through `jupyter console` with debug logging enabled. If you don't have it installed, run `pip install jupyter-console` first.
+
+```bash
+jupyter console --log-level=debug --kernel=octave
+```
+
+Replace `octave` with the name of your kernel (the directory name under `share/jupyter/kernels/`). Debug output includes the raw ZMQ messages exchanged between the client and kernel, which is useful for diagnosing protocol-level issues.
