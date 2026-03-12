@@ -16,7 +16,7 @@ run_notebook() {
     local kernel="$2"
     local with_pkg="$3"
     echo "Running: $notebook (kernel: $kernel)"
-    uv run --with "$with_pkg" jupyter nbconvert \
+    uv run --with nbconvert --with "$with_pkg" jupyter nbconvert \
         --to notebook \
         --execute \
         --inplace \
