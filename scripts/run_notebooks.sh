@@ -39,6 +39,9 @@ run_notebook() {
 
 run_notebook "Jigsaw in IPython.ipynb"          "python3"          "jupyter"
 run_notebook "Mandelbrot.ipynb"                  "calysto_scheme"   "calysto-scheme"
+uv run --with nbconvert jupyter nbconvert --to notebook --inplace \
+    --ClearOutputPreprocessor.enabled=True \
+    "$EXAMPLES_DIR/Mandelbrot.ipynb"
 run_notebook "MetaKernel Echo Demo.ipynb"        "metakernel_echo"  "$REPO_DIR/metakernel_echo"
 run_notebook "MetaKernel Python Demo.ipynb"      "metakernel_python" "$REPO_DIR/metakernel_python"
 run_notebook "Processing Magic in IPython.ipynb" "python3"          "jupyter"
