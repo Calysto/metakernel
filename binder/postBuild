@@ -4,6 +4,9 @@ set -e
 # Install metakernel with all extras and local kernels
 pip install --no-deps . ./metakernel_python ./metakernel_echo
 
+# Enable ipyparallel server extension
+jupyter server extension enable ipyparallel --sys-prefix
+
 # Remove notebooks for kernels not available in this environment
 rm -f examples/SAS_metakernel_example.ipynb
 rm -f "examples/Calysto Processing.ipynb"
