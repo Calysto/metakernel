@@ -4,10 +4,11 @@ set -e
 # Install metakernel with all extras and local kernels
 pip install --no-deps . ./metakernel_python ./metakernel_echo
 
-# Remove notebooks for kernels not available in this environment
-rm -f examples/SAS_metakernel_example.ipynb
-rm -f "examples/Calysto Processing.ipynb"
-rm -f examples/Mandelbrot.ipynb
+# Create demo directory with selected notebooks
+mkdir -p demo
+cp examples/echo_kernel.ipynb demo/
+cp "examples/Jigsaw in IPython.ipynb" demo/
+cp "examples/Tutor Magic in IPython.ipynb" demo/
 
 # Clean up pip cache
 pip cache purge
