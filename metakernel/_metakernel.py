@@ -155,6 +155,23 @@ class MetaKernel(Kernel):
         if Widget is not None:
             widgets.register_comm_target()
 
+        # Ensure comm objects created by this kernel have kernel=self set at
+        # construction time. This allows ipywidgets.Output context manager to
+        # reach kernel.get_parent() and correctly set msg_id (issue #217).
+        try:
+            _kernel_ref = self
+            _base_create_comm = comm.create_comm
+
+            def _create_comm_with_kernel(*args: Any, **kwargs: Any) -> Any:
+                c = _base_create_comm(*args, **kwargs)
+                if getattr(c, "kernel", None) is None:
+                    c.kernel = _kernel_ref  # type: ignore[attr-defined]
+                return c
+
+            comm.create_comm = _create_comm_with_kernel
+        except Exception:
+            pass
+
         self.hist_file = get_history_file(self)
         self.parser = Parser(
             self.identifier_regex,
