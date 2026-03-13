@@ -670,6 +670,17 @@ class TestDoExecute:
                     os.remove(fname)
         mock_exec.assert_not_called()
 
+    def test_exception_from_do_execute_direct_sets_error_status(self) -> None:
+        """When do_execute_direct raises an exception, execute_reply status is 'error' (issue #175)."""
+        kernel = get_kernel(EvalKernel)
+        with unittest.mock.patch.object(
+            kernel, "do_execute_direct", side_effect=RuntimeError("kernel blew up")
+        ):
+            resp = asyncio.run(kernel.do_execute("some_code", False))
+        assert resp["status"] == "error"
+        assert resp["ename"] == "RuntimeError"
+        assert resp["evalue"] == "kernel blew up"
+
 
 class TestDoShutdown:
     def test_no_hist_file_skips_file_write(self) -> None:
