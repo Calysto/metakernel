@@ -15,7 +15,6 @@ class ShellMagic(Magic):
         super().__init__(kernel)
         self.repl: REPLWrapper | None = None
         self.cmd: str | None = None
-        self.start_process()
 
     def line_shell(self, *args: str) -> None:
         """
@@ -49,6 +48,8 @@ class ShellMagic(Magic):
             os.chdir(cwd)
 
     def eval(self, cmd: str, incremental: bool = False) -> str:
+        if self.repl is None:
+            self.start_process()
         assert self.repl is not None
         stream_handler = self.kernel.Print if incremental else None
         return self.repl.run_command(cmd, timeout=None, stream_handler=stream_handler)
