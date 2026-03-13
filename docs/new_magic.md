@@ -84,6 +84,28 @@ my_kernel/
 
 No extra registration step is required — the `register_magics(kernel)` function in each file is called automatically.
 
+## Debugging magic loading
+
+If a magic is not appearing as expected, use `%lsmagic -v` to see which directories MetaKernel searched and whether any files failed to load:
+
+```
+%lsmagic -v
+```
+
+The output includes:
+
+- **Magic search paths** — the directories that were scanned for `*_magic.py` files. For a bundled kernel magic, the first entry should be the `magics/` subdirectory of your kernel package. If your magic file is not in one of these directories, it will never be found.
+- **Load errors** — any exceptions raised while importing a magic file or calling its `register_magics` function. The error message points directly to the file and the cause.
+
+If your magic is missing after a regular (non-editable) install, verify that the `magics/` directory is included in your package. With hatchling add it explicitly if needed:
+
+```toml
+[tool.hatch.build.targets.wheel]
+packages = ["my_kernel"]
+```
+
+After fixing the file placement, restart the kernel and run `%lsmagic -v` again to confirm the path appears and no errors are reported.
+
 ## Writing a cell magic
 
 A cell magic receives the rest of the cell as a body via `self.code`. Set `self.evaluate = False` if you do not want the kernel to evaluate the cell body as normal code after the magic runs.

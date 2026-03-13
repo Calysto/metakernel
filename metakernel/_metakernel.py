@@ -184,6 +184,8 @@ class MetaKernel(Kernel):
             self.shell_handlers[msg_type] = getattr(self.comm_manager, msg_type)
         self._display_formatter = DisplayFormatter()  # pass kwargs?
         self.env: dict[str, Any] = {}
+        self.magic_search_paths: list[str] = []
+        self.magic_load_errors: list[tuple[str, str]] = []
         self.reload_magics()
         # provide a way to get the current instance
         self.set_variable("kernel", self)
@@ -759,6 +761,7 @@ class MetaKernel(Kernel):
         """Reload all of the line and cell magics."""
         self.line_magics: dict[str, Any] = {}
         self.cell_magics: dict[str, Any] = {}
+        self.magic_load_errors = []
 
         # get base magic files and those relative to the current class
         # directory
@@ -779,6 +782,7 @@ class MetaKernel(Kernel):
             local_magics_dir,
             os.path.join(os.path.dirname(os.path.abspath(__file__)), "magics"),
         ]
+        self.magic_search_paths = list(paths)
         for magic_dir in paths:
             sys.path.append(magic_dir)
             magic_files.extend(glob.glob(os.path.join(magic_dir, "*.py")))
@@ -793,6 +797,7 @@ class MetaKernel(Kernel):
                 module.register_magics(self)
             except Exception as e:
                 self.log.error(f"Can't load '{magic}': error: {e}")
+                self.magic_load_errors.append((magic, str(e)))
 
     def register_magics(self, magic_klass: type[Magic]) -> None:
         """Register magics for a given magic_klass."""
