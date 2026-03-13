@@ -458,16 +458,15 @@ def test_handle_results_sets_last_id(tmp_path) -> None:
 
 @pytest.mark.skipif(NO_WIDGETS, reason="Requires ipywidgets")
 @pytest.mark.skipif(NO_PORTALOCKER, reason="Requires portalocker")
-def test_handle_results_toggles_show_initial_on_repeat(tmp_path) -> None:
+def test_handle_results_sets_last_id_on_repeat(tmp_path) -> None:
     activity_file = tmp_path / "activity.poll"
     activity_file.write_text(ACTIVITY_TEXT)
     a = Activity()
     a.load(str(activity_file))
-    assert a.show_initial is True
     a.handle_results(MockSender("Results"))
-    assert a.show_initial is True  # first call sets last_id, does not toggle
+    assert a.last_id == "q1"
     a.handle_results(MockSender("Results"))
-    assert a.show_initial is False  # second call on same id toggles
+    assert a.last_id == "q1"
 
 
 def _make_mock_calysto(monkeypatch: pytest.MonkeyPatch) -> list[dict[str, Any]]:
@@ -548,10 +547,8 @@ def test_handle_results_skips_results_choice_entries(tmp_path, monkeypatch) -> N
 
 @pytest.mark.skipif(NO_WIDGETS, reason="Requires ipywidgets")
 @pytest.mark.skipif(NO_PORTALOCKER, reason="Requires portalocker")
-def test_handle_results_show_initial_true_takes_first_response(
-    tmp_path, monkeypatch
-) -> None:
-    """With show_initial=True, only the first response per user is counted."""
+def test_handle_results_takes_last_response_per_user(tmp_path, monkeypatch) -> None:
+    """When a user changes their answer, the last response is always used."""
     activity_file = tmp_path / "activity.poll"
     activity_file.write_text(ACTIVITY_TEXT)
     a = Activity()
@@ -562,37 +559,55 @@ def test_handle_results_show_initial_true_takes_first_response(
         f.write("q1::user1::2024-01-01::1\n")
         f.write("q1::user1::2024-01-01::2\n")
     captured = _make_mock_calysto(monkeypatch)
-    assert a.show_initial is True
     a.handle_results(MockSender("Results"))
-    # First response (option "1") wins
-    assert captured[-1]["data"] == [1, 0]
+    # Last response (option "2") wins
+    assert captured[-1]["data"] == [0, 1]
 
 
 @pytest.mark.skipif(NO_WIDGETS, reason="Requires ipywidgets")
 @pytest.mark.skipif(NO_PORTALOCKER, reason="Requires portalocker")
-def test_handle_results_show_initial_false_takes_last_response(
+def test_handle_results_shows_latest_response_on_repeated_clicks(
     tmp_path, monkeypatch
 ) -> None:
-    """With show_initial=False, the last response per user is counted."""
+    """Regression test for #240: repeated Results clicks must reflect the latest
+    response, not alternate between first and last."""
     activity_file = tmp_path / "activity.poll"
-    activity_file.write_text(ACTIVITY_TEXT)
+    # Activity with 5 options to match the issue report
+    text = """\
+{
+    "activity": "poll",
+    "instructors": ["teacher01"],
+    "items": [
+        {
+            "id": "q1",
+            "type": "multiple choice",
+            "question": "Pick a number",
+            "options": ["one", "two", "three", "four", "five"]
+        }
+    ]
+}
+"""
+    activity_file.write_text(text)
     a = Activity()
     a.load(str(activity_file))
-    assert a.results_filename is not None
-    # user1 first answered 1, then changed to 2
-    with open(a.results_filename, "w") as f:
-        f.write("q1::user1::2024-01-01::1\n")
-        f.write("q1::user1::2024-01-01::2\n")
     captured = _make_mock_calysto(monkeypatch)
-    # First call: last_id=None → goes to else branch, show_initial stays True
+
+    # Simulate: click response 1, then Results
+    a.handle_submit(MockSender("1"))
     a.handle_results(MockSender("Results"))
-    first_data = list(captured[-1]["data"])  # snapshot before second call
-    # Second call: last_id==q1 → toggles show_initial to False
+    assert captured[-1]["data"] == [1, 0, 0, 0, 0]
+
+    # Simulate: click response 2, then Results
+    a.handle_submit(MockSender("2"))
     a.handle_results(MockSender("Results"))
-    assert not a.show_initial
-    # First call collected first response; second call (show_initial=False) collects last
-    assert first_data == [1, 0]
-    assert captured[-1]["data"] == [0, 1]
+    assert captured[-1]["data"] == [0, 1, 0, 0, 0]
+
+    # Simulate: click response 3, then Results
+    # BUG #240: this used to show [1, 0, 0, 0, 0] (first response) because
+    # show_initial toggled back to True on the 3rd Results click.
+    a.handle_submit(MockSender("3"))
+    a.handle_results(MockSender("Results"))
+    assert captured[-1]["data"] == [0, 0, 1, 0, 0]
 
 
 @pytest.mark.skipif(NO_WIDGETS, reason="Requires ipywidgets")
