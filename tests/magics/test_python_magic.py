@@ -168,7 +168,7 @@ def test_display_routes_to_parent_kernel() -> None:
 
     # Run %%python on kernel_a, which sets meta_kernel = kernel_a and patches
     # IPython.display.display globally.
-    with capture_send_messages(kernel_a) as sent_a:
+    with capture_send_messages(kernel_a):
         asyncio.run(
             kernel_a.do_execute(
                 "%%python\nfrom IPython.display import HTML, display",
@@ -180,7 +180,7 @@ def test_display_routes_to_parent_kernel() -> None:
 
     # The monkey-patched display should now route to kernel_a.
     with capture_send_messages(kernel_a) as sent_a2:
-        IPython.display.display(HTML("<b>from a</b>"))
+        IPython.display.display(HTML("<b>from a</b>"))  # type: ignore[no-untyped-call]
     display_a = [c for msg_type, c in sent_a2 if msg_type == "display_data"]
     assert display_a, "expected display_data routed to kernel_a after its %%python"
     assert display_a[0]["data"]["text/html"] == "<b>from a</b>"
@@ -199,7 +199,7 @@ def test_display_routes_to_parent_kernel() -> None:
         capture_send_messages(kernel_a) as stale_a,
         capture_send_messages(kernel_b) as sent_b2,
     ):
-        IPython.display.display(HTML("<b>from b</b>"))
+        IPython.display.display(HTML("<b>from b</b>"))  # type: ignore[no-untyped-call]
     assert not [c for msg_type, c in stale_a if msg_type == "display_data"], (
         "display_data must not route to kernel_a after kernel_b ran %%python"
     )
