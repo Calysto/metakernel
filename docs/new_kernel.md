@@ -290,3 +290,26 @@ jupyter console --log-level=debug --kernel=octave
 ```
 
 Replace `octave` with the name of your kernel (the directory name under `share/jupyter/kernels/`). Debug output includes the raw ZMQ messages exchanged between the client and kernel, which is useful for diagnosing protocol-level issues.
+
+## Troubleshooting
+
+### Kernel hangs at startup on Windows (encoding mismatch)
+
+If your kernel uses `ProcessMetaKernel` / `REPLWrapper` and hangs indefinitely at startup on Windows — with `pexpect` timing out while waiting for the initial prompt — the cause is often an encoding mismatch. `REPLWrapper` defaults to `encoding="utf-8"`, but many Windows programs (including gnuplot) write their startup output in the system code page (e.g. `cp1252`). When pexpect can't decode the bytes it receives it never matches the prompt pattern, so the kernel never finishes initialising.
+
+Pass the correct encoding when constructing `REPLWrapper`:
+
+```python
+from metakernel.replwrap import REPLWrapper
+
+repl = REPLWrapper("gnuplot", r"gnuplot>", None, encoding="cp1252")
+```
+
+To find the encoding your program uses, run it in a terminal and check what Python reports:
+
+```python
+import locale
+print(locale.getpreferredencoding())
+```
+
+Or start with `encoding="cp1252"` on Western-European Windows locales and `encoding="utf-8"` everywhere else.

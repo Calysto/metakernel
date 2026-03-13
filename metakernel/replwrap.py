@@ -59,6 +59,7 @@ class REPLWrapper:
         force_prompt_on_continuation: bool = False,
         echo: bool = False,
         extra_env: dict[str, Any] | None = None,
+        encoding: str = "utf-8",
     ) -> None:
         if isinstance(cmd_or_spawn, str):
             if extra_env:
@@ -70,7 +71,7 @@ class REPLWrapper:
                 cmd_or_spawn,
                 echo=echo,
                 codec_errors="ignore",
-                encoding="utf-8",
+                encoding=encoding,
                 env=env,
             )
         else:
