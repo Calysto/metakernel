@@ -38,6 +38,24 @@ class TestREPLWrapperInit:
         )
         assert wrapper.child is mock_child
 
+    def test_custom_encoding_passed_to_spawnu(self) -> None:
+        """When encoding is specified, pexpect.spawnu is called with that encoding.
+
+        Reproduces issue #171: REPLWrapper hardcoded utf-8, breaking kernels like
+        gnuplot on Windows that output in a different encoding (e.g. cp1252).
+        """
+        mock_child = _make_child(echo=False)
+        with patch("metakernel.pexpect.spawnu", return_value=mock_child) as mock_spawn:
+            with patch.object(REPLWrapper, "_expect_prompt"):
+                with patch("atexit.register"):
+                    wrapper = REPLWrapper(
+                        "gnuplot", r"gnuplot>", None, encoding="cp1252"
+                    )
+        mock_spawn.assert_called_once_with(
+            "gnuplot", echo=False, codec_errors="ignore", encoding="cp1252", env=None
+        )
+        assert wrapper.child is mock_child
+
     def test_spawn_object_used_directly(self) -> None:
         """When cmd_or_spawn is not a str, it is assigned as child directly."""
         mock_child = _make_child(echo=False)
