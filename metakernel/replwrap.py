@@ -91,12 +91,11 @@ class REPLWrapper:
         if prompt_change_cmd is None:
             self.prompt_regex = prompt_regex
         else:
-            self.set_prompt(
-                prompt_regex,
-                prompt_change_cmd.format(new_prompt_regex, continuation_prompt_regex),
+            formatted_prompt_change_cmd = prompt_change_cmd.format(
+                new_prompt_regex, continuation_prompt_regex
             )
+            self.set_prompt(prompt_regex, formatted_prompt_change_cmd)
             self.prompt_regex = new_prompt_regex
-            self.prompt_change_cmd = prompt_change_cmd
         self.continuation_prompt_regex = continuation_prompt_regex
         self.stdin_prompt_regex = stdin_prompt_regex
 

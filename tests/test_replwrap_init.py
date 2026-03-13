@@ -15,7 +15,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from metakernel import pexpect as mk_pexpect
-from metakernel.replwrap import PEXPECT_PROMPT, REPLWrapper
+from metakernel.replwrap import PEXPECT_CONTINUATION_PROMPT, PEXPECT_PROMPT, REPLWrapper
 
 
 def _make_child(echo: bool = False) -> MagicMock:
@@ -87,9 +87,9 @@ class TestREPLWrapperInit:
             with patch.object(REPLWrapper, "set_prompt") as mock_set:
                 with patch("atexit.register"):
                     wrapper = REPLWrapper(mock_child, r"[$#]", "PS1={0!r} PS2={1!r}")
-        mock_set.assert_called_once()
+        formatted = f"PS1={PEXPECT_PROMPT!r} PS2={PEXPECT_CONTINUATION_PROMPT!r}"
+        mock_set.assert_called_once_with(r"[$#]", formatted)
         assert wrapper.prompt_regex == PEXPECT_PROMPT
-        assert wrapper.prompt_change_cmd == "PS1={0!r} PS2={1!r}"
 
     def test_extra_init_cmd_runs_command(self) -> None:
         """When extra_init_cmd is given, run_command is called with it."""
