@@ -1,7 +1,7 @@
 import asyncio
 import textwrap
 
-from tests.utils import clear_log_text, get_kernel, get_log_text
+from tests.utils import capture_send_messages, clear_log_text, get_kernel, get_log_text
 
 
 def test_python_magic() -> None:
@@ -97,3 +97,58 @@ def test_python_magic5() -> None:
     asyncio.run(kernel.do_execute("%python print('hello')"))
 
     assert "hello" in get_log_text(kernel)
+
+
+def test_python_magic_html_display() -> None:
+    """%%python cell should display HTML objects as text/html (issue #187)."""
+    kernel = get_kernel()
+
+    # Returning an HTML object as the last expression should yield text/html
+    with capture_send_messages(kernel) as sent:
+        asyncio.run(
+            kernel.do_execute(
+                "%%python\nfrom IPython.display import HTML\nHTML('<b>hello</b>')",
+                False,
+            )
+        )
+    result_msgs = [c for msg_type, c in sent if msg_type == "execute_result"]
+    assert result_msgs, "expected an execute_result message"
+    assert "text/html" in result_msgs[0]["data"], (
+        "expected text/html in execute_result data"
+    )
+    assert result_msgs[0]["data"]["text/html"] == "<b>hello</b>"
+
+    # Calling display(HTML(...)) explicitly should emit display_data with text/html
+    kernel2 = get_kernel()
+    with capture_send_messages(kernel2) as sent2:
+        asyncio.run(
+            kernel2.do_execute(
+                textwrap.dedent("""\
+                %%python
+                from IPython.display import HTML, display
+                display(HTML('<i>world</i>'))"""),
+                False,
+            )
+        )
+    display_msgs = [c for msg_type, c in sent2 if msg_type == "display_data"]
+    assert display_msgs, "expected a display_data message"
+    assert "text/html" in display_msgs[0]["data"], "expected text/html in display_data"
+    assert display_msgs[0]["data"]["text/html"] == "<i>world</i>"
+
+    # A function that calls display(HTML(...)) internally should also work
+    kernel3 = get_kernel()
+    with capture_send_messages(kernel3) as sent3:
+        asyncio.run(
+            kernel3.do_execute(
+                textwrap.dedent("""\
+                %%python
+                from IPython.display import HTML, display
+                def plan():
+                    display(HTML('<b>plan</b>'))
+                plan()"""),
+                False,
+            )
+        )
+    display_msgs3 = [c for msg_type, c in sent3 if msg_type == "display_data"]
+    assert display_msgs3, "expected a display_data message from plan()"
+    assert display_msgs3[0]["data"]["text/html"] == "<b>plan</b>"

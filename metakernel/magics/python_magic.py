@@ -74,7 +74,12 @@ class PythonMagic(Magic):
     def eval(self, code: str) -> Any:
         import IPython.display
 
+        import metakernel
         import metakernel.display
+
+        # Ensure the current kernel is the active one so that display() calls
+        # inside %%python route to this kernel's output, not a stale instance.
+        metakernel.MetaKernel.meta_kernel = self.kernel
 
         # monkey patch IPython.display.display
         # to redirect notebook display calls to kernel display
