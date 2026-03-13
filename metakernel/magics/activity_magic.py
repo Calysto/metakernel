@@ -27,7 +27,6 @@ class Activity:
         self.filename: str | None = None
         self.results_filename: str | None = None
         self.instructors: list[Any] = []
-        self.show_initial = True
         self.last_id = None
 
     def load(self, filename: str) -> None:
@@ -153,11 +152,7 @@ class Activity:
     def handle_results(self, sender: Any) -> None:
         # write out when we show the Results:
         self.handle_submit(sender)
-        if self.last_id == self.questions[self.index].id:
-            self.show_initial = not self.show_initial
-        else:
-            self.show_initial = True
-            self.last_id = self.questions[self.index].id
+        self.last_id = self.questions[self.index].id
         data = {}
         assert self.results_filename is not None
         with open(self.results_filename) as fp:
@@ -167,11 +162,7 @@ class Activity:
                     id, user, _time, choice = line.split("::")
                     if self.questions[self.index].id == id:
                         if choice.strip() != "Results":
-                            if self.show_initial:
-                                if user.strip() not in data:
-                                    data[user.strip()] = choice.strip()
-                            else:  # shows last
-                                data[user.strip()] = choice.strip()
+                            data[user.strip()] = choice.strip()
                 line = fp.readline()
         choices = {
             str(i): 0 for i in range(1, len(self.questions[self.index].options) + 1)
