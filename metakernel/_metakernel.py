@@ -432,9 +432,12 @@ class MetaKernel(Kernel):
                 if code.startswith("~~META~~:"):
                     retval = self.do_execute_meta(code[9:].strip())
                 else:
-                    retval = self.do_execute_direct(code)
-                    if inspect.isawaitable(retval):
-                        retval = await retval
+                    try:
+                        retval = self.do_execute_direct(code)
+                        if inspect.isawaitable(retval):
+                            retval = await retval
+                    except Exception as e:
+                        retval = ExceptionWrapper(type(e).__name__, str(e), [])
             # Post-process magics:
             for magic in reversed(stack):
                 retval = magic.post_process(retval)
@@ -442,9 +445,12 @@ class MetaKernel(Kernel):
             if code.startswith("~~META~~:"):
                 retval = self.do_execute_meta(code[9:].strip())
             else:
-                retval = self.do_execute_direct(code)
-                if inspect.isawaitable(retval):
-                    retval = await retval
+                try:
+                    retval = self.do_execute_direct(code)
+                    if inspect.isawaitable(retval):
+                        retval = await retval
+                except Exception as e:
+                    retval = ExceptionWrapper(type(e).__name__, str(e), [])
 
         await self.post_execute(retval, code, silent)
 
