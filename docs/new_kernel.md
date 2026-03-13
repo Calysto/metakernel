@@ -87,6 +87,51 @@ Create `data_kernelspec/share/jupyter/kernels/my_kernel/kernel.json`:
 
 Optional keys include `"codemirror_mode"`, `"env"`, and `"interrupt_mode"`. See the [Jupyter kernel specification](https://jupyter-client.readthedocs.io/en/stable/kernels.html) for the full list.
 
+## Rich display output
+
+MetaKernel provides two complementary display paths depending on whether your kernel produces Python objects or raw MIME data.
+
+### Python objects
+
+Call `self.Display(obj)` from within `do_execute_direct` (or from a magic). MetaKernel passes the object through IPython's display formatter, which invokes `_repr_html_`, `_repr_svg_`, `_repr_png_`, and similar methods automatically:
+
+```python
+def do_execute_direct(self, code):
+    from IPython.display import HTML
+    return HTML("<b>result</b>")
+```
+
+You can also return the object directly from `do_execute_direct` and MetaKernel will format and publish it as an `execute_result`.
+
+### Raw MIME bundles (non-Python kernels)
+
+If your kernel generates display data natively — for example a C++ kernel that produces SVG or HTML — use `self.DisplayData(data)` to send a raw MIME bundle directly without going through IPython's formatter:
+
+```python
+def do_execute_direct(self, code):
+    # Call your language runtime and get MIME data back
+    mime_bundle = evaluate(code)  # e.g. {'text/html': '<b>result</b>', 'text/plain': 'result'}
+    self.DisplayData(mime_bundle)
+```
+
+`DisplayData` accepts an optional `metadata` dict keyed by MIME type:
+
+```python
+self.DisplayData(
+    {"image/svg+xml": svg_string, "text/plain": "[SVG image]"},
+    metadata={"image/svg+xml": {"isolated": True}},
+)
+```
+
+You can also return a MIME bundle dict directly from `do_execute_direct`. MetaKernel detects dicts whose keys are all MIME types and publishes them as `execute_result` without formatting:
+
+```python
+def do_execute_direct(self, code):
+    return {"text/html": "<b>result</b>", "text/plain": "result"}
+```
+
+As a convenience, `self.Display()` also accepts a raw MIME bundle dict and routes it to `DisplayData` automatically, so you can pass MIME data through the same call site as Python objects.
+
 ## Adding custom magics
 
 Place magic files in a `magics/` subpackage alongside your kernel module. Each file should be named `{name}_magic.py` and define a class that inherits from `Magic`. Line magics are methods named `line_{name}` and cell magics are `cell_{name}`:
