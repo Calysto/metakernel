@@ -34,6 +34,21 @@ if TYPE_CHECKING:
 
 warnings.filterwarnings("ignore", module="IPython.html.widgets")
 
+
+def _is_mime_bundle(obj: Any) -> bool:
+    """Return True if *obj* looks like a raw MIME bundle dict.
+
+    A MIME bundle is a non-empty dict whose keys are all MIME-type strings
+    (they all contain a ``/`` character), e.g.
+    ``{'text/html': '<b>hi</b>', 'text/plain': 'hi'}``.
+    """
+    return (
+        isinstance(obj, dict)
+        and bool(obj)
+        and all(isinstance(k, str) and "/" in k for k in obj)
+    )
+
+
 try:
     import ipywidgets as widgets  #  type:ignore[import-untyped]
     from ipywidgets.widgets.widget import Widget  #  type:ignore[import-untyped]
@@ -470,6 +485,14 @@ class MetaKernel(Kernel):
                 self.kernel_resp.update(content)
                 if not silent:
                     self.send_response(self.iopub_socket, "error", content)
+            elif _is_mime_bundle(retval):
+                if not silent:
+                    content = {
+                        "execution_count": self.execution_count,
+                        "data": retval,
+                        "metadata": {},
+                    }
+                    self.send_response(self.iopub_socket, "execute_result", content)
             else:
                 try:
                     data = self._display_formatter.format(retval)  # type:ignore[no-untyped-call]
@@ -649,10 +672,39 @@ class MetaKernel(Kernel):
         """Clear the output of the kernel."""
         self.send_response(self.iopub_socket, "clear_output", {"wait": wait})
 
+    def DisplayData(
+        self, data: dict[str, Any], metadata: dict[str, Any] | None = None
+    ) -> None:
+        """Display a raw MIME bundle directly without going through IPython's formatter.
+
+        Use this when your kernel produces display data in MIME format directly,
+        rather than Python objects with ``_repr_*_`` methods. This is the recommended
+        approach for non-Python kernels (e.g. C++, Julia) that generate rich output.
+
+        Args:
+            data: A dict mapping MIME types to content.
+                  Example: ``{'text/html': '<b>hello</b>', 'text/plain': 'hello'}``
+            metadata: Optional dict of per-MIME-type metadata.
+
+        Example::
+
+            kernel.DisplayData(
+                {'text/html': '<b>Rich output</b>', 'text/plain': 'Rich output'},
+                metadata={'text/html': {'isolated': True}},
+            )
+        """
+        self.log.debug("DisplayData: %s", list(data.keys()))
+        content = {"data": data, "metadata": metadata or {}}
+        self.send_response(self.iopub_socket, "display_data", content)
+
     def Display(self, *objects: Any, **kwargs: Any) -> None:
         """Display one or more objects using rich display.
 
         Supports a `clear_output` keyword argument that clears the output before displaying.
+
+        If an object is a dict whose keys are all MIME types (strings containing ``/``),
+        it is treated as a raw MIME bundle and sent directly — equivalent to calling
+        :meth:`DisplayData`.
 
         See https://ipython.readthedocs.io/en/stable/config/integrating.html?highlight=display#rich-display
         """
@@ -672,6 +724,9 @@ class MetaKernel(Kernel):
                 }
                 content = {"data": data, "metadata": {}}
                 self.send_response(self.iopub_socket, "display_data", content)
+            elif _is_mime_bundle(item):
+                self.log.debug("Display raw MIME bundle")
+                self.DisplayData(item)
             else:
                 self.log.debug("Display Data")
                 try:

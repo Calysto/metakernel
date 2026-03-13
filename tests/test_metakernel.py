@@ -880,6 +880,68 @@ class TestIpywidgetsOutputContextManager:
         assert output.msg_id == "", "msg_id should be cleared after exiting context"
 
 
+class TestDisplayData:
+    """Tests for raw MIME bundle display (issue #211)."""
+
+    MIME_BUNDLE = {"text/html": "<b>hello</b>", "text/plain": "hello"}
+
+    def test_display_data_sends_display_data_message(self) -> None:
+        """DisplayData() sends a display_data response with the given MIME bundle."""
+        kernel = get_kernel()
+        with unittest.mock.patch.object(kernel, "send_response") as mock_send:
+            kernel.DisplayData(self.MIME_BUNDLE)
+        mock_send.assert_called_once_with(
+            kernel.iopub_socket,
+            "display_data",
+            {"data": self.MIME_BUNDLE, "metadata": {}},
+        )
+
+    def test_display_data_passes_metadata(self) -> None:
+        """DisplayData() forwards the metadata dict."""
+        kernel = get_kernel()
+        meta = {"text/html": {"isolated": True}}
+        with unittest.mock.patch.object(kernel, "send_response") as mock_send:
+            kernel.DisplayData(self.MIME_BUNDLE, metadata=meta)
+        mock_send.assert_called_once_with(
+            kernel.iopub_socket,
+            "display_data",
+            {"data": self.MIME_BUNDLE, "metadata": meta},
+        )
+
+    def test_display_routes_mime_bundle_directly(self) -> None:
+        """Display() with a raw MIME bundle dict calls DisplayData, not the formatter."""
+        kernel = get_kernel()
+        with unittest.mock.patch.object(kernel, "DisplayData") as mock_dd:
+            kernel.Display(self.MIME_BUNDLE)
+        mock_dd.assert_called_once_with(self.MIME_BUNDLE)
+
+    def test_display_does_not_treat_plain_dict_as_mime_bundle(self) -> None:
+        """Display() with a plain dict (no '/' in keys) uses the formatter, not DisplayData."""
+        kernel = get_kernel()
+        plain_dict = {"key": "value"}
+        with unittest.mock.patch.object(kernel, "DisplayData") as mock_dd:
+            kernel.Display(plain_dict)
+        mock_dd.assert_not_called()
+
+    def test_post_execute_mime_bundle_sends_execute_result(self) -> None:
+        """post_execute with a MIME bundle return value sends execute_result directly."""
+        kernel = get_kernel(EvalKernel)
+        with unittest.mock.patch.object(kernel, "send_response") as mock_send:
+            asyncio.run(kernel.post_execute(self.MIME_BUNDLE, "code", silent=False))
+        mock_send.assert_called_once()
+        args = mock_send.call_args
+        assert args[0][1] == "execute_result"
+        assert args[0][2]["data"] == self.MIME_BUNDLE
+        assert args[0][2]["metadata"] == {}
+
+    def test_post_execute_mime_bundle_silent_does_not_send(self) -> None:
+        """post_execute with a MIME bundle and silent=True sends no response."""
+        kernel = get_kernel(EvalKernel)
+        with unittest.mock.patch.object(kernel, "send_response") as mock_send:
+            asyncio.run(kernel.post_execute(self.MIME_BUNDLE, "code", silent=True))
+        mock_send.assert_not_called()
+
+
 def teardown() -> None:
     if os.path.exists("TEST.txt"):
         os.remove("TEST.txt")
