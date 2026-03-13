@@ -857,6 +857,29 @@ class TestClearOutput:
         )
 
 
+class TestIpywidgetsOutputContextManager:
+    """Regression tests for issue #217: ipywidgets.Output context manager with MetaKernel."""
+
+    def test_output_widget_context_manager_sets_msg_id(self) -> None:
+        """ipywidgets.Output context manager sets msg_id when used with MetaKernel."""
+        ipywidgets = pytest.importorskip("ipywidgets")
+        kernel = get_kernel()
+        # Simulate an execute_request by setting a parent message
+        parent_msg = {
+            "header": {"msg_id": "test-msg-123", "msg_type": "execute_request"},
+            "content": {},
+        }
+        kernel.set_parent([], parent_msg, channel="shell")
+
+        output = ipywidgets.Output()
+        assert output.msg_id == "", "msg_id should be empty before entering context"
+        with output:
+            assert output.msg_id == "test-msg-123", (
+                "msg_id should be set to the parent execute_request msg_id inside context"
+            )
+        assert output.msg_id == "", "msg_id should be cleared after exiting context"
+
+
 def teardown() -> None:
     if os.path.exists("TEST.txt"):
         os.remove("TEST.txt")
