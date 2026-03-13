@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Iterator
+from contextlib import contextmanager
 from io import StringIO
 from logging import Logger, StreamHandler
 from typing import Any, TypeVar, overload
@@ -12,6 +14,7 @@ from metakernel import MetaKernel
 
 __all__ = [
     "EvalKernel",
+    "capture_send_messages",
     "clear_log_text",
     "get_kernel",
     "get_log",
@@ -119,6 +122,30 @@ def clear_log_text(obj: Any) -> None:
     assert isinstance(handler, StreamHandler)
     handler.stream.truncate(0)
     handler.stream.seek(0)
+
+
+@contextmanager
+def capture_send_messages(
+    kernel: MetaKernel,
+) -> Iterator[list[tuple[str, dict[str, Any]]]]:
+    """Context manager that captures messages sent via kernel.send_response.
+
+    Yields a list of (msg_type, content) tuples accumulated during the block.
+    """
+    sent: list[tuple[str, dict[str, Any]]] = []
+    original = kernel.send_response
+
+    def _capture(
+        socket: Any, msg_type: str, content: dict[str, Any], **kwargs: Any
+    ) -> Any:
+        sent.append((msg_type, content))
+        return original(socket, msg_type, content, **kwargs)
+
+    kernel.send_response = _capture  # type: ignore[method-assign]
+    try:
+        yield sent
+    finally:
+        kernel.send_response = original  # type: ignore[method-assign]
 
 
 def get_log_text(obj: Any) -> str:
