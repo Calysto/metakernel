@@ -267,14 +267,22 @@ Options:
 
 ## `%lsmagic`
 
-%lsmagic - list the current line and cell magics
+%lsmagic [-v] - list the current line and cell magics
 
 This line magic will list all of the available cell and line
 magics installed in the system and in your personal magic
 folder.
 
+Use -v/--verbose to also show the directories that were searched
+and any errors that occurred while loading magic files.
+
 Example:
     %lsmagic
+    %lsmagic -v
+
+Options:
+--------
+-v --verbose   Also show magic search paths and any load errors. [default: False]
 
 ## `%macro`
 
