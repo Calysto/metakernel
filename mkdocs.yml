@@ -42,4 +42,5 @@ nav:
   - Example Notebook: MetaKernel Echo Demo.ipynb
   - Creating a Kernel: new_kernel.md
   - Creating a Magic: new_magic.md
+  - Magics Reference: magics.md
   - API Reference: api.md

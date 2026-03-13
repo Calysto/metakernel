@@ -22,7 +22,7 @@ repos:
     hooks:
       - id: mdformat
         verbose: true
-        exclude: "metakernel/magics/README\\.md|docs/index\\.md"
+        exclude: "metakernel/magics/README\\.md|docs/index\\.md|docs/magics\\.md"
   
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.15.2
