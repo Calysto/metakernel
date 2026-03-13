@@ -2,6 +2,7 @@
 # Distributed under the terms of the Modified BSD License.
 from __future__ import annotations
 
+import os
 import random
 import string
 import urllib.request
@@ -52,6 +53,9 @@ class JigsawMagic(Magic):
         workspace_filename = workspace + ".xml"
         html_text = download("https://calysto.github.io/jigsaw/" + language + ".html")
         html_filename = workspace + ".html"
+        html_dir = os.path.dirname(html_filename)
+        if html_dir:
+            os.makedirs(html_dir, exist_ok=True)
         html_text = html_text.replace("MYWORKSPACENAME", workspace_filename)
         with open(html_filename, "w") as fp:
             fp.write(html_text)
