@@ -495,13 +495,17 @@ class _FakeApp(LoggingConfigurable):
 
 
 def _make_kernel_with_parent(extra_args: list[str]) -> MetaKernel:
+    import weakref
+
     ctx = zmq.Context.instance()
     sock = ctx.socket(zmq.PUB)
     parent = _FakeApp()
     parent.extra_args = extra_args  # type: ignore[attr-defined]
-    return MetaKernel(
+    kernel = MetaKernel(
         session=ss.Session(), iopub_socket=sock, log=get_log(), parent=parent
     )
+    weakref.finalize(kernel, sock.close)
+    return kernel
 
 
 class TestConstructorWithExtraArgs:
