@@ -152,3 +152,57 @@ def test_python_magic_html_display() -> None:
     display_msgs3 = [c for msg_type, c in sent3 if msg_type == "display_data"]
     assert display_msgs3, "expected a display_data message from plan()"
     assert display_msgs3[0]["data"]["text/html"] == "<b>plan</b>"
+
+
+def test_display_routes_to_parent_kernel() -> None:
+    """display() calls after %%python should route to the kernel that ran it.
+
+    After %%python executes on a kernel, the monkey-patched IPython.display.display
+    must send output to that kernel (the "parent"), not to a stale instance from a
+    previous %%python call on a different kernel.
+    """
+    import IPython.display
+
+    kernel_a = get_kernel()
+    kernel_b = get_kernel()
+
+    # Run %%python on kernel_a, which sets meta_kernel = kernel_a and patches
+    # IPython.display.display globally.
+    with capture_send_messages(kernel_a) as sent_a:
+        asyncio.run(
+            kernel_a.do_execute(
+                "%%python\nfrom IPython.display import HTML, display",
+                False,
+            )
+        )
+
+    from IPython.display import HTML
+
+    # The monkey-patched display should now route to kernel_a.
+    with capture_send_messages(kernel_a) as sent_a2:
+        IPython.display.display(HTML("<b>from a</b>"))
+    display_a = [c for msg_type, c in sent_a2 if msg_type == "display_data"]
+    assert display_a, "expected display_data routed to kernel_a after its %%python"
+    assert display_a[0]["data"]["text/html"] == "<b>from a</b>"
+
+    # Now run %%python on kernel_b — meta_kernel should switch to kernel_b.
+    with capture_send_messages(kernel_b):
+        asyncio.run(
+            kernel_b.do_execute(
+                "%%python\nfrom IPython.display import HTML, display",
+                False,
+            )
+        )
+
+    # The monkey-patched display should now route to kernel_b, not kernel_a.
+    with (
+        capture_send_messages(kernel_a) as stale_a,
+        capture_send_messages(kernel_b) as sent_b2,
+    ):
+        IPython.display.display(HTML("<b>from b</b>"))
+    assert not [c for msg_type, c in stale_a if msg_type == "display_data"], (
+        "display_data must not route to kernel_a after kernel_b ran %%python"
+    )
+    display_b = [c for msg_type, c in sent_b2 if msg_type == "display_data"]
+    assert display_b, "expected display_data routed to kernel_b"
+    assert display_b[0]["data"]["text/html"] == "<b>from b</b>"
