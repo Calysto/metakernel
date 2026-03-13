@@ -869,7 +869,7 @@ class TestIpywidgetsOutputContextManager:
             "header": {"msg_id": "test-msg-123", "msg_type": "execute_request"},
             "content": {},
         }
-        kernel.set_parent([], parent_msg, channel="shell")
+        kernel.set_parent([], parent_msg, channel="shell")  # type: ignore[no-untyped-call]
 
         output = ipywidgets.Output()
         assert output.msg_id == "", "msg_id should be empty before entering context"

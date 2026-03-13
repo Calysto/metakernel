@@ -165,7 +165,7 @@ class MetaKernel(Kernel):
             def _create_comm_with_kernel(*args: Any, **kwargs: Any) -> Any:
                 c = _base_create_comm(*args, **kwargs)
                 if getattr(c, "kernel", None) is None:
-                    c.kernel = _kernel_ref
+                    c.kernel = _kernel_ref  # type: ignore[attr-defined]
                 return c
 
             comm.create_comm = _create_comm_with_kernel
