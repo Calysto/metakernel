@@ -121,7 +121,7 @@
         Blockly.Python['expression_value'] = function(block) {
           var text_expression = block.getFieldValue('expression');
           // TODO: Assemble Python into code variable.
-          var code = "(" + text_expression + ")";
+          var code = text_expression;
           // TODO: Change ORDER_NONE to the correct strength.
           return [code, Blockly.Python.ORDER_NONE];
         };
@@ -131,7 +131,7 @@
           var value_do = Blockly.Python.valueToCode(block, 'do', Blockly.Python.ORDER_ATOMIC);
           var value_arguments = Blockly.Python.valueToCode(block, 'arguments', Blockly.Python.ORDER_ATOMIC);
           // TODO: Assemble Python into code variable.
-          window.parent.block = block;
+          
           var code = '...';
           // TODO: Change ORDER_NONE to the correct strength.
           return [code, Blockly.Python.ORDER_NONE];
@@ -163,6 +163,7 @@
           */
        };
     </script>
+<script>window.__jigsaw_saved_xml__ = "<xml xmlns=\"http://www.w3.org/1999/xhtml\"><block type=\"text_print\" x=\"2\" y=\"48\"><value name=\"TEXT\"><block type=\"expression_value\"><field name=\"expression\">myfunc(5, 6)</field></block></value><next><block type=\"variables_set\"><field name=\"VAR\">sqrt_two</field><value name=\"VALUE\"><block type=\"math_constant\"><field name=\"CONSTANT\">SQRT2</field></block></value></block></next></block></xml>";</script>
 </head>
 <body>
 
@@ -397,18 +398,15 @@
 <tr>
 <td>
 <div style="text-align: center">
-    <button onclick="window.parent.document.jigsaw_generate('workspace2.xml', 'Python')">Run</button>
-    <button onclick="window.parent.document.jigsaw_generate('workspace2.xml', 'Python', 1)">Generate Python Code</button>
-    <button onclick="window.parent.document.jigsaw_clear_output('workspace2.xml')">Clear Cell Output</button>
+    <button onclick="_jigsaw_run(workspace, 'Python', 'workspace2.xml')">Run</button>
+    <button onclick="_jigsaw_insert(workspace, 'Python', 'workspace2.xml')">Generate Python Code</button>
+    <button onclick="_jigsaw_clear('workspace2.xml')">Clear Cell Output</button>
 </div>
 </td>
 </tr>
 </table>
 
   <script>
-      // Make Blockly available to notebook:
-      window.parent.Blockly = Blockly;
-      window.parent.DOMParser = DOMParser;
 
       var workspace = Blockly.inject('blocklyDiv',
         {media: 'https://calysto.github.io/javascripts/blockly/media/',
@@ -417,7 +415,57 @@
         });
 
       var xml_init = document.getElementById('workspace');
-      window.parent.document.jigsaw_register_workspace("workspace2.xml", workspace, xml_init);
+      // Restore saved workspace XML embedded at magic run time (fixes #170).
+      (function() {
+        function applyXml(xml) {
+          try {
+            Blockly.Xml.domToWorkspace(workspace,
+              xml || xml_init ||
+              Blockly.Xml.textToDom('<xml id="workspace"></xml>'));
+          } catch(e) {}
+        }
+        try {
+          var saved = window.__jigsaw_saved_xml__;
+          if (saved) {
+            applyXml(new DOMParser().parseFromString(saved, 'text/xml').documentElement);
+          } else {
+            applyXml(null);
+          }
+        } catch(e) { applyXml(null); }
+      })();
   </script>
+<script>
+  // Use 4-space indentation for all Blockly code generators.
+  (function() {
+    var gens = ['Python', 'JavaScript', 'Java', 'Dart', 'Lua', 'PHP'];
+    for (var i = 0; i < gens.length; i++) {
+      if (Blockly[gens[i]]) Blockly[gens[i]].INDENT = '    ';
+    }
+  })();
+  function _jigsaw_send(msg) {
+    msg.msg_id = Math.random().toString(36).slice(2);
+    try { window.parent.postMessage(msg, '*'); } catch(e) {}
+    try {
+      if (window.top !== window.parent) {
+        window.top.postMessage(msg, '*');
+      }
+    } catch(e) {}
+  }
+  function _jigsaw_run(ws, lang, wf) {
+    var code = Blockly[lang].workspaceToCode(ws);
+    var xml  = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(ws));
+    _jigsaw_send({type:'jigsaw', action:'execute',
+      workspace_filename:wf, code:code, save_xml:xml});
+  }
+  function _jigsaw_insert(ws, lang, wf) {
+    var code = Blockly[lang].workspaceToCode(ws);
+    var xml  = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(ws));
+    _jigsaw_send({type:'jigsaw', action:'insert',
+      workspace_filename:wf, code:code, save_xml:xml});
+  }
+  function _jigsaw_clear(wf) {
+    _jigsaw_send({type:'jigsaw', action:'clear', workspace_filename:wf});
+  }
+</script>
 </body>
 </html>
