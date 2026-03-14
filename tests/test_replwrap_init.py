@@ -436,6 +436,32 @@ class TestInterrupt:
         assert result == "interrupted output"
 
 
+class TestSpawnPtyNone:
+    """Unit tests for pexpect.spawn() when pty is None (PopenSpawn path)."""
+
+    def test_no_args_uses_shlex_split(self) -> None:
+        """With no args, the command string is split via shlex.split."""
+        mock_child = MagicMock()
+        mock_popen_cls = MagicMock(return_value=mock_child)
+        with patch("metakernel.pexpect.pty", None):
+            with patch.object(mk_pexpect, "PopenSpawn", mock_popen_cls, create=True):
+                mk_pexpect.spawn("echo hello")
+        mock_popen_cls.assert_called_once()
+        cmd_arg = mock_popen_cls.call_args[0][0]
+        assert cmd_arg == ["echo", "hello"]
+
+    def test_with_args_prepends_command(self) -> None:
+        """With args provided, the command and args are combined into a list."""
+        mock_child = MagicMock()
+        mock_popen_cls = MagicMock(return_value=mock_child)
+        with patch("metakernel.pexpect.pty", None):
+            with patch.object(mk_pexpect, "PopenSpawn", mock_popen_cls, create=True):
+                mk_pexpect.spawn("python", args=["-c", "print(1)"])
+        mock_popen_cls.assert_called_once()
+        cmd_arg = mock_popen_cls.call_args[0][0]
+        assert cmd_arg == ["python", "-c", "print(1)"]
+
+
 class TestTerminate:
     @pytest.mark.skipif(
         sys.platform == "win32", reason="pexpect.pty not available on Windows"
