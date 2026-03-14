@@ -20,6 +20,17 @@ def test_jigsaw_magic() -> None:
 
 
 @pytest.mark.skipif(not has_network(), reason="no network")
+def test_jigsaw_magic_direct() -> None:
+    """Test calling JigsawMagic.line_jigsaw directly with a workspace filename."""
+    from metakernel.magics.jigsaw_magic import JigsawMagic
+
+    kernel = get_kernel(EvalKernel)
+    magic = JigsawMagic(kernel)
+    magic.line_jigsaw("Processing", workspace="workspace1")
+    assert os.path.isfile("workspace1.html"), "File does not exist: workspace1.html"
+
+
+@pytest.mark.skipif(not has_network(), reason="no network")
 def test_jigsaw_magic_with_path() -> None:
     """Test that %jigsaw saves files in a subdirectory when path is given in workspace (issue #167)."""
     kernel = get_kernel(EvalKernel)
