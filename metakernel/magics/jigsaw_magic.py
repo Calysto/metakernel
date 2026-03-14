@@ -295,7 +295,7 @@ class JigsawMagic(Magic):
     // Find the jigsaw cell's own output area element.
     function _dom_jig_cell(workspaceFilename) {{
         try {{
-            var htmlSrc = workspaceFilename.replace(/\.xml$/, '.html');
+            var htmlSrc = workspaceFilename.replace(/\\.xml$/, '.html');
             var frames = document.querySelectorAll('iframe');
             for (var i = 0; i < frames.length; i++) {{
                 if (frames[i].src && frames[i].src.indexOf(htmlSrc) !== -1) {{
@@ -422,13 +422,13 @@ class JigsawMagic(Magic):
         try {{
             var cfgEl = document.getElementById('jupyter-config-data');
             var cfg = cfgEl ? JSON.parse(cfgEl.textContent) : {{}};
-            var baseUrl = (cfg.baseUrl || '/').replace(/\/+$/, '');
+            var baseUrl = (cfg.baseUrl || '/').replace(/\\/+$/, '');
             var token = cfg.token || '';
             var authHdr = token ? {{'Authorization': 'token ' + token}} : {{}};
             // Determine the notebook path from the page URL.
             var nbPath = decodeURIComponent(location.pathname);
             if (baseUrl) nbPath = nbPath.replace(baseUrl, '');
-            nbPath = nbPath.replace(/^\/(notebooks|doc|lab\/tree)\//, '');
+            nbPath = nbPath.replace(/^\\/(notebooks|doc|lab\\/tree)\\//, '');
             fetch(baseUrl + '/api/sessions', {{headers: authHdr}})
                 .then(function(r) {{ return r.json(); }})
                 .then(function(sessions) {{
@@ -484,7 +484,7 @@ class JigsawMagic(Magic):
         // Fallback: scan all cells for the one whose output contains this iframe.
         if (!cell) {{
             try {{
-                var _h = data.workspace_filename.replace(/\.xml$/, '.html');
+                var _h = data.workspace_filename.replace(/\\.xml$/, '.html');
                 var _cs = _nb_cells();
                 for (var _ci = 0; _ci < _cs.length; _ci++) {{
                     if (_nb_iframe_in_cell(_cs[_ci], _h)) {{
@@ -567,7 +567,7 @@ class JigsawMagic(Magic):
     // so both old and new iframe HTML work without regenerating the file.
     document.jigsaw_generate = function(workspace_filename, language, insert_code) {{
         try {{
-            var html_src = workspace_filename.replace(/\.xml$/, '.html');
+            var html_src = workspace_filename.replace(/\\.xml$/, '.html');
             var iframes = document.querySelectorAll('iframe');
             for (var _i = 0; _i < iframes.length; _i++) {{
                 if (iframes[_i].src.indexOf(html_src) !== -1) {{
