@@ -126,6 +126,19 @@ class REPLWrapTestCase(unittest.TestCase):
         res = p.run_command("1 + 1")
         assert res.strip() == "2"
 
+    @pytest.mark.skipif(
+        sys.platform == "win32", reason="pexpect with python not reliable on Windows"
+    )
+    def test_spawn_args(self) -> None:
+        p = replwrap.REPLWrapper(
+            sys.executable,
+            ">>> ",
+            "import sys; sys.ps1={0!r}; sys.ps2={1!r}",
+            args=["-i", "-c", "x=4+7"],
+        )
+        res = p.run_command("x-11")
+        assert res.strip() == "0"
+
     def test_bracketed_paste(self) -> None:
         # Readline paste bracketing is easily toggled in bash, but can be harder elsewhere
         # This tests that run_command() still works with it enabled (the default for readline,

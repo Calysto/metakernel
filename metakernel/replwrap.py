@@ -44,6 +44,7 @@ class REPLWrapper:
     :param bool echo: Whether the child should echo, or in the case
     of Windows, whether the child does echo.
     :param dict extr_env: Extra env variables to send to the child.
+    :param list args: Additional arguments to pass to the spawned command.
     """
 
     def __init__(
@@ -60,6 +61,7 @@ class REPLWrapper:
         echo: bool = False,
         extra_env: dict[str, Any] | None = None,
         encoding: str = "utf-8",
+        args: list[str] | None = None,
     ) -> None:
         if isinstance(cmd_or_spawn, str):
             if extra_env:
@@ -69,6 +71,7 @@ class REPLWrapper:
                 env = None
             self.child = pexpect.spawnu(
                 cmd_or_spawn,
+                args=args,
                 echo=echo,
                 codec_errors="ignore",
                 encoding=encoding,

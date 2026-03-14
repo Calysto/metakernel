@@ -34,7 +34,12 @@ class TestREPLWrapperInit:
                 with patch("atexit.register"):
                     wrapper = REPLWrapper("bash", r"[$#]", None)
         mock_spawn.assert_called_once_with(
-            "bash", echo=False, codec_errors="ignore", encoding="utf-8", env=None
+            "bash",
+            args=None,
+            echo=False,
+            codec_errors="ignore",
+            encoding="utf-8",
+            env=None,
         )
         assert wrapper.child is mock_child
 
@@ -52,7 +57,12 @@ class TestREPLWrapperInit:
                         "gnuplot", r"gnuplot>", None, encoding="cp1252"
                     )
         mock_spawn.assert_called_once_with(
-            "gnuplot", echo=False, codec_errors="ignore", encoding="cp1252", env=None
+            "gnuplot",
+            args=None,
+            echo=False,
+            codec_errors="ignore",
+            encoding="cp1252",
+            env=None,
         )
         assert wrapper.child is mock_child
 
