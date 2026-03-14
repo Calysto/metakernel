@@ -129,6 +129,18 @@ class REPLWrapTestCase(unittest.TestCase):
     @pytest.mark.skipif(
         sys.platform == "win32", reason="pexpect with python not reliable on Windows"
     )
+    def test_spawn_no_args(self) -> None:
+        p = replwrap.REPLWrapper(
+            sys.executable,
+            ">>> ",
+            "import sys; sys.ps1={0!r}; sys.ps2={1!r}",
+        )
+        res = p.run_command("1+1")
+        assert res.strip() == "2"
+
+    @pytest.mark.skipif(
+        sys.platform == "win32", reason="pexpect with python not reliable on Windows"
+    )
     def test_spawn_args(self) -> None:
         p = replwrap.REPLWrapper(
             sys.executable,
