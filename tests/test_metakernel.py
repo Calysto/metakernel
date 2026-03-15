@@ -981,7 +981,7 @@ class TestScheduleDisplayOutput:
         """When io_loop is present, add_callback is used instead of a direct call."""
         kernel = get_kernel()
         mock_io_loop = unittest.mock.Mock()
-        kernel.io_loop = mock_io_loop  # type: ignore[attr-defined]
+        kernel.io_loop = mock_io_loop
 
         def cb() -> None:
             pass
