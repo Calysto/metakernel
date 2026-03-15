@@ -1,6 +1,7 @@
 import asyncio
 import os
 import re
+from pathlib import Path
 
 import pytest
 
@@ -18,7 +19,7 @@ skip_no_network = pytest.mark.skipif(not has_network(), reason="no network")
 
 @skip_no_network
 @pytest.mark.parametrize("language", LANGUAGES)
-def test_jigsaw_magic(tmp_path: pytest.TempPathFactory, language: str) -> None:
+def test_jigsaw_magic(tmp_path: Path, language: str) -> None:
     kernel = get_kernel(EvalKernel)
     asyncio.run(
         kernel.do_execute(f"%jigsaw {language} --workspace {tmp_path}/workspace1")
@@ -29,7 +30,7 @@ def test_jigsaw_magic(tmp_path: pytest.TempPathFactory, language: str) -> None:
 
 @skip_no_network
 @pytest.mark.parametrize("language", LANGUAGES)
-def test_jigsaw_magic_direct(tmp_path: pytest.TempPathFactory, language: str) -> None:
+def test_jigsaw_magic_direct(tmp_path: Path, language: str) -> None:
     """Test calling JigsawMagic.line_jigsaw directly with a workspace filename."""
     from metakernel.magics.jigsaw_magic import JigsawMagic
 
@@ -41,7 +42,7 @@ def test_jigsaw_magic_direct(tmp_path: pytest.TempPathFactory, language: str) ->
 
 @skip_no_network
 @pytest.mark.parametrize("language", LANGUAGES)
-def test_jigsaw_html_content(tmp_path: pytest.TempPathFactory, language: str) -> None:
+def test_jigsaw_html_content(tmp_path: Path, language: str) -> None:
     """Generated HTML uses postMessage, has no window.parent violations, and embeds saved-XML placeholder."""
     from metakernel.magics.jigsaw_magic import JigsawMagic
 
@@ -70,7 +71,7 @@ def test_jigsaw_html_content(tmp_path: pytest.TempPathFactory, language: str) ->
 
 
 @skip_no_network
-def test_jigsaw_magic_with_path(tmp_path: pytest.TempPathFactory) -> None:
+def test_jigsaw_magic_with_path(tmp_path: Path) -> None:
     """Test that %jigsaw saves files in a subdirectory when path is given in workspace (issue #167)."""
     kernel = get_kernel(EvalKernel)
     workspace = tmp_path / "subdir" / "workspace1"
