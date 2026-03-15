@@ -161,6 +161,48 @@ def do_execute_direct(self, code):
 
 As a convenience, `self.Display()` also accepts a raw MIME bundle dict and routes it to `DisplayData` automatically, so you can pass MIME data through the same call site as Python objects.
 
+## Pushing output from background threads
+
+MetaKernel kernels can send output to all connected frontends at any time — even when no cell is being executed. This is useful for kernels that wrap an application that emits events, periodic status updates, or asynchronous notifications.
+
+Use `self.schedule_display_output(callback)` to schedule a callable on the kernel's main IO loop. Because ZMQ sockets are not thread-safe, calling `self.Print(...)` directly from a background thread is unsafe; `schedule_display_output` routes the call through Tornado's thread-safe `add_callback`, ensuring the message is delivered correctly.
+
+```python
+import threading
+import time
+
+from metakernel import MetaKernel
+
+
+class MyKernel(MetaKernel):
+    # ... (required attributes omitted for brevity)
+
+    def start(self):
+        super().start()
+        t = threading.Thread(target=self._background_monitor, daemon=True)
+        t.start()
+
+    def _background_monitor(self):
+        """Poll the connected application every 10 seconds and forward any output."""
+        while True:
+            time.sleep(10)
+            message = self._poll_app()   # your application-specific call
+            if message:
+                self.schedule_display_output(
+                    lambda msg=message: self.Print(msg)
+                )
+
+    def _poll_app(self):
+        return "periodic status update"
+
+    def do_execute_direct(self, code, silent=False):
+        return self._poll_app()
+```
+
+The callback receives no arguments and is called on the main thread, so it can safely call `self.Print`, `self.Write`, `self.Display`, `self.DisplayData`, or `self.Error`.
+
+When `io_loop` is not available (for example in unit tests), the callback is invoked directly instead.
+
 ## Adding custom magics
 
 Place magic files in a `magics/` subpackage alongside your kernel module. Each file should be named `{name}_magic.py` and define a class that inherits from `Magic`. Line magics are methods named `line_{name}` and cell magics are `cell_{name}`:

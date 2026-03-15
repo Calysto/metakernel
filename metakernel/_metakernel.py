@@ -12,7 +12,7 @@ import sys
 import warnings
 from collections import OrderedDict
 from subprocess import CalledProcessError
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Callable
 
 import comm
 from ipykernel.kernelapp import IPKernelApp
@@ -814,6 +814,38 @@ class MetaKernel(Kernel):
             self.log.info(message.rstrip())
         else:
             self.send_response(self.iopub_socket, "stream", stream_content)
+
+    def schedule_display_output(self, callback: Callable[[], None]) -> None:
+        """Schedule a display output callback to run on the kernel's main IO loop.
+
+        Use this to send output to the frontend from a background thread when
+        no execution is in progress. The callback is executed on the kernel's
+        main IO loop, ensuring thread safety with ZMQ sockets.
+
+        Example::
+
+            import threading
+            import time
+
+            def background_task(kernel):
+                while True:
+                    time.sleep(10)
+                    kernel.schedule_display_output(
+                        lambda: kernel.Print("Periodic update from background!")
+                    )
+
+            threading.Thread(target=background_task, args=(self,), daemon=True).start()
+
+        Args:
+            callback: A callable that will be invoked on the main IO loop.
+                      Typically calls methods like :meth:`Print`, :meth:`Write`,
+                      :meth:`Display`, :meth:`DisplayData`, or :meth:`Error`.
+        """
+        io_loop = getattr(self, "io_loop", None)
+        if io_loop is not None:
+            io_loop.add_callback(callback)
+        else:
+            callback()
 
     ##############################
     # Private API and methods not likely to be overridden
