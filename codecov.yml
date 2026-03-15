@@ -1,0 +1,22 @@
+codecov:
+  notify:
+    # Wait for both coverage uploads before reporting:
+    # 1 cover (ubuntu-latest, Python 3.10) +
+    # 1 cover (windows-latest, Python 3.10)
+    after_n_builds: 2
+
+coverage:
+  status:
+    project:
+      default:
+        target: 90%
+        threshold: 0%
+    patch:
+      default:
+        target: 95%
+        threshold: 0%
+
+comment:
+  layout: "reach,diff,flags,files"
+  behavior: default
+  require_changes: false
