@@ -100,7 +100,7 @@ class TutorMagic(Magic):
             f'">Run in Online Python Tutor</button>'
             f"</div>"
         )
-        self.kernel.Display(HTML(html))
+        self.kernel.Display(HTML(html))  # type: ignore[no-untyped-call]
         self.evaluate = False
 
 

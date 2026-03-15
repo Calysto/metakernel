@@ -20,7 +20,7 @@ def _run_tutor(code: str, language: str | None = None):
 
 def _get_url(html_obj) -> str:
     """Extract the pythontutor URL embedded in the HTML button output."""
-    return html_obj.data
+    return str(html_obj.data)
 
 
 def test_tutor_python3_url() -> None:
