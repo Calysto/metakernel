@@ -238,7 +238,7 @@ def _parse_args(
     for key, value in kwargs.items():
         try:
             kwargs[key] = safe_eval(value)
-        except Exception:
+        except Exception:  # noqa: S110
             pass
 
     return new_args, kwargs

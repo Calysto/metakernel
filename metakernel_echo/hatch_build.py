@@ -22,7 +22,7 @@ class CustomHook(BuildHookInterface):
         prefix = os.path.join(here, "data_kernelspec")
 
         with TemporaryDirectory() as td:
-            os.chmod(td, 0o755)  # Starts off as 700, not user readable
+            os.chmod(td, 0o755)  # noqa: S103 Starts off as 700, not user readable
             with open(os.path.join(td, "kernel.json"), "w") as f:
                 json.dump(kernel_json, f, sort_keys=True)
             print("Installing Jupyter kernel spec")

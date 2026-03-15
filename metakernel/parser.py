@@ -110,7 +110,7 @@ class Parser:
             info["column"] = col = 0
 
         _match = re.search(self.id_regex, line)
-        assert _match is not None
+        assert _match is not None  # noqa: S101
         obj = _match.group()
 
         full_obj = obj
@@ -212,7 +212,7 @@ class Parser:
             info["name"] = "help"
             regex = rf"(\{self.help_suffix}+)\Z"
             match = re.search(regex, code.strip(), re.UNICODE)
-            assert match is not None
+            assert match is not None  # noqa: S101
             suf = match.group()
             info["prefix"] = ""
             info["type"] = types[len(suf)]
@@ -313,7 +313,7 @@ def _listdir(root: str) -> list[str]:
             if os.path.isdir(path):
                 name += os.sep
             res.append(name)
-    except Exception:
+    except Exception:  # noqa: S110
         pass  # no need to report invalid paths
     return res
 

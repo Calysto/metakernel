@@ -84,7 +84,7 @@ class HelpMagic(Magic):
                 if minfo["args"]:
                     info = self.kernel.parse_code(minfo["args"])
                 elif magic:
-                    assert isinstance(magic, Magic)
+                    assert isinstance(magic, Magic)  # noqa: S101
                     return magic.get_help(minfo["type"], minfo["name"], level)
 
             else:
@@ -95,14 +95,14 @@ class HelpMagic(Magic):
                 elif minfo["args"]:
                     info = self.kernel.parse_code(minfo["args"])
                 elif magic:
-                    assert isinstance(magic, Magic)
+                    assert isinstance(magic, Magic)  # noqa: S101
                     return magic.get_help(minfo["type"], minfo["name"], level)
                 else:
                     return "No such {} magic named '{}', so can't really help with that".format(
                         minfo["type"], minfo["name"]
                     )
             if magic:
-                assert isinstance(magic, Magic)
+                assert isinstance(magic, Magic)  # noqa: S101
                 the_help = magic.get_help_on(info, level)
                 self.kernel.log.error("got")
                 self.kernel.log.error(the_help)

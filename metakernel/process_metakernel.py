@@ -53,7 +53,7 @@ class ProcessMetaKernel(MetaKernel):
 
     @property
     def banner(self) -> str:  # type:ignore[override]
-        assert self._banner is not None
+        assert self._banner is not None  # noqa: S101
         return self._banner
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -97,7 +97,7 @@ class ProcessMetaKernel(MetaKernel):
             if self.wrapper is not None:
                 try:
                     self.wrapper.terminate()
-                except Exception:
+                except Exception:  # noqa: S110
                     pass
             self.restart_kernel()
             self.reload_magics()

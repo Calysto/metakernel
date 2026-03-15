@@ -34,7 +34,7 @@ class Activity:
             filename = os.path.expanduser(filename)
         filename = os.path.abspath(filename)
         self.filename = filename
-        assert self.filename is not None
+        assert self.filename is not None  # noqa: S101
         with open(self.filename) as fp:
             json_text = "".join(fp.readlines())
         self.load_json(json_text)
@@ -154,7 +154,7 @@ class Activity:
         self.handle_submit(sender)
         self.last_id = self.questions[self.index].id
         data = {}
-        assert self.results_filename is not None
+        assert self.results_filename is not None  # noqa: S101
         with open(self.results_filename) as fp:
             line = fp.readline()
             while line:
@@ -189,7 +189,7 @@ class Activity:
     def handle_submit(self, sender: Any) -> None:
         import portalocker
 
-        assert self.results_filename is not None
+        assert self.results_filename is not None  # noqa: S101
         with portalocker.Lock(self.results_filename, "a+") as g:
             g.write(
                 f"{self.id}::{getpass.getuser()}::{datetime.datetime.today()}::{sender.description}\n"
@@ -330,8 +330,8 @@ class ActivityMagic(Magic):
         activity = Activity()
         activity.load(filename)
         # Make sure results file is writable:
-        assert activity.results_filename is not None
-        os.chmod(activity.results_filename, 0o777)
+        assert activity.results_filename is not None  # noqa: S101
+        os.chmod(activity.results_filename, 0o777)  # noqa: S103
         # Ok, let's test it (MetaKernel):
         self.line_activity(filename)
         self.evaluate = False
