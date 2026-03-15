@@ -79,6 +79,12 @@ body:
       label: Kernel Using MetaKernel
       placeholder: "e.g., Calysto Scheme, MetaKernel Python"
 
+  - type: input
+    id: kernel-version
+    attributes:
+      label: Kernel Version
+      placeholder: "e.g., 0.1.0"
+
   - type: textarea
     id: screenshots
     attributes:
