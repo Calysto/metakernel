@@ -144,7 +144,7 @@ No special configuration is required — these fixes are applied every time
 verify.
 
 **`%jigsaw` shows a blank iframe / SecurityError in the browser console**
-: Make sure you are running a recent version of MetaKernel (≥ 0.30).
+: Make sure you are running a recent version of MetaKernel (≥ 1.0).
 Earlier versions wrote HTML that accessed `window.parent` directly, which
 is blocked across origins.
 
