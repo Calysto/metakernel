@@ -5,7 +5,7 @@ from __future__ import annotations
 import time
 from typing import Any
 
-from metakernel import Magic, MetaKernel, option
+from metakernel import ExceptionWrapper, Magic, MetaKernel, option
 
 
 class Slice:
@@ -382,6 +382,15 @@ kernels['{kernel_name}'] = {class_name}()
                 return None
         except Exception:
             pass
+        # If every remote result is an ExceptionWrapper, surface the first one
+        # as a proper error so MetaKernel reports it as an error message rather
+        # than formatting the list as plain output (issue #61).
+        if (
+            isinstance(self.retval, list)
+            and self.retval
+            and all(isinstance(r, ExceptionWrapper) for r in self.retval)
+        ):
+            return self.retval[0]
         return self.retval
 
 

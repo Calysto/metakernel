@@ -6,7 +6,7 @@ from typing import Any
 import pytest
 
 from metakernel.magics.parallel_magic import ParallelMagic
-from tests.utils import EvalKernel, get_kernel, get_log_text
+from tests.utils import EvalKernel, capture_send_messages, get_kernel, get_log_text
 
 try:
     import ipyparallel  # type: ignore[import-untyped]
@@ -28,6 +28,37 @@ def test_parallel_magic() -> None:
     asyncio.run(kernel.do_execute("%px cluster_rank", False))
     results = get_log_text(kernel)
     assert "[0, 1, 2]" in results, results
+
+
+@pytest.mark.skipif(ipyparallel is None, reason="Requires ipyparallel")
+def test_px_error_reports_exception_not_noisy_traceback() -> None:
+    """%%px with failing code should report the remote error, not a noisy
+    'Error in calling magic' wrapper with full Python traceback (issue #61)."""
+    kernel = get_kernel(EvalKernel)
+    asyncio.run(
+        kernel.do_execute("%parallel metakernel_python MetaKernelPython", False)
+    )
+
+    with capture_send_messages(kernel) as messages:
+        asyncio.run(kernel.do_execute("%%px\nundefined_variable_xyz_issue61", False))
+
+    all_text = "\n".join(
+        m.get("text", "")
+        + m.get("evalue", "")
+        + str(m.get("traceback", []))
+        + str(m.get("data", {}))
+        for _, m in messages
+    )
+
+    assert "Error in calling magic" not in all_text, (
+        f"Got noisy call_magic wrapper instead of a proper error message:\n{all_text}"
+    )
+    # The response should be an error message type, not just execute_result
+    msg_types = [t for t, _ in messages]
+    assert "error" in msg_types, (
+        f"Expected an 'error' message type but got {msg_types}.\n"
+        f"Full output:\n{all_text}"
+    )
 
 
 # Starting the cluster from here doesn't work with pytest
