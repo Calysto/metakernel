@@ -20,135 +20,6 @@ def download(url: str) -> str:
     return g.read().decode("utf-8")  # type: ignore[no-any-return]
 
 
-def _fix_cross_origin(html_text: str, language: str, saved_xml: str = "") -> str:
-    """Rewrite cross-origin window.parent accesses to use postMessage (#170).
-
-    Direct property access on a cross-origin (or null-origin sandboxed) parent
-    frame is blocked by modern browsers.  postMessage() is explicitly permitted
-    across any origin boundary, so we:
-
-    1. Remove the lines that expose Blockly/DOMParser on the parent window.
-    2. Replace the jigsaw_register_workspace() call with inline initialisation
-       that reads the workspace XML from a JS variable embedded in the HTML at
-       magic run time (avoids XHR, which also fails from a null-origin frame).
-    3. Replace button onclick handlers with postMessage calls via small helper
-       functions injected just before </body>.
-    4. Remove the stray ``window.parent.block = block`` assignment.
-    """
-    import json
-    import re
-
-    # 1. Remove lines that expose Blockly/DOMParser to the parent window.
-    html_text = html_text.replace(
-        "      // Make Blockly available to notebook:\n"
-        "      window.parent.Blockly = Blockly;\n"
-        "      window.parent.DOMParser = DOMParser;\n",
-        "",
-    )
-
-    # 2. Replace jigsaw_register_workspace with inline XML initialisation.
-    #    The saved XML (if any) is injected as window.__jigsaw_saved_xml__
-    #    in a <script> tag added to <head>, so no XHR is needed.
-    html_text = html_text.replace(
-        "      var xml_init = document.getElementById('workspace');\n"
-        '      window.parent.document.jigsaw_register_workspace("MYWORKSPACENAME", workspace, xml_init);',
-        "      var xml_init = document.getElementById('workspace');\n"
-        "      // Restore saved workspace XML embedded at magic run time (fixes #170).\n"
-        "      (function() {\n"
-        "        function applyXml(xml) {\n"
-        "          try {\n"
-        "            Blockly.Xml.domToWorkspace(workspace,\n"
-        "              xml || xml_init ||\n"
-        "              Blockly.Xml.textToDom('<xml id=\"workspace\"></xml>'));\n"
-        "          } catch(e) {}\n"
-        "        }\n"
-        "        try {\n"
-        "          var saved = window.__jigsaw_saved_xml__;\n"
-        "          if (saved) {\n"
-        "            applyXml(new DOMParser().parseFromString(saved, 'text/xml').documentElement);\n"
-        "          } else {\n"
-        "            applyXml(null);\n"
-        "          }\n"
-        "        } catch(e) { applyXml(null); }\n"
-        "      })();",
-    )
-
-    # Embed the saved XML as a JS variable in <head> so the init code above
-    # can read it without any network request.
-    xml_script = (
-        f"<script>window.__jigsaw_saved_xml__ = {json.dumps(saved_xml)};</script>\n"
-    )
-    html_text = html_text.replace("</head>", xml_script + "</head>")
-
-    # 3. Replace button onclick handlers with local helper calls.
-    #    Use regex so the actual Blockly language in the HTML (e.g. 'Java' for
-    #    Processing, 'Python' for Python) is preserved rather than requiring it
-    #    to match the %jigsaw LANGUAGE argument.
-    #    Replace insert (with trailing ', 1') before run (without) to avoid a
-    #    partial match on the run pattern.
-    html_text = re.sub(
-        r"window\.parent\.document\.jigsaw_generate\('MYWORKSPACENAME', '([^']+)', 1\)",
-        r"_jigsaw_insert(workspace, '\1', 'MYWORKSPACENAME')",
-        html_text,
-    )
-    html_text = re.sub(
-        r"window\.parent\.document\.jigsaw_generate\('MYWORKSPACENAME', '([^']+)'\)",
-        r"_jigsaw_run(workspace, '\1', 'MYWORKSPACENAME')",
-        html_text,
-    )
-    html_text = html_text.replace(
-        "window.parent.document.jigsaw_clear_output('MYWORKSPACENAME')",
-        "_jigsaw_clear('MYWORKSPACENAME')",
-    )
-
-    # 4. Remove stray window.parent property assignments (dead code in the HTML).
-    html_text = html_text.replace("window.parent.block = block;", "")
-
-    # 5. Inject helper functions before </body>.
-    #    Send to both window.parent and window.top so the message reaches the
-    #    listener regardless of whether Javascript(script) runs in a sandboxed
-    #    output-cell frame (window.parent) or the top-level page (window.top).
-    #    A msg_id lets the listener deduplicate if both deliveries arrive.
-    helper = (
-        "<script>\n"
-        "  // Use 4-space indentation for all Blockly code generators.\n"
-        "  (function() {\n"
-        "    var gens = ['Python', 'JavaScript', 'Java', 'Dart', 'Lua', 'PHP'];\n"
-        "    for (var i = 0; i < gens.length; i++) {\n"
-        "      if (Blockly[gens[i]]) Blockly[gens[i]].INDENT = '    ';\n"
-        "    }\n"
-        "  })();\n"
-        "  function _jigsaw_send(msg) {\n"
-        "    msg.msg_id = Math.random().toString(36).slice(2);\n"
-        "    try { window.parent.postMessage(msg, '*'); } catch(e) {}\n"
-        "    try {\n"
-        "      if (window.top !== window.parent) {\n"
-        "        window.top.postMessage(msg, '*');\n"
-        "      }\n"
-        "    } catch(e) {}\n"
-        "  }\n"
-        "  function _jigsaw_run(ws, lang, wf) {\n"
-        "    var code = Blockly[lang].workspaceToCode(ws);\n"
-        "    var xml  = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(ws));\n"
-        "    _jigsaw_send({type:'jigsaw', action:'execute',\n"
-        "      workspace_filename:wf, code:code, save_xml:xml});\n"
-        "  }\n"
-        "  function _jigsaw_insert(ws, lang, wf) {\n"
-        "    var code = Blockly[lang].workspaceToCode(ws);\n"
-        "    var xml  = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(ws));\n"
-        "    _jigsaw_send({type:'jigsaw', action:'insert',\n"
-        "      workspace_filename:wf, code:code, save_xml:xml});\n"
-        "  }\n"
-        "  function _jigsaw_clear(wf) {\n"
-        "    _jigsaw_send({type:'jigsaw', action:'clear', workspace_filename:wf});\n"
-        "  }\n"
-        "</script>\n"
-    )
-    html_text = html_text.replace("</body>", helper + "</body>")
-
-    return html_text
-
-
 class JigsawMagic(Magic):
     @option(
         "-w",
@@ -181,7 +52,9 @@ class JigsawMagic(Magic):
                 )
             )
         workspace_filename = workspace + ".xml"
-        html_text = download("https://calysto.github.io/jigsaw/" + language + ".html")
+        html_text = download(
+            "https://calysto.github.io/jigsaw_v2/" + language + ".html"
+        )
         html_filename = workspace + ".html"
         html_dir = os.path.dirname(html_filename)
         if html_dir:
@@ -194,8 +67,11 @@ class JigsawMagic(Magic):
                     saved_xml = f.read()
             except OSError:
                 pass
-        # Fix cross-origin issue before substituting the workspace placeholder.
-        html_text = _fix_cross_origin(html_text, language, saved_xml)
+        # Embed saved XML into the placeholder injected by the local server HTML.
+        html_text = html_text.replace(
+            'window.__jigsaw_saved_xml__ = "";',
+            f"window.__jigsaw_saved_xml__ = {_json.dumps(saved_xml)};",
+        )
         html_text = html_text.replace("MYWORKSPACENAME", workspace_filename)
         with open(html_filename, "w") as fp:
             fp.write(html_text)
