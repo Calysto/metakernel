@@ -43,4 +43,5 @@ nav:
   - Creating a Kernel: new_kernel.md
   - Creating a Magic: new_magic.md
   - Magics Reference: magics.md
+  - JupyterHub Deployment: jupyterhub.md
   - API Reference: api.md
