@@ -87,6 +87,35 @@ Create `data_kernelspec/share/jupyter/kernels/my_kernel/kernel.json`:
 
 Optional keys include `"codemirror_mode"`, `"env"`, and `"interrupt_mode"`. See the [Jupyter kernel specification](https://jupyter-client.readthedocs.io/en/stable/kernels.html) for the full list.
 
+## Syntax highlighting (kernel.js)
+
+To add syntax highlighting for your language in the notebook editor, set a `kernel_javascript` class attribute on your kernel. When `python -m my_kernel install` runs, MetaKernel writes this string to `kernel.js` alongside `kernel.json` in the kernelspec directory.
+
+The JavaScript should use CodeMirror's `defineSimpleMode` (or any other CodeMirror API) wrapped in a `define` call:
+
+```python
+class MyKernel(MetaKernel):
+    kernel_javascript = """
+define(
+  ['codemirror/lib/codemirror', 'codemirror/addon/mode/simple'],
+  function(CodeMirror, _) {
+    return {
+      onload: function() {
+        CodeMirror.defineSimpleMode('my_language', {
+          start: [
+            {regex: /#.*/, token: 'comment'},
+            {regex: /\\b(if|else|while|for)\\b/, token: 'keyword'},
+          ]
+        });
+      }
+    };
+  }
+);
+"""
+```
+
+The string is only written when it is non-empty after stripping whitespace, so leaving the attribute unset or blank skips the file entirely.
+
 ## Rich display output
 
 MetaKernel provides two complementary display paths depending on whether your kernel produces Python objects or raw MIME data.
