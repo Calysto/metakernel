@@ -953,6 +953,74 @@ class TestDisplayData:
         mock_send.assert_not_called()
 
 
+class TestScheduleDisplayOutput:
+    """Tests for schedule_display_output (issue #198)."""
+
+    def test_calls_callback_directly_without_io_loop(self) -> None:
+        """Callback is invoked immediately when io_loop is absent (e.g. in tests)."""
+        kernel = get_kernel()
+        assert not hasattr(kernel, "io_loop")
+        called = []
+        kernel.schedule_display_output(lambda: called.append(True))
+        assert called == [True]
+
+    def test_sends_iopub_message_via_callback(self) -> None:
+        """schedule_display_output triggers Print which sends a stream message."""
+        kernel = get_kernel()
+        with unittest.mock.patch.object(kernel, "send_response") as mock_send:
+            kernel.schedule_display_output(
+                lambda: kernel.Print("hello from background")
+            )
+        mock_send.assert_called_once_with(
+            kernel.iopub_socket,
+            "stream",
+            {"name": "stdout", "text": "hello from background\n"},
+        )
+
+    def test_uses_io_loop_add_callback_when_available(self) -> None:
+        """When io_loop is present, add_callback is used instead of a direct call."""
+        kernel = get_kernel()
+        mock_io_loop = unittest.mock.Mock()
+        kernel.io_loop = mock_io_loop  # type: ignore[attr-defined]
+
+        def cb() -> None:
+            pass
+
+        kernel.schedule_display_output(cb)
+        mock_io_loop.add_callback.assert_called_once_with(cb)
+
+    def test_background_thread_sends_message(self) -> None:
+        """Callback scheduled from a background thread is executed and sends output."""
+        import threading
+
+        kernel = get_kernel()
+        sent: list[tuple[str, dict[str, Any]]] = []
+        original = kernel.send_response
+
+        def _capture(
+            socket: Any, msg_type: str, content: dict[str, Any], **kwargs: Any
+        ) -> Any:
+            sent.append((msg_type, content))
+            return original(socket, msg_type, content, **kwargs)
+
+        kernel.send_response = _capture  # type: ignore[method-assign]
+
+        done = threading.Event()
+
+        def background() -> None:
+            kernel.schedule_display_output(lambda: kernel.Print("from thread"))
+            done.set()
+
+        t = threading.Thread(target=background)
+        t.start()
+        t.join(timeout=2)
+        assert done.is_set(), "background thread did not complete"
+        assert any(
+            msg_type == "stream" and content.get("text") == "from thread\n"
+            for msg_type, content in sent
+        )
+
+
 def teardown() -> None:
     if os.path.exists("TEST.txt"):
         os.remove("TEST.txt")

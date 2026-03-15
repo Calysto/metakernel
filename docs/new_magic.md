@@ -201,6 +201,32 @@ Inside a magic method, use the following helpers on `self.kernel`:
 
 : Read a variable from the kernel's namespace.
 
+`self.kernel.schedule_display_output(callback)`
+
+: Schedule a zero-argument callable to run on the kernel's main IO loop. Use this when you need to send output from a background thread (for example, in response to an event from a connected application). ZMQ sockets are not thread-safe, so calling `Print` or `Display` directly from a background thread is unsafe — `schedule_display_output` routes the call through Tornado's thread-safe `add_callback`:
+
+````
+```python
+import threading
+
+def line_watch(self, interval="5"):
+    """
+    %watch [interval]
+
+    Start a background thread that prints a status message every *interval* seconds.
+    """
+    def _monitor():
+        import time
+        while True:
+            time.sleep(float(interval))
+            self.kernel.schedule_display_output(
+                lambda: self.kernel.Print("still running…")
+            )
+
+    threading.Thread(target=_monitor, daemon=True).start()
+```
+````
+
 `self.code`
 
 : The raw cell body (cell magics only); available after `call_magic` sets it, or directly inside `cell_*` methods.
