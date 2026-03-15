@@ -23,7 +23,7 @@ from __future__ import annotations
 # -----------------------------------------------------------------------------
 from urllib.parse import quote
 
-from IPython.display import IFrame
+from IPython.display import HTML
 
 from metakernel import Magic, MetaKernel, option
 
@@ -88,8 +88,19 @@ class TutorMagic(Magic):
         elif language == "javascript":
             url += "py=js&rawInputLstJSON=%5B%5D&curInstr=0&codeDivWidth=350&codeDivHeight=400"
 
-        # Display the results in the output area
-        self.kernel.Display(IFrame(url, height=500, width="100%"))
+        # Display a button that loads the iframe on click (avoids simultaneous
+        # requests from multiple %%tutor cells in a static notebook).
+        escaped_url = url.replace('"', "&quot;")
+        html = (
+            f"<div>"
+            f'<button onclick="'
+            f"this.parentNode.innerHTML='<iframe src=&quot;{escaped_url}&quot; "
+            f"width=&quot;100%&quot; height=&quot;500&quot; "
+            f"frameborder=&quot;0&quot;></iframe>'"
+            f'">Run in Online Python Tutor</button>'
+            f"</div>"
+        )
+        self.kernel.Display(HTML(html))  # type: ignore[no-untyped-call]
         self.evaluate = False
 
 
