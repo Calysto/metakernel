@@ -128,10 +128,20 @@ extend-select = [
   "B",      # flake8-bugbear
   "I",      # isort
   "RUF",    # Ruff-specific
+  "S",      # flake8-bandit (security)
   "UP",     # pyupgrade
 ]
-ignore = ["RUF012", "RUF005"]
+ignore = [
+  "RUF005",
+  "RUF012",
+  "S102",   # exec() is fundamental to a Python kernel/REPL
+  "S307",   # eval() is fundamental to a kernel/REPL system
+  "S310",   # URL open with user-provided URLs is intentional
+  "S603",   # subprocess with trusted internal input
+  "S604",   # shell= as a dict key is not a security issue (false positive)
+  "S607",   # partial executable path is intentional
+]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["UP031", "E402", "RUF012", "F841"]
+"tests/**" = ["UP031", "E402", "RUF012", "F841", "S101", "S108"]
 "metakernel/pexpect.py" = ["F401"]

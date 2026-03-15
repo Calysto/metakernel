@@ -146,7 +146,7 @@ class MetaKernel(Kernel):
             # Write has already been set
             try:
                 sys.stdout.write = self.Write  # type: ignore[method-assign]
-            except Exception:
+            except Exception:  # noqa: S110
                 pass  # Can't change stdout
         self.redirect_to_log = False
         self.shell = None
@@ -184,7 +184,7 @@ class MetaKernel(Kernel):
                 return c
 
             comm.create_comm = _create_comm_with_kernel
-        except Exception:
+        except Exception:  # noqa: S110
             pass
 
         self.hist_file = get_history_file(self)

@@ -50,7 +50,7 @@ class ShellMagic(Magic):
     def eval(self, cmd: str, incremental: bool = False) -> str:
         if self.repl is None:
             self.start_process()
-        assert self.repl is not None
+        assert self.repl is not None  # noqa: S101
         stream_handler = self.kernel.Print if incremental else None
         return self.repl.run_command(cmd, timeout=None, stream_handler=stream_handler)
 

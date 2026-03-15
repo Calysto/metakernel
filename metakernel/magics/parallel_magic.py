@@ -380,7 +380,7 @@ kernels['{kernel_name}'] = {class_name}()
             ## any will crash on numpy arrays
             if isinstance(self.retval, list) and not any(self.retval):
                 return None
-        except Exception:
+        except Exception:  # noqa: S110
             pass
         # If every remote result is an ExceptionWrapper, surface the first one
         # as a proper error so MetaKernel reports it as an error message rather

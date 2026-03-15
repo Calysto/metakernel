@@ -125,7 +125,7 @@ class MacroMagic(Magic):
             try:
                 with open(macro_file) as mf:
                     data = ast.literal_eval(mf.read())
-            except Exception:
+            except Exception:  # noqa: S112
                 continue
             self.learned.update(data)
 
