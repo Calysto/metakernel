@@ -1,4 +1,5 @@
 import os
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -198,7 +199,7 @@ class TestMetaKernelAppSubcommands:
         written_files: list[str] = []
         original_open = open
 
-        def capture_open(path: str, mode: str = "r", **kwargs: object) -> object:
+        def capture_open(path: str, mode: str = "r", **kwargs: Any) -> Any:
             written_files.append(os.path.basename(path))
             return original_open(path, mode, **kwargs)
 
@@ -235,7 +236,7 @@ class TestMetaKernelAppSubcommands:
         written_files: list[str] = []
         original_open = open
 
-        def capture_open(path: str, mode: str = "r", **kwargs: object) -> object:
+        def capture_open(path: str, mode: str = "r", **kwargs: Any) -> Any:
             written_files.append(os.path.basename(path))
             return original_open(path, mode, **kwargs)
 
@@ -271,7 +272,7 @@ class TestMetaKernelAppSubcommands:
         written_files: list[str] = []
         original_open = open
 
-        def capture_open(path: str, mode: str = "r", **kwargs: object) -> object:
+        def capture_open(path: str, mode: str = "r", **kwargs: Any) -> Any:
             written_files.append(os.path.basename(path))
             return original_open(path, mode, **kwargs)
 
@@ -307,10 +308,10 @@ class TestMetaKernelAppSubcommands:
         import io
         import os
 
-        written: dict[str, str] = {}
+        written: dict[str, io.StringIO] = {}
         original_open = open
 
-        def capture_open(path: str, mode: str = "r", **kwargs: object) -> object:
+        def capture_open(path: str, mode: str = "r", **kwargs: Any) -> Any:
             if "w" in mode and os.path.basename(path) == "kernel.js":
                 buf = io.StringIO()
                 buf.close = lambda: None  # type: ignore[method-assign]
