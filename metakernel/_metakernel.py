@@ -974,7 +974,8 @@ class MetaKernelApp(IPKernelApp):
                 self.argv = filtered
 
             def start(self) -> None:
-                kernel_spec = self.kernel_class().kernel_json
+                instance = self.kernel_class()
+                kernel_spec = instance.kernel_json
                 if self.display_name is not None:
                     kernel_spec["display_name"] = self.display_name
                 with TemporaryDirectory() as td:
@@ -982,6 +983,12 @@ class MetaKernelApp(IPKernelApp):
                     os.mkdir(dirname)
                     with open(os.path.join(dirname, "kernel.json"), "w") as f:
                         json.dump(kernel_spec, f, sort_keys=True)
+                    if (
+                        hasattr(instance, "kernel_javascript")
+                        and instance.kernel_javascript.strip()
+                    ):
+                        with open(os.path.join(dirname, "kernel.js"), "w") as f:
+                            f.write(instance.kernel_javascript)
                     filenames = ["logo-64x64.png", "logo-32x32.png"]
                     name = self.kernel_class.__module__
                     for filename in filenames:

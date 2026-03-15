@@ -1,4 +1,5 @@
 import os
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -116,6 +117,7 @@ class TestMetaKernelAppSubcommands:
         }
         mock_kernel_class = MagicMock()
         mock_kernel_class.return_value.kernel_json = kernel_json
+        mock_kernel_class.return_value.kernel_javascript = ""
         mock_kernel_class.__module__ = "metakernel"
 
         app = MetaKernelApp()
@@ -151,6 +153,7 @@ class TestMetaKernelAppSubcommands:
         }
         mock_kernel_class = MagicMock()
         mock_kernel_class.return_value.kernel_json = kernel_json
+        mock_kernel_class.return_value.kernel_javascript = ""
         mock_kernel_class.__module__ = "metakernel"
 
         app = MetaKernelApp()
@@ -171,6 +174,160 @@ class TestMetaKernelAppSubcommands:
         assert "install" in cmd
         assert "--user" in cmd
 
+    def test_install_start_writes_kernel_js_when_kernel_javascript_set(self) -> None:
+        import os
+
+        kernel_json = {
+            "argv": ["python", "-m", "test_kernel"],
+            "display_name": "Test Kernel",
+            "language": "test",
+            "name": "test-kernel",
+        }
+        mock_instance = MagicMock()
+        mock_instance.kernel_json = kernel_json
+        mock_instance.kernel_javascript = "define([], function() {});"
+        mock_kernel_class = MagicMock(return_value=mock_instance)
+        mock_kernel_class.__module__ = "metakernel"
+
+        app = MetaKernelApp()
+        KernelInstallerApp, _ = app.subcommands["install"]
+        KernelInstallerApp.kernel_class = mock_kernel_class
+
+        installer = KernelInstallerApp()
+        installer.argv = []
+
+        written_files: list[str] = []
+        original_open = open
+
+        def capture_open(path: str, mode: str = "r", **kwargs: Any) -> Any:
+            written_files.append(os.path.basename(path))
+            return original_open(path, mode, **kwargs)
+
+        with (
+            patch("subprocess.check_call"),
+            patch("builtins.open", side_effect=capture_open),
+        ):
+            installer.start()
+
+        assert "kernel.js" in written_files
+
+    def test_install_start_skips_kernel_js_when_kernel_javascript_empty(self) -> None:
+        import os
+
+        kernel_json = {
+            "argv": ["python", "-m", "test_kernel"],
+            "display_name": "Test Kernel",
+            "language": "test",
+            "name": "test-kernel",
+        }
+        mock_instance = MagicMock()
+        mock_instance.kernel_json = kernel_json
+        mock_instance.kernel_javascript = "   "
+        mock_kernel_class = MagicMock(return_value=mock_instance)
+        mock_kernel_class.__module__ = "metakernel"
+
+        app = MetaKernelApp()
+        KernelInstallerApp, _ = app.subcommands["install"]
+        KernelInstallerApp.kernel_class = mock_kernel_class
+
+        installer = KernelInstallerApp()
+        installer.argv = []
+
+        written_files: list[str] = []
+        original_open = open
+
+        def capture_open(path: str, mode: str = "r", **kwargs: Any) -> Any:
+            written_files.append(os.path.basename(path))
+            return original_open(path, mode, **kwargs)
+
+        with (
+            patch("subprocess.check_call"),
+            patch("builtins.open", side_effect=capture_open),
+        ):
+            installer.start()
+
+        assert "kernel.js" not in written_files
+
+    def test_install_start_skips_kernel_js_when_kernel_javascript_absent(self) -> None:
+        import os
+
+        kernel_json = {
+            "argv": ["python", "-m", "test_kernel"],
+            "display_name": "Test Kernel",
+            "language": "test",
+            "name": "test-kernel",
+        }
+        mock_instance = MagicMock(spec=["kernel_json"])
+        mock_instance.kernel_json = kernel_json
+        mock_kernel_class = MagicMock(return_value=mock_instance)
+        mock_kernel_class.__module__ = "metakernel"
+
+        app = MetaKernelApp()
+        KernelInstallerApp, _ = app.subcommands["install"]
+        KernelInstallerApp.kernel_class = mock_kernel_class
+
+        installer = KernelInstallerApp()
+        installer.argv = []
+
+        written_files: list[str] = []
+        original_open = open
+
+        def capture_open(path: str, mode: str = "r", **kwargs: Any) -> Any:
+            written_files.append(os.path.basename(path))
+            return original_open(path, mode, **kwargs)
+
+        with (
+            patch("subprocess.check_call"),
+            patch("builtins.open", side_effect=capture_open),
+        ):
+            installer.start()
+
+        assert "kernel.js" not in written_files
+
+    def test_install_start_writes_correct_kernel_js_content(self) -> None:
+        kernel_json = {
+            "argv": ["python", "-m", "test_kernel"],
+            "display_name": "Test Kernel",
+            "language": "test",
+            "name": "test-kernel",
+        }
+        js_content = "define([], function() { return {}; });"
+        mock_instance = MagicMock()
+        mock_instance.kernel_json = kernel_json
+        mock_instance.kernel_javascript = js_content
+        mock_kernel_class = MagicMock(return_value=mock_instance)
+        mock_kernel_class.__module__ = "metakernel"
+
+        app = MetaKernelApp()
+        KernelInstallerApp, _ = app.subcommands["install"]
+        KernelInstallerApp.kernel_class = mock_kernel_class
+
+        installer = KernelInstallerApp()
+        installer.argv = []
+
+        import io
+        import os
+
+        written: dict[str, io.StringIO] = {}
+        original_open = open
+
+        def capture_open(path: str, mode: str = "r", **kwargs: Any) -> Any:
+            if "w" in mode and os.path.basename(path) == "kernel.js":
+                buf = io.StringIO()
+                buf.close = lambda: None  # type: ignore[method-assign]
+                written["kernel.js"] = buf
+                return buf
+            return original_open(path, mode, **kwargs)
+
+        with (
+            patch("subprocess.check_call"),
+            patch("builtins.open", side_effect=capture_open),
+        ):
+            installer.start()
+
+        assert "kernel.js" in written
+        assert written["kernel.js"].getvalue() == js_content
+
     def test_install_start_exits_on_failure(self) -> None:
         import subprocess
 
@@ -182,6 +339,7 @@ class TestMetaKernelAppSubcommands:
         }
         mock_kernel_class = MagicMock()
         mock_kernel_class.return_value.kernel_json = kernel_json
+        mock_kernel_class.return_value.kernel_javascript = ""
         mock_kernel_class.__module__ = "metakernel"
 
         app = MetaKernelApp()
