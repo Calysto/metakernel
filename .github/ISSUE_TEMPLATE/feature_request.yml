@@ -1,0 +1,43 @@
+name: Feature Request
+description: Suggest an enhancement or new feature for MetaKernel
+title: "[Feature] Short description of the enhancement"
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to suggest a new feature!
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Is your feature request related to a problem?
+      description: A clear description of what the problem is.
+      placeholder: "e.g., I'm frustrated when..."
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Describe the solution you'd like
+      description: A clear and concise description of what you want to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Describe alternatives you've considered
+      description: Any alternative solutions or features you've considered.
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: User Value/Impact
+      description: Who will benefit from this? How does it improve the user experience or developer workflow?
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context/Screenshots
+      description: Add any other context, examples, or screenshots about the feature request here.
