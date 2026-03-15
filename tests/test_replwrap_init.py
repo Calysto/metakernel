@@ -34,7 +34,12 @@ class TestREPLWrapperInit:
                 with patch("atexit.register"):
                     wrapper = REPLWrapper("bash", r"[$#]", None)
         mock_spawn.assert_called_once_with(
-            "bash", echo=False, codec_errors="ignore", encoding="utf-8", env=None
+            "bash",
+            args=None,
+            echo=False,
+            codec_errors="ignore",
+            encoding="utf-8",
+            env=None,
         )
         assert wrapper.child is mock_child
 
@@ -52,7 +57,12 @@ class TestREPLWrapperInit:
                         "gnuplot", r"gnuplot>", None, encoding="cp1252"
                     )
         mock_spawn.assert_called_once_with(
-            "gnuplot", echo=False, codec_errors="ignore", encoding="cp1252", env=None
+            "gnuplot",
+            args=None,
+            echo=False,
+            codec_errors="ignore",
+            encoding="cp1252",
+            env=None,
         )
         assert wrapper.child is mock_child
 
@@ -424,6 +434,32 @@ class TestInterrupt:
         with patch.object(wrapper, "_expect_prompt", return_value=0):
             result = wrapper.interrupt()
         assert result == "interrupted output"
+
+
+class TestSpawnPtyNone:
+    """Unit tests for pexpect.spawn() when pty is None (PopenSpawn path)."""
+
+    def test_no_args_uses_shlex_split(self) -> None:
+        """With no args, the command string is split via shlex.split."""
+        mock_child = MagicMock()
+        mock_popen_cls = MagicMock(return_value=mock_child)
+        with patch("metakernel.pexpect.pty", None):
+            with patch.object(mk_pexpect, "PopenSpawn", mock_popen_cls, create=True):
+                mk_pexpect.spawn("echo hello")
+        mock_popen_cls.assert_called_once()
+        cmd_arg = mock_popen_cls.call_args[0][0]
+        assert cmd_arg == ["echo", "hello"]
+
+    def test_with_args_prepends_command(self) -> None:
+        """With args provided, the command and args are combined into a list."""
+        mock_child = MagicMock()
+        mock_popen_cls = MagicMock(return_value=mock_child)
+        with patch("metakernel.pexpect.pty", None):
+            with patch.object(mk_pexpect, "PopenSpawn", mock_popen_cls, create=True):
+                mk_pexpect.spawn("python", args=["-c", "print(1)"])
+        mock_popen_cls.assert_called_once()
+        cmd_arg = mock_popen_cls.call_args[0][0]
+        assert cmd_arg == ["python", "-c", "print(1)"]
 
 
 class TestTerminate:
