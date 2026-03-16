@@ -73,7 +73,10 @@ def test_magics() -> None:
         assert magic in kernel.cell_magics
 
     with tempfile.NamedTemporaryFile() as ntf:
-        kernel.get_magic("%%shell ls %s" % ntf.name)
+        # Use %shell (line magic) so the command is passed as args to line_shell(),
+        # not as cell body to cell_shell(). %%shell with the command on the first
+        # line sets self.code="" so the command is never actually executed.
+        kernel.get_magic("%shell ls %s" % ntf.name)
         log_text = get_log_text(kernel)
         # Windows may give 8.3 short paths (RUNNER~1) vs long paths in shell output
         assert os.path.basename(ntf.name) in log_text
