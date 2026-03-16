@@ -2,6 +2,65 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 1.0.0rc0
+
+([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.32.0...873b53e3a709278b91c75eaeeb38497490c28eb0))
+
+### Enhancements made
+
+- Use pre-fixed jigsaw_v2 HTML and expand test coverage [#385](https://github.com/Calysto/metakernel/pull/385) ([@blink1073](https://github.com/blink1073))
+- Add schedule_display_output for pushing messages to frontends outside execution [#382](https://github.com/Calysto/metakernel/pull/382) ([@blink1073](https://github.com/blink1073))
+- Add kernel_javascript support to write kernel.js during kernelspec install [#378](https://github.com/Calysto/metakernel/pull/378) ([@blink1073](https://github.com/blink1073))
+- Add args parameter to REPLWrapper to support executable paths with spaces [#377](https://github.com/Calysto/metakernel/pull/377) ([@blink1073](https://github.com/blink1073))
+- Fix %jigsaw cross-origin errors and restore button functionality [#375](https://github.com/Calysto/metakernel/pull/375) ([@blink1073](https://github.com/blink1073))
+- Add DisplayData() for raw MIME bundle display [#368](https://github.com/Calysto/metakernel/pull/368) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Add %lsmagic -v for magic load debugging [#366](https://github.com/Calysto/metakernel/pull/366) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Add Binder support [#361](https://github.com/Calysto/metakernel/pull/361) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+
+### Bugs fixed
+
+- Fix test_magics Windows CI failure: use %shell instead of %%shell [#388](https://github.com/Calysto/metakernel/pull/388) ([@blink1073](https://github.com/blink1073))
+- Fix %px/%px errors not surfacing as proper error messages (closes #61) [#380](https://github.com/Calysto/metakernel/pull/380) ([@blink1073](https://github.com/blink1073))
+- Fix %%tutor loading all iframes immediately (closes #68) [#379](https://github.com/Calysto/metakernel/pull/379) ([@blink1073](https://github.com/blink1073))
+- Fix %jigsaw failing to save files when workspace path includes a subdirectory [#374](https://github.com/Calysto/metakernel/pull/374) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Add encoding parameter to REPLWrapper to fix startup hang on Windows [#373](https://github.com/Calysto/metakernel/pull/373) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Fix execute_reply reporting 'ok' status when do_execute_direct raises [#372](https://github.com/Calysto/metakernel/pull/372) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Fix %%python display() routing to wrong kernel [#371](https://github.com/Calysto/metakernel/pull/371) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Fix activity magic showing wrong results on repeated clicks [#370](https://github.com/Calysto/metakernel/pull/370) ([@blink1073](https://github.com/blink1073), [@claude](https://github.com/claude), [@codecov-commenter](https://github.com/codecov-commenter))
+- Fix prompt_change_cmd storing unformatted template [#369](https://github.com/Calysto/metakernel/pull/369) ([@blink1073](https://github.com/blink1073), [@claude](https://github.com/claude), [@codecov-commenter](https://github.com/codecov-commenter))
+- Fix ipywidgets Output context manager not working with MetaKernel [#365](https://github.com/Calysto/metakernel/pull/365) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Fix shell_magic load failure on Windows by lazy-initializing shell process [#364](https://github.com/Calysto/metakernel/pull/364) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Wait for any output instead of default prompt on startup [#357](https://github.com/Calysto/metakernel/pull/357) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Clear PS0 in bash REPL wrapper [#356](https://github.com/Calysto/metakernel/pull/356) ([@ellert](https://github.com/ellert), [@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+
+### Maintenance and upkeep improvements
+
+- Add GitHub issue templates for bug reports and feature requests [#384](https://github.com/Calysto/metakernel/pull/384) ([@blink1073](https://github.com/blink1073))
+- Add ruff S (flake8-bandit) security checks [#383](https://github.com/Calysto/metakernel/pull/383) ([@blink1073](https://github.com/blink1073))
+- Restructure CI coverage uploads and add codecov.yml [#381](https://github.com/Calysto/metakernel/pull/381) ([@blink1073](https://github.com/blink1073))
+- Add GitHub pull request template [#376](https://github.com/Calysto/metakernel/pull/376) ([@blink1073](https://github.com/blink1073))
+- Add example notebook CI [#363](https://github.com/Calysto/metakernel/pull/363) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Bump tornado from 6.5.4 to 6.5.5 [#360](https://github.com/Calysto/metakernel/pull/360) ([@blink1073](https://github.com/blink1073))
+- Remove virtualenv pins from example kernels [#355](https://github.com/Calysto/metakernel/pull/355) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter), [@hroncok](https://github.com/hroncok))
+
+### Documentation improvements
+
+- Add JupyterHub deployment docs and cross-origin regression tests (issue #196) [#386](https://github.com/Calysto/metakernel/pull/386) ([@blink1073](https://github.com/blink1073))
+- Include magics README in docs [#367](https://github.com/Calysto/metakernel/pull/367) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Add debugging section to new kernel docs [#362](https://github.com/Calysto/metakernel/pull/362) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+- Switch documentation from Sphinx to MkDocs [#358](https://github.com/Calysto/metakernel/pull/358) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2026-03-10&to=2026-03-16&type=c))
+
+@blink1073 ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2026-03-10..2026-03-16&type=Issues)) | @claude ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aclaude+updated%3A2026-03-10..2026-03-16&type=Issues)) | @codecov-commenter ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Acodecov-commenter+updated%3A2026-03-10..2026-03-16&type=Issues)) | @ellert ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aellert+updated%3A2026-03-10..2026-03-16&type=Issues)) | @hroncok ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ahroncok+updated%3A2026-03-10..2026-03-16&type=Issues))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.32.0
 
 ([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.31.0...88ea17cb2c596d745713cea0f875346abca468c0))
@@ -39,8 +98,6 @@ See [our definition of contributors](https://github-activity.readthedocs.io/en/l
 ([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2026-03-03&to=2026-03-10&type=c))
 
 @blink1073 ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2026-03-03..2026-03-10&type=Issues)) | @claude ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aclaude+updated%3A2026-03-03..2026-03-10&type=Issues)) | @codecov-commenter ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Acodecov-commenter+updated%3A2026-03-03..2026-03-10&type=Issues)) | @ellert ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aellert+updated%3A2026-03-03..2026-03-10&type=Issues))
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.31.0
 
