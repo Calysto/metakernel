@@ -2,6 +2,27 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 1.0.0rc1
+
+([Full Changelog](https://github.com/Calysto/metakernel/compare/v1.0.0rc0...161618c81c69279785c341cf6eab449a244e580e))
+
+### Maintenance and upkeep improvements
+
+- Bump minimum dependency versions to releases from 2023 or later [#392](https://github.com/Calysto/metakernel/pull/392) ([@blink1073](https://github.com/blink1073), [@claude](https://github.com/claude))
+- Add validate-pyproject lint hook and switch to prek [#390](https://github.com/Calysto/metakernel/pull/390) ([@blink1073](https://github.com/blink1073))
+- Bump zizmorcore/zizmor-action from 0.5.0 to 0.5.2 in the actions group [#389](https://github.com/Calysto/metakernel/pull/389) ([@blink1073](https://github.com/blink1073))
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2026-03-16&to=2026-03-17&type=c))
+
+@blink1073 ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2026-03-16..2026-03-17&type=Issues)) | @claude ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aclaude+updated%3A2026-03-16..2026-03-17&type=Issues))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 1.0.0rc0
 
 ([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.32.0...873b53e3a709278b91c75eaeeb38497490c28eb0))
@@ -58,8 +79,6 @@ See [our definition of contributors](https://github-activity.readthedocs.io/en/l
 ([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2026-03-10&to=2026-03-16&type=c))
 
 @blink1073 ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2026-03-10..2026-03-16&type=Issues)) | @claude ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aclaude+updated%3A2026-03-10..2026-03-16&type=Issues)) | @codecov-commenter ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Acodecov-commenter+updated%3A2026-03-10..2026-03-16&type=Issues)) | @ellert ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aellert+updated%3A2026-03-10..2026-03-16&type=Issues)) | @hroncok ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ahroncok+updated%3A2026-03-10..2026-03-16&type=Issues))
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.32.0
 
