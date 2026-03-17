@@ -36,6 +36,11 @@ repos:
     hooks:
       - id: uv-lock
 
+  - repo: https://github.com/abravalheri/validate-pyproject
+    rev: v0.25
+    hooks:
+      - id: validate-pyproject
+
   - repo: https://github.com/crate-ci/typos
     rev: "v1.42.0"
     hooks:

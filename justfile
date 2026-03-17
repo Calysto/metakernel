@@ -59,6 +59,7 @@ typing:
 lint:
     just pre-commit ruff-format
     just pre-commit ruff-check
+    just pre-commit validate-pyproject
 
 # Run example notebooks (excludes Calysto Processing and SAS)
 run-notebooks:
