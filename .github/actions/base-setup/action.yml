@@ -1,0 +1,25 @@
+name: Base Setup
+description: Install uv (with OS-keyed cache), just, graphviz (Linux), and project dependencies
+
+runs:
+  using: composite
+  steps:
+    - name: Install uv
+      uses: astral-sh/setup-uv@5a095e7a2014a4212f075830d4f7277575a9d098 # v7
+      with:
+        enable-cache: true
+        cache-suffix: ${{ runner.os }}
+
+    - name: Install just
+      uses: extractions/setup-just@f8a3cce218d9f83db3a2ecd90e41ac3de6cdfd9b # v3
+
+    - name: Install graphviz
+      if: runner.os == 'Linux'
+      uses: awalsh128/cache-apt-pkgs-action@4c50001f12d9e900339b2be2940c2e04b2e3b31c # v1.4.3
+      with:
+        packages: graphviz
+
+    - name: Install dependencies
+      if: hashFiles('justfile') != ''
+      run: just install
+      shell: bash

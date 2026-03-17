@@ -1,9 +1,10 @@
 codecov:
   notify:
-    # Wait for both coverage uploads before reporting:
+    # Wait for all coverage uploads before reporting:
     # 1 cover (ubuntu-latest, Python 3.10) +
+    # 1 cover (macos-latest, Python 3.10) +
     # 1 cover (windows-latest, Python 3.10)
-    after_n_builds: 2
+    after_n_builds: 3
 
 coverage:
   status:
