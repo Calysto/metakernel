@@ -145,6 +145,9 @@ jobs:
         uv sync
         just typing
 
+    - name: Run pip-audit
+      run: just audit
+
   test_minimum_versions:
     name: Test Minimum Versions
     timeout-minutes: 20

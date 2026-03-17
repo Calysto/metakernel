@@ -65,6 +65,11 @@ lint:
 run-notebooks:
     bash scripts/run_notebooks.sh
 
+# Run pip-audit security audit
+audit:
+    uv sync --all-groups --all-extras
+    PIPAPI_PYTHON_LOCATION=$(which python) uv tool run pip-audit --skip-editable
+
 # Run pre-commit hook
 pre-commit *args="":
     uv tool run prek run --all-files {{args}}
