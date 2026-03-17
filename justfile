@@ -67,4 +67,4 @@ run-notebooks:
 
 # Run pre-commit hook
 pre-commit *args="":
-    uv tool run pre-commit run --all-files {{args}}
+    uv tool run prek run --all-files {{args}}
