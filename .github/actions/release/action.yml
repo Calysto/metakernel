@@ -4,7 +4,7 @@ description: Bumps version, updates changelog, creates GitHub release
 inputs:
   version:
     required: true
-    description: "Version to release (e.g. 1.0.0, major, minor, patch, rc, dev)"
+    description: "Version to release (e.g. 1.0.0, minor, patch, rc, dev)"
   dry_run:
     required: false
     default: "false"
@@ -22,6 +22,21 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Set input environment variables
+      shell: bash
+      env:
+        VERSION: ${{ inputs.version }}
+        DRY_RUN: ${{ inputs.dry_run }}
+        REF: ${{ inputs.ref }}
+        SHA: ${{ github.sha }}
+        REPOSITORY: ${{ github.repository }}
+      run: |
+        echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+        echo "DRY_RUN=$DRY_RUN" >> "$GITHUB_ENV"
+        echo "REF=$REF" >> "$GITHUB_ENV"
+        echo "SHA=$SHA" >> "$GITHUB_ENV"
+        echo "REPOSITORY=$REPOSITORY" >> "$GITHUB_ENV"
+
     - uses: actions/checkout@v6
       with:
         fetch-depth: 0
@@ -37,7 +52,6 @@ runs:
       shell: bash
       env:
         TOKEN: ${{ steps.app-token.outputs.token }}
-        REPOSITORY: ${{ github.repository }}
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -54,12 +68,18 @@ runs:
 
     - name: Set release version
       shell: bash
-      env:
-        VERSION: ${{ inputs.version }}
-      run: uv version "$VERSION" --frozen
+      run: |
+        if [[ "$VERSION" =~ ^[0-9] ]]; then
+          uv version "$VERSION" --frozen
+        else
+          uv version --bump "$VERSION" --frozen
+        fi
+        echo "VERSION=$(uv version --short)" >> "$GITHUB_ENV"
 
     - name: Update CHANGELOG.md
       shell: bash
+      env:
+        CHANGELOG_BODY: ${{ steps.changelog.outputs.changelog }}
       run: |
         python3 - <<'PYEOF'
         import os
@@ -81,16 +101,10 @@ runs:
         with open("CHANGELOG.md", "w") as f:
             f.writelines(lines)
         PYEOF
-      env:
-        VERSION: ${{ inputs.version }}
-        CHANGELOG_BODY: ${{ steps.changelog.outputs.changelog }}
 
     - name: Commit release changes
       if: ${{ inputs.dry_run == 'false' }}
       shell: bash
-      env:
-        VERSION: ${{ inputs.version }}
-        REF: ${{ inputs.ref }}
       run: |
         git add pyproject.toml CHANGELOG.md
         git commit -m "Release $VERSION"
@@ -102,10 +116,6 @@ runs:
       env:
         GH_TOKEN: ${{ steps.app-token.outputs.token }}
         CHANGELOG_BODY: ${{ steps.changelog.outputs.changelog }}
-        VERSION: ${{ inputs.version }}
-        DRY_RUN: ${{ inputs.dry_run }}
-        REF: ${{ inputs.ref }}
-        SHA: ${{ github.sha }}
       run: |
         if [ "$DRY_RUN" = "true" ]; then
           TARGET="$SHA"
@@ -125,22 +135,18 @@ runs:
       shell: bash
       env:
         GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        VERSION: ${{ inputs.version }}
       run: gh release delete "v$VERSION" --yes --cleanup-tag
 
     - name: Bump to dev version
       shell: bash
-      env:
-        VERSION: ${{ inputs.version }}
-      run: uv version "$VERSION.dev0" --frozen
+      run: |
+        uv version --bump patch --bump dev
+        echo "VERSION=$(uv version --short)" >> "$GITHUB_ENV"
 
     - name: Commit dev version bump
       if: ${{ inputs.dry_run == 'false' }}
       shell: bash
-      env:
-        VERSION: ${{ inputs.version }}
-        REF: ${{ inputs.ref }}
       run: |
         git add pyproject.toml
-        git commit -m "Back to dev: $VERSION.dev0"
+        git commit -m "Back to dev: $VERSION"
         git push origin "HEAD:$REF"
