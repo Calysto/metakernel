@@ -1492,6 +1492,7 @@ wheels = [
 
 [[package]]
 name = "metakernel"
+version = "1.0.0rc1"
 source = { editable = "." }
 dependencies = [
     { name = "comm" },

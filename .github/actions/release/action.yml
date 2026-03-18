@@ -1,0 +1,128 @@
+name: Release
+description: Bumps version, updates changelog, creates GitHub release
+
+inputs:
+  version:
+    required: true
+    description: "Version to release (e.g. 1.0.0, major, minor, patch, rc, dev)"
+  dry_run:
+    required: false
+    default: "false"
+    description: "Dry run: creates a draft release then deletes it, does not push"
+  app_id:
+    required: true
+    description: "GitHub App ID for authenticated pushes"
+  app_private_key:
+    required: true
+    description: "GitHub App private key"
+  ref:
+    required: true
+    description: "Branch to push commits back to (when not dry_run)"
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+        persist-credentials: false
+
+    - uses: actions/create-github-app-token@v2
+      id: app-token
+      with:
+        app-id: ${{ inputs.app_id }}
+        private-key: ${{ inputs.app_private_key }}
+
+    - name: Configure git
+      shell: bash
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git remote set-url origin https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/${{ github.repository }}
+
+    - name: Generate changelog
+      id: changelog
+      uses: mikepenz/release-changelog-builder-action@v5
+      with:
+        fromTag: ""
+        toTag: "HEAD"
+        ignorePreReleases: "true"
+        token: ${{ steps.app-token.outputs.token }}
+
+    - name: Set release version
+      shell: bash
+      run: uv version "${{ inputs.version }}" --frozen
+
+    - name: Update CHANGELOG.md
+      shell: bash
+      run: |
+        python3 - <<'PYEOF'
+        import os
+        version = os.environ["VERSION"]
+        body = os.environ["CHANGELOG_BODY"]
+        with open("CHANGELOG.md") as f:
+            lines = f.readlines()
+        # Find the first blank line after the top-level # header
+        insert_at = None
+        for i, line in enumerate(lines):
+            if line.startswith("# "):
+                for j in range(i + 1, len(lines)):
+                    if lines[j].strip() == "":
+                        insert_at = j + 1
+                        break
+                break
+        new_entry = [f"## {version}\n", "\n", body.rstrip("\n") + "\n", "\n"]
+        lines[insert_at:insert_at] = new_entry
+        with open("CHANGELOG.md", "w") as f:
+            f.writelines(lines)
+        PYEOF
+      env:
+        VERSION: ${{ inputs.version }}
+        CHANGELOG_BODY: ${{ steps.changelog.outputs.changelog }}
+
+    - name: Commit release changes
+      if: ${{ inputs.dry_run == 'false' }}
+      shell: bash
+      run: |
+        git add pyproject.toml CHANGELOG.md
+        git commit -m "Release ${{ inputs.version }}"
+        git push origin HEAD:${{ inputs.ref }}
+
+    - name: Create GitHub release
+      id: create-release
+      shell: bash
+      run: |
+        if [ "${{ inputs.dry_run }}" = "true" ]; then
+          TARGET="${{ github.sha }}"
+          DRAFT="--draft"
+        else
+          TARGET="${{ inputs.ref }}"
+          DRAFT=""
+        fi
+        gh release create "v${{ inputs.version }}" \
+          --title "${{ inputs.version }}" \
+          --notes "$CHANGELOG_BODY" \
+          --target "$TARGET" \
+          $DRAFT
+      env:
+        GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        CHANGELOG_BODY: ${{ steps.changelog.outputs.changelog }}
+
+    - name: Delete draft release
+      if: ${{ inputs.dry_run == 'true' }}
+      shell: bash
+      run: gh release delete "v${{ inputs.version }}" --yes --cleanup-tag
+      env:
+        GH_TOKEN: ${{ steps.app-token.outputs.token }}
+
+    - name: Bump to dev version
+      shell: bash
+      run: uv version "${{ inputs.version }}.dev0" --frozen
+
+    - name: Commit dev version bump
+      if: ${{ inputs.dry_run == 'false' }}
+      shell: bash
+      run: |
+        git add pyproject.toml
+        git commit -m "Back to dev: ${{ inputs.version }}.dev0"
+        git push origin HEAD:${{ inputs.ref }}
