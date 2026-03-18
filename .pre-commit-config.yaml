@@ -47,6 +47,8 @@ repos:
     rev: v0.25
     hooks:
       - id: validate-pyproject
+        # Optional extra validations from SchemaStore:
+        additional_dependencies: ["validate-pyproject-schema-store[all]"]
 
   - repo: https://github.com/crate-ci/typos
     rev: "v1.42.0"
