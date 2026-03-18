@@ -7,7 +7,8 @@ import shlex
 import sys
 import traceback
 from ast import literal_eval as safe_eval
-from typing import TYPE_CHECKING, Any, Callable, NoReturn, TypeVar, cast
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Any, NoReturn, TypeVar, cast
 
 if TYPE_CHECKING:
     from IPython.core.interactiveshell import InteractiveShell

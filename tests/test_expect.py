@@ -58,7 +58,7 @@ def hex_diff(left, right) -> str:
             _right,
         )
         for _left, _right in zip(
-            hex_dump(left).splitlines(), hex_dump(right).splitlines()
+            hex_dump(left).splitlines(), hex_dump(right).splitlines(), strict=False
         )
         if _left != _right
     ]

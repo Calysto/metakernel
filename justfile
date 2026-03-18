@@ -37,6 +37,8 @@ cover *args="":
     uv run --group coverage ipcluster start -n=3 &
     uv run --group coverage pytest --cov=metakernel {{args}}
     uv run coverage annotate
+    uv run coverage xml
+    uv run coverage report --show-missing
     -uv run --group coverage ipcluster stop
 
 # Build MkDocs HTML docs

@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling >=1.5"]
+requires = ["hatchling >=1.14.0"]
 build-backend = "hatchling.build"
 
 [project]
@@ -9,15 +9,20 @@ classifiers = [
     "License :: OSI Approved :: BSD License",
     "Intended Audience :: Developers",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Framework :: IPython",
     "Topic :: System :: Shells",
 ]
 urls = {Homepage = "https://github.com/Calysto/metakernel"}
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "comm >=0.1.3",
-    "ipykernel >=6.21.3",
-    "jupyter_core >=5.3.0",
+    "ipykernel >=6.22.0",
+    "jupyter_core >=5.3.1",
     "pexpect >=4.9.0",
     "jedi >=0.19.0",
 ]
@@ -28,40 +33,40 @@ file = "README.md"
 content-type = "text/markdown"
 
 [project.optional-dependencies]
-activity = ["portalocker"] # activity magic
-parallel = ["ipyparallel"] # parallel magic
+activity = ["portalocker >=2.8.0"] # activity magic
+parallel = ["ipyparallel >=8.5.1"] # parallel magic
 
 [dependency-groups]
 dev = [ { include-group = "test" } ]
 test = [
-    "jupyter_kernel_test",
-    "ipywidgets",
+    "jupyter_kernel_test >=0.6.0",
+    "ipywidgets >=8.0.5",
     "metakernel_python",
-    "pytest",
-    "pytest-timeout",
-    "requests",
+    "pytest >=9.0",
+    "pytest-timeout >=2.2.0",
+    "requests >=2.29.0",
 ]
 test-all = [
     { include-group = "test" },
-    "calysto",           # brain magic, activity magic (BarChart)
-    "calysto-scheme",    # scheme magic
-    "ipyparallel",       # parallel magic
-    "matplotlib",        # matplotlib magic
-    "portalocker",       # activity magic
-    "pydot",             # dot magic
+    "calysto >=1.0.6",        # brain magic, activity magic (BarChart)
+    "calysto-scheme >=1.4.8", # scheme magic
+    "ipyparallel >=8.5.1",    # parallel magic
+    "matplotlib >=3.7.2",     # matplotlib magic
+    "portalocker >=2.8.0",    # activity magic
+    "pydot >=2.0.0",          # dot magic
 ]
 docs = [
-    "mkdocs>=1.5",
-    "mkdocs-material>=9.0",
-    "mkdocs-jupyter>=0.24",
-    "mkdocstrings[python]>=0.24",
+    "mkdocs>=1.4.3",
+    "mkdocs-material>=9.1.4",
+    "mkdocs-jupyter>=0.24.1",
+    "mkdocstrings[python]>=0.21.0",
 ]
 coverage = [
     { include-group = "test-all" },
-    "coverage[toml]",
-    "pytest-cov",
+    "coverage[toml] >=7.2.3",
+    "pytest-cov >=4.1.0",
 ]
-typing = [{ include-group = "test-all" }, "pip", "mypy", "ipywidgets"]
+typing = [{ include-group = "test-all" }, "pip >=23.1", "mypy >=1.2.0", "ipywidgets >=8.0.5"]
 
 [tool.uv.sources]
 metakernel_python = { path = "./metakernel_python", editable = true }
@@ -96,6 +101,8 @@ filterwarnings= [
   "module:datetime.datetime.utc:DeprecationWarning:ipyparallel",
   "module:Parsing dates involving a day of month without a year:DeprecationWarning",
   "module:'setParseAction' deprecated - use 'set_parse_action':DeprecationWarning",
+  # This is resolved in newer versions of Jupyter Core that removed the warning.
+  "module:Jupyter is migrating its paths:DeprecationWarning",
 ]
 
 [tool.coverage.report]

@@ -1,0 +1,19 @@
+{
+    "ignorePatterns": [
+        {
+            "pattern": "^https://github.com"
+        },
+        {
+            "pattern": "^http://path/to/some/"
+        },
+        {
+            "pattern": "^http://host"
+        },
+        {
+            "pattern": "^http://nbviewer.ipython.org/"
+        },
+        {
+            "pattern": "^http://some/file/from/"
+        }
+    ]
+}
