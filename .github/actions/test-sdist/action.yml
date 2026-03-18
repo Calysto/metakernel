@@ -1,6 +1,12 @@
 name: Test SDist
 description: Downloads the sdist artifact, unpacks it, and runs the test suite
 
+inputs:
+  command:
+    required: false
+    default: "uv run --group test pytest -v ."
+    description: "Command to run the test suite from within the unpacked sdist directory"
+
 runs:
   using: composite
   steps:
@@ -22,4 +28,6 @@ runs:
     - name: Run tests
       shell: bash
       working-directory: sdist_unpack
-      run: uv run pytest
+      env:
+        COMMAND: ${{ inputs.command }}
+      run: $COMMAND
