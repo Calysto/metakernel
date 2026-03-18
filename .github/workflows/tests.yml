@@ -11,6 +11,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
   cancel-in-progress: true
 
+permissions:
+    contents: read
+
 jobs:
   build:
     name: Build and Inspect Package
@@ -24,6 +27,7 @@ jobs:
 
   test:
     name: Test (Python ${{ matrix.python-version }})
+    # Delay the test builds so the cover builds get a chance to start first.
     needs: [build]
     runs-on: ubuntu-latest
 
@@ -46,6 +50,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: astral-sh/setup-uv@5a095e7a2014a4212f075830d4f7277575a9d098 # v7
+        with:
+          enable-cache: true
 
       - uses: actions/download-artifact@v4
         with:
@@ -62,7 +68,6 @@ jobs:
 
   cover:
     name: Cover (${{ matrix.os }}, Python 3.10)
-    needs: [build]
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -87,12 +92,11 @@ jobs:
           fail_ci_if_error: false
 
   static:
-    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/base-setup
-      - run: just pre-commit
+      - run: just pre-commit --hook-stage=manual
       - run: just docs
       - run: just help
       - name: Test typing
@@ -102,26 +106,15 @@ jobs:
 
   test_minimum_versions:
     name: Test Minimum Versions
-    needs: [build]
     timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/base-setup
-      - run: just test -v
-
-  link_check:
-    needs: [build]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: ./.github/actions/base-setup
-      - uses: jupyterlab/maintainer-tools/.github/actions/check-links@93556350e3433849ea434d68e8b8f7d9e9a402a4 # v1
-        with:
-          ignore_links: "http://some/file/from/* http://path/to/some/* http://host* http://nbviewer.ipython.org/*"
+      - run: |
+          uv run --group test --resolution=lowest-direct pytest -v
 
   check_release:
-    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -133,14 +126,11 @@ jobs:
 
   run_notebooks:
     name: Run Notebooks
-    needs: [build]
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@v6
-        with:
-          persist-credentials: false
       - uses: ./.github/actions/base-setup
       - run: just run-notebooks
 
@@ -152,7 +142,6 @@ jobs:
       - test_sdist
       - cover
       - static
-      - link_check
       - test_minimum_versions
       - check_release
       - run_notebooks

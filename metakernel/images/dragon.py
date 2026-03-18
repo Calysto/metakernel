@@ -19,7 +19,7 @@ def dragon(arrow: Any, level: Any = 4, size: Any = 200, direction: Any = 45) -> 
 def draw_dragon4(
     center: Any, size: Any, counts: Any, colors: Any, angle: Any = 0
 ) -> None:
-    for color, count in zip(colors, counts):
+    for color, count in zip(colors, counts, strict=False):
         if color is not None:
             arrow = Arrow(center)
             arrow.pen.color = Color(color)

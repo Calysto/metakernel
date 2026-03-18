@@ -11,8 +11,9 @@ import subprocess
 import sys
 import warnings
 from collections import OrderedDict
+from collections.abc import Callable
 from subprocess import CalledProcessError
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any
 
 import comm
 from ipykernel.kernelapp import IPKernelApp

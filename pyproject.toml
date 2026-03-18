@@ -39,12 +39,12 @@ parallel = ["ipyparallel"] # parallel magic
 [dependency-groups]
 dev = [ { include-group = "test" } ]
 test = [
-    "jupyter_kernel_test",
-    "ipywidgets",
+    "jupyter_kernel_test >=0.6.0",
+    "ipywidgets >=8.1.1",
     "metakernel_python",
-    "pytest",
-    "pytest-timeout",
-    "requests",
+    "pytest >=9.0",
+    "pytest-timeout >=2.2.0",
+    "requests >=2.29.0",
 ]
 test-all = [
     { include-group = "test" },
