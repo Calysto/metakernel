@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  release-test:
+  publish-test:
     name: Publish in-dev package to test.pypi.org
     environment: release-test
     if: github.event.repository.fork == false
@@ -19,11 +19,14 @@ jobs:
       id-token: write
 
     steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/publish
         with:
           repository-url: https://test.pypi.org/legacy/
 
-  release:
+  publish:
     name: Publish released package to pypi.org
     environment: release
     if: github.event.repository.fork == false && github.event_name == 'release'
@@ -33,4 +36,7 @@ jobs:
       id-token: write
 
     steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/publish

@@ -22,6 +22,8 @@ jobs:
       supported_python_classifiers_json_array: ${{ steps.baipp.outputs.supported_python_classifiers_json_array }}
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - uses: hynek/build-and-inspect-python-package@efb823f52190ad02594531168b7a2d5790e66516  # v2.14.0
         id: baipp
 
@@ -41,6 +43,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/base-setup
       - run: just test -v
 
@@ -50,6 +54,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/test-sdist
 
   cover:
@@ -81,6 +87,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/base-setup
       - run: just pre-commit --hook-stage=manual
       - run: just docs
@@ -96,6 +104,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/base-setup
       - run: |
           uv run --group test --resolution=lowest-direct pytest -v
@@ -107,6 +117,8 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/base-setup
       - run: just run-notebooks
 
