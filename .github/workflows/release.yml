@@ -22,6 +22,9 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/release
         with:
           version: ${{ github.event_name == 'schedule' && '10.10.10.10' || inputs.version }}
