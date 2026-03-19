@@ -49,22 +49,8 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     steps:
-      - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
-        with:
-          enable-cache: true
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: Packages
-          path: dist
-
-      - run: |
-          mkdir sdist_unpack
-          tar xf dist/*.tar.gz --strip-components=1 -C sdist_unpack
-        shell: bash
-
-      - run: uv run pytest
-        working-directory: sdist_unpack
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/test-sdist
 
   cover:
     name: Cover (${{ matrix.os }}, Python 3.10)
@@ -114,16 +100,6 @@ jobs:
       - run: |
           uv run --group test --resolution=lowest-direct pytest -v
 
-  check_release:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: ./.github/actions/base-setup
-      - run: pip install -e .
-      - uses: jupyter-server/jupyter_releaser/.github/actions/check-release@3e74486d1011d24cd5e9977202fd349dece0db9c # v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
   run_notebooks:
     name: Run Notebooks
     runs-on: ubuntu-latest
@@ -143,7 +119,6 @@ jobs:
       - cover
       - static
       - test_minimum_versions
-      - check_release
       - run_notebooks
     runs-on: ubuntu-latest
     steps:

@@ -6,6 +6,8 @@ import pytest
 
 import metakernel.magics.kernel_magic as _km
 from metakernel.magics.kernel_magic import register_ipython_magics
+
+pytest.importorskip("metakernel_echo")
 from metakernel_echo.metakernel_echo import MetaKernelEcho
 from tests.utils import EvalKernel, clear_log_text, get_kernel, get_log_text
 

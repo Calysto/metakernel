@@ -1,0 +1,31 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release (e.g. 1.0.0, patch, minor, rc, dev)"
+        required: true
+        type: string
+      dry_run:
+        description: "Dry run (creates a draft release, then deletes it)"
+        required: false
+        type: boolean
+        default: false
+  schedule:
+    - cron: "0 9 * * *"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write
+    steps:
+      - uses: ./.github/actions/release
+        with:
+          version: ${{ github.event_name == 'schedule' && '10.10.10.10' || inputs.version }}
+          dry_run: ${{ github.event_name == 'schedule' && 'true' || inputs.dry_run }}
+          app_id: ${{ vars.APP_ID }}
+          app_private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          ref: ${{ github.ref_name }}

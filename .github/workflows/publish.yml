@@ -1,0 +1,36 @@
+name: Build & publish PyPI package
+
+on:
+  schedule:
+    - cron: "0 9 * * *"
+  release:
+    types:
+      - published
+  workflow_dispatch:
+
+jobs:
+  release-test:
+    name: Publish in-dev package to test.pypi.org
+    environment: release-test
+    if: github.event.repository.fork == false
+    runs-on: ubuntu-latest
+    permissions:
+      attestations: write
+      id-token: write
+
+    steps:
+      - uses: ./.github/actions/publish
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
+  release:
+    name: Publish released package to pypi.org
+    environment: release
+    if: github.event.repository.fork == false && github.event_name == 'release'
+    runs-on: ubuntu-latest
+    permissions:
+      attestations: write
+      id-token: write
+
+    steps:
+      - uses: ./.github/actions/publish

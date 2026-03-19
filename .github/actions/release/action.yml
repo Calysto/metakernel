@@ -1,0 +1,152 @@
+name: Release
+description: Bumps version, updates changelog, creates GitHub release
+
+inputs:
+  version:
+    required: true
+    description: "Version to release (e.g. 1.0.0, minor, patch, rc, dev)"
+  dry_run:
+    required: false
+    default: "false"
+    description: "Dry run: creates a draft release then deletes it, does not push"
+  app_id:
+    required: true
+    description: "GitHub App ID for authenticated pushes"
+  app_private_key:
+    required: true
+    description: "GitHub App private key"
+  ref:
+    required: true
+    description: "Branch to push commits back to (when not dry_run)"
+
+runs:
+  using: composite
+  steps:
+    - name: Set input environment variables
+      shell: bash
+      env:
+        VERSION: ${{ inputs.version }}
+        DRY_RUN: ${{ inputs.dry_run }}
+        REF: ${{ inputs.ref }}
+        SHA: ${{ github.sha }}
+        REPOSITORY: ${{ github.repository }}
+      run: |
+        echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+        echo "DRY_RUN=$DRY_RUN" >> "$GITHUB_ENV"
+        echo "REF=$REF" >> "$GITHUB_ENV"
+        echo "SHA=$SHA" >> "$GITHUB_ENV"
+        echo "REPOSITORY=$REPOSITORY" >> "$GITHUB_ENV"
+
+    - uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+        persist-credentials: false
+
+    - uses: actions/create-github-app-token@v2
+      id: app-token
+      with:
+        app-id: ${{ inputs.app_id }}
+        private-key: ${{ inputs.app_private_key }}
+
+    - name: Configure git
+      shell: bash
+      env:
+        TOKEN: ${{ steps.app-token.outputs.token }}
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git remote set-url origin "https://x-access-token:${TOKEN}@github.com/${REPOSITORY}"
+
+    - name: Generate changelog
+      id: changelog
+      uses: mikepenz/release-changelog-builder-action@a34a8009a9588bb86b02a873cf592440e96a5da8  # v6.1.1
+      with:
+        fromTag: ""
+        toTag: "HEAD"
+        ignorePreReleases: "true"
+        token: ${{ steps.app-token.outputs.token }}
+
+    - name: Set release version
+      shell: bash
+      run: |
+        if [[ "$VERSION" =~ ^[0-9] ]]; then
+          uv version "$VERSION" --frozen
+        else
+          uv version --bump "$VERSION" --frozen
+        fi
+        echo "VERSION=$(uv version --short)" >> "$GITHUB_ENV"
+
+    - name: Update CHANGELOG.md
+      shell: bash
+      env:
+        CHANGELOG_BODY: ${{ steps.changelog.outputs.changelog }}
+      run: |
+        python3 - <<'PYEOF'
+        import os
+        version = os.environ["VERSION"]
+        body = os.environ["CHANGELOG_BODY"]
+        with open("CHANGELOG.md") as f:
+            lines = f.readlines()
+        # Find the first blank line after the top-level # header
+        insert_at = None
+        for i, line in enumerate(lines):
+            if line.startswith("# "):
+                for j in range(i + 1, len(lines)):
+                    if lines[j].strip() == "":
+                        insert_at = j + 1
+                        break
+                break
+        new_entry = [f"## {version}\n", "\n", body.rstrip("\n") + "\n", "\n"]
+        lines[insert_at:insert_at] = new_entry
+        with open("CHANGELOG.md", "w") as f:
+            f.writelines(lines)
+        PYEOF
+
+    - name: Commit release changes
+      if: ${{ inputs.dry_run == 'false' }}
+      shell: bash
+      run: |
+        git add pyproject.toml CHANGELOG.md
+        git commit -m "Release $VERSION"
+        git push origin "HEAD:$REF"
+
+    - name: Create GitHub release
+      id: create-release
+      shell: bash
+      env:
+        GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        CHANGELOG_BODY: ${{ steps.changelog.outputs.changelog }}
+      run: |
+        if [ "$DRY_RUN" = "true" ]; then
+          TARGET="$SHA"
+          DRAFT="--draft"
+        else
+          TARGET="$REF"
+          DRAFT=""
+        fi
+        gh release create "v$VERSION" \
+          --title "$VERSION" \
+          --notes "$CHANGELOG_BODY" \
+          --target "$TARGET" \
+          $DRAFT
+
+    - name: Delete draft release
+      if: ${{ inputs.dry_run == 'true' }}
+      shell: bash
+      env:
+        GH_TOKEN: ${{ steps.app-token.outputs.token }}
+      run: gh release delete "v$VERSION" --yes --cleanup-tag
+
+    - name: Bump to dev version
+      shell: bash
+      run: |
+        uv version --bump patch --bump dev
+        echo "VERSION=$(uv version --short)" >> "$GITHUB_ENV"
+
+    - name: Commit dev version bump
+      if: ${{ inputs.dry_run == 'false' }}
+      shell: bash
+      run: |
+        git add pyproject.toml
+        git commit -m "Back to dev: $VERSION"
+        git push origin "HEAD:$REF"

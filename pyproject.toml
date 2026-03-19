@@ -26,7 +26,8 @@ dependencies = [
     "pexpect >=4.9.0",
     "jedi >=0.19.0",
 ]
-dynamic = ["description", "version"]
+dynamic = ["description"]
+version = "1.0.1.dev1"
 
 [project.readme]
 file = "README.md"
@@ -70,9 +71,6 @@ typing = [{ include-group = "test-all" }, "pip >=23.1", "mypy >=1.2.0", "ipywidg
 
 [tool.uv.sources]
 metakernel_python = { path = "./metakernel_python", editable = true }
-
-[tool.hatch.version]
-path = "metakernel/__init__.py"
 
 [tool.hatch.build]
 exclude = [

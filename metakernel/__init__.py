@@ -1,5 +1,6 @@
 """A Jupyter kernel base class in Python which includes core magic functions (including help, command and file path completion, parallel and distributed processing, downloads, and much more)."""
 
+from importlib.metadata import version as _version
 from typing import Any
 
 from . import pexpect
@@ -39,4 +40,4 @@ __all__ = [
     "u",
 ]
 
-__version__ = "1.0.0rc1"
+__version__ = _version("metakernel")
