@@ -80,7 +80,7 @@ runs:
         fi
         echo "VERSION=$(uv version --short)" >> "$GITHUB_ENV"
 
-    - name: Update CHANGELOG.md
+    - name: Handle changelog
       shell: bash
       env:
         CHANGELOG_BODY: ${{ steps.changelog.outputs.changelog }}
@@ -105,14 +105,18 @@ runs:
         with open("CHANGELOG.md", "w") as f:
             f.writelines(lines)
         PYEOF
+        echo "## ${VERSION}\n${CHANGELOG_BODY}" >> $GITHUB_STEP_SUMMARY
 
     - name: Commit release changes
-      if: ${{ inputs.dry_run == 'false' }}
       shell: bash
       run: |
         git add pyproject.toml CHANGELOG.md
         git commit -m "Release $VERSION"
-        git push origin "HEAD:$REF"
+        if [ "$DRY_RUN" = "true" ]; then
+          echo "Not pushing changes"
+        else
+          git push origin "HEAD:$REF"
+        fi
 
     - name: Create GitHub release
       id: create-release
@@ -128,18 +132,14 @@ runs:
           TARGET="$REF"
           DRAFT=""
         fi
-        gh release create "v$VERSION" \
+        export RELEASE_URL=$(gh release create "v$VERSION" \
           --title "$VERSION" \
           --notes "$CHANGELOG_BODY" \
           --target "$TARGET" \
-          $DRAFT
-
-    - name: Delete draft release
-      if: ${{ inputs.dry_run == 'true' }}
-      shell: bash
-      env:
-        GH_TOKEN: ${{ steps.app-token.outputs.token }}
-      run: gh release delete "v$VERSION" --yes --cleanup-tag
+          $DRAFT)
+        if [ -n "$DRAFT" ]; then
+          gh release delete $RELEASE_URL --yes
+        fi
 
     - name: Bump to dev version
       shell: bash
@@ -148,9 +148,12 @@ runs:
         echo "VERSION=$(uv version --short)" >> "$GITHUB_ENV"
 
     - name: Commit dev version bump
-      if: ${{ inputs.dry_run == 'false' }}
       shell: bash
       run: |
         git add pyproject.toml
         git commit -m "Back to dev: $VERSION"
-        git push origin "HEAD:$REF"
+        if [ "$DRY_RUN" = "true" ]; then
+          echo "Not pushing changes"
+        else
+          git push origin "HEAD:$REF"
+        fi
