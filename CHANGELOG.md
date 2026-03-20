@@ -1,5 +1,38 @@
 # Changelog Entries
 
+## 1.0.0rc2
+
+## Maintenance and upkeep improvements
+
+- Refactor tests workflow
+  - PR: #393
+- Add a workflow to update pre-commit versions and improve validate-pyproject
+  - PR: #394
+- Refactor CI into composite actions and add release/publish workflows
+  - PR: #395
+- Ensure Consistent use of actions/checkout
+  - PR: #396
+- Fix release action by installing uv
+  - PR: #397
+- Clean up release action
+  - PR: #398
+- More release fixes and refinements
+  - PR: #399
+- Release action fixes and refinements
+  - PR: #400
+- Fix draft release deletion in release action
+  - PR: #401
+- Refine release workflow: add build-package job and simplify changelog template
+  - PR: #402
+- Add skip-existing to Test PyPI upload when dry_run is true
+  - PR: #403
+- Add verbose output to Test PyPI upload in dry_run mode
+  - PR: #404
+- Fix dry_run boolean comparison in publish workflow
+  - PR: #405
+- Fix release workflow: correct PyPI publish input name and add step summary
+  - PR: #406
+
 ## 1.0.0rc1
 
 ([Full Changelog](https://github.com/Calysto/metakernel/compare/v1.0.0rc0...161618c81c69279785c341cf6eab449a244e580e))
