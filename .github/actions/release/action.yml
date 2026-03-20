@@ -176,13 +176,16 @@ runs:
           TARGET="$REF"
           DRAFT=""
         fi
-        export RELEASE_URL=$(gh release create "v$VERSION" \
+        gh release create "v$VERSION" \
           --title "$VERSION" \
           --notes "$CHANGELOG_BODY" \
           --target "$TARGET" \
-          $DRAFT)
+          $DRAFT
         if [ -n "$DRAFT" ]; then
-          gh release delete $RELEASE_URL --yes
+          # Delete the most recent draft release.
+          gh release list --json id,isDraft,createdAt \
+            | jq -r '[.[] | select(.isDraft == true)] | sort_by(.createdAt) | last | .id' \
+            | xargs -I {} gh api -X DELETE "repos/$(gh repo view --json nameWithOwner -q .nameWithOwner)/releases/{}"
         fi
         echo "::endgroup::"
 
