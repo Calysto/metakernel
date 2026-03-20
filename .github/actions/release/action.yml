@@ -183,9 +183,10 @@ runs:
           $DRAFT
         if [ -n "$DRAFT" ]; then
           # Delete the most recent draft release.
-          gh release list --json id,isDraft,createdAt \
-            | jq -r '[.[] | select(.isDraft == true)] | sort_by(.createdAt) | last | .id' \
-            | xargs -I {} gh api -X DELETE "repos/$(gh repo view --json nameWithOwner -q .nameWithOwner)/releases/{}"
+          REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner)
+          gh api "repos/$REPO/releases" \
+            | jq -r '[.[] | select(.draft == true)] | sort_by(.created_at) | last | .id' \
+            | xargs -I {} gh api -X DELETE "repos/$REPO/releases/{}"
         fi
         echo "::endgroup::"
 
