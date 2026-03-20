@@ -1,5 +1,12 @@
 # Changelog Entries
 
+## 1.0.0rc3
+
+## Maintenance and upkeep improvements
+
+- Change version to 1.0.0rc2
+  - PR: #409
+
 ## 1.0.2rc1
 
 ## Maintenance and upkeep improvements
