@@ -69,12 +69,11 @@ jobs:
     - name: Upload package to Test PyPI
       uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # v1.13.0
       with:
-        repository-url: https://test.pypi.org/legacy/
-        skip-existing: ${{ inputs.dry_run == 'true' }}
-        verbose: ${{ inputs.dry_run == 'true' }}
+        repository_url: https://test.pypi.org/legacy/
+        skip-existing: ${{ inputs.dry_run }}
+        verbose: ${{ inputs.dry_run }}
 
     - name: Upload package to PyPI
-      if: ${{ inputs.dry_run != 'true' }}
+      if: ${{ !inputs.dry_run }}
       uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # v1.13.0
-      with:
-        repository-url: https://test.pypi.org/legacy/
+
