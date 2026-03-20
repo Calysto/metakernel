@@ -19,6 +19,11 @@ inputs:
     required: true
     description: "Branch to push commits back to (when not dry_run)"
 
+outputs:
+  tag:
+    description: "The release tag created (e.g. v0.3.5)"
+    value: ${{ steps.set-tag.outputs.tag }}
+
 runs:
   using: composite
   steps:
@@ -190,6 +195,16 @@ runs:
         fi
         echo "::endgroup::"
 
+    - name: Set tag output
+      id: set-tag
+      shell: bash
+      run: |
+        if [ "$DRY_RUN" = "true" ]; then
+          echo "tag=$SHA" >> "$GITHUB_OUTPUT"
+        else
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+        fi
+
     - name: Bump to dev version
       shell: bash
       run: |
@@ -209,5 +224,5 @@ runs:
         else
           git push origin "HEAD:$REF"
         fi
-        echo "\n\n## Post version: ${VERSION}" >> $GITHUB_STEP_SUMMARY
+        printf "\n\n## Post version: %s\n" "${VERSION}" >> $GITHUB_STEP_SUMMARY
         echo "::endgroup::"
