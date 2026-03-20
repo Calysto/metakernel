@@ -16,9 +16,30 @@ on:
     - cron: "0 9 * * *"
 
 jobs:
-  # Always build & lint package.
+  release:
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write
+    outputs:
+      tag: ${{ steps.release.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/release
+        id: release
+        with:
+          version: ${{ github.event_name == 'schedule' && '10.10.10.10' || inputs.version }}
+          dry_run: ${{ github.event_name == 'schedule' && 'true' || inputs.dry_run }}
+          app_id: ${{ vars.APP_ID }}
+          app_private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          ref: ${{ github.ref_name }}
+
+  # Build the package from the release tag so the artifact matches what was released.
   build-package:
     name: Build & verify package
+    needs: [release]
     runs-on: ubuntu-latest
     permissions:
       attestations: write
@@ -27,6 +48,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
+          ref: ${{ needs.release.outputs.tag }}
           fetch-depth: 0
           persist-credentials: false
 
@@ -34,26 +56,8 @@ jobs:
         with:
           attest-build-provenance-github: 'true'
 
-  release:
-    needs: [build-package]
-    runs-on: ubuntu-latest
-    environment: release
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          persist-credentials: false
-      - uses: ./.github/actions/release
-        with:
-          version: ${{ github.event_name == 'schedule' && '10.10.10.10' || inputs.version }}
-          dry_run: ${{ github.event_name == 'schedule' && 'true' || inputs.dry_run }}
-          app_id: ${{ vars.APP_ID }}
-          app_private_key: ${{ secrets.APP_PRIVATE_KEY }}
-          ref: ${{ github.ref_name }}
-
   publish:
-    needs: [release]
+    needs: [build-package]
     runs-on: ubuntu-latest
     environment: release
     permissions:
@@ -76,4 +80,3 @@ jobs:
     - name: Upload package to PyPI
       if: ${{ !inputs.dry_run }}
       uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # v1.13.0
-
