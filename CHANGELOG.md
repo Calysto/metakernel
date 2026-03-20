@@ -1,5 +1,12 @@
 # Changelog Entries
 
+## 1.0.2rc1
+
+## Maintenance and upkeep improvements
+
+- Skip dev version bump for pre-release versions
+  - PR: #408
+
 ## 1.0.1rc1
 
 ## Maintenance and upkeep improvements
