@@ -209,4 +209,5 @@ runs:
         else
           git push origin "HEAD:$REF"
         fi
+        echo "\n\n## Post version: ${VERSION}" >> $GITHUB_STEP_SUMMARY
         echo "::endgroup::"
