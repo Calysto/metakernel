@@ -1,5 +1,12 @@
 # Changelog Entries
 
+## 1.0.1rc1
+
+## Maintenance and upkeep improvements
+
+- Fix release workflow: build package from release tag
+  - PR: #407
+
 ## 1.0.0rc2
 
 ## Maintenance and upkeep improvements
