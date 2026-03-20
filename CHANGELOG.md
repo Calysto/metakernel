@@ -1,22 +1,5 @@
 # Changelog Entries
 
-## 1.0.1rc1
-
-## 📦 Uncategorized
-
-- Refactor tests workflow
-   - PR: #393
-- Add a workflow to update pre-commit versions and improve validate-pyproject
-   - PR: #394
-- Refactor CI into composite actions and add release/publish workflows
-   - PR: #395
-- Ensure Consistent use of actions/checkout
-   - PR: #396
-- Fix release action by installing uv
-   - PR: #397
-- Clean up release action
-   - PR: #398
-
 ## 1.0.0rc1
 
 ([Full Changelog](https://github.com/Calysto/metakernel/compare/v1.0.0rc0...161618c81c69279785c341cf6eab449a244e580e))
