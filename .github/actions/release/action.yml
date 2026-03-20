@@ -198,7 +198,12 @@ runs:
     - name: Set tag output
       id: set-tag
       shell: bash
-      run: echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+      run: |
+        if [ "$DRY_RUN" = "true" ]; then
+          echo "tag=$SHA" >> "$GITHUB_OUTPUT"
+        else
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+        fi
 
     - name: Bump to dev version
       shell: bash
