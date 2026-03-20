@@ -80,7 +80,7 @@ runs:
         token: ${{ steps.app-token.outputs.token }}
         configurationJson: |
           {
-            "template": "#{{CHANGELOG}}\n\n<details>\n<summary>Uncategorized</summary>\n\n#{{UNCATEGORIZED}}\n</details>",
+            "template": "#{{CHANGELOG}}\n",
             "categories": [
               {
                   "title": "## Enhancements Made",
