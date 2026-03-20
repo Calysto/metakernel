@@ -71,6 +71,7 @@ jobs:
       with:
         repository-url: https://test.pypi.org/legacy/
         skip-existing: ${{ inputs.dry_run == 'true' }}
+        verbose: ${{ inputs.dry_run == 'true' }}
 
     - name: Upload package to PyPI
       if: ${{ inputs.dry_run != 'true' }}
