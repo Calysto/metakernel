@@ -42,7 +42,6 @@ jobs:
     needs: [release]
     runs-on: ubuntu-latest
     permissions:
-      attestations: write
       id-token: write
 
     steps:
@@ -53,8 +52,6 @@ jobs:
           persist-credentials: false
 
       - uses: hynek/build-and-inspect-python-package@efb823f52190ad02594531168b7a2d5790e66516 # v2.14.0
-        with:
-          attest-build-provenance-github: 'true'
 
   publish:
     needs: [build-package]
