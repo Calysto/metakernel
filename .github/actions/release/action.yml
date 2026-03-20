@@ -207,6 +207,7 @@ runs:
 
     - name: Bump to dev version
       shell: bash
+      if: ${{ !contains(env.VERSION, 'rc') && !contains(env.VERSION, 'beta') && !contains(env.VERSION, 'alpha') }}
       run: |
         echo "::group::Commands"
         uv version --bump patch --bump dev --frozen
@@ -215,6 +216,7 @@ runs:
 
     - name: Commit dev version bump
       shell: bash
+      if: ${{ !contains(env.VERSION, 'rc') && !contains(env.VERSION, 'beta') && !contains(env.VERSION, 'alpha') }}
       run: |
         echo "::group::Commands"
         git add pyproject.toml
