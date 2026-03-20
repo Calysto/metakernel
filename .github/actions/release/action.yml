@@ -22,7 +22,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Set input environment variables
+    - name: Set environment variables and bash defaults
       shell: bash
       env:
         VERSION: ${{ inputs.version }}
@@ -31,11 +31,15 @@ runs:
         SHA: ${{ github.sha }}
         REPOSITORY: ${{ github.repository }}
       run: |
+        echo "::group::Commands"
         echo "VERSION=$VERSION" >> "$GITHUB_ENV"
         echo "DRY_RUN=$DRY_RUN" >> "$GITHUB_ENV"
         echo "REF=$REF" >> "$GITHUB_ENV"
         echo "SHA=$SHA" >> "$GITHUB_ENV"
         echo "REPOSITORY=$REPOSITORY" >> "$GITHUB_ENV"
+        echo "set -eux" > "$RUNNER_TEMP/bash_env"
+        echo "BASH_ENV=$RUNNER_TEMP/bash_env" >> $GITHUB_ENV
+        echo "::endgroup::"
 
     - name: Check out
       uses: actions/checkout@v6
@@ -61,9 +65,11 @@ runs:
       env:
         TOKEN: ${{ steps.app-token.outputs.token }}
       run: |
+        echo "::group::Commands"
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
         git remote set-url origin "https://x-access-token:${TOKEN}@github.com/${REPOSITORY}"
+        echo "::endgroup::"
 
     - name: Generate changelog
       id: changelog
@@ -102,18 +108,21 @@ runs:
     - name: Set release version
       shell: bash
       run: |
+        echo "::group::Commands"
         if [[ "$VERSION" =~ ^[0-9] ]]; then
           uv version "$VERSION" --frozen
         else
           uv version --bump "$VERSION" --frozen
         fi
         echo "VERSION=$(uv version --short)" >> "$GITHUB_ENV"
+        echo "::endgroup::"
 
     - name: Handle changelog
       shell: bash
       env:
         CHANGELOG_BODY: ${{ steps.changelog.outputs.changelog }}
       run: |
+        echo "::group::Commands"
         python3 - <<'PYEOF'
         import os
         version = os.environ["VERSION"]
@@ -137,10 +146,12 @@ runs:
         echo "## ${VERSION}" >> $GITHUB_STEP_SUMMARY
         echo "${CHANGELOG_BODY}" >> $GITHUB_STEP_SUMMARY
         uv run --with mdformat mdformat CHANGELOG.md
+        echo "::endgroup::"
 
     - name: Commit release changes
       shell: bash
       run: |
+        echo "::group::Commands"
         git add pyproject.toml CHANGELOG.md
         git commit -m "Release $VERSION"
         if [ "$DRY_RUN" = "true" ]; then
@@ -148,6 +159,7 @@ runs:
         else
           git push origin "HEAD:$REF"
         fi
+        echo "::endgroup::"
 
     - name: Create GitHub release
       id: create-release
@@ -156,6 +168,7 @@ runs:
         GH_TOKEN: ${{ steps.app-token.outputs.token }}
         CHANGELOG_BODY: ${{ steps.changelog.outputs.changelog }}
       run: |
+        echo "::group::Commands"
         if [ "$DRY_RUN" = "true" ]; then
           TARGET="$SHA"
           DRAFT="--draft"
@@ -163,24 +176,31 @@ runs:
           TARGET="$REF"
           DRAFT=""
         fi
-        export RELEASE_URL=$(gh release create "v$VERSION" \
+        gh release create "v$VERSION" \
           --title "$VERSION" \
           --notes "$CHANGELOG_BODY" \
           --target "$TARGET" \
-          $DRAFT)
+          $DRAFT
         if [ -n "$DRAFT" ]; then
-          gh release delete $RELEASE_URL --yes
+          # Delete the most recent draft release.
+          gh release list --json id,isDraft,createdAt \
+            | jq -r '[.[] | select(.isDraft == true)] | sort_by(.createdAt) | last | .id' \
+            | xargs -I {} gh api -X DELETE "repos/$(gh repo view --json nameWithOwner -q .nameWithOwner)/releases/{}"
         fi
+        echo "::endgroup::"
 
     - name: Bump to dev version
       shell: bash
       run: |
+        echo "::group::Commands"
         uv version --bump patch --bump dev --frozen
         echo "VERSION=$(uv version --short)" >> "$GITHUB_ENV"
+        echo "::endgroup::"
 
     - name: Commit dev version bump
       shell: bash
       run: |
+        echo "::group::Commands"
         git add pyproject.toml
         git commit -m "Back to dev: $VERSION"
         if [ "$DRY_RUN" = "true" ]; then
@@ -188,3 +208,4 @@ runs:
         else
           git push origin "HEAD:$REF"
         fi
+        echo "::endgroup::"
