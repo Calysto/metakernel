@@ -37,20 +37,24 @@ runs:
         echo "SHA=$SHA" >> "$GITHUB_ENV"
         echo "REPOSITORY=$REPOSITORY" >> "$GITHUB_ENV"
 
-    - uses: actions/checkout@v6
+    - name: Check out
+      uses: actions/checkout@v6
       with:
         fetch-depth: 0
         persist-credentials: false
 
-    - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
+    - name: Set up uv
+      uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
       with:
         enable-cache: true
 
-    - uses: actions/create-github-app-token@v2
+    - name: Generate token for GitHub push
+      uses: actions/create-github-app-token@v2
       id: app-token
       with:
         app-id: ${{ inputs.app_id }}
         private-key: ${{ inputs.app_private_key }}
+        permission-contents: write
 
     - name: Configure git
       shell: bash
@@ -65,10 +69,35 @@ runs:
       id: changelog
       uses: mikepenz/release-changelog-builder-action@a34a8009a9588bb86b02a873cf592440e96a5da8  # v6.1.1
       with:
-        fromTag: ""
         toTag: "HEAD"
         ignorePreReleases: "true"
         token: ${{ steps.app-token.outputs.token }}
+        configurationJson: |
+          {
+            "template": "#{{CHANGELOG}}\n\n<details>\n<summary>Uncategorized</summary>\n\n#{{UNCATEGORIZED}}\n</details>",
+            "categories": [
+              {
+                  "title": "## Enhancements Made",
+                  "labels": ["enhancement"]
+              },
+              {
+                  "title": "## Bugs Fixed",
+                  "labels": ["bug"]
+              },
+              {
+                  "title": "## Documentation improvements",
+                  "labels": ["documentation"]
+              },
+              {
+                  "title": "## Maintenance and upkeep improvements",
+                  "labels": ["maintenance"]
+              },
+              {
+                  "title": "## Dependency updates",
+                  "labels": ["dependencies"]
+              }
+            ]
+          }
 
     - name: Set release version
       shell: bash
@@ -105,7 +134,9 @@ runs:
         with open("CHANGELOG.md", "w") as f:
             f.writelines(lines)
         PYEOF
-        echo "## ${VERSION}\n${CHANGELOG_BODY}" >> $GITHUB_STEP_SUMMARY
+        echo "## ${VERSION}" >> $GITHUB_STEP_SUMMARY
+        echo "${CHANGELOG_BODY}" >> $GITHUB_STEP_SUMMARY
+        uv run --with mdformat mdformat CHANGELOG.md
 
     - name: Commit release changes
       shell: bash
@@ -144,7 +175,7 @@ runs:
     - name: Bump to dev version
       shell: bash
       run: |
-        uv version --bump patch --bump dev
+        uv version --bump patch --bump dev --frozen
         echo "VERSION=$(uv version --short)" >> "$GITHUB_ENV"
 
     - name: Commit dev version bump
