@@ -2517,6 +2517,19 @@ dev = ["pre-commit", "tox"]
 testing = ["coverage", "pytest", "pytest-benchmark"]
 
 [[package]]
+name = "poetry-core"
+version = "2.3.1"
+description = "Poetry PEP 517 Build Backend"
+optional = false
+python-versions = "<4.0,>=3.10"
+groups = ["docs"]
+markers = "python_version < \"4.0\""
+files = [
+    {file = "poetry_core-2.3.1-py3-none-any.whl", hash = "sha256:db1cf63b782570deb38bfba61e2304a553eef0740dc17959a50cc0f5115ee634"},
+    {file = "poetry_core-2.3.1.tar.gz", hash = "sha256:96f791d5d7d4e040f3983d76779425cf9532690e2756a24fd5ca0f86af19ef82"},
+]
+
+[[package]]
 name = "portalocker"
 version = "3.2.0"
 description = "Wraps the portalocker recipe for easy usage"
@@ -3552,4 +3565,4 @@ parallel = ["ipyparallel"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10"
-content-hash = "4c78be991e4f3516079b20d027daf18f570e34f9e68aad21afa46e3d9b9aaacb"
+content-hash = "78292781d181e23ee743a26edc1993b40946b294839f06c174cc0b66e1e7a595"

@@ -54,6 +54,7 @@ test-all = [
     "pydot >=2.0.0",          # dot magic
 ]
 docs = [
+    "poetry-core>=2.0.0; python_version < '4.0'",
     "mkdocs>=1.4.3",
     "mkdocs-material>=9.1.4",
     "mkdocs-jupyter>=0.24.1",
@@ -74,6 +75,7 @@ include = [
 
 [tool.poetry.group.test.dependencies]
 metakernel_python = {path = "./metakernel_python", develop = true}
+ipython = {version = ">=9.0", python = ">=3.11"}
 
 [tool.pytest.ini_options]
 minversion = "9.0"
