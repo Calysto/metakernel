@@ -16,6 +16,14 @@ runs:
       shell: bash
       run: pipx install "poetry>=2.3,<3"
 
+    - name: Cache dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pypoetry/cache
+        key: pypoetry-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+        restore-keys: |
+          pypoetry-${{ runner.os }}-
+
     - name: Install test dependencies
       shell: bash
       run: |
