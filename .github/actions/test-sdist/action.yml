@@ -4,7 +4,7 @@ description: Downloads the sdist artifact, unpacks it, and runs the test suite
 inputs:
   command:
     required: false
-    default: "poetry run pytest -v"
+    default: "poetry run --with test pytest -v"
     description: "Command to run the test suite from within the unpacked sdist directory"
 
 runs:

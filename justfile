@@ -23,7 +23,7 @@ test *args="":
 # Run full test suite with ipcluster and all optional magic dependencies
 test-all *args="":
     poetry install --with test-all
-    poetry run ipcluster start -n=3 &
+    bash scripts/start_cluster.sh 3
     poetry run pytest {{args}}
     -poetry run ipcluster stop
 
@@ -34,7 +34,7 @@ test-parallel *args="":
 # Run tests with coverage
 cover *args="":
     poetry install --with coverage
-    poetry run ipcluster start -n=3 &
+    bash scripts/start_cluster.sh 3
     poetry run pytest --cov=metakernel {{args}}
     poetry run coverage annotate
     poetry run coverage xml
@@ -74,4 +74,5 @@ run-notebooks:
 
 # Run pre-commit hook
 pre-commit *args="":
+    poetry install --with dev
     poetry run pre-commit run --all-files {{args}}

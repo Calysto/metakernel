@@ -4,28 +4,9 @@ set -euo pipefail
 REPO_DIR="$(dirname "$0")/.."
 EXAMPLES_DIR="$REPO_DIR/examples"
 
-echo "Starting ipcluster..."
-# Install calysto_scheme kernel and start ipcluster in the same env.
-# Run in background (no --daemonize) so the process stays alive for engines.
-poetry run bash -c "
-    python -m calysto_scheme install --user &&
-    ipcluster start --n=5
-" &
-echo "Waiting for ipcluster to be ready..."
-poetry run python - <<'EOF'
-import ipyparallel as ipp, time, sys
-for _ in range(60):
-    try:
-        c = ipp.Client()
-        if len(c) >= 5:
-            print(f"Cluster ready with {len(c)} engines")
-            sys.exit(0)
-    except Exception:
-        pass
-    time.sleep(2)
-print("ERROR: cluster not ready after 120s", file=sys.stderr)
-sys.exit(1)
-EOF
+echo "Installing calysto_scheme kernel..."
+poetry run python -m calysto_scheme install --user
+bash "$(dirname "$0")/start_cluster.sh" 5
 
 run_notebook() {
     local notebook="$1"
