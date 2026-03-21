@@ -62,6 +62,7 @@ docs-serve:
 # Regenerate magics/README.md from magic docstrings
 help:
     poetry sync --with test
+    poetry run pip install -q --no-deps -e ./metakernel_python/
     poetry run python docs/generate_help.py
 
 # Run type checking
@@ -78,8 +79,6 @@ lint:
 
 # Run example notebooks (excludes Calysto Processing and SAS)
 run-notebooks:
-    poetry sync --with test-all
-    poetry run pip install -q --no-deps -e ./metakernel_python/
     bash scripts/run_notebooks.sh
 
 # Run pre-commit hook

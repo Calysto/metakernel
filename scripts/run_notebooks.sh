@@ -4,6 +4,10 @@ set -euo pipefail
 REPO_DIR="$(dirname "$0")/.."
 EXAMPLES_DIR="$REPO_DIR/examples"
 
+poetry sync --with test-all
+poetry run pip install -q --no-deps -e ./metakernel_python/
+poetry run pip install -q --no-deps -e ./metakernel_echo/
+
 bash "$(dirname "$0")/start_cluster.sh" 5
 
 run_notebook() {
