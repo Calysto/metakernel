@@ -138,8 +138,6 @@ jobs:
         with:
           version: patch
           dry_run: "true"
-          app_id: ${{ vars.APP_ID }}
-          app_private_key: ${{ secrets.APP_PRIVATE_KEY }}
           ref: ${{ github.head_ref }}
 
   tests_check: # This job does nothing and is only used for the branch protection
