@@ -46,19 +46,6 @@ runs:
         echo "BASH_ENV=$RUNNER_TEMP/bash_env" >> $GITHUB_ENV
         echo "::endgroup::"
 
-    - name: Check out
-      uses: actions/checkout@v6
-      with:
-        fetch-depth: 0
-        persist-credentials: false
-
-    - name: Set up Python
-      uses: actions/setup-python@v5
-
-    - name: Install Poetry
-      shell: bash
-      run: pipx install "poetry>=2.3,<3"
-
     - name: Generate token for GitHub push
       uses: actions/create-github-app-token@v2
       id: app-token
