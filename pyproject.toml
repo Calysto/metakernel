@@ -68,7 +68,6 @@ typing = [{ include-group = "test-all" }, "pip >=23.1", "mypy >=1.2.0", "ipywidg
 
 [tool.poetry.group.test.dependencies]
 metakernel_python = {path = "./metakernel_python", develop = true}
-metakernel_echo = {path = "./metakernel_echo", develop = true}
 
 [tool.pytest.ini_options]
 minversion = "9.0"

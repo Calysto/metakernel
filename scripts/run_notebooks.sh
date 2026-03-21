@@ -4,8 +4,6 @@ set -euo pipefail
 REPO_DIR="$(dirname "$0")/.."
 EXAMPLES_DIR="$REPO_DIR/examples"
 
-echo "Installing kernels..."
-poetry run python -m metakernel_python install --sys-prefix
 bash "$(dirname "$0")/start_cluster.sh" 5
 
 run_notebook() {

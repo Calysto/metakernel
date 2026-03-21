@@ -19,7 +19,7 @@ clean:
 # Run core test suite (no cluster needed)
 test *args="":
     poetry install --with test
-    poetry run python -m metakernel_python install --sys-prefix
+    poetry run pip install -q --no-deps -e ./metakernel_python/
     poetry run pytest {{args}}
 
 # Run full test suite with ipcluster and all optional magic dependencies
@@ -27,7 +27,7 @@ test-all *args="":
     #!/usr/bin/env bash
     set -euo pipefail
     poetry install --with test-all
-    poetry run python -m metakernel_python install --sys-prefix
+    poetry run pip install -q --no-deps -e ./metakernel_python/
     bash scripts/start_cluster.sh 3
     poetry run pytest {{args}}
     poetry run ipcluster stop || true
@@ -41,7 +41,7 @@ cover *args="":
     #!/usr/bin/env bash
     set -euo pipefail
     poetry install --with coverage
-    poetry run python -m metakernel_python install --sys-prefix
+    poetry run pip install -q --no-deps -e ./metakernel_python/
     bash scripts/start_cluster.sh 3
     poetry run pytest --cov=metakernel {{args}}
     poetry run coverage annotate
@@ -79,6 +79,7 @@ lint:
 # Run example notebooks (excludes Calysto Processing and SAS)
 run-notebooks:
     poetry install --with test-all
+    poetry run pip install -q --no-deps -e ./metakernel_python/
     bash scripts/run_notebooks.sh
 
 # Run pre-commit hook
