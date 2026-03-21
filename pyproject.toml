@@ -35,7 +35,7 @@ activity = ["portalocker >=2.8.0"] # activity magic
 parallel = ["ipyparallel >=8.5.1"] # parallel magic
 
 [dependency-groups]
-dev = [ { include-group = "test" } ]
+dev = [ { include-group = "test" }, "pre-commit" ]
 test = [
     "jupyter_kernel_test >=0.6.0",
     "ipywidgets >=8.0.5",
