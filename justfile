@@ -22,10 +22,12 @@ test *args="":
 
 # Run full test suite with ipcluster and all optional magic dependencies
 test-all *args="":
+    #!/usr/bin/env bash
+    set -euo pipefail
     poetry install --with test-all
     bash scripts/start_cluster.sh 3
     poetry run pytest {{args}}
-    -poetry run ipcluster stop
+    poetry run ipcluster stop || true
 
 # Alias for test-all
 test-parallel *args="":
@@ -33,13 +35,15 @@ test-parallel *args="":
 
 # Run tests with coverage
 cover *args="":
+    #!/usr/bin/env bash
+    set -euo pipefail
     poetry install --with coverage
     bash scripts/start_cluster.sh 3
     poetry run pytest --cov=metakernel {{args}}
     poetry run coverage annotate
     poetry run coverage xml
     poetry run coverage report --show-missing
-    -poetry run ipcluster stop
+    poetry run ipcluster stop || true
 
 # Build MkDocs HTML docs
 docs:

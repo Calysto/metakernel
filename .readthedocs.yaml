@@ -4,6 +4,7 @@ build:
   tools:
     python: "3.12"
   commands:
-    - pip install poetry
-    - VIRTUAL_ENV=$READTHEDOCS_VIRTUALENV_PATH poetry install --with docs
-    - VIRTUAL_ENV=$READTHEDOCS_VIRTUALENV_PATH poetry run mkdocs build -d $READTHEDOCS_OUTPUT/html
+    - pip install "poetry>=2.3,<3"
+    - poetry config virtualenvs.create false
+    - poetry install --with docs
+    - mkdocs build -d $READTHEDOCS_OUTPUT/html
