@@ -16,21 +16,26 @@ clean:
     find . -name "*.pyc" -delete
     find . -name "*.py,cover" -delete
 
+[private]
+_setup group:
+    poetry sync --only main,{{group}}
+    poetry run pip install -q --no-deps -e ./metakernel_python/
+
+[private]
+_run-with-cluster *args="":
+    bash scripts/start_cluster.sh 3
+    poetry run pytest {{args}}
+    poetry run ipcluster stop || true
+
 # Run core test suite (no cluster needed)
 test *args="":
-    poetry sync --only main,test
-    poetry run pip install -q --no-deps -e ./metakernel_python/
+    just _setup test
     poetry run pytest {{args}}
 
 # Run full test suite with ipcluster and all optional magic dependencies
 test-all *args="":
-    #!/usr/bin/env bash
-    set -euo pipefail
-    poetry sync --only main,test-all
-    poetry run pip install -q --no-deps -e ./metakernel_python/
-    bash scripts/start_cluster.sh 3
-    poetry run pytest {{args}}
-    poetry run ipcluster stop || true
+    just _setup test-all
+    just _run-with-cluster {{args}}
 
 # Alias for test-all
 test-parallel *args="":
@@ -38,16 +43,11 @@ test-parallel *args="":
 
 # Run tests with coverage
 cover *args="":
-    #!/usr/bin/env bash
-    set -euo pipefail
-    poetry sync --only main,coverage
-    poetry run pip install -q --no-deps -e ./metakernel_python/
-    bash scripts/start_cluster.sh 3
-    poetry run pytest --cov=metakernel {{args}}
+    just _setup coverage
+    just _run-with-cluster --cov=metakernel {{args}}
     poetry run coverage annotate
     poetry run coverage xml
     poetry run coverage report --show-missing
-    poetry run ipcluster stop || true
 
 # Build MkDocs HTML docs
 docs:
@@ -61,8 +61,7 @@ docs-serve:
 
 # Regenerate magics/README.md from magic docstrings
 help:
-    poetry sync --only main,test
-    poetry run pip install -q --no-deps -e ./metakernel_python/
+    just _setup test
     poetry run python docs/generate_help.py
 
 # Run type checking
