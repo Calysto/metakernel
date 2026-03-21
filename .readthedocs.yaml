@@ -7,4 +7,4 @@ build:
     - pip install "poetry>=2.3,<3"
     - poetry config virtualenvs.create false
     - poetry sync --only main,docs
-    - mkdocs build -d $READTHEDOCS_OUTPUT/html
+    - poetry run mkdocs build -d $READTHEDOCS_OUTPUT/html
