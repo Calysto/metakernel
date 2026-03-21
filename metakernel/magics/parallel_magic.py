@@ -68,16 +68,18 @@ class ParallelMagic(Magic):
         from ipyparallel import Client  # type: ignore[import-untyped]
 
         count = 1
+        last_error: Exception | None = None
         while count <= 5:
             try:
                 self.client = Client()
                 break
-            except Exception:
-                print("Waiting on cluster to start...")
+            except Exception as e:
+                last_error = e
+                print(f"Waiting on cluster to start... ({e})")
                 time.sleep(2)
             count += 1
         if count == 6:
-            raise Exception("Cluster was not started.")
+            raise Exception(f"Cluster was not started. Last error: {last_error}")
         if ids is None:
             count = 1
             while count <= 5:
@@ -117,6 +119,7 @@ class ParallelMagic(Magic):
                 view = None
                 for item in ids_slice:
                     count = 1
+                    last_error = None
                     while count <= 5:
                         try:
                             client = self.client[item]
@@ -126,12 +129,15 @@ class ParallelMagic(Magic):
                             else:
                                 view = client
                             break
-                        except Exception:
-                            print("Waiting on cluster to start...")
+                        except Exception as e:
+                            last_error = e
+                            print(f"Waiting on cluster to start... ({e})")
                             time.sleep(2)
                         count += 1
                     if count == 6:
-                        raise Exception("Cluster was not started.")
+                        raise Exception(
+                            f"Cluster was not started. Last error: {last_error}"
+                        )
                 self.view = view
         self.view_load_balanced = self.client.load_balanced_view()
         self.module_name = module_name
