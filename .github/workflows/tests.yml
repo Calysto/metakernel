@@ -109,11 +109,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: ./.github/actions/base-setup
-      - name: Force the use of minimum versions
-        run: |
-          sed -i -E 's/"(\^|>=)([0-9])/"==\2/' pyproject.toml
-          sed -i -E 's/requires-python = "==([0-9])/requires-python = ">=\1/' pyproject.toml
-      - run: just test -v
+      - uses: ./.github/actions/test-minimum-versions
 
   run_notebooks:
     name: Run Notebooks
