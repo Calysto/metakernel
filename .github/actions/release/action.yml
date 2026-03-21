@@ -163,6 +163,7 @@ runs:
 
     - name: Create GitHub release
       id: create-release
+      if: inputs.app_id != ''
       shell: bash
       env:
         GH_TOKEN: ${{ steps.app-token.outputs.token }}
