@@ -5,8 +5,6 @@ REPO_DIR="$(dirname "$0")/.."
 EXAMPLES_DIR="$REPO_DIR/examples"
 
 echo "Installing kernels..."
-poetry run python -m calysto_scheme install --sys-prefix
-poetry run python -m metakernel_echo install --sys-prefix
 poetry run python -m metakernel_python install --sys-prefix
 bash "$(dirname "$0")/start_cluster.sh" 5
 
