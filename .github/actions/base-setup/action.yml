@@ -37,19 +37,14 @@ runs:
       uses: actions/cache@v4
       with:
         path: ~/.cache/pypoetry/cache
-        key: pypoetry-${{ runner.os }}-py${{ inputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+        key: pypoetry-${{ runner.os }}-py${{ inputs.python-version }}-${{ github.job }}-${{ github.workflow }}-${{ hashFiles('**/poetry.lock') }}
         restore-keys: |
+          pypoetry-${{ runner.os }}-py${{ inputs.python-version }}-${{ github.job }}-${{ github.workflow }}-
           pypoetry-${{ runner.os }}-py${{ inputs.python-version }}-
 
     - name: Install just
       if: hashFiles('justfile') != ''
       uses: extractions/setup-just@f8a3cce218d9f83db3a2ecd90e41ac3de6cdfd9b # v3
-
-    - name: Install graphviz
-      if: runner.os == 'Linux'
-      uses: tecolicom/actions-use-apt-tools@065d3fb036b7fc85487573596f97732ed0d3fce1 # v1.7
-      with:
-        tools: graphviz
 
     - name: Install dependencies
       if: hashFiles('justfile') != ''

@@ -74,8 +74,12 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/base-setup
+      - name: Install graphviz
+        if: runner.os == 'Linux'
+        uses: tecolicom/actions-use-apt-tools@065d3fb036b7fc85487573596f97732ed0d3fce1 # v1.7
+        with:
+          tools: graphviz
       - run: just cover -v
-
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
         with:
@@ -119,6 +123,25 @@ jobs:
       - uses: ./.github/actions/base-setup
       - run: just run-notebooks
 
+  test_release:
+    name: Test Release (Dry Run)
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/base-setup
+      - uses: ./.github/actions/release
+        with:
+          version: patch
+          dry_run: "true"
+          app_id: ${{ vars.APP_ID }}
+          app_private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          ref: ${{ github.head_ref }}
+
   tests_check: # This job does nothing and is only used for the branch protection
     if: always()
     needs:
@@ -129,9 +152,11 @@ jobs:
       - static
       - test_minimum_versions
       - run_notebooks
+      - test_release
     runs-on: ubuntu-latest
     steps:
       - name: Decide whether the needed jobs succeeded or failed
         uses: re-actors/alls-green@05ac9388f0aebcb5727afa17fcccfecd6f8ec5fe # release/v1
         with:
+          allowed-skips: test_release
           jobs: ${{ toJSON(needs) }}

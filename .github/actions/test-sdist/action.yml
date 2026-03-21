@@ -4,7 +4,7 @@ description: Downloads the sdist artifact, unpacks it, and runs the test suite
 inputs:
   setup:
     required: false
-    default: "poetry sync --only main,tests"
+    default: "poetry sync --only main,test"
   command:
     required: false
     default: "poetry run pytest -v"

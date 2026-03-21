@@ -10,11 +10,13 @@ inputs:
     default: "false"
     description: "Dry run: creates a draft release then deletes it, does not push"
   app_id:
-    required: true
-    description: "GitHub App ID for authenticated pushes"
+    required: false
+    default: ""
+    description: "GitHub App ID for authenticated pushes (not required for dry_run)"
   app_private_key:
-    required: true
-    description: "GitHub App private key"
+    required: false
+    default: ""
+    description: "GitHub App private key (not required for dry_run)"
   ref:
     required: true
     description: "Branch to push commits back to (when not dry_run)"
@@ -48,11 +50,19 @@ runs:
 
     - name: Generate token for GitHub push
       uses: actions/create-github-app-token@v2
-      id: app-token
+      id: create-app-token
+      if: inputs.app_id != ''
       with:
         app-id: ${{ inputs.app_id }}
         private-key: ${{ inputs.app_private_key }}
         permission-contents: write
+
+    - name: Set auth token
+      id: app-token
+      shell: bash
+      env:
+        APP_TOKEN: ${{ steps.create-app-token.outputs.token }}
+      run: echo "token=${APP_TOKEN:-${{ github.token }}}" >> $GITHUB_OUTPUT
 
     - name: Configure git
       shell: bash
