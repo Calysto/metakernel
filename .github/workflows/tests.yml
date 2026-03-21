@@ -38,14 +38,13 @@ jobs:
       matrix:
         python-version: ${{ fromJSON(needs.build.outputs.supported_python_classifiers_json_array) }}
 
-    env:
-      UV_PYTHON: ${{ matrix.python-version }}
-
     steps:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
       - uses: ./.github/actions/base-setup
+        with:
+          python-version: ${{ matrix.python-version }}
       - run: just test -v
 
   test_sdist:
@@ -94,9 +93,7 @@ jobs:
       - run: just docs
       - run: just help
       - name: Test typing
-        run: |
-          uv sync
-          just typing
+        run: just typing
 
   test_minimum_versions:
     name: Test Minimum Versions
@@ -107,8 +104,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: ./.github/actions/base-setup
-      - run: |
-          uv run --group test --resolution=lowest-direct pytest -v
+      - run: poetry install --with test && poetry run pytest -v
 
   run_notebooks:
     name: Run Notebooks

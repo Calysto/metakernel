@@ -52,10 +52,12 @@ runs:
         fetch-depth: 0
         persist-credentials: false
 
-    - name: Set up uv
-      uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
-      with:
-        enable-cache: true
+    - name: Set up Python
+      uses: actions/setup-python@v5
+
+    - name: Install Poetry
+      shell: bash
+      run: pipx install "poetry>=2.3,<3"
 
     - name: Generate token for GitHub push
       uses: actions/create-github-app-token@v2
@@ -114,12 +116,8 @@ runs:
       shell: bash
       run: |
         echo "::group::Commands"
-        if [[ "$VERSION" =~ ^[0-9] ]]; then
-          uv version "$VERSION" --frozen
-        else
-          uv version --bump "$VERSION" --frozen
-        fi
-        echo "VERSION=$(uv version --short)" >> "$GITHUB_ENV"
+        poetry version "$VERSION"
+        echo "VERSION=$(poetry version --short)" >> "$GITHUB_ENV"
         echo "::endgroup::"
 
     - name: Handle changelog
@@ -150,7 +148,7 @@ runs:
         PYEOF
         echo "## ${VERSION}" >> $GITHUB_STEP_SUMMARY
         echo "${CHANGELOG_BODY}" >> $GITHUB_STEP_SUMMARY
-        uv run --with mdformat mdformat CHANGELOG.md
+        pipx run mdformat CHANGELOG.md
         echo "::endgroup::"
 
     - name: Commit release changes
@@ -210,8 +208,8 @@ runs:
       if: ${{ !contains(env.VERSION, 'rc') && !contains(env.VERSION, 'beta') && !contains(env.VERSION, 'alpha') }}
       run: |
         echo "::group::Commands"
-        uv version --bump patch --bump dev --frozen
-        echo "VERSION=$(uv version --short)" >> "$GITHUB_ENV"
+        poetry version prerelease
+        echo "VERSION=$(poetry version --short)" >> "$GITHUB_ENV"
         echo "::endgroup::"
 
     - name: Commit dev version bump

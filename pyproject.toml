@@ -1,9 +1,10 @@
 [build-system]
-requires = ["hatchling >=1.14.0"]
-build-backend = "hatchling.build"
+requires = ["poetry-core>=2.0.0"]
+build-backend = "poetry.core.masonry.api"
 
 [project]
 name = "metakernel"
+description = "A Jupyter/IPython Kernel base class in Python"
 authors = [{name = "Metakernel Developers", email = "steven.silvester@ieee.org"}]
 classifiers = [
     "License :: OSI Approved :: BSD License",
@@ -26,12 +27,8 @@ dependencies = [
     "pexpect >=4.9.0",
     "jedi >=0.19.0",
 ]
-dynamic = ["description"]
 version = "1.0.0rc4"
-
-[project.readme]
-file = "README.md"
-content-type = "text/markdown"
+readme = "README.md"
 
 [project.optional-dependencies]
 activity = ["portalocker >=2.8.0"] # activity magic
@@ -42,7 +39,6 @@ dev = [ { include-group = "test" } ]
 test = [
     "jupyter_kernel_test >=0.6.0",
     "ipywidgets >=8.0.5",
-    "metakernel_python",
     "pytest >=9.0",
     "pytest-timeout >=2.2.0",
     "requests >=2.29.0",
@@ -53,6 +49,7 @@ test-all = [
     "calysto-scheme >=1.4.8", # scheme magic
     "ipyparallel >=8.5.1",    # parallel magic
     "matplotlib >=3.7.2",     # matplotlib magic
+    "nbconvert >=7.0.0",      # notebook execution
     "portalocker >=2.8.0",    # activity magic
     "pydot >=2.0.0",          # dot magic
 ]
@@ -69,15 +66,9 @@ coverage = [
 ]
 typing = [{ include-group = "test-all" }, "pip >=23.1", "mypy >=1.2.0", "ipywidgets >=8.0.5"]
 
-[tool.uv.sources]
-metakernel_python = { path = "./metakernel_python", editable = true }
-
-[tool.hatch.build]
-exclude = [
-  "docs/",
-  "examples",
-]
-artifacts = ["metakernel/py.typed"]
+[tool.poetry.group.test.dependencies]
+metakernel_python = {path = "./metakernel_python", develop = true}
+metakernel_echo = {path = "./metakernel_echo", develop = true}
 
 [tool.pytest.ini_options]
 minversion = "9.0"

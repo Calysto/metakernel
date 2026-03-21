@@ -7,8 +7,8 @@ default:
 
 # Install for development
 install:
-    uv sync
-    uv tool run pre-commit install
+    poetry install --with dev
+    poetry run pre-commit install
 
 # Clean build artifacts
 clean:
@@ -18,55 +18,60 @@ clean:
 
 # Run core test suite (no cluster needed)
 test *args="":
-    uv run pytest {{args}}
+    poetry run pytest {{args}}
 
-# Run full test suite with ipcluster
-test-parallel *args="":
-    uv run --with ipyparallel ipcluster start -n=3 &
-    uv run pytest {{args}}
-    -uv run --with ipyparallel ipcluster stop
-
-# Run full test suite with all optional magic dependencies
+# Run full test suite with ipcluster and all optional magic dependencies
 test-all *args="":
-    uv run --group test-all ipcluster start -n=3 &
-    uv run --group test-all pytest {{args}}
-    -uv run --group test-all ipcluster stop
+    poetry install --with test-all
+    poetry run ipcluster start -n=3 &
+    poetry run pytest {{args}}
+    -poetry run ipcluster stop
+
+# Alias for test-all
+test-parallel *args="":
+    just test-all {{args}}
 
 # Run tests with coverage
 cover *args="":
-    uv run --group coverage ipcluster start -n=3 &
-    uv run --group coverage pytest --cov=metakernel {{args}}
-    uv run coverage annotate
-    uv run coverage xml
-    uv run coverage report --show-missing
-    -uv run --group coverage ipcluster stop
+    poetry install --with coverage
+    poetry run ipcluster start -n=3 &
+    poetry run pytest --cov=metakernel {{args}}
+    poetry run coverage annotate
+    poetry run coverage xml
+    poetry run coverage report --show-missing
+    -poetry run ipcluster stop
 
 # Build MkDocs HTML docs
 docs:
-    uv run --group docs mkdocs build
+    poetry install --with docs
+    poetry run mkdocs build
 
 # Serve MkDocs docs locally
 docs-serve:
-    uv run --group docs mkdocs serve
+    poetry install --with docs
+    poetry run mkdocs serve
 
 # Regenerate magics/README.md from magic docstrings
 help:
-    uv run python docs/generate_help.py
+    poetry run python docs/generate_help.py
 
 # Run type checking
 typing:
-    uv run --group typing mypy . --install-types --non-interactive
+    poetry install --with typing
+    poetry run mypy . --install-types --non-interactive
 
 # Run linter
 lint:
     just pre-commit ruff-format
     just pre-commit ruff-check
     just pre-commit validate-pyproject
+    just pre-commit poetry-check
 
 # Run example notebooks (excludes Calysto Processing and SAS)
 run-notebooks:
+    poetry install --with test-all
     bash scripts/run_notebooks.sh
 
 # Run pre-commit hook
 pre-commit *args="":
-    uv tool run prek run --all-files {{args}}
+    poetry run pre-commit run --all-files {{args}}

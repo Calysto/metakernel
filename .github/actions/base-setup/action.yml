@@ -1,14 +1,31 @@
 name: Base Setup
-description: Install uv (with OS-keyed cache), just, graphviz (Linux), and project dependencies
+description: Install Python, Poetry (with OS-keyed cache), just, graphviz (Linux), and project dependencies
+
+inputs:
+  python-version:
+    required: false
+    default: ""
+    description: "Python version to use (defaults to system Python if not specified)"
 
 runs:
   using: composite
   steps:
-    - name: Install uv
-      uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
+    - name: Install Python
+      uses: actions/setup-python@v5
       with:
-        enable-cache: true
-        cache-suffix: ${{ runner.os }}
+        python-version: ${{ inputs.python-version || '' }}
+
+    - name: Install Poetry
+      shell: bash
+      run: pipx install "poetry>=2.3,<3"
+
+    - name: Cache dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pypoetry
+        key: venv-${{ runner.os }}-py${{ inputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+        restore-keys: |
+          venv-${{ runner.os }}-py${{ inputs.python-version }}-
 
     - name: Install just
       if: hashFiles('justfile') != ''

@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- [uv](https://docs.astral.sh/uv/) — Python package manager
+- [Poetry](https://python-poetry.org/) — Python package manager (`pipx install "poetry>=2.3,<3"`)
 - [just](https://github.com/casey/just) — command runner
 
 ## Setting up the development environment
@@ -15,9 +15,9 @@ cd metakernel
 just install
 ```
 
-This runs `uv sync --all-groups` and installs the pre-commit hooks. It creates a
+This runs `poetry install --with dev` and installs the pre-commit hooks. It creates a
 virtual environment with `metakernel` in editable mode along with `metakernel_python`
-(local path dependency) and all development dependency groups.
+and `metakernel_echo` (local path dependencies) and all development dependency groups.
 
 ## Available recipes
 
@@ -46,18 +46,18 @@ just test-file tests/test_metakernel.py::test_magics
 
 ## Dependency groups
 
-Dependencies are managed with uv [dependency groups](https://docs.astral.sh/uv/concepts/projects/dependencies/#dependency-groups):
+Dependencies are managed with [Poetry dependency groups](https://python-poetry.org/docs/managing-dependencies/#dependency-groups):
 
 | Group | Purpose |
 | ---------- | ---------------------------------------- |
 | `test` | pytest, jupyter_kernel_test, metakernel_python (local) |
-| `docs` | Sphinx and extensions |
+| `docs` | MkDocs and extensions |
 | `coverage` | pytest-cov and coverage (includes test) |
 
 To install only a specific group:
 
 ```bash
-uv sync --group test
+poetry install --with test
 ```
 
 ## Code style
@@ -93,7 +93,7 @@ To run them locally:
 just run-notebooks
 ```
 
-This script (`scripts/run_notebooks.sh`) starts an ipcluster with 5 engines (required by `Mandelbrot.ipynb` for parallel execution), runs each notebook via `jupyter nbconvert --execute`, and then stops the cluster. Each notebook is run with its appropriate kernel installed via `uv run --with`:
+This script (`scripts/run_notebooks.sh`) starts an ipcluster with 5 engines (required by `Mandelbrot.ipynb` for parallel execution), runs each notebook via `jupyter nbconvert --execute`, and then stops the cluster. All required kernels and packages are installed via the `test-all` dependency group:
 
 | Notebook | Kernel | Package |
 | --- | --- | --- |
