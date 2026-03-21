@@ -203,16 +203,15 @@ runs:
 
     - name: Bump to dev version
       shell: bash
-      if: ${{ !contains(env.VERSION, 'rc') && !contains(env.VERSION, 'beta') && !contains(env.VERSION, 'alpha') }}
       run: |
         echo "::group::Commands"
-        poetry version prerelease
+        DEV_VERSION=$(python3 "$(dirname "$0")/bump_dev.py" "$VERSION")
+        poetry version "$DEV_VERSION"
         echo "VERSION=$(poetry version --short)" >> "$GITHUB_ENV"
         echo "::endgroup::"
 
     - name: Commit dev version bump
       shell: bash
-      if: ${{ !contains(env.VERSION, 'rc') && !contains(env.VERSION, 'beta') && !contains(env.VERSION, 'alpha') }}
       run: |
         echo "::group::Commands"
         git add pyproject.toml
