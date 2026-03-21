@@ -5,15 +5,29 @@ inputs:
   python-version:
     required: false
     default: ""
-    description: "Python version to use (defaults to system Python if not specified)"
+    description: "Python version to use (defaults to minimum version from pyproject.toml)"
 
 runs:
   using: composite
   steps:
+    - name: Get default Python version
+      id: get-python-version
+      if: inputs.python-version == ''
+      shell: bash
+      run: |
+        python3 -c "
+        import tomllib, re
+        with open('pyproject.toml', 'rb') as f:
+            data = tomllib.load(f)
+        req = data['project']['requires-python']
+        m = re.search(r'[\d.]+', req)
+        print('version=' + m.group())
+        " >> $GITHUB_OUTPUT
+
     - name: Install Python
       uses: actions/setup-python@v5
       with:
-        python-version: ${{ inputs.python-version || '' }}
+        python-version: ${{ inputs.python-version || steps.get-python-version.outputs.version }}
 
     - name: Install Poetry
       shell: bash
