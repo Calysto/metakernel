@@ -53,6 +53,7 @@ docs-serve:
 
 # Regenerate magics/README.md from magic docstrings
 help:
+    poetry install --with test
     poetry run python docs/generate_help.py
 
 # Run type checking
