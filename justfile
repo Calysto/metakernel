@@ -18,6 +18,9 @@ clean:
 
 # Run core test suite (no cluster needed)
 test *args="":
+    poetry install --with test
+    poetry run python -m metakernel_echo install --sys-prefix
+    poetry run python -m metakernel_python install --sys-prefix
     poetry run pytest {{args}}
 
 # Run full test suite with ipcluster and all optional magic dependencies
@@ -25,6 +28,8 @@ test-all *args="":
     #!/usr/bin/env bash
     set -euo pipefail
     poetry install --with test-all
+    poetry run python -m metakernel_echo install --sys-prefix
+    poetry run python -m metakernel_python install --sys-prefix
     bash scripts/start_cluster.sh 3
     poetry run pytest {{args}}
     poetry run ipcluster stop || true
@@ -38,6 +43,8 @@ cover *args="":
     #!/usr/bin/env bash
     set -euo pipefail
     poetry install --with coverage
+    poetry run python -m metakernel_echo install --sys-prefix
+    poetry run python -m metakernel_python install --sys-prefix
     bash scripts/start_cluster.sh 3
     poetry run pytest --cov=metakernel {{args}}
     poetry run coverage annotate

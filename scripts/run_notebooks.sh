@@ -6,8 +6,8 @@ EXAMPLES_DIR="$REPO_DIR/examples"
 
 echo "Installing kernels..."
 poetry run python -m calysto_scheme install --sys-prefix
-poetry run jupyter kernelspec install "$REPO_DIR/metakernel_echo/data_kernelspec/share/jupyter/kernels/metakernel_echo" --sys-prefix --name=metakernel_echo
-poetry run jupyter kernelspec install "$REPO_DIR/metakernel_python/data_kernelspec/share/jupyter/kernels/metakernel_python" --sys-prefix --name=metakernel_python
+poetry run python -m metakernel_echo install --sys-prefix
+poetry run python -m metakernel_python install --sys-prefix
 bash "$(dirname "$0")/start_cluster.sh" 5
 
 run_notebook() {
