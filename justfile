@@ -7,7 +7,7 @@ default:
 
 # Install for development
 install:
-    poetry sync --only dev
+    poetry sync --only main, dev
     poetry run pre-commit install
 
 # Clean build artifacts
@@ -18,7 +18,7 @@ clean:
 
 # Run core test suite (no cluster needed)
 test *args="":
-    poetry sync --only test
+    poetry sync --only main, test
     poetry run pip install -q --no-deps -e ./metakernel_python/
     poetry run pytest {{args}}
 
@@ -26,7 +26,7 @@ test *args="":
 test-all *args="":
     #!/usr/bin/env bash
     set -euo pipefail
-    poetry sync --only test-all
+    poetry sync --only main, test-all
     poetry run pip install -q --no-deps -e ./metakernel_python/
     bash scripts/start_cluster.sh 3
     poetry run pytest {{args}}
@@ -40,7 +40,7 @@ test-parallel *args="":
 cover *args="":
     #!/usr/bin/env bash
     set -euo pipefail
-    poetry sync --only coverage
+    poetry sync --only main, coverage
     poetry run pip install -q --no-deps -e ./metakernel_python/
     bash scripts/start_cluster.sh 3
     poetry run pytest --cov=metakernel {{args}}
@@ -51,23 +51,23 @@ cover *args="":
 
 # Build MkDocs HTML docs
 docs:
-    poetry sync --only docs
+    poetry sync --only main, docs
     poetry run mkdocs build
 
 # Serve MkDocs docs locally
 docs-serve:
-    poetry sync --only docs
+    poetry sync --only main, docs
     poetry run mkdocs serve
 
 # Regenerate magics/README.md from magic docstrings
 help:
-    poetry sync --only test
+    poetry sync --only main, test
     poetry run pip install -q --no-deps -e ./metakernel_python/
     poetry run python docs/generate_help.py
 
 # Run type checking
 typing:
-    poetry sync --only typing
+    poetry sync --only main, typing
     poetry run mypy . --install-types --non-interactive
 
 # Run linter
@@ -83,5 +83,5 @@ run-notebooks:
 
 # Run pre-commit hook
 pre-commit *args="":
-    poetry sync --only dev
+    poetry sync --only main, dev
     poetry run pre-commit run --all-files {{args}}
