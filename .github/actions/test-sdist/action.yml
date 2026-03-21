@@ -4,7 +4,7 @@ description: Downloads the sdist artifact, unpacks it, and runs the test suite
 inputs:
   command:
     required: false
-    default: "poetry run pytest -v"
+    default: "pytest -v"
     description: "Command to run the test suite from within the unpacked sdist directory"
 
 runs:
@@ -18,7 +18,10 @@ runs:
 
     - name: Install test dependencies
       shell: bash
-      run: poetry install --with test
+      run: |
+        poetry install --with test
+        poetry run pip install -q --no-deps -e ./metakernel_python/
+        poetry run python -m metakernel_python install --sys-prefix
 
     - uses: actions/download-artifact@v4
       with:
@@ -36,4 +39,6 @@ runs:
       working-directory: sdist_unpack
       env:
         COMMAND: ${{ inputs.command }}
-      run: $COMMAND
+      run: |
+        VENV=$(cd .. && poetry env info --path)
+        PATH="$VENV/bin:$PATH" $COMMAND
