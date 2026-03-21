@@ -7,7 +7,7 @@ default:
 
 # Install for development
 install:
-    poetry install --with dev
+    poetry install --sync --with dev
     poetry run pre-commit install
 
 # Clean build artifacts
@@ -18,7 +18,7 @@ clean:
 
 # Run core test suite (no cluster needed)
 test *args="":
-    poetry install --with test
+    poetry install --sync --with test
     poetry run pip install -q --no-deps -e ./metakernel_python/
     poetry run pytest {{args}}
 
@@ -26,7 +26,7 @@ test *args="":
 test-all *args="":
     #!/usr/bin/env bash
     set -euo pipefail
-    poetry install --with test-all
+    poetry install --sync --with test-all
     poetry run pip install -q --no-deps -e ./metakernel_python/
     bash scripts/start_cluster.sh 3
     poetry run pytest {{args}}
@@ -40,7 +40,7 @@ test-parallel *args="":
 cover *args="":
     #!/usr/bin/env bash
     set -euo pipefail
-    poetry install --with coverage
+    poetry install --sync --with coverage
     poetry run pip install -q --no-deps -e ./metakernel_python/
     bash scripts/start_cluster.sh 3
     poetry run pytest --cov=metakernel {{args}}
@@ -51,22 +51,22 @@ cover *args="":
 
 # Build MkDocs HTML docs
 docs:
-    poetry install --with docs
+    poetry install --sync --with docs
     poetry run mkdocs build
 
 # Serve MkDocs docs locally
 docs-serve:
-    poetry install --with docs
+    poetry install --sync --with docs
     poetry run mkdocs serve
 
 # Regenerate magics/README.md from magic docstrings
 help:
-    poetry install --with test
+    poetry install --sync --with test
     poetry run python docs/generate_help.py
 
 # Run type checking
 typing:
-    poetry install --with typing
+    poetry install --sync --with typing
     poetry run mypy . --install-types --non-interactive
 
 # Run linter
@@ -78,11 +78,11 @@ lint:
 
 # Run example notebooks (excludes Calysto Processing and SAS)
 run-notebooks:
-    poetry install --with test-all
+    poetry install --sync --with test-all
     poetry run pip install -q --no-deps -e ./metakernel_python/
     bash scripts/run_notebooks.sh
 
 # Run pre-commit hook
 pre-commit *args="":
-    poetry install --with dev
+    poetry install --sync --with dev
     poetry run pre-commit run --all-files {{args}}

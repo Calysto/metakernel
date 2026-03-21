@@ -19,7 +19,7 @@ runs:
     - name: Install test dependencies
       shell: bash
       run: |
-        poetry install --with test
+        poetry install --sync --with test
         poetry run pip install -q --no-deps -e ./metakernel_python/
         poetry run python -m metakernel_python install --sys-prefix
 
