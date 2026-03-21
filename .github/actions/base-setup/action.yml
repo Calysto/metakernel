@@ -22,11 +22,10 @@ runs:
     - name: Cache dependencies
       uses: actions/cache@v4
       with:
-        path: ~/.cache/pypoetry
-        key: venv-${{ runner.os }}-py${{ inputs.python-version }}-${{ github.workflow }}-${{ github.job }}-${{ hashFiles('**/poetry.lock') }}
+        path: ~/.cache/pypoetry/cache
+        key: pypoetry-${{ runner.os }}-py${{ inputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
         restore-keys: |
-          venv-${{ runner.os }}-py${{ inputs.python-version }}-${{ github.workflow }}-${{ github.job }}-
-          venv-${{ runner.os }}-py${{ inputs.python-version }}-
+          pypoetry-${{ runner.os }}-py${{ inputs.python-version }}-
 
     - name: Install just
       if: hashFiles('justfile') != ''
