@@ -109,6 +109,9 @@ jobs:
         with:
           persist-credentials: false
       - uses: ./.github/actions/base-setup
+      - name: Force the use of minimum versions
+        run: |
+          sed -i -E 's/"(\^|>=)([0-9])/"==\2/' pyproject.toml
       - run: just test -v
 
   run_notebooks:
@@ -125,7 +128,7 @@ jobs:
 
   test_release:
     name: Test Release (Dry Run)
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: write

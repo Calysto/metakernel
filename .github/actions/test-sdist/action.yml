@@ -2,12 +2,9 @@ name: Test SDist
 description: Downloads the sdist artifact, unpacks it, and runs the test suite
 
 inputs:
-  setup:
-    required: false
-    default: "poetry sync --only main,test"
   command:
     required: false
-    default: "poetry run pytest -v"
+    default: "just test"
     description: "Command to run the test suite from within the unpacked sdist directory"
 
 runs:
@@ -17,13 +14,6 @@ runs:
       with:
         name: Packages
         path: dist
-
-    - name: Run setup
-      shell: bash
-      env:
-        COMMAND: ${{ inputs.setup }}
-      run: |
-        $COMMAND
 
     - name: Unpack sdist
       shell: bash
