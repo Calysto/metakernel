@@ -7,14 +7,18 @@ from tempfile import TemporaryDirectory
 from hatchling.builders.hooks.plugin.interface import BuildHookInterface
 from jupyter_client.kernelspec import KernelSpecManager
 
+kernel_json = {
+    "argv": ["python", "-m", "metakernel_echo", "-f", "{connection_file}"],
+    "display_name": "MetaKernel Echo",
+    "language": "echo",
+    "name": "metakernel_echo",
+}
+
 
 class CustomHook(BuildHookInterface):
     def initialize(self, version, build_data):
         here = os.path.abspath(os.path.dirname(__file__))
         sys.path.insert(0, here)
-        from metakernel_echo import MetaKernelEcho
-
-        kernel_json = MetaKernelEcho.kernel_json
         prefix = os.path.join(here, "data_kernelspec")
 
         with TemporaryDirectory() as td:
