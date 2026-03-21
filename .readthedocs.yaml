@@ -5,6 +5,5 @@ build:
     python: "3.12"
   commands:
     - pip install "poetry>=2.3,<3"
-    - poetry config virtualenvs.create false
     - poetry sync --only main,docs
     - poetry run mkdocs build -d $READTHEDOCS_OUTPUT/html

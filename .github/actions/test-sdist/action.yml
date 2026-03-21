@@ -2,39 +2,28 @@ name: Test SDist
 description: Downloads the sdist artifact, unpacks it, and runs the test suite
 
 inputs:
+  setup:
+    required: false
+    default: "poetry sync --only main,tests"
   command:
     required: false
-    default: "pytest -v"
+    default: "poetry run pytest -v"
     description: "Command to run the test suite from within the unpacked sdist directory"
 
 runs:
   using: composite
   steps:
-    - uses: actions/setup-python@v5
-
-    - name: Install Poetry
-      shell: bash
-      run: pipx install "poetry>=2.3,<3"
-
-    - name: Cache dependencies
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/pypoetry/cache
-        key: pypoetry-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
-        restore-keys: |
-          pypoetry-${{ runner.os }}-
-
-    - name: Install test dependencies
-      shell: bash
-      run: |
-        poetry sync --only main,test
-        poetry run pip install -q --no-deps -e ./metakernel_python/
-        poetry run python -m metakernel_python install --sys-prefix
-
     - uses: actions/download-artifact@v4
       with:
         name: Packages
         path: dist
+
+    - name: Run setup
+      shell: bash
+      env:
+        COMMAND: ${{ inputs.setup }}
+      run: |
+        $COMMAND
 
     - name: Unpack sdist
       shell: bash
@@ -48,5 +37,4 @@ runs:
       env:
         COMMAND: ${{ inputs.command }}
       run: |
-        VENV=$(cd .. && poetry env info --path)
-        PATH="$VENV/bin:$PATH" $COMMAND
+        $COMMAND
