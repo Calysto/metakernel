@@ -4,7 +4,8 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Version to release (e.g. 1.0.0, patch, minor, rc, dev)"
+        # See https://python-poetry.org/docs/cli/#version for a description of version types.
+        description: "Version to release: a version number (e.g. 1.0.0rc4) or one of: patch, minor, major, prepatch, preminor, premajor, prerelease"
         required: true
         type: string
       dry_run:
