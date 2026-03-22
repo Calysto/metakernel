@@ -4,7 +4,8 @@ description: Bumps version, updates changelog, creates GitHub release
 inputs:
   version:
     required: true
-    description: "Version to release (e.g. 1.0.0, minor, patch, rc, dev)"
+    # See https://python-poetry.org/docs/cli/#version for a description of version types.
+    description: "Version to release: a version number (e.g. 1.0.0rc4) or one of: patch, minor, major, prepatch, preminor, premajor, prerelease"
   dry_run:
     required: false
     default: "false"
@@ -29,6 +30,21 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Validate version input
+      shell: bash
+      env:
+        VERSION: ${{ inputs.version }}
+      run: |
+        VALID_BUMPS="patch minor major prepatch preminor premajor prerelease"
+        if echo "$VALID_BUMPS" | grep -qw "$VERSION"; then
+          echo "Version bump type: $VERSION"
+        elif echo "$VERSION" | grep -qP '^\d+\.\d+\.\d+'; then
+          echo "Version string: $VERSION"
+        else
+          echo "Error: '$VERSION' is not a valid version. Must be a version number (e.g. 1.0.0rc4) or one of: $VALID_BUMPS"
+          exit 1
+        fi
+
     - name: Set environment variables and bash defaults
       shell: bash
       env:
