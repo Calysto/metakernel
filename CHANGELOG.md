@@ -1,5 +1,22 @@
 # Changelog Entries
 
+## 1.0.0rc6
+
+## Maintenance and upkeep improvements
+
+- Change version to 1.0.0rc2
+  - PR: #409
+- Disable attestations for PyPI publish step
+  - PR: #410
+- Migrate from uv to Poetry 2.3
+  - PR: #411
+- Release tooling: bump to 1.0.0rc4, improve version validation and bump_dev script
+  - PR: #412
+- Fix release job crash when dev version bump is a no-op
+  - PR: #413
+- Migrate local actions to calysto/maintainer_tools
+  - PR: #414
+
 ## 1.0.0rc5
 
 ## Maintenance and upkeep improvements
