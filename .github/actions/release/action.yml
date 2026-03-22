@@ -231,11 +231,15 @@ runs:
       run: |
         echo "::group::Commands"
         git add pyproject.toml
-        git commit -m "Back to dev: $VERSION"
-        if [ "$DRY_RUN" = "true" ]; then
-          echo "Not pushing changes"
+        if git diff --staged --quiet; then
+          echo "No version bump needed (already a pre-release version: $VERSION)"
         else
-          git push origin "HEAD:$REF"
+          git commit -m "Back to dev: $VERSION"
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "Not pushing changes"
+          else
+            git push origin "HEAD:$REF"
+          fi
         fi
         printf "\n\n## Post version: %s\n" "${VERSION}" >> $GITHUB_STEP_SUMMARY
         echo "::endgroup::"
