@@ -44,10 +44,7 @@ test-parallel *args="":
 # Run tests with coverage
 cover *args="":
     just _setup coverage
-    just _run-with-cluster --cov=metakernel {{args}}
-    poetry run coverage annotate
-    poetry run coverage xml
-    poetry run coverage report --show-missing
+    just _run-with-cluster --cov=metakernel --cov-report=annotate --cov-report=xml --cov-report=term-missing {{args}}
 
 # Build MkDocs HTML docs
 docs:
