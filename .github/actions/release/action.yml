@@ -205,7 +205,7 @@ runs:
       shell: bash
       run: |
         echo "::group::Commands"
-        DEV_VERSION=$(python3 "$(dirname "$0")/bump_dev.py" "$VERSION")
+        DEV_VERSION=$(python3 "$GITHUB_ACTION_PATH/bump_dev.py" "$VERSION")
         poetry version "$DEV_VERSION"
         echo "VERSION=$(poetry version --short)" >> "$GITHUB_ENV"
         echo "::endgroup::"
