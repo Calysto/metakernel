@@ -28,6 +28,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
+      - uses: calysto/maintainer_tools/actions/base-setup@v1
       - uses: calysto/maintainer_tools/actions/release@v1
         id: release
         with:
