@@ -11,6 +11,12 @@ class MetaKernelEcho(MetaKernel):
     implementation = "MetaKernel Echo"
     implementation_version = "1.0"
     language = "text"
+    kernel_json = {
+        "argv": ["python", "-m", "metakernel_echo", "-f", "{connection_file}"],
+        "display_name": "MetaKernel Echo",
+        "language": "echo",
+        "name": "metakernel_echo",
+    }
     language_version = "0.1"
     banner = "MetaKernel Echo - as useful as a parrot"
     language_info = {

@@ -38,14 +38,13 @@ jobs:
       matrix:
         python-version: ${{ fromJSON(needs.build.outputs.supported_python_classifiers_json_array) }}
 
-    env:
-      UV_PYTHON: ${{ matrix.python-version }}
-
     steps:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
       - uses: ./.github/actions/base-setup
+        with:
+          python-version: ${{ matrix.python-version }}
       - run: just test -v
 
   test_sdist:
@@ -56,6 +55,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
+      - uses: ./.github/actions/base-setup
       - uses: ./.github/actions/test-sdist
 
   cover:
@@ -74,8 +74,12 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/base-setup
+      - name: Install graphviz
+        if: runner.os == 'Linux'
+        uses: tecolicom/actions-use-apt-tools@065d3fb036b7fc85487573596f97732ed0d3fce1 # v1.7
+        with:
+          tools: graphviz
       - run: just cover -v
-
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
         with:
@@ -94,9 +98,7 @@ jobs:
       - run: just docs
       - run: just help
       - name: Test typing
-        run: |
-          uv sync
-          just typing
+        run: just typing
 
   test_minimum_versions:
     name: Test Minimum Versions
@@ -107,8 +109,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: ./.github/actions/base-setup
-      - run: |
-          uv run --group test --resolution=lowest-direct pytest -v
+      - uses: ./.github/actions/test-minimum-versions
 
   run_notebooks:
     name: Run Notebooks
@@ -122,6 +123,23 @@ jobs:
       - uses: ./.github/actions/base-setup
       - run: just run-notebooks
 
+  test_release:
+    name: Test Release (Dry Run)
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/base-setup
+      - uses: ./.github/actions/release
+        with:
+          version: patch
+          dry_run: "true"
+          ref: ${{ github.head_ref }}
+
   tests_check: # This job does nothing and is only used for the branch protection
     if: always()
     needs:
@@ -132,6 +150,7 @@ jobs:
       - static
       - test_minimum_versions
       - run_notebooks
+      - test_release
     runs-on: ubuntu-latest
     steps:
       - name: Decide whether the needed jobs succeeded or failed

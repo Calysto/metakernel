@@ -12,6 +12,8 @@ and distributed processing, downloads, and much more).
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Calysto/metakernel/HEAD?urlpath=notebooks/examples/MetaKernel%20Python%20Demo.ipynb)
 
+MetaKernel follows [SPEC 0](https://scientific-python.org/specs/spec-0000/) for minimum supported Python and dependency versions.
+
 See Jupyter's docs on [wrapper
 kernels](http://jupyter-client.readthedocs.io/en/stable/wrapperkernels.html).
 

@@ -38,10 +38,12 @@ repos:
       - id: ruff-check
         args: ["--fix", "--show-fixes"]
 
-  - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.6.14
+  - repo: https://github.com/python-poetry/poetry
+    rev: 2.3.0
     hooks:
-      - id: uv-lock
+      - id: poetry-check
+        args: ["--strict"]
+      - id: poetry-lock
 
   - repo: https://github.com/abravalheri/validate-pyproject
     rev: v0.25

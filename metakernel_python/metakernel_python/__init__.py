@@ -13,6 +13,12 @@ class MetaKernelPython(MetaKernel):
     implementation = "MetaKernel Python"
     implementation_version = "1.0"
     language = "python"
+    kernel_json = {
+        "argv": ["python", "-m", "metakernel_python", "-f", "{connection_file}"],
+        "display_name": "MetaKernel Python",
+        "language": "python",
+        "name": "metakernel_python",
+    }
     language_version = "0.1"
     banner = "MetaKernel Python - evaluates Python statements and expressions"
     language_info = {

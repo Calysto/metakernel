@@ -4,6 +4,6 @@ build:
   tools:
     python: "3.12"
   commands:
-    - pip install uv
-    - uv sync --group docs
-    - uv run mkdocs build -d $READTHEDOCS_OUTPUT/html
+    - pip install "poetry>=2.3,<3"
+    - poetry sync --only main,docs
+    - poetry run mkdocs build -d $READTHEDOCS_OUTPUT/html

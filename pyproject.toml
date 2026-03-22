@@ -1,15 +1,15 @@
 [build-system]
-requires = ["hatchling >=1.14.0"]
-build-backend = "hatchling.build"
+requires = ["poetry-core>=2.0.0"]
+build-backend = "poetry.core.masonry.api"
 
 [project]
 name = "metakernel"
+description = "A Jupyter/IPython Kernel base class in Python"
 authors = [{name = "Metakernel Developers", email = "steven.silvester@ieee.org"}]
+license = "BSD-3-Clause"
 classifiers = [
-    "License :: OSI Approved :: BSD License",
     "Intended Audience :: Developers",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -18,7 +18,7 @@ classifiers = [
     "Topic :: System :: Shells",
 ]
 urls = {Homepage = "https://github.com/Calysto/metakernel"}
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "comm >=0.1.3",
     "ipykernel >=6.22.0",
@@ -26,23 +26,19 @@ dependencies = [
     "pexpect >=4.9.0",
     "jedi >=0.19.0",
 ]
-dynamic = ["description"]
-version = "1.0.0rc4"
-
-[project.readme]
-file = "README.md"
-content-type = "text/markdown"
+version = "1.0.2a0"
+readme = "README.md"
 
 [project.optional-dependencies]
 activity = ["portalocker >=2.8.0"] # activity magic
 parallel = ["ipyparallel >=8.5.1"] # parallel magic
 
 [dependency-groups]
-dev = [ { include-group = "test" } ]
+dev = [ { include-group = "test" }, "pre-commit" ]
 test = [
+    "ipython >=9.0",
     "jupyter_kernel_test >=0.6.0",
     "ipywidgets >=8.0.5",
-    "metakernel_python",
     "pytest >=9.0",
     "pytest-timeout >=2.2.0",
     "requests >=2.29.0",
@@ -53,10 +49,12 @@ test-all = [
     "calysto-scheme >=1.4.8", # scheme magic
     "ipyparallel >=8.5.1",    # parallel magic
     "matplotlib >=3.7.2",     # matplotlib magic
+    "nbconvert >=7.0.0",      # notebook execution
     "portalocker >=2.8.0",    # activity magic
     "pydot >=2.0.0",          # dot magic
 ]
 docs = [
+    "poetry-core>=2.0.0; python_version < '4.0'",
     "mkdocs>=1.4.3",
     "mkdocs-material>=9.1.4",
     "mkdocs-jupyter>=0.24.1",
@@ -69,15 +67,15 @@ coverage = [
 ]
 typing = [{ include-group = "test-all" }, "pip >=23.1", "mypy >=1.2.0", "ipywidgets >=8.0.5"]
 
-[tool.uv.sources]
-metakernel_python = { path = "./metakernel_python", editable = true }
-
-[tool.hatch.build]
-exclude = [
-  "docs/",
-  "examples",
+[tool.poetry]
+include = [
+    { path = "tests", format = "sdist" },
+    { path = "data_kernelspec", format = "wheel" },
 ]
-artifacts = ["metakernel/py.typed"]
+
+[tool.poetry.group.test.dependencies]
+metakernel_python = {path = "./metakernel_python", develop = true}
+ipython = {version = ">=9.0"}
 
 [tool.pytest.ini_options]
 minversion = "9.0"
