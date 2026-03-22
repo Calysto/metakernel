@@ -42,6 +42,7 @@ repos:
     rev: 2.3.0
     hooks:
       - id: poetry-check
+        args: ["--strict"]
       - id: poetry-lock
 
   - repo: https://github.com/abravalheri/validate-pyproject
