@@ -42,7 +42,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - uses: ./.github/actions/base-setup
+      - uses: calysto/maintainer_tools/actions/base-setup@v1
         with:
           python-version: ${{ matrix.python-version }}
       - run: just test -v
@@ -55,8 +55,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - uses: ./.github/actions/base-setup
-      - uses: ./.github/actions/test-sdist
+      - uses: calysto/maintainer_tools/actions/test-sdist@v1
 
   cover:
     name: Cover (${{ matrix.os }}, Python 3.10)
@@ -73,7 +72,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-      - uses: ./.github/actions/base-setup
+      - uses: calysto/maintainer_tools/actions/base-setup@v1
       - name: Install graphviz
         if: runner.os == 'Linux'
         uses: tecolicom/actions-use-apt-tools@065d3fb036b7fc85487573596f97732ed0d3fce1 # v1.7
@@ -93,7 +92,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - uses: ./.github/actions/base-setup
+      - uses: calysto/maintainer_tools/actions/base-setup@v1
       - run: just pre-commit --hook-stage=manual
       - run: just docs
       - run: just help
@@ -108,8 +107,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - uses: ./.github/actions/base-setup
-      - uses: ./.github/actions/test-minimum-versions
+      - uses: calysto/maintainer_tools/actions/test-minimum-versions@v1
 
   run_notebooks:
     name: Run Notebooks
@@ -120,7 +118,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - uses: ./.github/actions/base-setup
+      - uses: calysto/maintainer_tools/actions/base-setup@v1
       - run: just run-notebooks
 
   test_release:
@@ -133,8 +131,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - uses: ./.github/actions/base-setup
-      - uses: ./.github/actions/release
+      - uses: calysto/maintainer_tools/actions/release@v1
         with:
           version: patch
           dry_run: "true"
