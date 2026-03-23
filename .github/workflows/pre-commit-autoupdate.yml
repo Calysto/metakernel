@@ -2,6 +2,7 @@
 name: Pre-commit autoupdate
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 9 * * 1'  # Every Monday at 9am
 
