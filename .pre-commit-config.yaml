@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-ast
       - id: check-merge-conflict
@@ -13,7 +13,7 @@ repos:
         exclude: "tests/utils\\.py"
 
   - repo: https://github.com/Mateusz-Grzelinski/actionlint-py
-    rev: v1.7.7.23
+    rev: v1.7.11.24
     hooks:
       - id: actionlint
 
@@ -32,14 +32,14 @@ repos:
         stages: [manual]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.6
+    rev: v0.15.7
     hooks:
       - id: ruff-format
       - id: ruff-check
         args: ["--fix", "--show-fixes"]
 
   - repo: https://github.com/python-poetry/poetry
-    rev: 2.3.0
+    rev: 2.3.2
     hooks:
       - id: poetry-check
         args: ["--strict"]
@@ -53,7 +53,7 @@ repos:
         additional_dependencies: ["validate-pyproject-schema-store[all]"]
 
   - repo: https://github.com/crate-ci/typos
-    rev: "v1.42.0"
+    rev: "v1"
     hooks:
       - id: typos
         args: []
