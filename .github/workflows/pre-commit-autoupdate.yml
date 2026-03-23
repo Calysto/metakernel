@@ -12,6 +12,7 @@ jobs:
   autoupdate:
     if: github.event_name != 'schedule' || github.repository == 'Calysto/metakernel'
     runs-on: ubuntu-latest
+    environment: release
     steps:
       - uses: actions/create-github-app-token@v2
         id: app-token
