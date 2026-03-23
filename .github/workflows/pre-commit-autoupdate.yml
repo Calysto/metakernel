@@ -5,6 +5,9 @@ on:
   schedule:
     - cron: '0 9 * * 1'  # Every Monday at 9am
 
+permissions:
+  contents: read
+
 jobs:
   autoupdate:
     if: github.event_name != 'schedule' || github.repository == 'Calysto/metakernel'
