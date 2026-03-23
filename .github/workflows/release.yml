@@ -18,6 +18,7 @@ on:
 
 jobs:
   release:
+    if: github.event_name != 'schedule' || github.repository == 'Calysto/metakernel'
     runs-on: ubuntu-latest
     environment: release
     permissions:
