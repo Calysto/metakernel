@@ -37,7 +37,7 @@ class REPLWrapTestCase(unittest.TestCase):
         assert "SLEEP" in res, res
 
         # should handle CR by default
-        cmd = r'for i in {1..3};do echo -ne "\r$i"; sleep 1; done'
+        cmd = r'for i in {1..3};do echo -ne "\r$i"; sleep 0.1; done'
         res = bash.run_command(cmd)
         assert "\r1\r2\r3" in res
 

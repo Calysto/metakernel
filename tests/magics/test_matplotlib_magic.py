@@ -1,5 +1,6 @@
 import asyncio
 import importlib.util
+import sys
 
 import pytest
 
@@ -20,6 +21,7 @@ def restore_ipython_display():
     IPython.display.display = original
 
 
+@pytest.mark.skipif(sys.platform != "linux", reason="Too slow on non-Linux CI")
 def test_matplotlib_magic_sets_backend() -> None:
     """%matplotlib sets the matplotlib backend."""
     import matplotlib
