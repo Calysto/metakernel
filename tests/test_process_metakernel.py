@@ -32,7 +32,7 @@ def test_process_metakernel() -> None:
     kernel.Display(html)
 
     asyncio.run(
-        kernel.do_execute(r'for i in {1..3};do echo -ne "$i\r"; sleep 1; done', None)
+        kernel.do_execute(r'for i in {1..3};do echo -ne "$i\r"; sleep 0.1; done', None)
     )
     text = get_log_text(kernel)
     assert r"1\r2\r3\r" in text
