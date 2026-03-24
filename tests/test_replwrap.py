@@ -33,8 +33,10 @@ class REPLWrapTestCase(unittest.TestCase):
         assert "real" in res, res
 
         # PAGER should be set to cat, otherwise man hangs
-        res = bash.run_command("man sleep", timeout=2)
-        assert "SLEEP" in res, res
+        res = bash.run_command("NO_COLOR=1 man sleep", timeout=2)
+        # groff-1.23.0 uses backspaces in output. Strip them along with
+        # the preceding character to normalize the tested result.
+        assert "SLEEP" in re.sub(r".\x08", "", res), res
 
         # should handle CR by default
         cmd = r'for i in {1..3};do echo -ne "\r$i"; sleep 0.1; done'
