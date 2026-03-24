@@ -1,175 +1,57 @@
 # Changelog Entries
 
-## 1.0.0rc6
+## 1.0.0
 
-## Maintenance and upkeep improvements
+### Highlights
 
-- Change version to 1.0.0rc2
-  - PR: #409
-- Disable attestations for PyPI publish step
-  - PR: #410
-- Migrate from uv to Poetry 2.3
-  - PR: #411
-- Release tooling: bump to 1.0.0rc4, improve version validation and bump_dev script
-  - PR: #412
-- Fix release job crash when dev version bump is a no-op
-  - PR: #413
-- Migrate local actions to calysto/maintainer_tools
-  - PR: #414
+MetaKernel 1.0 is a major modernization release with numerous bug fixes, new features, improved CI/CD, and refreshed
+documentation.
 
-## 1.0.0rc5
+### New Features
 
-## Maintenance and upkeep improvements
+- DisplayData() for raw MIME bundle display (#211)
+- schedule_display_output() for pushing messages to frontends outside of execution (#382)
+- %lsmagic -v for magic load debugging (#366)
+- kernel_javascript support — write kernel.js during kernelspec install (#378)
+- JupyterHub deployment docs and cross-origin regression tests (#196, #386)
 
-- Change version to 1.0.0rc2
-  - PR: #409
-- Disable attestations for PyPI publish step
-  - PR: #410
-- Migrate from uv to Poetry 2.3
-  - PR: #411
-- Release tooling: bump to 1.0.0rc4, improve version validation and bump_dev script
-  - PR: #412
-- Fix release job crash when dev version bump is a no-op
-  - PR: #413
+### Bug Fixes
 
-## 1.0.0rc4
+- execute_reply now reports error status when do_execute_direct raises (#175) — previously errors were silently
+  swallowed with an 'ok' status
+- %px / %px errors now surface as proper error messages (#61)
+- %%tutor no longer loads all iframes immediately (#68) — only the active frame loads
+- %jigsaw cross-origin errors fixed and button functionality restored (#375), plus fix for saving files when workspace
+  path includes a subdirectory (#167)
+- %%python display() routed to wrong kernel — fixed (#371)
+- %activity magic showed wrong results on repeated "Results" clicks (#240) — fixed
+- ipywidgets Output context manager now works with MetaKernel (#365)
+- shell_magic load failure on Windows — fixed via lazy-initializing the shell process (#364)
+- prompt_change_cmd stored unformatted template (#359) — fixed
+- REPLWrapper encoding parameter added to fix startup hang on Windows (#171)
+- REPLWrapper waits for any output instead of default prompt on startup (#357), and clears PS0 in bash wrapper (#356)
+- REPLWrapper args parameter added to support executable paths with spaces (#377)
 
-## Maintenance and upkeep improvements
+### Documentation
 
-- Change version to 1.0.0rc2
-  - PR: #409
-- Disable attestations for PyPI publish step
-  - PR: #410
+- Switched from Sphinx to MkDocs (#358)
+- Added debugging section to new-kernel docs (#362)
+- Included magics README in docs (#367)
+- Added Binder support for interactive examples (#361)
 
-## 1.0.0rc3
+### CI/CD & Project Infrastructure
 
-## Maintenance and upkeep improvements
-
-- Change version to 1.0.0rc2
-  - PR: #409
-
-## 1.0.2rc1
-
-## Maintenance and upkeep improvements
-
-- Skip dev version bump for pre-release versions
-  - PR: #408
-
-## 1.0.1rc1
-
-## Maintenance and upkeep improvements
-
-- Fix release workflow: build package from release tag
-  - PR: #407
-
-## 1.0.0rc2
-
-## Maintenance and upkeep improvements
-
-- Refactor tests workflow
-  - PR: #393
-- Add a workflow to update pre-commit versions and improve validate-pyproject
-  - PR: #394
-- Refactor CI into composite actions and add release/publish workflows
-  - PR: #395
-- Ensure Consistent use of actions/checkout
-  - PR: #396
-- Fix release action by installing uv
-  - PR: #397
-- Clean up release action
-  - PR: #398
-- More release fixes and refinements
-  - PR: #399
-- Release action fixes and refinements
-  - PR: #400
-- Fix draft release deletion in release action
-  - PR: #401
-- Refine release workflow: add build-package job and simplify changelog template
-  - PR: #402
-- Add skip-existing to Test PyPI upload when dry_run is true
-  - PR: #403
-- Add verbose output to Test PyPI upload in dry_run mode
-  - PR: #404
-- Fix dry_run boolean comparison in publish workflow
-  - PR: #405
-- Fix release workflow: correct PyPI publish input name and add step summary
-  - PR: #406
-
-## 1.0.0rc1
-
-([Full Changelog](https://github.com/Calysto/metakernel/compare/v1.0.0rc0...161618c81c69279785c341cf6eab449a244e580e))
-
-### Maintenance and upkeep improvements
-
-- Bump minimum dependency versions to releases from 2023 or later [#392](https://github.com/Calysto/metakernel/pull/392) ([@blink1073](https://github.com/blink1073), [@claude](https://github.com/claude))
-- Add validate-pyproject lint hook and switch to prek [#390](https://github.com/Calysto/metakernel/pull/390) ([@blink1073](https://github.com/blink1073))
-- Bump zizmorcore/zizmor-action from 0.5.0 to 0.5.2 in the actions group [#389](https://github.com/Calysto/metakernel/pull/389) ([@blink1073](https://github.com/blink1073))
-
-### Contributors to this release
-
-The following people contributed discussions, new ideas, code and documentation contributions, and review.
-See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
-
-([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2026-03-16&to=2026-03-17&type=c))
-
-@blink1073 ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2026-03-16..2026-03-17&type=Issues)) | @claude ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aclaude+updated%3A2026-03-16..2026-03-17&type=Issues))
-
-## 1.0.0rc0
-
-([Full Changelog](https://github.com/Calysto/metakernel/compare/v0.32.0...873b53e3a709278b91c75eaeeb38497490c28eb0))
-
-### Enhancements made
-
-- Use pre-fixed jigsaw_v2 HTML and expand test coverage [#385](https://github.com/Calysto/metakernel/pull/385) ([@blink1073](https://github.com/blink1073))
-- Add schedule_display_output for pushing messages to frontends outside execution [#382](https://github.com/Calysto/metakernel/pull/382) ([@blink1073](https://github.com/blink1073))
-- Add kernel_javascript support to write kernel.js during kernelspec install [#378](https://github.com/Calysto/metakernel/pull/378) ([@blink1073](https://github.com/blink1073))
-- Add args parameter to REPLWrapper to support executable paths with spaces [#377](https://github.com/Calysto/metakernel/pull/377) ([@blink1073](https://github.com/blink1073))
-- Fix %jigsaw cross-origin errors and restore button functionality [#375](https://github.com/Calysto/metakernel/pull/375) ([@blink1073](https://github.com/blink1073))
-- Add DisplayData() for raw MIME bundle display [#368](https://github.com/Calysto/metakernel/pull/368) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
-- Add %lsmagic -v for magic load debugging [#366](https://github.com/Calysto/metakernel/pull/366) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
-- Add Binder support [#361](https://github.com/Calysto/metakernel/pull/361) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
-
-### Bugs fixed
-
-- Fix test_magics Windows CI failure: use %shell instead of %%shell [#388](https://github.com/Calysto/metakernel/pull/388) ([@blink1073](https://github.com/blink1073))
-- Fix %px/%px errors not surfacing as proper error messages (closes #61) [#380](https://github.com/Calysto/metakernel/pull/380) ([@blink1073](https://github.com/blink1073))
-- Fix %%tutor loading all iframes immediately (closes #68) [#379](https://github.com/Calysto/metakernel/pull/379) ([@blink1073](https://github.com/blink1073))
-- Fix %jigsaw failing to save files when workspace path includes a subdirectory [#374](https://github.com/Calysto/metakernel/pull/374) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
-- Add encoding parameter to REPLWrapper to fix startup hang on Windows [#373](https://github.com/Calysto/metakernel/pull/373) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
-- Fix execute_reply reporting 'ok' status when do_execute_direct raises [#372](https://github.com/Calysto/metakernel/pull/372) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
-- Fix %%python display() routing to wrong kernel [#371](https://github.com/Calysto/metakernel/pull/371) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
-- Fix activity magic showing wrong results on repeated clicks [#370](https://github.com/Calysto/metakernel/pull/370) ([@blink1073](https://github.com/blink1073), [@claude](https://github.com/claude), [@codecov-commenter](https://github.com/codecov-commenter))
-- Fix prompt_change_cmd storing unformatted template [#369](https://github.com/Calysto/metakernel/pull/369) ([@blink1073](https://github.com/blink1073), [@claude](https://github.com/claude), [@codecov-commenter](https://github.com/codecov-commenter))
-- Fix ipywidgets Output context manager not working with MetaKernel [#365](https://github.com/Calysto/metakernel/pull/365) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
-- Fix shell_magic load failure on Windows by lazy-initializing shell process [#364](https://github.com/Calysto/metakernel/pull/364) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
-- Wait for any output instead of default prompt on startup [#357](https://github.com/Calysto/metakernel/pull/357) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
-- Clear PS0 in bash REPL wrapper [#356](https://github.com/Calysto/metakernel/pull/356) ([@ellert](https://github.com/ellert), [@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
-
-### Maintenance and upkeep improvements
-
-- Add GitHub issue templates for bug reports and feature requests [#384](https://github.com/Calysto/metakernel/pull/384) ([@blink1073](https://github.com/blink1073))
-- Add ruff S (flake8-bandit) security checks [#383](https://github.com/Calysto/metakernel/pull/383) ([@blink1073](https://github.com/blink1073))
-- Restructure CI coverage uploads and add codecov.yml [#381](https://github.com/Calysto/metakernel/pull/381) ([@blink1073](https://github.com/blink1073))
-- Add GitHub pull request template [#376](https://github.com/Calysto/metakernel/pull/376) ([@blink1073](https://github.com/blink1073))
-- Add example notebook CI [#363](https://github.com/Calysto/metakernel/pull/363) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
-- Bump tornado from 6.5.4 to 6.5.5 [#360](https://github.com/Calysto/metakernel/pull/360) ([@blink1073](https://github.com/blink1073))
-- Remove virtualenv pins from example kernels [#355](https://github.com/Calysto/metakernel/pull/355) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter), [@hroncok](https://github.com/hroncok))
-
-### Documentation improvements
-
-- Add JupyterHub deployment docs and cross-origin regression tests (issue #196) [#386](https://github.com/Calysto/metakernel/pull/386) ([@blink1073](https://github.com/blink1073))
-- Include magics README in docs [#367](https://github.com/Calysto/metakernel/pull/367) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
-- Add debugging section to new kernel docs [#362](https://github.com/Calysto/metakernel/pull/362) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
-- Switch documentation from Sphinx to MkDocs [#358](https://github.com/Calysto/metakernel/pull/358) ([@blink1073](https://github.com/blink1073), [@codecov-commenter](https://github.com/codecov-commenter))
-
-### Contributors to this release
-
-The following people contributed discussions, new ideas, code and documentation contributions, and review.
-See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
-
-([GitHub contributors page for this release](https://github.com/Calysto/metakernel/graphs/contributors?from=2026-03-10&to=2026-03-16&type=c))
-
-@blink1073 ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ablink1073+updated%3A2026-03-10..2026-03-16&type=Issues)) | @claude ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aclaude+updated%3A2026-03-10..2026-03-16&type=Issues)) | @codecov-commenter ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Acodecov-commenter+updated%3A2026-03-10..2026-03-16&type=Issues)) | @ellert ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Aellert+updated%3A2026-03-10..2026-03-16&type=Issues)) | @hroncok ([activity](https://github.com/search?q=repo%3ACalysto%2Fmetakernel+involves%3Ahroncok+updated%3A2026-03-10..2026-03-16&type=Issues))
+- Migrated build system from uv to Poetry 2.3 (#411)
+- Bumped minimum dependency versions to 2023+ releases (#392)
+- Refactored CI into composite actions; added release/publish workflows (#395)
+- Migrated local actions to calysto/maintainer_tools (#414)
+- Added example notebook CI via run_notebooks.sh (#363)
+- Added ruff S (flake8-bandit) security checks (#383)
+- Added validate-pyproject lint hook (#390)
+- Added GitHub issue templates and PR template (#384, #376)
+- Added codecov configuration (#381)
+- Added pre-commit auto-update workflow (#394)
+- Removed virtualenv pins from example kernels (#355)
 
 ## 0.32.0
 
