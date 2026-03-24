@@ -1,5 +1,58 @@
 # Changelog Entries
 
+## 1.0.0
+
+## Highlights
+
+MetaKernel 1.0 is a major modernization release with numerous bug fixes, new features, improved CI/CD, and refreshed
+documentation.
+
+## New Features
+
+- DisplayData() for raw MIME bundle display (#211)
+- schedule_display_output() for pushing messages to frontends outside of execution (#382)
+- %lsmagic -v for magic load debugging (#366)
+- kernel_javascript support — write kernel.js during kernelspec install (#378)
+- JupyterHub deployment docs and cross-origin regression tests (#196, #386)
+
+## Bug Fixes
+
+- execute_reply now reports error status when do_execute_direct raises (#175) — previously errors were silently
+  swallowed with an 'ok' status
+- %px / %px errors now surface as proper error messages (#61)
+- %%tutor no longer loads all iframes immediately (#68) — only the active frame loads
+- %jigsaw cross-origin errors fixed and button functionality restored (#375), plus fix for saving files when workspace
+  path includes a subdirectory (#167)
+- %%python display() routed to wrong kernel — fixed (#371)
+- %activity magic showed wrong results on repeated "Results" clicks (#240) — fixed
+- ipywidgets Output context manager now works with MetaKernel (#365)
+- shell_magic load failure on Windows — fixed via lazy-initializing the shell process (#364)
+- prompt_change_cmd stored unformatted template (#359) — fixed
+- REPLWrapper encoding parameter added to fix startup hang on Windows (#171)
+- REPLWrapper waits for any output instead of default prompt on startup (#357), and clears PS0 in bash wrapper (#356)
+- REPLWrapper args parameter added to support executable paths with spaces (#377)
+
+## Documentation
+
+- Switched from Sphinx to MkDocs (#358)
+- Added debugging section to new-kernel docs (#362)
+- Included magics README in docs (#367)
+- Added Binder support for interactive examples (#361)
+
+## CI/CD & Project Infrastructure
+
+- Migrated build system from uv to Poetry 2.3 (#411)
+- Bumped minimum dependency versions to 2023+ releases (#392)
+- Refactored CI into composite actions; added release/publish workflows (#395)
+- Migrated local actions to calysto/maintainer_tools (#414)
+- Added example notebook CI via run_notebooks.sh (#363)
+- Added ruff S (flake8-bandit) security checks (#383)
+- Added validate-pyproject lint hook (#390)
+- Added GitHub issue templates and PR template (#384, #376)
+- Added codecov configuration (#381)
+- Added pre-commit auto-update workflow (#394)
+- Removed virtualenv pins from example kernels (#355)
+
 ## 1.0.0rc6
 
 ## Maintenance and upkeep improvements
