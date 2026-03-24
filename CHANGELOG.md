@@ -1,5 +1,24 @@
 # Changelog Entries
 
+## 1.0.1
+
+### Bugs Fixed
+
+- Process backspaces in output to fix test on groff-1.23.0
+  - PR: #422
+
+### Documentation improvements
+
+- Clean up the 1.0 changelog
+  - PR: #419
+
+### Maintenance and upkeep improvements
+
+- Speed up CI test suite on non-Linux platforms
+  - PR: #420
+- Fix dry_run handling in publish job for scheduled runs
+  - PR: #421
+
 ## 1.0.0
 
 ### Highlights
