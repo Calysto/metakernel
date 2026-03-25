@@ -81,6 +81,7 @@ ipython = {version = ">=9.0"}
 minversion = "9.0"
 addopts= "-raXs  --durations 10 --color=yes --doctest-modules"
 testpaths = ["tests"]
+norecursedirs = ["images"]
 strict = true
 log_level = "INFO"
 timeout = 300
