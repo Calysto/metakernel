@@ -1,5 +1,12 @@
 # Changelog Entries
 
+## 1.0.2
+
+### Bugs Fixed
+
+- Fix sdist test collection failure for dragon.py
+  - PR: #423
+
 ## 1.0.1
 
 ### Bugs Fixed
