@@ -136,6 +136,7 @@ class REPLWrapTestCase(unittest.TestCase):
             sys.executable,
             ">>> ",
             "import sys; sys.ps1={0!r}; sys.ps2={1!r}",
+            extra_env=dict(PYTHON_BASIC_REPL="1"),
         )
         res = p.run_command("1+1")
         assert res.strip() == "2"
@@ -149,6 +150,7 @@ class REPLWrapTestCase(unittest.TestCase):
             ">>> ",
             "import sys; sys.ps1={0!r}; sys.ps2={1!r}",
             args=["-i", "-c", "x=4+7"],
+            extra_env=dict(PYTHON_BASIC_REPL="1"),
         )
         res = p.run_command("x-11")
         assert res.strip() == "0"
