@@ -16,7 +16,6 @@ permissions:
 
 jobs:
   build:
-    if: github.event_name != 'schedule' || github.repository == 'Calysto/metakernel'
     name: Build and Inspect Package
     runs-on: ubuntu-latest
     outputs:
@@ -74,6 +73,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - uses: calysto/maintainer_tools/actions/base-setup@v1
       - name: Install graphviz
         if: runner.os == 'Linux'
@@ -82,6 +83,7 @@ jobs:
           tools: graphviz
       - run: just cover -v
       - name: Upload coverage to Codecov
+        if: github.event_name != 'pull_request' || !github.event.pull_request.head.repo.fork
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -126,7 +128,6 @@ jobs:
 
   test_release:
     name: Test Release (Dry Run)
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -157,5 +158,4 @@ jobs:
       - name: Decide whether the needed jobs succeeded or failed
         uses: re-actors/alls-green@05ac9388f0aebcb5727afa17fcccfecd6f8ec5fe # release/v1
         with:
-          allowed-skips: test_release
           jobs: ${{ toJSON(needs) }}
