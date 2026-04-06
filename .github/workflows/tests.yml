@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - uses: hynek/build-and-inspect-python-package@efb823f52190ad02594531168b7a2d5790e66516  # v2.14.0
+      - uses: hynek/build-and-inspect-python-package@fe0a0fb1925ca263d076ca4f2c13e93a6e92a33e  # v2.17.0
         id: baipp
 
   test:
@@ -84,7 +84,7 @@ jobs:
       - run: just cover -v
       - name: Upload coverage to Codecov
         if: github.event_name != 'pull_request' || !github.event.pull_request.head.repo.fork
-        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
+        uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           env_vars: OS,PYTHON
