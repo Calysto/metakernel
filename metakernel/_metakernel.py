@@ -357,11 +357,16 @@ class MetaKernel(Kernel):
 
         # Suppress the parent-poller warning: we are shutting down intentionally,
         # so whichever exit path fires first (ours or the poller's) is fine.
+        # The poller logs via traitlets.log.get_logger(), which returns the app's
+        # logger directly — filters must be added there, not on logging.root (root
+        # filters are not re-applied to propagated records).
         class _SuppressParentExit(logging.Filter):
             def filter(self, record: logging.LogRecord) -> bool:
                 return "Parent appears to have exited" not in record.getMessage()
 
-        logging.root.addFilter(_SuppressParentExit())
+        _f = _SuppressParentExit()
+        self.log.addFilter(_f)
+        logging.root.addFilter(_f)
 
         loop = asyncio.get_event_loop()
 
