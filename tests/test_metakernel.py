@@ -156,6 +156,30 @@ def test_ls_path_complete() -> None:
     assert comp["matches"] == ["ipython/"], comp
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="path completion format differs on Windows"
+)
+def test_path_complete_trailing_slash() -> None:
+    """Cursor after '/' must not replace the whole line (issue #432)."""
+    kernel = get_kernel()
+    text = "%cd /"
+    comp = asyncio.run(kernel.do_complete(text, len(text)))
+    assert comp["cursor_start"] == comp["cursor_end"] == len(text), comp
+    assert len(comp["matches"]) > 0, "expected filesystem entries under /"
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="path completion format differs on Windows"
+)
+def test_path_complete_trailing_dash() -> None:
+    """Cursor after '-' in a path must not replace the whole line (issue #432)."""
+    kernel = get_kernel()
+    text = "%ls /tmp/nonexistent-"
+    comp = asyncio.run(kernel.do_complete(text, len(text)))
+    # Even with no matches, cursor_start must not be 0 when there is a path prefix
+    assert comp["cursor_start"] != 0 or comp["matches"] == [], comp
+
+
 def test_history() -> None:
     kernel = get_kernel()
     asyncio.run(kernel.do_execute("!ls", False))
