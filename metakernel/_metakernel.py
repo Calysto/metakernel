@@ -600,6 +600,13 @@ class MetaKernel(Kernel):
             "metadata": {},
         }
 
+        # When the cursor sits after a non-identifier character (e.g. `/`, `-`) the
+        # id_regex matches empty string, setting cursor_start to 0.  Path completions
+        # are already stripped of their prefix, so we only need to append them at the
+        # cursor position — not replace from the beginning of the line.
+        if not info["obj"] and info["path_matches"]:
+            content["cursor_start"] = content["cursor_end"]
+
         matches = info["path_matches"]
 
         if info["magic"]:
