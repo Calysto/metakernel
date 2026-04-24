@@ -34,7 +34,7 @@ activity = ["portalocker >=2.8.0"] # activity magic
 parallel = ["ipyparallel >=8.5.1"] # parallel magic
 
 [dependency-groups]
-dev = [ { include-group = "test" }, "pre-commit" ]
+dev = [ { include-group = "test" }, "pre-commit", "jupyter-console (>=6.6.3,<7.0.0)" ]
 test = [
     "ipython >=9.0",
     "jupyter_kernel_test >=0.6.0",

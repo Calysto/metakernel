@@ -81,3 +81,9 @@ run-notebooks:
 pre-commit *args="":
     poetry sync --only main,dev
     poetry run pre-commit run --all-files {{args}}
+
+# Launch Jupyter console with MetaKernel Python for manual smoke testing
+test-manual:
+    poetry sync --only main,dev
+    poetry run pip install -q -e ./metakernel_python/
+    poetry run jupyter console --kernel=metakernel_python

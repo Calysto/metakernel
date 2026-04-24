@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import glob
 import importlib
 import inspect
@@ -346,6 +347,30 @@ class MetaKernel(Kernel):
         """Restart the kernel"""
         pass
 
+    def _request_shutdown(self) -> None:
+        """Send an ask_exit payload and schedule kernel shutdown.
+
+        Called when do_execute_direct raises SystemExit so the kernel closes
+        gracefully instead of waiting for the parent-process monitor to fire.
+        """
+        self.kernel_resp["payload"] = [{"source": "ask_exit", "keepkernel": False}]
+
+        # Suppress the parent-poller warning: we are shutting down intentionally,
+        # so whichever exit path fires first (ours or the poller's) is fine.
+        class _SuppressParentExit(logging.Filter):
+            def filter(self, record: logging.LogRecord) -> bool:
+                return "Parent appears to have exited" not in record.getMessage()
+
+        logging.root.addFilter(_SuppressParentExit())
+
+        loop = asyncio.get_event_loop()
+
+        async def _shutdown() -> None:
+            await self.do_shutdown(False)
+            os._exit(0)
+
+        loop.call_later(0.1, lambda: loop.create_task(_shutdown()))
+
     ############################################
     # Implement base class methods
 
@@ -437,6 +462,9 @@ class MetaKernel(Kernel):
                         retval = self.do_execute_direct(code)
                         if inspect.isawaitable(retval):
                             retval = await retval
+                    except SystemExit:
+                        self._request_shutdown()
+                        return self.kernel_resp
                     except Exception as e:
                         retval = ExceptionWrapper(type(e).__name__, str(e), [])
             # Post-process magics:
@@ -450,6 +478,9 @@ class MetaKernel(Kernel):
                     retval = self.do_execute_direct(code)
                     if inspect.isawaitable(retval):
                         retval = await retval
+                except SystemExit:
+                    self._request_shutdown()
+                    return self.kernel_resp
                 except Exception as e:
                     retval = ExceptionWrapper(type(e).__name__, str(e), [])
 
