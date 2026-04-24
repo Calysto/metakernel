@@ -1,5 +1,36 @@
 # Changelog Entries
 
+## 1.0.3
+
+### Bugs Fixed
+
+- Fix path tab completion erasing line when cursor is on / or -
+  - PR: #433
+
+### Maintenance and upkeep improvements
+
+- Set PYTHON_BASIC_REPL="1" for two new test
+  - PR: #424
+- Fix CI skip conditions in tests.yml
+  - PR: #425
+- chore: pre-commit autoupdate
+  - PR: #426
+- chore: pre-commit autoupdate
+  - PR: #427
+- chore: pre-commit autoupdate
+  - PR: #429
+- chore: pre-commit autoupdate
+  - PR: #430
+- Add test-manual recipe and graceful kernel shutdown on exit
+  - PR: #434
+
+### Dependency updates
+
+- Bump the actions group with 3 updates
+  - PR: #428
+- Bump the actions group with 3 updates
+  - PR: #431
+
 ## 1.0.2
 
 ### Bugs Fixed
