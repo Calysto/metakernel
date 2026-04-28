@@ -10,7 +10,7 @@ import pytest
 import zmq
 from traitlets.config import LoggingConfigurable
 
-from metakernel import ExceptionWrapper, MetaKernel
+from metakernel import ExceptionWrapper, Magic, MetaKernel
 from tests.utils import (
     EvalKernel,
     clear_log_text,
@@ -178,6 +178,35 @@ def test_path_complete_trailing_dash() -> None:
     comp = asyncio.run(kernel.do_complete(text, len(text)))
     # Even with no matches, cursor_start must not be 0 when there is a path prefix
     assert comp["cursor_start"] != 0 or comp["matches"] == [], comp
+
+
+def test_magic_complete_trailing_dash() -> None:
+    """Cursor after '--' in magic args must not replace the whole line (issue #432).
+
+    When a magic's get_completions returns matches and the cursor sits after a
+    non-identifier character such as '--', cursor_start must equal cursor_end so
+    that completions are appended at the cursor rather than replacing from position 0.
+    """
+
+    class OptionMagic(Magic):
+        """A magic that offers --opt1 and --opt2 as completions."""
+
+        def line_option_magic(self, arg: str = "") -> None:
+            """A magic with option completions."""
+
+        def get_completions(self, info: dict[str, Any]) -> list[str]:
+            options = ["opt1", "opt2"]
+            return [o for o in options if o.startswith(info["obj"])]
+
+    kernel = get_kernel()
+    kernel.register_magics(OptionMagic)
+
+    # Cursor after '--': obj is empty, magic get_completions returns matches.
+    # cursor_start must equal cursor_end (append at cursor, not replace from 0).
+    text = "%option_magic --"
+    comp = asyncio.run(kernel.do_complete(text, len(text)))
+    assert comp["cursor_start"] == comp["cursor_end"] == len(text), comp
+    assert comp["matches"] == ["opt1", "opt2"], comp
 
 
 def test_history() -> None:
