@@ -1,5 +1,22 @@
 # Changelog Entries
 
+## 1.0.4
+
+### Bugs Fixed
+
+- fix: extend cursor_start fix to magic get_completions (issue #432 follow-up)
+  - PR: #437
+
+### Maintenance and upkeep improvements
+
+- chore: pre-commit autoupdate
+  - PR: #435
+
+### Dependency updates
+
+- Bump github/codeql-action from 4.35.1 to 4.35.2 in the actions group
+  - PR: #436
+
 ## 1.0.3
 
 ### Bugs Fixed
