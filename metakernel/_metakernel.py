@@ -687,6 +687,13 @@ class MetaKernel(Kernel):
                 )
                 matches = new_list
 
+        # Extend the path-completion fix (#432) to magic get_completions: when the
+        # cursor sits after a non-identifier character (e.g. `--`, `-`) the id_regex
+        # again matches empty string so cursor_start is 0.  Completions should be
+        # appended at the cursor, not used to replace the entire line.
+        if not info["obj"] and matches:
+            content["cursor_start"] = content["cursor_end"]
+
         content["matches"] = sorted(matches)
 
         return content
