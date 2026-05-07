@@ -97,7 +97,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: calysto/maintainer_tools/actions/base-setup@v1
-      - run: just pre-commit --hook-stage=manual
+      - uses: calysto/maintainer_tools/actions/pre-commit-run@v1
       - run: just docs
       - run: just help
       - name: Test typing
