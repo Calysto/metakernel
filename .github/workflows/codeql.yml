@@ -34,7 +34,7 @@ jobs:
       with:
         persist-credentials: false
     - name: Analyze with CodeQL
-      uses: calysto/maintainer_tools/actions/codeql@v1
+      uses: calysto/maintainer_tools/actions/codeql@v1.5.0
       with:
         language: ${{ matrix.language }}
         build-mode: ${{ matrix.build-mode }}
