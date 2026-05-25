@@ -32,7 +32,7 @@ repos:
         stages: [manual]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.12
+    rev: v0.15.13
     hooks:
       - id: ruff-format
       - id: ruff-check
@@ -53,7 +53,7 @@ repos:
         additional_dependencies: ["validate-pyproject-schema-store[all]"]
 
   - repo: https://github.com/crate-ci/typos
-    rev: "v1.46.1"
+    rev: "v1.46.2"
     hooks:
       - id: typos
         args: []
