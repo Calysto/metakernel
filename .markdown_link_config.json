@@ -10,7 +10,7 @@
             "pattern": "^http://host"
         },
         {
-            "pattern": "^http://nbviewer.ipython.org/"
+            "pattern": "^https://nbviewer.jupyter.org/"
         },
         {
             "pattern": "^http://some/file/from/"
