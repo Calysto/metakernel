@@ -211,7 +211,7 @@ c.OctaveKernel.plot_settings = dict(backend='qt')
 # Documentation
 
 Example notebooks can be viewed
-[here](http://nbviewer.jupyter.org/github/Calysto/metakernel/tree/main/examples/).
+[here](https://nbviewer.jupyter.org/github/Calysto/metakernel/tree/main/examples/).
 
 Documentation is available
 [online](http://Calysto.github.io/metakernel/). Magics have interactive
