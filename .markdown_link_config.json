@@ -1,4 +1,5 @@
 {
+    "retryOn429": true,
     "ignorePatterns": [
         {
             "pattern": "^https://github.com"
@@ -14,6 +15,9 @@
         },
         {
             "pattern": "^http://some/file/from/"
+        },
+        {
+            "pattern": "^https?://.*\\.readthedocs\\.io"
         }
     ]
 }
