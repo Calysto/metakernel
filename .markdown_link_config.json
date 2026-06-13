@@ -15,6 +15,9 @@
         },
         {
             "pattern": "^http://some/file/from/"
+        },
+        {
+            "pattern": "^https?://.*\\.readthedocs\\.io"
         }
     ]
 }
