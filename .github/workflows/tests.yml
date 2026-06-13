@@ -26,6 +26,8 @@ jobs:
           persist-credentials: false
       - uses: hynek/build-and-inspect-python-package@d44ca7d91762de7a7d5436ddae667c6da6d1c3df  # v2.18.0
         id: baipp
+        with:
+          include-free-threaded: "true"
 
   test:
     name: Test (Python ${{ matrix.python-version }})

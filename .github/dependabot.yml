@@ -6,6 +6,8 @@ updates:
       interval: "weekly"
     cooldown:
       default-days: 7
+    ignore:
+      - dependency-name: "calysto/maintainer_tools"
     groups:
       actions:
         patterns:
