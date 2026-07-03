@@ -19,15 +19,13 @@ jobs:
     name: Build and Inspect Package
     runs-on: ubuntu-latest
     outputs:
-      supported_python_classifiers_json_array: ${{ steps.baipp.outputs.supported_python_classifiers_json_array }}
+      supported_python_classifiers_json_array: ${{ steps.baipp.outputs.python-versions }}
     steps:
       - uses: actions/checkout@v7.0.0
         with:
           persist-credentials: false
-      - uses: hynek/build-and-inspect-python-package@d44ca7d91762de7a7d5436ddae667c6da6d1c3df  # v2.18.0
+      - uses: calysto/maintainer_tools/actions/build@v1
         id: baipp
-        with:
-          include-free-threaded: "true"
 
   test:
     name: Test (Python ${{ matrix.python-version }})
