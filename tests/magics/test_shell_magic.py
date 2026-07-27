@@ -154,7 +154,15 @@ def test_start_process_uses_powershell_on_windows(monkeypatch) -> None:
     magic.cmd = None
     magic.repl = None
     sm = _magic_module(magic)
-    monkeypatch.setattr(sm.os, "name", "nt")
+
+    class FakeOS:
+        name = "nt"
+
+    # `sm.os` is the real stdlib `os` module (a process-wide singleton), so
+    # monkeypatching `os.name` directly would corrupt pathlib's platform
+    # detection for the rest of the test session. Replace the module-level
+    # `os` reference instead, scoped to this test only.
+    monkeypatch.setattr(sm, "os", FakeOS())
     fake_repl = object()
     monkeypatch.setattr(sm, "powershell", lambda: fake_repl)
     magic.start_process()
