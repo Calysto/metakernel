@@ -124,3 +124,61 @@ def test_line_include_file_not_found() -> None:
     asyncio.run(kernel.do_execute("%include /nonexistent_path_xyz_abc/file.py"))
     log_text = get_log_text(kernel)
     assert "Error" in log_text
+
+
+def test_line_include_unterminated_quote_falls_back_to_split(tmp_path) -> None:
+    """A shlex ValueError (e.g. unterminated quote) falls back to str.split(),
+    which leaves the stray quote character in the filename, so the file lookup
+    fails and an error is logged rather than raising out of the magic."""
+    kernel = get_kernel()
+    f = tmp_path / "snippet.py"
+    f.write_text("q = 1\n")
+
+    asyncio.run(kernel.do_execute(f"%include '{f}"))
+    log_text = get_log_text(kernel)
+    assert "Error" in log_text
+
+
+def test_line_include_chained_with_trailing_code(tmp_path) -> None:
+    """Chained %include lines followed by code insert file text before the code."""
+    kernel = get_kernel()
+    executed = []
+
+    def do_execute_direct(code):
+        executed.append(code)
+
+    kernel.do_execute_direct = do_execute_direct  # type: ignore[method-assign,assignment]
+
+    f1 = tmp_path / "first.py"
+    f1.write_text("FIRST_CONTENT\n")
+    f2 = tmp_path / "second.py"
+    f2.write_text("SECOND_CONTENT\n")
+
+    asyncio.run(kernel.do_execute(f"%include {f1}\n%include {f2}\nCODE_LINE"))
+    assert executed
+    result = executed[-1]
+    assert "FIRST_CONTENT" in result
+    assert "SECOND_CONTENT" in result
+    assert "CODE_LINE" in result
+
+
+def test_line_include_chained_without_trailing_code(tmp_path) -> None:
+    """Chained %include lines with no trailing code still include both files."""
+    kernel = get_kernel()
+    executed = []
+
+    def do_execute_direct(code):
+        executed.append(code)
+
+    kernel.do_execute_direct = do_execute_direct  # type: ignore[method-assign,assignment]
+
+    f1 = tmp_path / "first.py"
+    f1.write_text("FIRST_CONTENT\n")
+    f2 = tmp_path / "second.py"
+    f2.write_text("SECOND_CONTENT\n")
+
+    asyncio.run(kernel.do_execute(f"%include {f1}\n%include {f2}"))
+    assert executed
+    result = executed[-1]
+    assert "FIRST_CONTENT" in result
+    assert "SECOND_CONTENT" in result

@@ -1,11 +1,30 @@
 import asyncio
 import importlib.util
+from typing import Any
+from unittest.mock import MagicMock
 
 import pytest
 
+import metakernel.magics.brain_magic as _bm
+from metakernel.magics.brain_magic import register_ipython_magics
 from tests.utils import get_kernel
 
 has_calysto = importlib.util.find_spec("calysto") is not None
+
+
+@pytest.fixture()
+def ipython_brain_magic(monkeypatch):
+    """Yield the registered `brain` cell-magic function with IPython stubbed out."""
+    captured: dict[str, Any] = {}
+
+    monkeypatch.setattr(
+        "IPython.core.magic.register_cell_magic",
+        lambda f: captured.update(brain=f) or f,  # type:ignore[redundant-expr]
+    )
+
+    register_ipython_magics()
+
+    yield captured["brain"]
 
 
 def test_brain_code_transform() -> None:
@@ -62,3 +81,26 @@ def test_brain_cell_magic_executes() -> None:
     asyncio.run(kernel.do_execute("%%brain\nrobot.forward(1)", None))
     magic = kernel.cell_magics["brain"]
     assert magic.code is not None
+
+
+def test_register_ipython_magics_noop_without_ipython(
+    ipython_brain_magic, monkeypatch
+) -> None:
+    """The registered `brain` function is a no-op when get_ipython() returns None."""
+    monkeypatch.setattr(_bm, "get_ipython", lambda: None)
+    assert ipython_brain_magic("", "robot.forward(1)") is None
+
+
+def test_register_ipython_magics_executes_transformed_code(
+    ipython_brain_magic, monkeypatch
+) -> None:
+    """The registered `brain` function transforms and executes the cell."""
+    mock_ipkernel = MagicMock()
+    monkeypatch.setattr(_bm, "get_ipython", lambda: mock_ipkernel)
+
+    ipython_brain_magic("", "robot.forward(1)")
+
+    executed_code = mock_ipkernel.kernel.do_execute.call_args[0][0]
+    assert "robot.forward(1)" in executed_code
+    assert "robot.brain = brain" in executed_code
+    mock_ipkernel.kernel.do_execute.assert_called_once_with(executed_code, silent=True)
