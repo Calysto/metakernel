@@ -127,8 +127,11 @@ def test_start_process_falls_back_to_sh(monkeypatch) -> None:
         return "/bin/sh" if cmd == "sh" else None
 
     monkeypatch.setattr(sm.pexpect, "which", fake_which)
+    fake_repl = object()
+    monkeypatch.setattr(sm, "bash", lambda command=None: fake_repl)
     magic.start_process()
     assert magic.cmd == "sh"
+    assert magic.repl is fake_repl
 
 
 @pytest.mark.skipif(sys.platform == "win32", reason="posix-only shell behavior")
