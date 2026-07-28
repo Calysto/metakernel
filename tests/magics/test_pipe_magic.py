@@ -1,6 +1,26 @@
 import asyncio
+from typing import Any
 
+import pytest
+
+import metakernel.magics.pipe_magic as _pm
+from metakernel.magics.pipe_magic import register_ipython_magics
 from tests.utils import EvalKernel, clear_log_text, get_kernel, get_log_text
+
+
+@pytest.fixture()
+def ipython_pipe_magic(monkeypatch):
+    """Yield the registered `pipe` cell-magic function with IPython stubbed out."""
+    captured: dict[str, Any] = {}
+
+    monkeypatch.setattr(
+        "IPython.core.magic.register_cell_magic",
+        lambda f: captured.update(pipe=f) or f,  # type:ignore[redundant-expr]
+    )
+
+    register_ipython_magics()
+
+    yield captured["pipe"]
 
 
 def test_pipe_magic() -> None:
@@ -57,3 +77,24 @@ this is a test
     text = get_log_text(kernel)
     assert "histay is a esttay" in text, "text: " + text
     clear_log_text(kernel)
+
+
+def test_register_ipython_magics_noop_without_ipython(
+    ipython_pipe_magic, monkeypatch
+) -> None:
+    """The registered `pipe` function is a no-op when get_ipython() returns None."""
+    monkeypatch.setattr(_pm, "get_ipython", lambda: None)
+    assert ipython_pipe_magic("upper", "hello") is None
+
+
+def test_register_ipython_magics_pipes_through_functions(
+    ipython_pipe_magic, monkeypatch
+) -> None:
+    """The registered `pipe` function evaluates and pipes through user_global functions."""
+
+    class FakeIPython:
+        ns_table = {"user_global": {"upper": str.upper, "reverse": lambda s: s[::-1]}}
+
+    monkeypatch.setattr(_pm, "get_ipython", lambda: FakeIPython())
+
+    assert ipython_pipe_magic("upper | reverse", "hello") == "OLLEH"
