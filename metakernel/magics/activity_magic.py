@@ -27,7 +27,7 @@ class Activity:
         self.filename: str | None = None
         self.results_filename: str | None = None
         self.instructors: list[Any] = []
-        self.last_id = None
+        self.last_id: str | None = None
 
     def load(self, filename: str) -> None:
         if filename.startswith("~"):

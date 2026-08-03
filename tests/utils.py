@@ -102,7 +102,7 @@ def get_kernel(kernel_class: type[_KT]) -> _KT: ...
 def get_kernel(kernel_class: type[MetaKernel] = MetaKernel) -> MetaKernel:
     import weakref
 
-    context = zmq.Context.instance()
+    context: zmq.Context[zmq.Socket[bytes]] = zmq.Context.instance()
     iopub_socket = context.socket(zmq.PUB)
 
     kernel = kernel_class(
