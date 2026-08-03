@@ -12,3 +12,4 @@ examples/temp.txt
 *,cover
 .cover*
 **/data_kernelspec/
+uv.lock

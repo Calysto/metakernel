@@ -35,13 +35,11 @@ class Dummy(Magic):
         """
         %%spam - Cook some spam
         """
-        pass
 
     def line_eggs(self, style):
         """
         %eggs STYLE - cook some eggs in the given style
         """
-        pass
 
 
 def test_get_magics() -> None:
@@ -140,16 +138,20 @@ class VarargsMagic(Magic):
 class TestMagicOptionParser:
     def test_exit_with_msg_writes_stderr(self) -> None:
         parser = MagicOptionParser()
-        with patch.object(sys, "stderr") as mock_stderr:
-            with pytest.raises(Exception, match="oops"):
-                parser.exit(1, "oops")
+        with (
+            patch.object(sys, "stderr") as mock_stderr,
+            pytest.raises(Exception, match="oops"),
+        ):
+            parser.exit(1, "oops")
         mock_stderr.write.assert_called_once_with("oops")
 
     def test_exit_without_msg_skips_stderr(self) -> None:
         parser = MagicOptionParser()
-        with patch.object(sys, "stderr") as mock_stderr:
-            with pytest.raises(Exception, match="None"):
-                parser.exit(0)
+        with (
+            patch.object(sys, "stderr") as mock_stderr,
+            pytest.raises(Exception, match="None"),
+        ):
+            parser.exit(0)
         mock_stderr.write.assert_not_called()
 
 

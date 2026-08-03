@@ -36,7 +36,8 @@ class ConnectInfoMagic(Magic):
         """
         connection_file = self.kernel.config["IPKernelApp"]["connection_file"]
         try:
-            config = json.loads(open(connection_file).read())
+            with open(connection_file) as f:
+                config = json.load(f)
         except Exception:
             config = {
                 "stdin_port": "UNKNOWN",

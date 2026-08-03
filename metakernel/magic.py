@@ -66,7 +66,7 @@ class Magic:
         if fargs[0] == "self":
             fargs = fargs[1:]
 
-        fargs = [f for f in fargs if f not in kwargs.keys()]
+        fargs = [f for f in fargs if f not in kwargs]
         if len(args) > len(fargs) and not arg_spec.varargs:
             extra = " ".join(str(s) for s in (args[len(fargs) - 1 :]))
             args = args[: len(fargs) - 1] + [extra]
@@ -90,7 +90,7 @@ class Magic:
         if fargs[0] == "self":
             fargs = fargs[1:]
 
-        fargs = [f for f in fargs if f not in kwargs.keys()]
+        fargs = [f for f in fargs if f not in kwargs]
         if len(args) > len(fargs) and not arg_spec.varargs:
             extra = " ".join(str(s) for s in (args[len(fargs) - 1 :]))
             args = args[: len(fargs) - 1] + [extra]
@@ -207,7 +207,7 @@ def _parse_args(
 
     args = _split_args(args)
 
-    kwargs = dict()
+    kwargs = {}
     if getattr(func, "has_options", False):
         parser = MagicOptionParser(usage=usage, conflict_handler="resolve")
         parser.add_options(func.options)
@@ -293,7 +293,7 @@ def _format_option(option: Any) -> str:
     output += option.get_opt_string() + " "
     output += " " * (15 - len(output))
     output += option.help + " "
-    if not option.default == ("NO", "DEFAULT"):
+    if option.default != ("NO", "DEFAULT"):
         output += f"[default: {option.default}]"
     return str(output)
 

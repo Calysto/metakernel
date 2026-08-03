@@ -97,7 +97,7 @@ class MetaKernel(Kernel):
     app_name = "metakernel"
     identifier_regex = r"[^\d\W][\w\.]*"
     func_call_regex = r"([^\d\W][\w\.]*)\([^\)\()]*\Z"
-    magic_prefixes = dict(magic="%", shell="!", help="?")
+    magic_prefixes = {"magic": "%", "shell": "!", "help": "?"}
     help_suffix = "?"
     help_links = [
         {
@@ -118,7 +118,7 @@ class MetaKernel(Kernel):
         # 'file_extension': '.py',
         "help_links": help_links,
     }
-    plot_settings: dict[str, Any] = Dict(dict(backend="inline")).tag(config=True)  # type: ignore[assignment]
+    plot_settings: dict[str, Any] = Dict({"backend": "inline"}).tag(config=True)  # type: ignore[assignment]
 
     meta_kernel = None
 
@@ -143,7 +143,10 @@ class MetaKernel(Kernel):
             # (eg, not as a process)
             # FIXME: take care of input/output, eg StringIO
             #        make work without a session
-            self.log = logging.Logger(".metakernel")  # type:ignore[unreachable]
+            # Each kernel instance needs its own isolated Logger (not a shared
+            # one from the logging manager's registry) so its handlers -- and
+            # the log text tests capture from them -- don't leak across instances.
+            self.log = logging.Logger(".metakernel")  # type:ignore[unreachable]  # noqa: LOG001
         else:
             # Write has already been set
             try:
@@ -246,13 +249,11 @@ class MetaKernel(Kernel):
         """
         Set a variable to a Python-typed value.
         """
-        pass
 
     def get_variable(self, name: str) -> Any:
         """
         Lookup a variable name and return a Python-typed value.
         """
-        pass
 
     def repr(self, item: Any) -> str:
         """The repr of the kernel."""
@@ -273,7 +274,6 @@ class MetaKernel(Kernel):
 
     def handle_plot_settings(self) -> None:
         """Handle the current plot settings"""
-        pass
 
     def get_local_magics_dir(self) -> str:
         """
@@ -292,7 +292,6 @@ class MetaKernel(Kernel):
         """
         Execute code in the kernel language.
         """
-        pass
 
     def do_execute_file(self, filename: str) -> Any:
         """
@@ -315,13 +314,7 @@ class MetaKernel(Kernel):
 
         for highlighting expressions in the frontend.
         """
-        if code == "reset":
-            raise Exception("This kernel does not implement this meta command")
-        elif code == "stop":
-            raise Exception("This kernel does not implement this meta command")
-        elif code == "step":
-            raise Exception("This kernel does not implement this meta command")
-        elif code.startswith("inspect "):
+        if code in ("reset", "stop", "step") or code.startswith("inspect "):
             raise Exception("This kernel does not implement this meta command")
         else:
             raise Exception(f"Unknown meta command: '{code}'")
@@ -345,7 +338,6 @@ class MetaKernel(Kernel):
 
     def restart_kernel(self) -> None:
         """Restart the kernel"""
-        pass
 
     def _request_shutdown(self) -> None:
         """Send an ask_exit payload and schedule kernel shutdown.
@@ -570,7 +562,7 @@ class MetaKernel(Kernel):
 
         https://jupyter-client.readthedocs.io/en/stable/messaging.html#history
         """
-        with open(self.hist_file) as fid:
+        with open(self.hist_file) as fid:  # noqa: ASYNC230 -- small file, infrequent call
             self.hist_cache = json.loads(fid.read() or "[]")
         return {"status": "ok", "history": [(None, None, h) for h in self.hist_cache]}
 
@@ -581,7 +573,7 @@ class MetaKernel(Kernel):
         https://jupyter-client.readthedocs.io/en/stable/messaging.html#kernel-shutdown
         """
         if self.hist_file:
-            with open(self.hist_file, "w") as fid:
+            with open(self.hist_file, "w") as fid:  # noqa: ASYNC230 -- small file, infrequent call
                 json.dump(self.hist_cache[-self.max_hist_cache :], fid)
         if restart:
             self.Print("Restarting kernel...")
@@ -668,7 +660,7 @@ class MetaKernel(Kernel):
 
             elif not info["magic"]["code"] and not info["magic"]["args"]:
                 matches = []
-                for name in magics.keys():
+                for name in magics:
                     if name.startswith(info["magic"]["name"]):
                         pre = info["magic"]["prefix"]
                         matches.append(pre + name)

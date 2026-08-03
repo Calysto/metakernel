@@ -141,12 +141,14 @@ extend-select = [
 ignore = [
   "RUF005",
   "RUF012",
-  "S102",   # exec() is fundamental to a Python kernel/REPL
-  "S307",   # eval() is fundamental to a kernel/REPL system
-  "S310",   # URL open with user-provided URLs is intentional
-  "S603",   # subprocess with trusted internal input
-  "S604",   # shell= as a dict key is not a security issue (false positive)
-  "S607",   # partial executable path is intentional
+  "S102",    # exec() is fundamental to a Python kernel/REPL
+  "S307",    # eval() is fundamental to a kernel/REPL system
+  "S310",    # URL open with user-provided URLs is intentional
+  "S603",    # subprocess with trusted internal input
+  "S604",    # shell= as a dict key is not a security issue (false positive)
+  "S607",    # partial executable path is intentional
+  "BLE001",  # kernels/magics must catch arbitrary exceptions from user code and report them, not crash
+  "TRY002",  # small library with no existing exception hierarchy; not worth introducing one just for this
 ]
 
 [tool.ruff.lint.per-file-ignores]

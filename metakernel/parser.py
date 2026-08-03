@@ -6,7 +6,7 @@ from typing import Any
 
 IDENTIFIER_REGEX = r"[^\d\W][\w\.]*"
 FUNC_CALL_REGEX = r"([^\d\W][\w\.]*)\([^\)\()]*\Z"
-MAGIC_PREFIXES = dict(magic="%", shell="!", help="?")
+MAGIC_PREFIXES = {"magic": "%", "shell": "!", "help": "?"}
 HELP_SUFFIX = "?"
 
 
@@ -42,7 +42,7 @@ class Parser:
             re.UNICODE,
         )
 
-        self.magic_regex = "|".join([default_regex, identifier_regex])
+        self.magic_regex = f"{default_regex}|{identifier_regex}"
 
         full_path_regex = r'([\w/\.~][^\'"]*)\Z'
         self.unquoted_path = re.compile(
@@ -94,7 +94,7 @@ class Parser:
         start = min(start, end)
         start = max(0, start)
 
-        info: dict[str, Any] = dict(code=code, magic=dict())
+        info: dict[str, Any] = {"code": code, "magic": {}}
 
         info["magic"] = self._parse_magic(code[:end])
 
@@ -274,12 +274,12 @@ class Parser:
                 path = "".join(path_list[0])
                 matches = _complete_path(path)
 
-                if len(path) > len(obj) and not path == ".":
+                if len(path) > len(obj) and path != ".":
                     matches = [m[len(path) - len(obj) :] for m in matches]
                 elif path == ".":
                     matches = [m[1:] for m in matches if m.startswith(".")]
 
-            return [m.strip() for m in matches if not m.strip() == obj]
+            return [m.strip() for m in matches if m.strip() != obj]
 
         matches = get_regex_matches(self.unquoted_path)
         matches += get_regex_matches(self.single_path)

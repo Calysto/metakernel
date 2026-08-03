@@ -30,7 +30,9 @@ def test_install_magic_magic() -> None:
     )
     text = get_log_text(kernel)
     assert re.match(
-        ".*Downloaded '.*ipython/metakernel/magics/cd_magic.py'", text, re.DOTALL | re.M
+        ".*Downloaded '.*ipython/metakernel/magics/cd_magic.py'",
+        text,
+        re.DOTALL | re.MULTILINE,
     ), "Not downloaded"
     assert os.path.isfile(filename), "File not found: %s" % filename
 
