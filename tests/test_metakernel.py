@@ -553,7 +553,7 @@ class _FakeApp(LoggingConfigurable):
 def _make_kernel_with_parent(extra_args: list[str]) -> MetaKernel:
     import weakref
 
-    ctx = zmq.Context.instance()
+    ctx: zmq.Context[zmq.Socket[bytes]] = zmq.Context.instance()
     sock = ctx.socket(zmq.PUB)
     parent = _FakeApp()
     parent.extra_args = extra_args  # type: ignore[attr-defined]
