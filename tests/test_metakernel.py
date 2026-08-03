@@ -224,7 +224,7 @@ def test_history() -> None:
     kernel = get_kernel()
     asyncio.run(kernel.do_history(None, None, None))
     assert "!ls" in "".join(kernel.hist_cache)
-    assert "%cd ~"
+    assert "%cd" in "".join(kernel.hist_cache)
 
 
 def test_sticky_magics() -> None:
@@ -531,9 +531,11 @@ class TestMakeSubkernel:
         mock_display = unittest.mock.MagicMock()
         mock_shell = unittest.mock.MagicMock()
         mock_shell.kernel.session = ss.Session()
-        with unittest.mock.patch("IPython.get_ipython", return_value=mock_shell):
-            with unittest.mock.patch("IPython.display.display", mock_display):
-                child.makeSubkernel(parent)
+        with (
+            unittest.mock.patch("IPython.get_ipython", return_value=mock_shell),
+            unittest.mock.patch("IPython.display.display", mock_display),
+        ):
+            child.makeSubkernel(parent)
         assert child.Display is mock_display
 
     def test_with_ipython_sets_send_response_to_shell_response(self) -> None:
@@ -751,9 +753,11 @@ class TestDoShutdown:
         """With restart=True, restart_kernel() and reload_magics() are both called."""
         kernel = get_kernel(EvalKernel)
         kernel.hist_file = ""
-        with unittest.mock.patch.object(kernel, "restart_kernel") as mock_restart:
-            with unittest.mock.patch.object(kernel, "reload_magics") as mock_reload:
-                resp = asyncio.run(kernel.do_shutdown(True))
+        with (
+            unittest.mock.patch.object(kernel, "restart_kernel") as mock_restart,
+            unittest.mock.patch.object(kernel, "reload_magics") as mock_reload,
+        ):
+            resp = asyncio.run(kernel.do_shutdown(True))
         mock_restart.assert_called_once()
         mock_reload.assert_called_once()
         assert resp == {"status": "ok", "restart": True}

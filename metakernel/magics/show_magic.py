@@ -50,7 +50,6 @@ class ShowMagic(Magic):
                     "source": "page",
                 }
             ]
-        return None
 
 
 def register_magics(kernel: MetaKernel) -> None:

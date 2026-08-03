@@ -31,8 +31,7 @@ class ProcessingMagic(Magic):
         """%%processing - run contents of cell as a Processing script"""
 
         repr_code = repr(self.code)
-        if repr_code.startswith("u"):
-            repr_code = repr_code[1:]
+        repr_code = repr_code.removeprefix("u")
 
         env = {"code": repr_code, "id": self.canvas_id}
         code = """
@@ -63,6 +62,6 @@ def register_ipython_magics() -> None:
 
     @register_cell_magic
     def processing(line: str, cell: str) -> None:
-        """ """
+        """%%processing - run contents of cell as a Processing script."""
         magic.code = cell
         magic.cell_processing()

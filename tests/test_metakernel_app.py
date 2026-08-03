@@ -349,12 +349,14 @@ class TestMetaKernelAppSubcommands:
         installer = KernelInstallerApp()
         installer.argv = []
 
-        with patch(
-            "subprocess.check_call",
-            side_effect=subprocess.CalledProcessError(1, "jupyter"),
+        with (
+            patch(
+                "subprocess.check_call",
+                side_effect=subprocess.CalledProcessError(1, "jupyter"),
+            ),
+            pytest.raises(SystemExit) as exc_info,
         ):
-            with pytest.raises(SystemExit) as exc_info:
-                installer.start()
+            installer.start()
         assert exc_info.value.code == 1
 
 

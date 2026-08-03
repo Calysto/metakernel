@@ -72,9 +72,9 @@ class MagicMagic(Magic):
 
         cell_magics = self.kernel.cell_magics
         line_magics = self.kernel.line_magics
-        if minfo["type"] in ["cell", "sticky"] and name in cell_magics.keys():
+        if minfo["type"] in ["cell", "sticky"] and name in cell_magics:
             magic = cell_magics[name]
-        elif minfo["type"] == "line" and name in line_magics.keys():
+        elif minfo["type"] == "line" and name in line_magics:
             magic = line_magics[name]
 
         else:

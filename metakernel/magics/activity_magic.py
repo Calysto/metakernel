@@ -160,9 +160,11 @@ class Activity:
             while line:
                 if "::" in line:
                     id, user, _time, choice = line.split("::")
-                    if self.questions[self.index].id == id:
-                        if choice.strip() != "Results":
-                            data[user.strip()] = choice.strip()
+                    if (
+                        self.questions[self.index].id == id
+                        and choice.strip() != "Results"
+                    ):
+                        data[user.strip()] = choice.strip()
                 line = fp.readline()
         choices = {
             str(i): 0 for i in range(1, len(self.questions[self.index].options) + 1)
@@ -192,7 +194,7 @@ class Activity:
         assert self.results_filename is not None  # noqa: S101
         with portalocker.Lock(self.results_filename, "a+") as g:
             g.write(
-                f"{self.id}::{getpass.getuser()}::{datetime.datetime.today()}::{sender.description}\n"
+                f"{self.id}::{getpass.getuser()}::{datetime.datetime.now(tz=datetime.timezone.utc)}::{sender.description}\n"  # noqa: UP017
             )
             g.flush()
             os.fsync(g.fileno())
@@ -290,7 +292,8 @@ class ActivityMagic(Magic):
                 ip.set_next_input((f"%%activity {filename}\n\n") + text)
             return
         elif mode == "edit":
-            text = "".join(open(filename).readlines())
+            with open(filename) as f:
+                text = f.read()
             ip = get_ipython()
             if ip is not None:
                 ip.set_next_input((f"%%activity {filename}\n\n") + text)

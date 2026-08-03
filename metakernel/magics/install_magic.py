@@ -42,7 +42,8 @@ class InstallMagic(Magic):
         if filename.startswith("~"):
             filename = os.path.expanduser(filename)
         filename = os.path.abspath(filename)
-        text = open(filename).read()
+        with open(filename) as f:
+            text = f.read()
         if (f'IPython.load_extensions("{name}");') in text:
             return
         if "// INSTALL MAGIC" not in text:

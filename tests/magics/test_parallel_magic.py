@@ -352,9 +352,10 @@ class _PxView:
     def __getitem__(self, key: Any) -> Any:
         self._call_count += 1
         self.called_with.append(key)
-        if self._raises is not None:
-            if self._fail_times == 0 or self._call_count <= self._fail_times:
-                raise self._raises
+        if self._raises is not None and (
+            self._fail_times == 0 or self._call_count <= self._fail_times
+        ):
+            raise self._raises
         return self._return_value
 
     def __setitem__(self, key: Any, value: Any) -> None:

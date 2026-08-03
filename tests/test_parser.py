@@ -44,10 +44,10 @@ def test_scheme_parser() -> None:
 def test_path_completions() -> None:
     p = Parser()
 
-    if not os.name == "nt":
+    if os.name != "nt":
         code = "/usr/bi"
         assert "bin/" in p.parse_code(code)["path_matches"]
-    if not os.name == "nt":
+    if os.name != "nt":
         code = "~/.bashr"
         assert "bashrc" in p.parse_code(code)["path_matches"]
 

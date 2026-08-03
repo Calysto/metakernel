@@ -61,9 +61,11 @@ def test_line_dot_noop_for_empty_graph() -> None:
     """%dot does nothing when pydot fails to parse any graph."""
     kernel = get_kernel()
     magic = kernel.line_magics["dot"]
-    with patch("pydot.graph_from_dot_data", return_value=[]) as mock_parse:
-        with patch.object(kernel, "Display") as mock_display:
-            magic.line_dot("not valid dot")
+    with (
+        patch("pydot.graph_from_dot_data", return_value=[]) as mock_parse,
+        patch.object(kernel, "Display") as mock_display,
+    ):
+        magic.line_dot("not valid dot")
     mock_parse.assert_called_once()
     mock_display.assert_not_called()
 
@@ -74,9 +76,11 @@ def test_cell_dot_noop_for_empty_graph() -> None:
     kernel = get_kernel()
     magic = kernel.cell_magics["dot"]
     magic.code = "not valid dot"
-    with patch("pydot.graph_from_dot_data", return_value=[]):
-        with patch.object(kernel, "Display") as mock_display:
-            magic.cell_dot()
+    with (
+        patch("pydot.graph_from_dot_data", return_value=[]),
+        patch.object(kernel, "Display") as mock_display,
+    ):
+        magic.cell_dot()
     mock_display.assert_not_called()
 
 
@@ -87,9 +91,11 @@ def test_line_dot_handles_str_svg() -> None:
     magic = kernel.line_magics["dot"]
     fake_graph = MagicMock()
     fake_graph.create_svg.return_value = "<svg>already str</svg>"
-    with patch("pydot.graph_from_dot_data", return_value=[fake_graph]):
-        with patch.object(kernel, "Display") as mock_display:
-            magic.line_dot("graph A { a->b };")
+    with (
+        patch("pydot.graph_from_dot_data", return_value=[fake_graph]),
+        patch.object(kernel, "Display") as mock_display,
+    ):
+        magic.line_dot("graph A { a->b };")
     html_obj = mock_display.call_args[0][0]
     assert "already str" in html_obj.data
 
@@ -102,9 +108,11 @@ def test_cell_dot_handles_str_svg() -> None:
     magic.code = "graph A { a->b };"
     fake_graph = MagicMock()
     fake_graph.create_svg.return_value = "<svg>already str</svg>"
-    with patch("pydot.graph_from_dot_data", return_value=[fake_graph]):
-        with patch.object(kernel, "Display") as mock_display:
-            magic.cell_dot()
+    with (
+        patch("pydot.graph_from_dot_data", return_value=[fake_graph]),
+        patch.object(kernel, "Display") as mock_display,
+    ):
+        magic.cell_dot()
     html_obj = mock_display.call_args[0][0]
     assert "already str" in html_obj.data
     assert not magic.evaluate
@@ -122,7 +130,9 @@ def test_register_ipython_magics() -> None:
 
     fake_graph = MagicMock()
     fake_graph.create_svg.return_value = "<svg>ipython</svg>"
-    with patch("pydot.graph_from_dot_data", return_value=[fake_graph]):
-        with patch("IPython.display.display") as mock_display:
-            captured["dot"]("", "graph A { a->b };")
+    with (
+        patch("pydot.graph_from_dot_data", return_value=[fake_graph]),
+        patch("IPython.display.display") as mock_display,
+    ):
+        captured["dot"]("", "graph A { a->b };")
     assert mock_display.called

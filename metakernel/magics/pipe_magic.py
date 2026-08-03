@@ -47,7 +47,7 @@ def register_ipython_magics() -> None:
 
     @register_cell_magic
     def pipe(line: str, cell: str) -> Any:
-        """ """
+        """%%pipe FUNCTION1 | FUNCTION2 ... - pipe the cell through a series of function calls."""
         ip = get_ipython()
         if ip is None:
             return

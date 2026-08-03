@@ -48,12 +48,8 @@ class FileMagic(Magic):
         else:
             message = f"Appended on file '{filename}'."
         try:
-            if append:
-                fp = open(filename, "a")
-            else:
-                fp = open(filename, "w")
-            fp.write(self.code)
-            fp.close()
+            with open(filename, "a" if append else "w") as fp:
+                fp.write(self.code)
             self.kernel.Print(message)
         except Exception as e:
             self.kernel.Error(str(e))
