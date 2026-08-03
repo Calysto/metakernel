@@ -143,7 +143,10 @@ class MetaKernel(Kernel):
             # (eg, not as a process)
             # FIXME: take care of input/output, eg StringIO
             #        make work without a session
-            self.log = logging.getLogger(".metakernel")  # type:ignore[unreachable]
+            # Each kernel instance needs its own isolated Logger (not a shared
+            # one from the logging manager's registry) so its handlers -- and
+            # the log text tests capture from them -- don't leak across instances.
+            self.log = logging.Logger(".metakernel")  # type:ignore[unreachable]  # noqa: LOG001
         else:
             # Write has already been set
             try:
