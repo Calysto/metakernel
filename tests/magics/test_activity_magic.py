@@ -234,6 +234,17 @@ def test_line_activity_magic_renders_widget(tmp_path) -> None:
     assert os.path.exists(str(activity_file) + ".results")
 
 
+def test_line_activity_magic_edit_mode_reads_file(tmp_path) -> None:
+    """%activity FILENAME edit reads the raw file contents without error."""
+    activity_file = tmp_path / "test_activity"
+    activity_file.write_text(ACTIVITY_TEXT)
+
+    kernel = get_kernel(EvalKernel)
+    asyncio.run(kernel.do_execute(f"%activity {activity_file} edit", False))
+
+    assert "Error" not in get_log_text(kernel)
+
+
 # ---------------------------------------------------------------------------
 # Activity.create_widget()
 # ---------------------------------------------------------------------------
