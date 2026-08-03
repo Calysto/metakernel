@@ -36,7 +36,8 @@ activity = ["portalocker >=2.8.0"] # activity magic
 parallel = ["ipyparallel >=8.5.1"] # parallel magic
 
 [dependency-groups]
-dev = [ { include-group = "test" }, "pre-commit", "jupyter-console (>=6.6.3,<7.0.0)" ]
+dev-extra = ["pre-commit", "jupyter-console (>=6.6.3,<7.0.0)"]
+dev = [{ include-group = "test" }, { include-group = "dev-extra" }]
 test = [
     "ipython >=9.0",
     "jupyter_kernel_test >=0.6.0",
@@ -45,8 +46,7 @@ test = [
     "pytest-timeout >=2.2.0",
     "requests >=2.29.0",
 ]
-test-all = [
-    { include-group = "test" },
+test-all-extra = [
     "calysto >=1.0.6",        # brain magic, activity magic (BarChart)
     "calysto-scheme >=1.4.8", # scheme magic
     "ipyparallel >=8.5.1",    # parallel magic
@@ -55,6 +55,7 @@ test-all = [
     "portalocker >=2.8.0",    # activity magic
     "pydot >=2.0.0",          # dot magic
 ]
+test-all = [{ include-group = "test" }, { include-group = "test-all-extra" }]
 docs = [
     "poetry-core>=2.0.0; python_version < '4.0'",
     "mkdocs>=1.4.3",
@@ -62,12 +63,10 @@ docs = [
     "mkdocs-jupyter>=0.24.1",
     "mkdocstrings[python]>=0.21.0",
 ]
-coverage = [
-    { include-group = "test-all" },
-    "coverage[toml] >=7.2.3",
-    "pytest-cov >=4.1.0",
-]
-typing = [{ include-group = "test-all" }, "pip >=23.1", "mypy >=1.2.0", "ipywidgets >=8.0.5"]
+coverage-extra = ["coverage[toml] >=7.2.3", "pytest-cov >=4.1.0"]
+coverage = [{ include-group = "test-all" }, { include-group = "coverage-extra" }]
+typing-extra = ["pip >=23.1", "mypy >=1.2.0", "ipywidgets >=8.0.5"]
+typing = [{ include-group = "test-all" }, { include-group = "typing-extra" }]
 
 [tool.poetry]
 include = [

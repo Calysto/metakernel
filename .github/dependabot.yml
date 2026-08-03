@@ -16,3 +16,4 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 0 # disables routine version-update PRs; security-update PRs are unaffected by this limit
