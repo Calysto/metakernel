@@ -8,7 +8,7 @@ import sys
 import traceback
 from ast import literal_eval as safe_eval
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Any, NoReturn, TypeVar, cast
+from typing import TYPE_CHECKING, Any, NoReturn, TypeVar
 
 if TYPE_CHECKING:
     from IPython.core.interactiveshell import InteractiveShell
@@ -154,7 +154,7 @@ def get_ipython() -> InteractiveShell | None:
     """Return the running IPython shell instance, or None if not in IPython."""
     from IPython import get_ipython as _get_ipython  # type: ignore[attr-defined]
 
-    return cast("InteractiveShell | None", _get_ipython())  # type: ignore[no-untyped-call]
+    return _get_ipython()
 
 
 def option(*args: Any, **kwargs: Any) -> Callable[[_F], _F]:
