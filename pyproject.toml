@@ -39,7 +39,7 @@ parallel = ["ipyparallel >=8.5.1"] # parallel magic
 dev-extra = ["pre-commit", "jupyter-console (>=6.6.3,<7.0.0)"]
 dev = [{ include-group = "test" }, { include-group = "dev-extra" }]
 test = [
-    "ipython >=9.0",
+    "ipython >=9.16",
     "jupyter_kernel_test >=0.6.0",
     "ipywidgets >=8.0.5",
     "pytest >=9.0",
@@ -76,7 +76,7 @@ include = [
 
 [tool.poetry.group.test.dependencies]
 metakernel_python = {path = "./metakernel_python", develop = true}
-ipython = {version = ">=9.0"}
+ipython = {version = ">=9.16"}
 
 [tool.pytest.ini_options]
 minversion = "9.0"

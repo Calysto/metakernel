@@ -3567,4 +3567,4 @@ parallel = ["ipyparallel"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11"
-content-hash = "f4658d6b3ee408c172362fc8c202b85ba531bace4ca8b174c14b82013c63f5bd"
+content-hash = "25b2e0f991bfd09ca6230458952d3d969eae32bbdaffe40314f06eb5d5b80844"
