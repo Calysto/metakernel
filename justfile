@@ -66,21 +66,19 @@ typing:
     poetry sync --only main,typing
     poetry run mypy . --install-types --non-interactive
 
-# Run linter
-lint:
-    just pre-commit ruff-format
-    just pre-commit ruff-check
-    just pre-commit validate-pyproject
-    just pre-commit poetry-check
+# Run all pre-commit hooks
+lint *args="":
+    poetry sync --only main,dev
+    poetry run pre-commit run --all-files {{args}}
 
 # Run example notebooks (excludes Calysto Processing and SAS)
 run-notebooks:
     bash scripts/run_notebooks.sh
 
-# Run pre-commit hook
-pre-commit *args="":
+# Run all pre-commit hooks, including manual-stage hooks
+lint-all *args="":
     poetry sync --only main,dev
-    poetry run pre-commit run --all-files {{args}}
+    poetry run pre-commit run --all-files --hook-stage manual {{args}}
 
 # Launch Jupyter console with MetaKernel Python for manual smoke testing
 test-manual:

@@ -33,7 +33,8 @@ just run-notebooks     # execute example notebooks
 just docs              # build MkDocs HTML docs
 just help              # regenerate magics/README.md from docstrings
 just typing            # run mypy type checks
-just lint              # run ruff linter
+just lint              # run all pre-commit hooks
+just lint-all          # also run manual-stage hooks (markdown-link-check)
 just clean             # remove build artifacts
 ```
 
@@ -65,7 +66,7 @@ poetry install --with test
 This project uses [ruff](https://docs.astral.sh/ruff/) for linting and formatting,
 enforced via pre-commit hooks. The hooks are installed automatically by `just install`.
 
-Lint manually with `just lint`.
+Lint manually with `just lint`, or `just lint-all` to include manual-stage hooks.
 
 ## Running tests
 
