@@ -1,5 +1,31 @@
 # Changelog Entries
 
+## 1.0.7
+
+This release carries the 1.0.1 through 1.0.5 changes onto PyPI. Those versions were tagged and released on GitHub but never uploaded: the publish step was gated on a condition that was always false, and a skipped step does not fail a job, so five releases went by unnoticed. 1.0.6 fixed the condition and was the first upload since 1.0.0. Everything below is new to anyone installing from PyPI.
+
+### Bugs Fixed
+
+- Fix two child-process leaks in REPLWrapper (#475). A failed startup left the spawned child running with nothing able to reach it, and terminating a PopenSpawn child left its three pipes open.
+- Extend the cursor_start fix to magic get_completions (#437)
+- Fix path tab completion erasing the line when the cursor is on / or - (#433)
+- Fix sdist test collection failure for dragon.py (#423)
+- Process backspaces in output to fix a test on groff-1.23.0 (#422)
+
+### Enhancements Made
+
+- Add Python 3.15 and free-threading support (#442)
+
+### Maintenance and upkeep improvements
+
+- Publish to PyPI on real releases (#476)
+- Add a test-manual recipe and graceful kernel shutdown on exit (#434)
+- Raise magics test coverage to 95% (#465)
+- Standardize justfile targets (#474)
+- Ignore a DeprecationWarning from Python 3.15 (#439)
+- Update the nbviewer URL from ipython.org to jupyter.org, over https (#449, #451)
+- Plus routine CI, pre-commit, lockfile and dependency updates (#419 through #478)
+
 ## 1.0.6
 
 ### Maintenance and upkeep improvements
