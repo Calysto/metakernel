@@ -1,5 +1,12 @@
 # Changelog Entries
 
+## 1.0.6
+
+### Maintenance and upkeep improvements
+
+- Publish to PyPI on real releases
+  - PR: #476
+
 ## 1.0.5
 
 ### Bugs Fixed
