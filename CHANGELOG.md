@@ -1,5 +1,86 @@
 # Changelog Entries
 
+## 1.0.5
+
+### Bugs Fixed
+
+- Fix two child-process leaks in REPLWrapper
+  - PR: #475
+
+### Maintenance and upkeep improvements
+
+- chore: pre-commit autoupdate
+  - PR: #438
+- Ignore DeprecationWarning from Python 3.15
+  - PR: #439
+- chore: use new maintainer_tools actions for zizmor, codeql, pre-commit
+  - PR: #440
+- chore: pre-commit autoupdate
+  - PR: #441
+- chore: pre-commit autoupdate
+  - PR: #444
+- chore: pre-commit autoupdate
+  - PR: #446
+- chore: pre-commit autoupdate
+  - PR: #448
+- fix: update nbviewer URL from ipython.org to jupyter.org
+  - PR: #449
+- fix: use https for nbviewer link in README
+  - PR: #451
+- chore: pre-commit autoupdate
+  - PR: #452
+- fix: handle 429 Too Many Requests in markdown link checker
+  - PR: #453
+- Add Python 3.15 and free-threading support
+  - PR: #442
+- chore: pre-commit autoupdate
+  - PR: #455
+- chore: pre-commit autoupdate
+  - PR: #456
+- chore: pre-commit autoupdate
+  - PR: #457
+- ci: use calysto/maintainer_tools build action
+  - PR: #459
+- chore: pre-commit autoupdate
+  - PR: #460
+- chore: pre-commit autoupdate
+  - PR: #462
+- chore: pre-commit autoupdate
+  - PR: #463
+- test: raise magics test coverage to 95%
+  - PR: #465
+- ci: drop Test PyPI upload, add pyproject/package metadata checks
+  - PR: #466
+- ci: security-only Dependabot for pip + weekly poetry.lock update job
+  - PR: #467
+- chore: update poetry.lock
+  - PR: #469
+- chore: pre-commit autoupdate
+  - PR: #470
+- chore: pre-commit autoupdate
+  - PR: #472
+- chore: update poetry.lock
+  - PR: #471
+- Standardize justfile targets
+  - PR: #474
+
+### Dependency updates
+
+- Bump the actions group with 2 updates
+  - PR: #447
+- Bump actions/checkout from 6 to 6.0.2 in the actions group
+  - PR: #450
+- Bump the actions group with 2 updates
+  - PR: #454
+- Bump actions/checkout from 6.0.3 to 7.0.0 in the actions group
+  - PR: #458
+- Bump the actions group with 2 updates
+  - PR: #464
+- Bump pymdown-extensions from 10.21 to 11.0
+  - PR: #468
+- Bump pypa/gh-action-pypi-publish from 1.14.1 to 1.14.2 in the actions group
+  - PR: #473
+
 ## 1.0.4
 
 ### Bugs Fixed
