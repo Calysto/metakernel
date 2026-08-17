@@ -1,7 +1,6 @@
-"""Tests for the PowerShell prompt handshake in :func:`metakernel.replwrap.powershell`.
+"""Tests for the PowerShell prompt handshake.
 
-These drive a scripted stand-in for the child process, so they exercise the
-Windows code path on every platform.
+A scripted stand-in for the child process runs the Windows path everywhere.
 """
 
 from __future__ import annotations
@@ -16,9 +15,7 @@ from metakernel.pexpect import TIMEOUT
 from metakernel.replwrap import PEXPECT_PROMPT
 
 BANNER_HEAD = "Windows PowerShell\r\n"
-# The rest of the banner, ending in PowerShell's own first prompt.  It arrives
-# only once the first line has been sent, which is what makes the handshake
-# racy against a real shell.
+# Arrives only after the first line is sent, which is what makes this racy.
 BANNER_TAIL = (
     "Copyright (C) Microsoft Corporation. All rights reserved.\r\n\r\nPS C:\\> "
 )
@@ -35,10 +32,9 @@ LS_OUTPUT = (
 class FakePowerShell:
     """A scripted stand-in for a PowerShell child process.
 
-    PowerShell echoes each line it is sent, then writes that command's output
-    followed by the next prompt.  ``Function prompt`` lines are interpreted the
-    way PowerShell would: the double-quoted pieces are concatenated and become
-    the prompt from then on.
+    Each line sent is echoed back, then that command's output, then the prompt.
+    A ``Function prompt`` line installs the concatenation of its quoted pieces
+    as the new prompt, the way PowerShell would.
     """
 
     crlf = "\r\n"
@@ -112,11 +108,7 @@ def repl(monkeypatch: pytest.MonkeyPatch) -> replwrap.REPLWrapper:
 def test_prompt_change_cmd_does_not_spell_out_the_prompt(
     repl: replwrap.REPLWrapper,
 ) -> None:
-    """The command that installs the prompt must not contain the prompt.
-
-    PowerShell echoes it back, and an echo containing the prompt is
-    indistinguishable from the prompt itself.
-    """
+    """An echo carrying the prompt is indistinguishable from the prompt."""
     assert repl.prompt_change_cmd is not None
     assert PEXPECT_PROMPT not in repl.prompt_change_cmd
 
