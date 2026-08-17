@@ -575,3 +575,47 @@ class TestTerminate:
         wrapper.child.kill.side_effect = OSError(errno.EPERM, "Operation not permitted")
         with patch.object(mk_pexpect, "pty", None), pytest.raises(OSError):
             wrapper.terminate()
+
+    def test_pty_none_closes_child_pipes(self) -> None:
+        """PopenSpawn has no close(), so terminate() closes its pipes itself."""
+        wrapper = _make_wrapper()
+        proc = MagicMock()
+        wrapper.child.proc = proc
+        with patch.object(mk_pexpect, "pty", None):
+            wrapper.terminate()
+        proc.wait.assert_called_once_with(timeout=5)
+        proc.stdin.close.assert_called_once()
+        proc.stdout.close.assert_called_once()
+        proc.stderr.close.assert_called_once()
+
+    def test_pty_none_closes_pipes_even_when_kill_fails(self) -> None:
+        """A kill that raises must not leave the pipes open."""
+        wrapper = _make_wrapper()
+        proc = MagicMock()
+        wrapper.child.proc = proc
+        wrapper.child.kill.side_effect = OSError(errno.EPERM, "Operation not permitted")
+        with patch.object(mk_pexpect, "pty", None), pytest.raises(OSError):
+            wrapper.terminate()
+        proc.stdout.close.assert_called_once()
+
+    def test_pty_none_survives_a_pipe_that_will_not_close(self) -> None:
+        """One pipe failing to close does not prevent the others from closing."""
+        wrapper = _make_wrapper()
+        proc = MagicMock()
+        proc.stdin.close.side_effect = OSError("already closed")
+        wrapper.child.proc = proc
+        with patch.object(mk_pexpect, "pty", None):
+            wrapper.terminate()  # must not raise
+        proc.stdout.close.assert_called_once()
+        proc.stderr.close.assert_called_once()
+
+    @pytest.mark.skipif(
+        sys.platform == "win32", reason="pexpect.pty not available on Windows"
+    )
+    def test_pty_spawn_pipes_are_left_to_pexpect(self) -> None:
+        """A pty spawn closes its own descriptor in close(); nothing to do here."""
+        wrapper = _make_wrapper()
+        proc = MagicMock()
+        wrapper.child.proc = proc
+        wrapper.terminate()
+        proc.stdout.close.assert_not_called()

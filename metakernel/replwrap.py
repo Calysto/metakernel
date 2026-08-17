@@ -336,6 +336,28 @@ class REPLWrapper:
         except Exception as e:
             if e.errno != errno.EACCES:
                 raise
+        finally:
+            self._close_pipes()
+
+    def _close_pipes(self) -> None:
+        """Close the pipes of a PopenSpawn child.
+
+        pexpect's pty spawn closes its descriptor in ``close()``, but PopenSpawn
+        (used wherever there is no pty) has no ``close()`` at all, so its three
+        pipes stay open until the garbage collector finalises them and reports
+        each one as a ResourceWarning.  Wait for the process to go first: the
+        reader thread is blocked on stdout, and letting it see EOF avoids
+        closing the descriptor out from under it.
+        """
+        proc = getattr(self.child, "proc", None)
+        if proc is None:
+            return
+        with contextlib.suppress(Exception):
+            proc.wait(timeout=5)
+        for pipe in (proc.stdin, proc.stdout, proc.stderr):
+            if pipe is not None:
+                with contextlib.suppress(Exception):
+                    pipe.close()
 
 
 def python(command: str = "python") -> REPLWrapper:
