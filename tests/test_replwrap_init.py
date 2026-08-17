@@ -141,6 +141,56 @@ class TestREPLWrapperInit:
         mock_run.assert_not_called()
 
 
+class TestStartupFailure:
+    """A failed handshake must not leave the spawned child running.
+
+    __init__ does not return, so the caller never receives the wrapper and has
+    no way to reach ``self.child`` and clean it up.
+    """
+
+    def test_spawned_child_is_terminated(self) -> None:
+        """A child spawned here is terminated when startup fails."""
+        mock_child = _make_child(echo=False)
+        timeout = mk_pexpect.TIMEOUT("no prompt")
+        with (
+            patch("metakernel.pexpect.spawnu", return_value=mock_child),
+            patch.object(REPLWrapper, "_expect_prompt", side_effect=timeout),
+            patch.object(REPLWrapper, "terminate") as mock_terminate,
+            patch("atexit.register"),
+            pytest.raises(mk_pexpect.TIMEOUT),
+        ):
+            REPLWrapper("bash", r"[$#]", None)
+        mock_terminate.assert_called_once_with()
+
+    def test_caller_supplied_spawn_is_left_alone(self) -> None:
+        """A spawn passed in by the caller stays the caller's to clean up."""
+        mock_child = _make_child(echo=False)
+        timeout = mk_pexpect.TIMEOUT("no prompt")
+        with (
+            patch.object(REPLWrapper, "_expect_prompt", side_effect=timeout),
+            patch.object(REPLWrapper, "terminate") as mock_terminate,
+            patch("atexit.register"),
+            pytest.raises(mk_pexpect.TIMEOUT),
+        ):
+            REPLWrapper(mock_child, r"[$#]", None)
+        mock_terminate.assert_not_called()
+
+    def test_terminate_failure_does_not_mask_the_original_error(self) -> None:
+        """The startup error propagates even when the cleanup itself fails."""
+        mock_child = _make_child(echo=False)
+        timeout = mk_pexpect.TIMEOUT("no prompt")
+        with (
+            patch("metakernel.pexpect.spawnu", return_value=mock_child),
+            patch.object(REPLWrapper, "_expect_prompt", side_effect=timeout),
+            patch.object(
+                REPLWrapper, "terminate", side_effect=OSError("cannot signal")
+            ),
+            patch("atexit.register"),
+            pytest.raises(mk_pexpect.TIMEOUT, match="no prompt"),
+        ):
+            REPLWrapper("bash", r"[$#]", None)
+
+
 def _make_wrapper(**kwargs: Any) -> REPLWrapper:
     """Create a REPLWrapper with a mock child, bypassing real subprocess spawning."""
     mock_child = _make_child()
@@ -525,3 +575,47 @@ class TestTerminate:
         wrapper.child.kill.side_effect = OSError(errno.EPERM, "Operation not permitted")
         with patch.object(mk_pexpect, "pty", None), pytest.raises(OSError):
             wrapper.terminate()
+
+    def test_pty_none_closes_child_pipes(self) -> None:
+        """PopenSpawn has no close(), so terminate() closes its pipes itself."""
+        wrapper = _make_wrapper()
+        proc = MagicMock()
+        wrapper.child.proc = proc
+        with patch.object(mk_pexpect, "pty", None):
+            wrapper.terminate()
+        proc.wait.assert_called_once_with(timeout=5)
+        proc.stdin.close.assert_called_once()
+        proc.stdout.close.assert_called_once()
+        proc.stderr.close.assert_called_once()
+
+    def test_pty_none_closes_pipes_even_when_kill_fails(self) -> None:
+        """A kill that raises must not leave the pipes open."""
+        wrapper = _make_wrapper()
+        proc = MagicMock()
+        wrapper.child.proc = proc
+        wrapper.child.kill.side_effect = OSError(errno.EPERM, "Operation not permitted")
+        with patch.object(mk_pexpect, "pty", None), pytest.raises(OSError):
+            wrapper.terminate()
+        proc.stdout.close.assert_called_once()
+
+    def test_pty_none_survives_a_pipe_that_will_not_close(self) -> None:
+        """One pipe failing to close does not prevent the others from closing."""
+        wrapper = _make_wrapper()
+        proc = MagicMock()
+        proc.stdin.close.side_effect = OSError("already closed")
+        wrapper.child.proc = proc
+        with patch.object(mk_pexpect, "pty", None):
+            wrapper.terminate()  # must not raise
+        proc.stdout.close.assert_called_once()
+        proc.stderr.close.assert_called_once()
+
+    @pytest.mark.skipif(
+        sys.platform == "win32", reason="pexpect.pty not available on Windows"
+    )
+    def test_pty_spawn_pipes_are_left_to_pexpect(self) -> None:
+        """A pty spawn closes its own descriptor in close(); nothing to do here."""
+        wrapper = _make_wrapper()
+        proc = MagicMock()
+        wrapper.child.proc = proc
+        wrapper.terminate()
+        proc.stdout.close.assert_not_called()
