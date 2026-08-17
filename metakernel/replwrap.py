@@ -407,7 +407,17 @@ def bash(command: str = "bash", prompt_regex: str = "[$#]") -> REPLWrapper:
 
 def powershell(command: str = "powershell", prompt_regex: str = ">") -> REPLWrapper:
     """ "Start a powershell and return a :class:`REPLWrapper` object."""
-    return REPLWrapper(command, prompt_regex, 'Function prompt {{ "{0}" }}', echo=True)
+    # PowerShell echoes back every line it is sent. A prompt-setting command
+    # that spelled the prompt out in full would arrive on the output stream
+    # ahead of the prompt it installs, and be matched in its place: from then
+    # on every read would be one prompt behind, so each command would return
+    # the previous command's output and the last one would be lost. Build the
+    # prompt from two halves so the echoed command cannot contain it, the way
+    # bash() hides "\\[\\]" inside PS1 for the same reason.
+    prompt = f'"{PEXPECT_PROMPT[:5]}" + "{PEXPECT_PROMPT[5:]}"'
+    return REPLWrapper(
+        command, prompt_regex, "Function prompt {{ " + prompt + " }}", echo=True
+    )
 
 
 def strip_bracketing(
