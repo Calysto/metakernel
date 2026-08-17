@@ -78,7 +78,9 @@ jobs:
         path: dist
 
     - name: Upload package to PyPI
-      if: ${{ !needs.release.outputs.dry_run }}
+      # Job outputs are strings, so "!dry_run" is always false here: the
+      # string "false" is truthy. Compare against "true" instead.
+      if: ${{ needs.release.outputs.dry_run != 'true' }}
       uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
       with:
         attestations: false
