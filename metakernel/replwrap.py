@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import atexit
+import contextlib
 import errno
 import os
 import signal
@@ -77,35 +78,63 @@ class REPLWrapper:
                 encoding=encoding,
                 env=env,
             )
+            spawned_here = True
         else:
             self.child = cmd_or_spawn
-
-        if self.child.echo and not echo:
-            # Existing spawn instance has echo enabled, disable it
-            # to prevent our input from being repeated to output.
-            self.child.setecho(False)
-            self.child.waitnoecho()
+            spawned_here = False
 
         self.echo = echo
         self.prompt_emit_cmd = prompt_emit_cmd
         self._force_prompt_on_continuation = force_prompt_on_continuation
         self.prompt_change_cmd: str | None = None
-        self.prompt_regex: str | None = None
-
-        if prompt_change_cmd is None:
-            self.prompt_regex = prompt_regex
-        else:
-            formatted_prompt_change_cmd = prompt_change_cmd.format(
-                new_prompt_regex, continuation_prompt_regex
-            )
-            self.set_prompt(prompt_regex, formatted_prompt_change_cmd)
-            self.prompt_regex = new_prompt_regex
+        self.prompt_regex: str | None = prompt_regex
         self.continuation_prompt_regex = continuation_prompt_regex
         self.stdin_prompt_regex = stdin_prompt_regex
 
         self._stream_handler: Any = None
         self._stdin_handler: Any = None
         self._line_handler: Any = None
+
+        try:
+            self._start_child(
+                prompt_regex, prompt_change_cmd, new_prompt_regex, extra_init_cmd
+            )
+        except BaseException:
+            # Startup failed, so __init__ never returns and nothing outside
+            # this frame can reach self.child.  A child spawned here would
+            # keep running for the life of the interpreter, unreferenced and
+            # unkillable, so end it now.  A spawn handed in by the caller
+            # stays theirs to clean up.
+            if spawned_here:
+                with contextlib.suppress(Exception):
+                    self.terminate()
+            raise
+
+    def _start_child(
+        self,
+        prompt_regex: Any,
+        prompt_change_cmd: str | None,
+        new_prompt_regex: Any,
+        extra_init_cmd: str | None,
+    ) -> None:
+        """Settle the child's echo, install the prompt, and wait for it.
+
+        Everything here talks to the child and can fail, which is why it is
+        separate from ``__init__``: the caller can then clean the child up
+        while it is still reachable.
+        """
+        if self.child.echo and not self.echo:
+            # Existing spawn instance has echo enabled, disable it
+            # to prevent our input from being repeated to output.
+            self.child.setecho(False)
+            self.child.waitnoecho()
+
+        if prompt_change_cmd is not None:
+            formatted_prompt_change_cmd = prompt_change_cmd.format(
+                new_prompt_regex, self.continuation_prompt_regex
+            )
+            self.set_prompt(prompt_regex, formatted_prompt_change_cmd)
+            self.prompt_regex = new_prompt_regex
 
         self._expect_prompt()
 
