@@ -21,7 +21,6 @@ from metakernel import Magic, MetaKernel
 
 
 class GreetMagic(Magic):
-
     def line_greet(self, name="world"):
         """
         %greet [name]
@@ -117,7 +116,6 @@ from metakernel import Magic, MetaKernel
 
 
 class RepeatMagic(Magic):
-
     def cell_repeat(self, times=2):
         """
         %%repeat [times]
@@ -131,7 +129,7 @@ class RepeatMagic(Magic):
         """
         for _ in range(int(times)):
             self.kernel.Print(self.code)
-        self.evaluate = False   # don't pass the body to the kernel
+        self.evaluate = False  # don't pass the body to the kernel
 
 
 def register_magics(kernel: MetaKernel) -> None:
@@ -149,9 +147,9 @@ from metakernel import Magic, MetaKernel, option
 
 
 class ShoutMagic(Magic):
-
     @option(
-        "-u", "--upper",
+        "-u",
+        "--upper",
         action="store_true",
         default=False,
         help="Convert output to upper case.",

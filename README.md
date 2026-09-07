@@ -93,6 +93,7 @@ subset of the magics in the IPython kernel.
 
 ```python
 from metakernel import register_ipython_magics
+
 register_ipython_magics()
 ```
 
@@ -102,8 +103,8 @@ Put the following in your (or a system-wide) `ipython_config.py` file:
 # /etc/ipython/ipython_config.py
 c = get_config()
 startup = [
-   'from metakernel import register_ipython_magics',
-   'register_ipython_magics()',
+    "from metakernel import register_ipython_magics",
+    "register_ipython_magics()",
 ]
 c.InteractiveShellApp.exec_lines = startup
 ```

@@ -68,7 +68,7 @@ on for kernel communication.
 Set the matching base URL in your `jupyterhub_config.py`:
 
 ```python
-c.JupyterHub.base_url = '/jupyter/'
+c.JupyterHub.base_url = "/jupyter/"
 ```
 
 ### nginx
