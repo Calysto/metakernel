@@ -152,9 +152,9 @@ class Magic:
 
 def get_ipython() -> InteractiveShell | None:
     """Return the running IPython shell instance, or None if not in IPython."""
-    from IPython import get_ipython as _get_ipython  # type: ignore[attr-defined]
+    from IPython import get_ipython as _get_ipython
 
-    return _get_ipython()
+    return _get_ipython()  # type:ignore[no-any-return]
 
 
 def option(*args: Any, **kwargs: Any) -> Callable[[_F], _F]:
