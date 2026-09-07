@@ -127,6 +127,7 @@ Call `self.Display(obj)` from within `do_execute_direct` (or from a magic). Meta
 ```python
 def do_execute_direct(self, code):
     from IPython.display import HTML
+
     return HTML("<b>result</b>")
 ```
 
@@ -139,7 +140,9 @@ If your kernel generates display data natively — for example a C++ kernel that
 ```python
 def do_execute_direct(self, code):
     # Call your language runtime and get MIME data back
-    mime_bundle = evaluate(code)  # e.g. {'text/html': '<b>result</b>', 'text/plain': 'result'}
+    mime_bundle = evaluate(
+        code
+    )  # e.g. {'text/html': '<b>result</b>', 'text/plain': 'result'}
     self.DisplayData(mime_bundle)
 ```
 
@@ -186,11 +189,9 @@ class MyKernel(MetaKernel):
         """Poll the connected application every 10 seconds and forward any output."""
         while True:
             time.sleep(10)
-            message = self._poll_app()   # your application-specific call
+            message = self._poll_app()  # your application-specific call
             if message:
-                self.schedule_display_output(
-                    lambda msg=message: self.Print(msg)
-                )
+                self.schedule_display_output(lambda msg=message: self.Print(msg))
 
     def _poll_app(self):
         return "periodic status update"
@@ -214,7 +215,6 @@ from metakernel import Magic
 
 
 class GreetMagic(Magic):
-
     def line_greet(self, name="world"):
         """
         %greet [name]
@@ -380,6 +380,7 @@ To find the encoding your program uses, run it in a terminal and check what Pyth
 
 ```python
 import locale
+
 print(locale.getpreferredencoding())
 ```
 
