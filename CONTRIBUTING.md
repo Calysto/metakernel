@@ -34,7 +34,7 @@ just docs              # build MkDocs HTML docs
 just help              # regenerate magics/README.md from docstrings
 just typing            # run mypy type checks
 just lint              # run all pre-commit hooks
-just lint-all          # also run manual-stage hooks (markdown-link-check)
+just lint-all          # also run manual-stage hooks
 just clean             # remove build artifacts
 ```
 
@@ -67,6 +67,7 @@ This project uses [ruff](https://docs.astral.sh/ruff/) for linting and formattin
 enforced via pre-commit hooks. The hooks are installed automatically by `just install`.
 
 Lint manually with `just lint`, or `just lint-all` to include manual-stage hooks.
+Markdown link checks run in CI (the `markdown_link_check` job), not locally.
 
 ## Running tests
 

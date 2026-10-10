@@ -75,7 +75,8 @@ lint *args="":
 run-notebooks:
     bash scripts/run_notebooks.sh
 
-# Run all pre-commit hooks, including manual-stage hooks
+# Run all pre-commit hooks, including any manual-stage hooks.
+# Markdown link checks run in CI (the markdown_link_check job), not here.
 lint-all *args="":
     poetry sync --only main,dev
     poetry run pre-commit run --all-files --hook-stage manual {{args}}
