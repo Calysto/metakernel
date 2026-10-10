@@ -134,6 +134,19 @@ jobs:
       - uses: calysto/maintainer_tools/actions/base-setup@v1
       - run: just run-notebooks
 
+  markdown_link_check:
+    name: Markdown Link Check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: calysto/maintainer_tools/actions/markdown-link-check@v1
+        with:
+          ignore-paths: "node_modules,.git,metakernel/magics/README.md"
+
   test_release:
     name: Test Release (Dry Run)
     runs-on: ubuntu-latest
@@ -160,6 +173,7 @@ jobs:
       - static
       - test_minimum_versions
       - run_notebooks
+      - markdown_link_check
       - test_release
     runs-on: ubuntu-latest
     steps:
