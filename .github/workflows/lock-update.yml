@@ -7,7 +7,8 @@ on:
     - cron: '0 6 * * 1'  # Every Monday at 6am
 
 permissions:
-  contents: read
+  contents: write
+  pull-requests: write
 
 jobs:
   lock-update:
@@ -23,3 +24,4 @@ jobs:
         with:
           app-id: ${{ vars.APP_ID }}
           app-private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          auto-merge: "true"
