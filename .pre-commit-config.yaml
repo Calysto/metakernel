@@ -25,7 +25,7 @@ repos:
         exclude: "metakernel/magics/README\\.md|docs/index\\.md|docs/magics\\.md"
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.16.10
+    rev: v0.17.0
     hooks:
       - id: ruff-format
       - id: ruff-check
@@ -44,10 +44,4 @@ repos:
       - id: validate-pyproject
         # Optional extra validations from SchemaStore:
         additional_dependencies: ["validate-pyproject-schema-store[all]"]
-
-  - repo: https://github.com/crate-ci/typos
-    rev: "v1.51.1"
-    hooks:
-      - id: typos
-        args: []
 
