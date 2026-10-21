@@ -2870,7 +2870,7 @@ version = "13.0.0"
 description = "Python Imaging Library (fork)"
 optional = false
 python-versions = ">=3.11"
-groups = ["coverage", "dev", "test-all", "test-all-extra", "typing"]
+groups = ["coverage", "test-all", "test-all-extra", "typing"]
 files = [
     {file = "pillow-13.0.0-cp311-cp311-macosx_10_10_x86_64.whl", hash = "sha256:6f38f3f885a09cafc93fd667b1173a92f379e43785d635e7983c893f0da319fb"},
     {file = "pillow-13.0.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:37290fbef0c73e2d51d594eb78fded7dc7170d1c3ad0a890269e6fd8c8c4e061"},
