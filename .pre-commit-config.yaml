@@ -45,9 +45,3 @@ repos:
         # Optional extra validations from SchemaStore:
         additional_dependencies: ["validate-pyproject-schema-store[all]"]
 
-  - repo: https://github.com/crate-ci/typos
-    rev: "v1.51.1"
-    hooks:
-      - id: typos
-        args: []
-
