@@ -51,7 +51,7 @@ test-all-extra = [
     "calysto-scheme >=1.4.8", # scheme magic
     "ipyparallel >=8.5.1",    # parallel magic
     "matplotlib >=3.7.2",     # matplotlib magic
-    "nbconvert >=7.0.0",      # notebook execution
+    "nbconvert >=7.17.2",      # notebook execution
     "portalocker >=2.8.0",    # activity magic
     "pydot >=2.0.0",          # dot magic
 ]
