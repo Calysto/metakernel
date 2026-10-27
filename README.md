@@ -219,5 +219,7 @@ Documentation is available
 [help](https://github.com/Calysto/metakernel/blob/main/metakernel/magics/README.md)
 (and online).
 
+TAB completion for magics arguments can be added by using [boosted_magics](https://gitlab.com/logistica-dev/jupyter-agent-kernel/magics/boosted-magics) package.
+
 For version information, see the
 [Changelog](https://github.com/Calysto/metakernel/blob/main/CHANGELOG.md).
