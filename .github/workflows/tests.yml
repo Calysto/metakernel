@@ -78,9 +78,9 @@ jobs:
       - uses: calysto/maintainer_tools/actions/base-setup@v1
       - name: Install graphviz
         if: runner.os == 'Linux'
-        uses: tecolicom/actions-use-apt-tools@065d3fb036b7fc85487573596f97732ed0d3fce1 # v1.7
-        with:
-          tools: graphviz
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y graphviz
       - run: just cover -v
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v5
